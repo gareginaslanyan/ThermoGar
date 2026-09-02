@@ -74,6 +74,8 @@ STORAGE_SCHEMA_VERSION = 1
 
 FE_DATABASE_KEY = "fe"
 FE_PROFILE_CANONICAL = "thermogar_patch"
+# Fe-профиль исключает C15_LAVES из фаз, доступных пользователю.
+EXCLUDED_PHASES = {FE_DATABASE_KEY: ("C15_LAVES",)}
 FE_DATABASE_RELATIVE_PATH = (
     "databases/converted/fe/"
     "mc_fe_v2062_with_mobility.thermogar.tdb"
@@ -2040,10 +2042,11 @@ def run_batch_calculations(
             requested_phases: tuple[str, ...] = ()
             phase_value = row.get("phases", "")
             if pd.notna(phase_value) and str(phase_value).strip():
+                excluded = EXCLUDED_PHASES.get(database_key, ())
                 requested_phases = tuple(
                     item.strip().upper()
                     for item in re.split(r"[,;]", str(phase_value))
-                    if item.strip()
+                    if item.strip() and item.strip().upper() not in excluded
                 )
 
             child = broker.execute_row(
