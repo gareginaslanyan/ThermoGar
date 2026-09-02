@@ -551,8 +551,14 @@ PROJECT_ROOT = find_project_root()
 LEGACY_MIGRATION_RECEIPT = migrate_legacy_state(THERMOGAR_PATHS, PROJECT_ROOT)
 
 
+# Case-sensitive on purpose. A TDB keyword is uppercase, while the indented
+# bibliography inside REFERENCE_FILE contains lines such as
+# "Phase diagram in the iron-rich corner ...". Matching those case-insensitively
+# returned "diagram", "equilibria", "relations" and "stability" as phase names,
+# which the verified loader then rejected as non-canonical, so binding any
+# database failed and the application stopped before rendering any control.
 _TDB_PHASE_DECLARATION = re.compile(
-    r"(?im)^\s*PHASE\s+([A-Z][A-Z0-9_]*)\s"
+    r"(?m)^\s*PHASE\s+([A-Z][A-Z0-9_]*)\s"
 )
 
 
