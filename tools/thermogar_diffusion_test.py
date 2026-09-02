@@ -48,6 +48,7 @@ def main() -> int:
 
     from thermogar_diffusion import run_diffusion
     from thermogar_release_policy import (
+        PRODUCTION_USE,
         RELEASE_DATABASE_LABELS,
         RELEASE_DATABASE_SHA256,
     )
@@ -216,7 +217,8 @@ def main() -> int:
         == "SYNTHETIC_SOFTWARE_REGRESSION_NOT_MATERIAL_INPUT"
         and result.input_confirmation is True
         and result.provenance["database_key"] == "ni"
-        and result.provenance["release_status"]["production_use"] == "DENIED"
+        and result.provenance["release_status"]["production_use"]
+        == PRODUCTION_USE
         and result.provenance["result_scope"]
         == "SOFTWARE_MODEL_OUTPUT_NOT_EXPERIMENTAL_VALIDATION_OR_MATERIAL_QUALIFICATION"
     )

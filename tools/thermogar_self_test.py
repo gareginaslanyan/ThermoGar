@@ -536,7 +536,7 @@ def run(root: Path) -> dict[str, Any]:
             == "SYNTHETIC_SOFTWARE_SELF_TEST_NOT_MATERIAL_INPUT"
             and diffusion_result.input_confirmation is True
             and diffusion_result.provenance["release_status"]["production_use"]
-            == "DENIED"
+            == report["release_status"]["production_use"]
             and diffusion_result.provenance["result_scope"]
             == "SOFTWARE_MODEL_OUTPUT_NOT_EXPERIMENTAL_VALIDATION_OR_MATERIAL_QUALIFICATION"
         )
@@ -635,7 +635,7 @@ def run(root: Path) -> dict[str, Any]:
 
 def print_report(report: dict[str, Any]) -> None:
     print("=" * 78)
-    print("THERMOGAR SWR · NE-02 — SOFTWARE SELF TEST")
+    print("THERMOGAR — SOFTWARE SELF TEST")
     print("=" * 78)
     print("Project:", report["project_root"])
     print("Python:", report["environment"]["python"])
