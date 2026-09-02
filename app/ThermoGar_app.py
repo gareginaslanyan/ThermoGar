@@ -138,9 +138,7 @@ from thermogar_precipitation import (
 from thermogar_database_guard import (
     FE_DATABASE_MAX_T_C,
     FE_PROFILE_CANONICAL,
-    KnownFeDatabaseIssue,
-    assert_fe_solidification_safe,
-    check_fe_high_temperature_behavior,
+    FE_PROFILE_LABELS,
     load_profile_manifest,
     passport_dataframe,
 )
@@ -5676,7 +5674,7 @@ if database_key == "fe":
         clear_restricted_fe_session_results()
         st.error(str(error))
         st.stop()
-    st.sidebar.caption("Fe-база thermogar_patch · C15_LAVES отключена")
+    st.sidebar.caption("Fe-база thermogar_patch · C15_LAVES исключена")
 
 available_elements = sorted(
     element for element in db.elements if element != "VA"
@@ -6515,7 +6513,6 @@ with temperature_tab:
             st.session_state.pop(temperature_b3_state_key, None)
             render_friendly_error(error, context="сканирование по температуре")
 
-
     if temperature_b3_state_key in st.session_state:
         result = st.session_state[temperature_b3_state_key]["display"]
 
@@ -6884,7 +6881,6 @@ with concentration_tab:
         except Exception as error:
             st.session_state.pop(concentration_b3_state_key, None)
             render_friendly_error(error, context="сканирование по составу")
-
 
     if concentration_b3_state_key in st.session_state:
         result = st.session_state[concentration_b3_state_key]["display"]
@@ -8896,33 +8892,6 @@ with solidification_tab:
                         "Фаза LIQUID отсутствует в выбранном наборе фаз."
                     )
 
-                fe_high_temperature_check = None
-                fe_guard_status = "не применяется"
-                if database_key == "fe":
-                    if "C15_LAVES" in phases:
-                        fe_high_temperature_check = check_fe_high_temperature_behavior(
-                            db,
-                            components,
-                            phases,
-                            composition_conditions,
-                            temperature_k=2000.0,
-                            pdens=int(solidification_pdens),
-                        )
-                        fe_guard_status = (
-                            "симптом воспроизведён"
-                            if fe_high_temperature_check.triggered
-                            else "симптом не воспроизведён для текущего состава"
-                        )
-                        assert_fe_solidification_safe(
-                            fe_profile_key,
-                            fe_high_temperature_check,
-                        )
-                    else:
-                        fe_guard_status = (
-                            "C15_LAVES исключена пользователем; результат "
-                            "является метастабильным относительно этой фазы"
-                        )
-
                 with st.status(
                     "Проверяем начальное состояние расплава…",
                     expanded=True,
@@ -9075,7 +9044,12 @@ with solidification_tab:
                             if database_key == "fe"
                             else "не применяется",
                         ),
-                        ("Высокотемпературная проверка C15_LAVES", fe_guard_status),
+                        (
+                            "Исключённые из расчёта фазы",
+                            ", ".join(sorted(FE_EXCLUDED_PHASES))
+                            if database_key == "fe"
+                            else "нет",
+                        ),
                         ("Основа", balance),
                         ("Единицы ввода", units_label),
                         ("Добавки", composition_text),
@@ -9107,7 +9081,6 @@ with solidification_tab:
                     "sequences": sequences,
                     "final_phases": final_phases,
                     "quality": solidification_quality,
-                    "fe_high_temperature_check": fe_high_temperature_check,
                     "fe_profile_key": fe_profile_key,
                     "display_threshold_percent": float(
                         solidification_display_percent
@@ -9127,7 +9100,6 @@ with solidification_tab:
                         ),
                         "errors": errors,
                         "fe_profile_key": fe_profile_key if database_key == "fe" else None,
-                        "fe_c15_guard": fe_guard_status,
                     },
                 )
 
@@ -10447,8 +10419,8 @@ with reference_tab:
         )
         if database_key != "fe":
             st.info(
-                "Специальный паспорт высокотемпературной проверки пока "
-                "нужен только открытой стальной базе mc_fe 2.062."
+                "Отдельный профиль базы ведётся только для открытой "
+                "стальной базы mc_fe 2.062."
             )
             st.dataframe(
                 pd.DataFrame(
@@ -10456,7 +10428,7 @@ with reference_tab:
                         ("База", definition["label"]),
                         ("Файл", str(database_path)),
                         ("SHA-256", CURRENT_CONTEXT["database_sha256"]),
-                        ("Известная блокирующая проверка", "не зарегистрирована"),
+                        ("Исключённые из расчёта фазы", "нет"),
                     ],
                     columns=["Поле", "Значение"],
                 ),
@@ -10477,64 +10449,6 @@ with reference_tab:
             if manifest:
                 with st.expander("JSON-паспорт патча конвертера", expanded=False):
                     st.json(manifest)
-
-            if release_calculation_button(
-                "Проверить текущий состав при 2000 K",
-                type="primary",
-                key="fe_database_high_temperature_check",
-            ):
-                try:
-                    entered = parse_composition(composition_text)
-                    (
-                        check_components,
-                        check_conditions,
-                        _check_x,
-                        _check_w,
-                        check_phases,
-                    ) = prepare_calculation(
-                        db,
-                        database_key,
-                        entered,
-                        units,
-                        balance,
-                        steel_mode,
-                    )
-                    check = check_fe_high_temperature_behavior(
-                        db,
-                        check_components,
-                        check_phases,
-                        check_conditions,
-                        temperature_k=2000.0,
-                        pdens=100,
-                    )
-                    metric_a, metric_b = st.columns(2)
-                    metric_a.metric(
-                        "LIQUID при 2000 K",
-                        f"{100.0 * check.liquid_fraction:.4f} %",
-                    )
-                    metric_b.metric(
-                        "C15_LAVES при 2000 K",
-                        f"{100.0 * check.c15_laves_fraction:.4f} %",
-                    )
-                    if check.triggered:
-                        st.error(
-                            "Проверка не пройдена: полный расплав не достигнут "
-                            "либо C15_LAVES остаётся при 2000 K. Ликвидус для "
-                            "этого состава не выдаётся как достоверный."
-                        )
-                    else:
-                        st.success(
-                            "Высокотемпературная проверка пройдена: при 2000 K "
-                            "получен практически полный расплав и C15_LAVES "
-                            "ниже порога."
-                        )
-                    st.dataframe(
-                        check.dataframe(),
-                        width="stretch",
-                        hide_index=True,
-                    )
-                except Exception as error:
-                    render_friendly_error(error, context="паспорт Fe-базы")
 
     with help_subtab, suppress(_CompactHelpRendered):
         st.subheader("Как пользоваться ThermoGar")
