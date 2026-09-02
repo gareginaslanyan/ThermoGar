@@ -954,11 +954,14 @@ class VerifiedB3BatchBroker:
         st.session_state["_thermogar_vlb_bound_context_v1"] = (
             vlb_bound_context.to_dict()
         )
+        # Пересвязывание тем же селектором каждый раз даёт новые
+        # binding_digest и binding_generation, поэтому по ним нельзя судить
+        # о смене базы: иначе результаты сканов стирались бы на каждом
+        # прогоне. Значение имеет только фактическая смена базы и профиля.
         if (
             type(previous) is not dict
-            or previous.get("binding_digest") != vlb_bound_context.binding_digest
-            or previous.get("binding_generation")
-            != vlb_bound_context.binding_generation
+            or previous.get("database_key") != vlb_bound_context.database_key
+            or previous.get("profile_key") != vlb_bound_context.profile_key
         ):
             clear_b3_session_results()
         return vlb_bound_context
