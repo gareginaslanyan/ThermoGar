@@ -72,7 +72,11 @@ PRESET_NI = {
 DEFAULTS = {
     "ni": ("FCC_A1", "GAMMA_PRIME", 800.0, 100.0, 0.023, 6.57, 6.57),
     "al": ("FCC_A1", "THETA_AL2CU", 200.0, 24.0, 0.15, 10.0, 10.0),
+    "fe": ("BCC_A2", "M23C6", 700.0, 100.0, 0.3, 7.09, 7.09),
 }
+
+# Fe-профиль исключает C15_LAVES из фаз, предлагаемых пользователю.
+EXCLUDED_PHASES = {"fe": ("C15_LAVES",)}
 
 NUCLEATION_TYPES = {
     "Объёмные центры": "BULK",
@@ -91,15 +95,10 @@ HETEROGENEOUS_RATIO_LIMITS = {
 }
 
 KWN_ADAPTER_IMPLEMENTATION_REVISION = "legacy-15.2-r1"
+# Расчёт KWN для Fe выполняется, но научная квалификация пары
+# матрица–выделение и физических параметров ещё не пройдена: провенанс
+# по-прежнему помечает результат как непубликуемый.
 FE_KWN_PUBLICATION_STATUS = "BLOCKED"
-FE_KWN_BLOCK_MESSAGE = (
-    "SWR policy: расчёт KWN для Fe-профиля заблокирован. "
-    "Диагностическая Fe-база содержит неквалифицированную деактивацию параметра "
-    "C15_LAVES без независимого подтверждения MatCalc/upstream; кроме того, "
-    "пара матрица–выделение и физические параметры KWN ещё не квалифицированы. "
-    "Разрешена только отдельная диагностика tools/validation/"
-    "thermogar_stage15_2_diagnostic.py без интегрирования во времени и публикации."
-)
 
 
 @dataclass
@@ -194,6 +193,12 @@ def _composition_vectors(
     else:
         raise ValueError("Неизвестные единицы состава.")
     return elements, x_at, x_wt
+
+
+def _selectable_phases(database_key: str, phases: list[str]) -> list[str]:
+    """Убрать из списка фазы, недоступные пользователю для данной базы."""
+    excluded = EXCLUDED_PHASES.get(str(database_key).strip().casefold(), ())
+    return [phase for phase in phases if phase not in excluded]
 
 
 def _compatible_phases(db: Any, elements: list[str]) -> list[str]:
@@ -511,8 +516,6 @@ def run_precipitation(
     if not isinstance(database_key, str):
         raise ValueError("Ключ базы KWN должен быть строкой.")
     database_key = database_key.strip().casefold()
-    if database_key == "fe":
-        raise RuntimeError(FE_KWN_BLOCK_MESSAGE)
     if database_key not in RELEASE_DATABASE_KEYS:
         raise ValueError(f"База {database_key!r} не входит в SWR release surface.")
     if not isinstance(input_provenance, str) or not input_provenance.strip():
@@ -751,9 +754,6 @@ def render_precipitation_section(
 ) -> None:
     st.subheader("Кинетика выделений")
     st.caption("Зарождение, рост, растворение и укрупнение одной фазы по модели KWN.")
-    if str(database_key).lower() == "fe":
-        st.caption("Steel: расчёт KWN не входит в текущий этап Core1.")
-        return
     if not PRECIPITATION_AVAILABLE:
         st.error("Модуль Kawin precipitation не загрузился.")
         st.code(PRECIPITATION_IMPORT_ERROR or "kawin не установлен")
@@ -810,7 +810,7 @@ def render_precipitation_section(
         effective_context = current_context
     try:
         elements, _x_at, _x_wt = _composition_vectors(db, balance, composition, units)
-        matrices = _matrix_candidates(db, elements)
+        matrices = _selectable_phases(database_key, _matrix_candidates(db, elements))
     except Exception as error:
         st.error(str(error))
         return
@@ -826,7 +826,9 @@ def render_precipitation_section(
         index=matrices.index(matrix_default),
         key=f"{widget_prefix}_{mode_key}_matrix",
     )
-    compatible_phases = _compatible_phases(db, elements)
+    compatible_phases = _selectable_phases(
+        database_key, _compatible_phases(db, elements)
+    )
     precipitates = sorted(
         phase for phase in compatible_phases
         if phase not in {matrix_phase, "LIQUID"}
