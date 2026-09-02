@@ -695,24 +695,6 @@ def restricted_fe_calculation_button(
     return release_calculation_button(*args, **kwargs)
 
 
-def restricted_fe_three_axis_points(
-    minimum: float,
-    maximum: float,
-    step: float,
-    label: str,
-) -> tuple[float, float, float]:
-    values = np.arange(
-        float(minimum),
-        float(maximum) + 0.5 * float(step),
-        float(step),
-    )
-    if len(values) != 3:
-        raise ValueError(
-            f"Fe-скан требует ровно 3 точки {label}."
-        )
-    return tuple(float(value) for value in values)
-
-
 def restricted_fe_refresh_session_result(
     state_key: str,
     fingerprint: str | None,
@@ -6312,24 +6294,13 @@ with temperature_tab:
                 steel_mode,
             )
         )
-        temperature_component_candidates = tuple(
-            temperature_candidate_phases
+        temperature_component_candidates = verified_b3_candidate_phases(
+            vlb_bound_context,
+            tuple(temperature_candidate_phases),
         )
-        if database_key == "fe":
-            temperature_candidate_phases = list(
-                vlb_bound_context.phase_policy.effective(
-                    (),
-                    candidates=temperature_component_candidates,
-                )
-            )
-        else:
-            temperature_component_candidates = verified_b3_candidate_phases(
-                vlb_bound_context,
-                temperature_component_candidates,
-            )
-            temperature_candidate_phases = list(
-                temperature_component_candidates
-            )
+        temperature_candidate_phases = list(
+            temperature_component_candidates
+        )
         (
             temperature_selected_phases,
             temperature_phase_mode,
@@ -6348,215 +6319,153 @@ with temperature_tab:
         temperature_selected_phases = None
         temperature_phase_mode = "Автоматически"
 
-    temperature_fe_state_key = (
-        "_thermogar_vlb_b2_result_equilibrium_temperature_scan"
-    )
     temperature_b3_state_key = (
         "_thermogar_vlb_b3_result_equilibrium_temperature_scan"
     )
     temperature_b3_request_key = (
         "_thermogar_vlb_b3_request_equilibrium_temperature_scan"
     )
-    temperature_fe_request = None
     temperature_feature_decision = None
-    temperature_fe_fingerprint = None
-    if database_key == "fe":
-        try:
-            temperature_points_c = restricted_fe_three_axis_points(
-                t_min,
-                t_max,
-                t_step,
-                "по температуре",
+    temperature_points_c: tuple[float, ...] = ()
+    try:
+        if t_max <= t_min:
+            raise ValueError("Конечная температура должна быть выше начальной.")
+        temperature_points_c = tuple(
+            float(value)
+            for value in np.arange(
+                float(t_min),
+                float(t_max) + 0.5 * float(t_step),
+                float(t_step),
             )
-            temperature_requested_phases = tuple(
-                sorted(temperature_selected_phases or ())
+        )
+        if len(temperature_points_c) > 150:
+            raise ValueError(
+                "Слишком много точек. Увеличьте шаг или уменьшите диапазон."
             )
-            temperature_fe_request = restricted_fe.make_restricted_fe_request(
+        temperature_requested_phases = (
+            ()
+            if temperature_phase_mode == "Автоматически"
+            else tuple(sorted(temperature_selected_phases or ()))
+        )
+        temperature_inputs = verified_equilibrium.make_equilibrium_inputs(
+            "equilibrium_temperature_scan",
+            balance=balance,
+            units=units,
+            composition_pct=parse_composition(composition_text),
+            pressure_pa=float(pressure_pa),
+            temperatures_k=tuple(
+                value + 273.15 for value in temperature_points_c
+            ),
+        )
+        temperature_feature_decision = (
+            verified_loaders.prepare_feature_request(
                 "equilibrium_temperature_scan",
-                balance=balance,
-                units=units,
-                composition_pct=parse_composition(composition_text),
-                pressure_pa=float(pressure_pa),
-                temperatures_k=tuple(
-                    value + 273.15 for value in temperature_points_c
-                ),
-                requested_phases=tuple(
-                    phase
-                    for phase in temperature_requested_phases
-                    if phase != restricted_fe.C15_PHASE
-                ),
-            )
-            temperature_feature_decision = restricted_fe_prepare_b2_decision(
                 vlb_bound_context,
-                temperature_fe_request,
-                temperature_component_candidates,
+                temperature_inputs,
                 temperature_requested_phases,
+                candidate_phases=temperature_component_candidates,
             )
-            if type(temperature_feature_decision) is verified_loaders.FeatureRequest:
-                temperature_fe_fingerprint = restricted_fe_b2_fingerprint(
-                    temperature_fe_request,
-                    temperature_feature_decision,
-                )
-        except Exception:
-            temperature_fe_request = None
-            temperature_feature_decision = None
-            temperature_fe_fingerprint = None
-        restricted_fe_refresh_session_result(
-            temperature_fe_state_key,
-            temperature_fe_fingerprint,
         )
-    else:
-        try:
-            if t_max <= t_min:
-                raise ValueError("Конечная температура должна быть выше начальной.")
-            temperature_points_c = tuple(
-                float(value)
-                for value in np.arange(
-                    float(t_min),
-                    float(t_max) + 0.5 * float(t_step),
-                    float(t_step),
-                )
-            )
-            if len(temperature_points_c) > 150:
-                raise ValueError(
-                    "Слишком много точек. Увеличьте шаг или уменьшите диапазон."
-                )
-            temperature_requested_phases = (
-                ()
-                if temperature_phase_mode == "Автоматически"
-                else tuple(sorted(temperature_selected_phases or ()))
-            )
-            temperature_inputs = verified_equilibrium.make_equilibrium_inputs(
-                "equilibrium_temperature_scan",
-                balance=balance,
-                units=units,
-                composition_pct=parse_composition(composition_text),
-                pressure_pa=float(pressure_pa),
-                temperatures_k=tuple(
-                    value + 273.15 for value in temperature_points_c
-                ),
-            )
-            temperature_feature_decision = (
-                verified_loaders.prepare_feature_request(
-                    "equilibrium_temperature_scan",
-                    vlb_bound_context,
-                    temperature_inputs,
-                    temperature_requested_phases,
-                    candidate_phases=temperature_component_candidates,
-                )
-            )
-        except Exception:
-            temperature_feature_decision = None
-        verified_b3_refresh_result(
-            temperature_b3_state_key,
-            temperature_b3_request_key,
+    except Exception:
+        temperature_feature_decision = None
+    verified_b3_refresh_result(
+        temperature_b3_state_key,
+        temperature_b3_request_key,
+        temperature_feature_decision,
+    )
+
+    if type(temperature_feature_decision) in (
+        verified_loaders.FeatureRequest,
+        verified_loaders.RejectedFeatureReceipt,
+    ):
+        temperature_clicked = verified_equilibrium_button(
             temperature_feature_decision,
+            "Построить график по температуре",
+            type="primary",
+            key="temperature_calculate",
         )
-
-    if database_key == "fe":
-        if type(temperature_feature_decision) in (
-            verified_loaders.FeatureRequest,
-            verified_loaders.RejectedFeatureReceipt,
-        ):
-            temperature_clicked = verified_feature_button(
-                temperature_feature_decision,
-                "Построить график по температуре",
-                type="primary",
-                key="temperature_calculate",
-            )
-        else:
-            st.button(
-                "Построить график по температуре",
-                type="primary",
-                key="temperature_calculate",
-                disabled=True,
-                help="Fe-скан требует ровно три корректные точки.",
-            )
-            temperature_clicked = False
     else:
-        if type(temperature_feature_decision) in (
-            verified_loaders.FeatureRequest,
-            verified_loaders.RejectedFeatureReceipt,
-        ):
-            temperature_clicked = verified_equilibrium_button(
-                temperature_feature_decision,
-                "Построить график по температуре",
-                type="primary",
-                key="temperature_calculate",
-            )
-        else:
-            st.button(
-                "Построить график по температуре",
-                type="primary",
-                key="temperature_calculate",
-                disabled=True,
-                help="Параметры температурного скана некорректны.",
-            )
-            temperature_clicked = False
-    if database_key == "fe" and temperature_clicked:
-        try:
-            if (
-                temperature_fe_request is None
-                or type(temperature_feature_decision)
-                is not verified_loaders.FeatureRequest
-                or temperature_fe_fingerprint is None
-            ):
-                raise ValueError(
-                    "Fe-скан требует ровно три корректные точки."
-                )
-            with st.spinner("Расчёт трёх Fe-точек по температуре…"):
-                with verified_loaders.acquire_execution(
-                    temperature_feature_decision,
-                    THERMOGAR_PATHS,
-                ) as temperature_lease:
-                    execution = restricted_fe.execute_bound_restricted_fe(
-                        vlb_bound_context,
-                        temperature_feature_decision,
-                        temperature_fe_request,
-                        temperature_lease,
-                        runner=restricted_fe._default_runner,
-                    )
-            restricted_fe_store_result(
-                temperature_fe_state_key,
-                temperature_fe_fingerprint,
-                temperature_fe_request,
-                temperature_feature_decision,
-                execution,
-            )
-        except Exception as error:
-            st.session_state.pop(temperature_fe_state_key, None)
-            render_friendly_error(
-                error,
-                context="Fe-сканирование по температуре",
-            )
+        st.button(
+            "Построить график по температуре",
+            type="primary",
+            key="temperature_calculate",
+            disabled=True,
+            help="Параметры температурного скана некорректны.",
+        )
+        temperature_clicked = False
 
-    if database_key != "fe" and temperature_clicked:
+    if temperature_clicked:
         try:
             if type(temperature_feature_decision) is not verified_loaders.FeatureRequest:
                 raise ValueError("Параметры температурного скана некорректны.")
+            temperature_execution = None
             with st.spinner("Расчёт температурных точек…"):
                 with acquire_b3_execution(
                     temperature_feature_decision,
                     THERMOGAR_PATHS,
                 ) as temperature_lease:
-                    execution = verified_equilibrium.execute_verified_equilibrium(
-                        vlb_bound_context,
-                        temperature_feature_decision,
-                        temperature_lease,
-                    )
-            rows: list[dict[str, float]] = []
-            for point in execution.points:
-                row: dict[str, float] = {
-                    "Температура, °C": point.call.temperature_k - 273.15,
-                }
-                row.update(
-                    {
-                        phase: 100.0 * fraction
-                        for phase, fraction in point.phase_fractions
+                    if database_key == "fe":
+                        (
+                            scan_components,
+                            scan_conditions,
+                            _scan_x,
+                            _scan_w,
+                            scan_phases,
+                        ) = prepare_calculation(
+                            db,
+                            database_key,
+                            parse_composition(composition_text),
+                            units,
+                            balance,
+                            steel_mode,
+                            temperature_selected_phases,
+                        )
+                        scan_df = direct_equilibrium_scan(
+                            db,
+                            scan_components,
+                            scan_phases,
+                            float(pressure_pa),
+                            "Температура, °C",
+                            [
+                                (
+                                    float(value),
+                                    scan_conditions,
+                                    float(value) + 273.15,
+                                )
+                                for value in temperature_points_c
+                            ],
+                        )
+                        scan_sha256 = str(
+                            CURRENT_CONTEXT["database_sha256"]
+                        )
+                    else:
+                        temperature_execution = (
+                            verified_equilibrium.execute_verified_equilibrium(
+                                vlb_bound_context,
+                                temperature_feature_decision,
+                                temperature_lease,
+                            )
+                        )
+            if temperature_execution is not None:
+                rows: list[dict[str, float]] = []
+                for point in temperature_execution.points:
+                    row: dict[str, float] = {
+                        "Температура, °C": point.call.temperature_k - 273.15,
                     }
+                    row.update(
+                        {
+                            phase: 100.0 * fraction
+                            for phase, fraction in point.phase_fractions
+                        }
+                    )
+                    rows.append(row)
+                scan_df = pd.DataFrame(rows).fillna(0.0)
+                scan_phases = list(
+                    temperature_execution.points[0].call.phases
                 )
-                rows.append(row)
-            scan_df = pd.DataFrame(rows).fillna(0.0)
+                scan_sha256 = (
+                    temperature_execution.feature_receipt.tdb_evidence.sha256
+                )
             phase_columns = [
                 column
                 for column in scan_df.columns
@@ -6577,7 +6486,7 @@ with temperature_tab:
             temperature_settings = pd.DataFrame(
                 [
                     ("База", definition["label"]),
-                    ("База SHA-256", execution.feature_receipt.tdb_evidence.sha256),
+                    ("База SHA-256", scan_sha256),
                     ("Температура от, °C", t_min),
                     ("Температура до, °C", t_max),
                     ("Шаг, °C", t_step),
@@ -6586,10 +6495,7 @@ with temperature_tab:
                     ("Единицы ввода", units_label),
                     ("Добавки", composition_text),
                     ("Выбор фаз", temperature_phase_mode),
-                    (
-                        "Фазы в расчёте",
-                        ", ".join(execution.points[0].call.phases),
-                    ),
+                    ("Фазы в расчёте", ", ".join(scan_phases)),
                 ],
                 columns=["Параметр", "Значение"],
             )
@@ -6603,43 +6509,14 @@ with temperature_tab:
                     "visible_phases": visible_phases,
                     "quality": quality,
                 },
-                execution,
+                temperature_execution,
             )
         except Exception as error:
             st.session_state.pop(temperature_b3_state_key, None)
             render_friendly_error(error, context="сканирование по температуре")
 
-    if database_key == "fe" and temperature_fe_state_key in st.session_state:
-        restricted_temperature = st.session_state[temperature_fe_state_key][
-            "receipt"
-        ]
-        restricted_temperature_df = restricted_fe_result_dataframe(
-            restricted_temperature,
-            "Температура, K",
-        )
-        restricted_temperature_phases = [
-            column
-            for column in restricted_temperature_df.columns
-            if column != "Температура, K"
-            and float(restricted_temperature_df[column].max())
-            >= display_threshold
-        ]
-        st.pyplot(
-            plot_phase_fraction_scan(
-                restricted_temperature_df,
-                "Температура, K",
-                restricted_temperature_phases,
-                "ThermoGar: Fe-скан по температуре",
-                database_key,
-            )
-        )
-        st.dataframe(
-            restricted_temperature_df,
-            width="stretch",
-            hide_index=True,
-        )
 
-    if database_key != "fe" and temperature_b3_state_key in st.session_state:
+    if temperature_b3_state_key in st.session_state:
         result = st.session_state[temperature_b3_state_key]["display"]
 
         st.pyplot(result["figure"])
@@ -6776,24 +6653,13 @@ with concentration_tab:
             balance,
             steel_mode,
         )
-        concentration_component_candidates = tuple(
-            concentration_candidate_phases
+        concentration_component_candidates = verified_b3_candidate_phases(
+            vlb_bound_context,
+            tuple(concentration_candidate_phases),
         )
-        if database_key == "fe":
-            concentration_candidate_phases = list(
-                vlb_bound_context.phase_policy.effective(
-                    (),
-                    candidates=concentration_component_candidates,
-                )
-            )
-        else:
-            concentration_component_candidates = verified_b3_candidate_phases(
-                vlb_bound_context,
-                concentration_component_candidates,
-            )
-            concentration_candidate_phases = list(
-                concentration_component_candidates
-            )
+        concentration_candidate_phases = list(
+            concentration_component_candidates
+        )
         (
             concentration_selected_phases,
             concentration_phase_mode,
@@ -6813,214 +6679,162 @@ with concentration_tab:
         concentration_selected_phases = None
         concentration_phase_mode = "Автоматически"
 
-    concentration_fe_state_key = (
-        "_thermogar_vlb_b2_result_equilibrium_composition_scan"
-    )
     concentration_b3_state_key = (
         "_thermogar_vlb_b3_result_equilibrium_composition_scan"
     )
     concentration_b3_request_key = (
         "_thermogar_vlb_b3_request_equilibrium_composition_scan"
     )
-    concentration_fe_request = None
     concentration_feature_decision = None
-    concentration_fe_fingerprint = None
-    if database_key == "fe":
-        try:
-            concentration_points = restricted_fe_three_axis_points(
-                c_min,
-                c_max,
-                c_step,
-                "по составу",
+    concentration_points: tuple[float, ...] = ()
+    try:
+        if c_max <= c_min:
+            raise ValueError("Конечная концентрация должна быть выше начальной.")
+        concentration_points = tuple(
+            float(value)
+            for value in np.arange(
+                float(c_min),
+                float(c_max) + 0.5 * float(c_step),
+                float(c_step),
             )
-            concentration_requested_phases = tuple(
-                sorted(concentration_selected_phases or ())
+        )
+        if len(concentration_points) > 150:
+            raise ValueError(
+                "Слишком много точек. Увеличьте шаг или уменьшите диапазон."
             )
-            concentration_fe_request = restricted_fe.make_restricted_fe_request(
+        concentration_requested_phases = (
+            ()
+            if concentration_phase_mode == "Автоматически"
+            else tuple(sorted(concentration_selected_phases or ()))
+        )
+        concentration_inputs = verified_equilibrium.make_equilibrium_inputs(
+            "equilibrium_composition_scan",
+            balance=balance,
+            units=units,
+            composition_pct=dict(fixed_entered_preview),
+            pressure_pa=float(pressure_pa),
+            temperatures_k=(float(concentration_temperature) + 273.15,),
+            variable_element=variable_element,
+            concentrations_pct=concentration_points,
+        )
+        concentration_feature_decision = (
+            verified_loaders.prepare_feature_request(
                 "equilibrium_composition_scan",
-                balance=balance,
-                units=units,
-                composition_pct=dict(fixed_entered_preview),
-                pressure_pa=float(pressure_pa),
-                temperatures_k=(float(concentration_temperature) + 273.15,),
-                requested_phases=tuple(
-                    phase
-                    for phase in concentration_requested_phases
-                    if phase != restricted_fe.C15_PHASE
-                ),
-                variable_element=variable_element,
-                concentrations_pct=concentration_points,
-            )
-            concentration_feature_decision = restricted_fe_prepare_b2_decision(
                 vlb_bound_context,
-                concentration_fe_request,
-                concentration_component_candidates,
+                concentration_inputs,
                 concentration_requested_phases,
+                candidate_phases=concentration_component_candidates,
             )
-            if type(concentration_feature_decision) is verified_loaders.FeatureRequest:
-                concentration_fe_fingerprint = restricted_fe_b2_fingerprint(
-                    concentration_fe_request,
-                    concentration_feature_decision,
-                )
-        except Exception:
-            concentration_fe_request = None
-            concentration_feature_decision = None
-            concentration_fe_fingerprint = None
-        restricted_fe_refresh_session_result(
-            concentration_fe_state_key,
-            concentration_fe_fingerprint,
         )
-    else:
-        try:
-            if c_max <= c_min:
-                raise ValueError("Конечная концентрация должна быть выше начальной.")
-            concentration_points = tuple(
-                float(value)
-                for value in np.arange(
-                    float(c_min),
-                    float(c_max) + 0.5 * float(c_step),
-                    float(c_step),
-                )
-            )
-            if len(concentration_points) > 150:
-                raise ValueError(
-                    "Слишком много точек. Увеличьте шаг или уменьшите диапазон."
-                )
-            concentration_requested_phases = (
-                ()
-                if concentration_phase_mode == "Автоматически"
-                else tuple(sorted(concentration_selected_phases or ()))
-            )
-            concentration_inputs = verified_equilibrium.make_equilibrium_inputs(
-                "equilibrium_composition_scan",
-                balance=balance,
-                units=units,
-                composition_pct=dict(fixed_entered_preview),
-                pressure_pa=float(pressure_pa),
-                temperatures_k=(float(concentration_temperature) + 273.15,),
-                variable_element=variable_element,
-                concentrations_pct=concentration_points,
-            )
-            concentration_feature_decision = (
-                verified_loaders.prepare_feature_request(
-                    "equilibrium_composition_scan",
-                    vlb_bound_context,
-                    concentration_inputs,
-                    concentration_requested_phases,
-                    candidate_phases=concentration_component_candidates,
-                )
-            )
-        except Exception:
-            concentration_feature_decision = None
-        verified_b3_refresh_result(
-            concentration_b3_state_key,
-            concentration_b3_request_key,
+    except Exception:
+        concentration_feature_decision = None
+    verified_b3_refresh_result(
+        concentration_b3_state_key,
+        concentration_b3_request_key,
+        concentration_feature_decision,
+    )
+
+    if type(concentration_feature_decision) in (
+        verified_loaders.FeatureRequest,
+        verified_loaders.RejectedFeatureReceipt,
+    ):
+        concentration_clicked = verified_equilibrium_button(
             concentration_feature_decision,
+            "Построить график по составу",
+            type="primary",
+            key="concentration_calculate",
         )
-
-    if database_key == "fe":
-        if type(concentration_feature_decision) in (
-            verified_loaders.FeatureRequest,
-            verified_loaders.RejectedFeatureReceipt,
-        ):
-            concentration_clicked = verified_feature_button(
-                concentration_feature_decision,
-                "Построить график по составу",
-                type="primary",
-                key="concentration_calculate",
-            )
-        else:
-            st.button(
-                "Построить график по составу",
-                type="primary",
-                key="concentration_calculate",
-                disabled=True,
-                help="Fe-скан требует ровно три корректные точки.",
-            )
-            concentration_clicked = False
     else:
-        if type(concentration_feature_decision) in (
-            verified_loaders.FeatureRequest,
-            verified_loaders.RejectedFeatureReceipt,
-        ):
-            concentration_clicked = verified_equilibrium_button(
-                concentration_feature_decision,
-                "Построить график по составу",
-                type="primary",
-                key="concentration_calculate",
-            )
-        else:
-            st.button(
-                "Построить график по составу",
-                type="primary",
-                key="concentration_calculate",
-                disabled=True,
-                help="Параметры скана по составу некорректны.",
-            )
-            concentration_clicked = False
-    if database_key == "fe" and concentration_clicked:
-        try:
-            if (
-                concentration_fe_request is None
-                or type(concentration_feature_decision)
-                is not verified_loaders.FeatureRequest
-                or concentration_fe_fingerprint is None
-            ):
-                raise ValueError(
-                    "Fe-скан требует ровно три корректные точки."
-                )
-            with st.spinner("Расчёт трёх Fe-точек по составу…"):
-                with verified_loaders.acquire_execution(
-                    concentration_feature_decision,
-                    THERMOGAR_PATHS,
-                ) as concentration_lease:
-                    execution = restricted_fe.execute_bound_restricted_fe(
-                        vlb_bound_context,
-                        concentration_feature_decision,
-                        concentration_fe_request,
-                        concentration_lease,
-                        runner=restricted_fe._default_runner,
-                    )
-            restricted_fe_store_result(
-                concentration_fe_state_key,
-                concentration_fe_fingerprint,
-                concentration_fe_request,
-                concentration_feature_decision,
-                execution,
-            )
-        except Exception as error:
-            st.session_state.pop(concentration_fe_state_key, None)
-            render_friendly_error(
-                error,
-                context="Fe-сканирование по составу",
-            )
+        st.button(
+            "Построить график по составу",
+            type="primary",
+            key="concentration_calculate",
+            disabled=True,
+            help="Параметры скана по составу некорректны.",
+        )
+        concentration_clicked = False
 
-    if database_key != "fe" and concentration_clicked:
+    if concentration_clicked:
         try:
             if type(concentration_feature_decision) is not verified_loaders.FeatureRequest:
                 raise ValueError("Параметры скана по составу некорректны.")
+            x_column = f"{variable_element}, {units_label}"
+            concentration_execution = None
             with st.spinner("Расчёт концентрационных точек…"):
                 with acquire_b3_execution(
                     concentration_feature_decision,
                     THERMOGAR_PATHS,
                 ) as concentration_lease:
-                    execution = verified_equilibrium.execute_verified_equilibrium(
-                        vlb_bound_context,
-                        concentration_feature_decision,
-                        concentration_lease,
+                    if database_key == "fe":
+                        scan_preview = dict(fixed_entered_preview)
+                        scan_preview[variable_element] = 1e-6
+                        (
+                            scan_components,
+                            _scan_conditions,
+                            _scan_x,
+                            _scan_w,
+                            scan_phases,
+                        ) = prepare_calculation(
+                            db,
+                            database_key,
+                            scan_preview,
+                            units,
+                            balance,
+                            steel_mode,
+                            concentration_selected_phases,
+                        )
+                        scan_df = direct_equilibrium_scan(
+                            db,
+                            scan_components,
+                            scan_phases,
+                            float(pressure_pa),
+                            x_column,
+                            [
+                                (
+                                    float(value),
+                                    scan_axis_conditions(
+                                        db,
+                                        {
+                                            **dict(fixed_entered_preview),
+                                            variable_element: float(value),
+                                        },
+                                        units,
+                                        balance,
+                                    ),
+                                    float(concentration_temperature) + 273.15,
+                                )
+                                for value in concentration_points
+                            ],
+                        )
+                        scan_sha256 = str(
+                            CURRENT_CONTEXT["database_sha256"]
+                        )
+                    else:
+                        concentration_execution = (
+                            verified_equilibrium.execute_verified_equilibrium(
+                                vlb_bound_context,
+                                concentration_feature_decision,
+                                concentration_lease,
+                            )
+                        )
+            if concentration_execution is not None:
+                rows: list[dict[str, float]] = []
+                for point in concentration_execution.points:
+                    row: dict[str, float] = {x_column: point.call.axis_value}
+                    row.update(
+                        {
+                            phase: 100.0 * fraction
+                            for phase, fraction in point.phase_fractions
+                        }
                     )
-            x_column = f"{variable_element}, {units_label}"
-            rows: list[dict[str, float]] = []
-            for point in execution.points:
-                row: dict[str, float] = {x_column: point.call.axis_value}
-                row.update(
-                    {
-                        phase: 100.0 * fraction
-                        for phase, fraction in point.phase_fractions
-                    }
+                    rows.append(row)
+                scan_df = pd.DataFrame(rows).fillna(0.0)
+                scan_phases = list(
+                    concentration_execution.points[0].call.phases
                 )
-                rows.append(row)
-            scan_df = pd.DataFrame(rows).fillna(0.0)
+                scan_sha256 = (
+                    concentration_execution.feature_receipt.tdb_evidence.sha256
+                )
             phase_columns = [
                 column for column in scan_df.columns if column != x_column
             ]
@@ -7042,7 +6856,7 @@ with concentration_tab:
             concentration_settings = pd.DataFrame(
                 [
                     ("База", definition["label"]),
-                    ("База SHA-256", execution.feature_receipt.tdb_evidence.sha256),
+                    ("База SHA-256", scan_sha256),
                     ("Температура, °C", concentration_temperature),
                     ("Изменяемый элемент", variable_element),
                     ("Концентрация от, %", c_min),
@@ -7052,10 +6866,7 @@ with concentration_tab:
                     ("Основа", balance),
                     ("Единицы ввода", units_label),
                     ("Выбор фаз", concentration_phase_mode),
-                    (
-                        "Фазы в расчёте",
-                        ", ".join(execution.points[0].call.phases),
-                    ),
+                    ("Фазы в расчёте", ", ".join(scan_phases)),
                 ],
                 columns=["Параметр", "Значение"],
             )
@@ -7068,44 +6879,14 @@ with concentration_tab:
                     "figure": figure,
                     "quality": quality,
                 },
-                execution,
+                concentration_execution,
             )
         except Exception as error:
             st.session_state.pop(concentration_b3_state_key, None)
             render_friendly_error(error, context="сканирование по составу")
 
-    if database_key == "fe" and concentration_fe_state_key in st.session_state:
-        restricted_concentration = st.session_state[concentration_fe_state_key][
-            "receipt"
-        ]
-        restricted_concentration_axis = f"{variable_element}, {units_label}"
-        restricted_concentration_df = restricted_fe_result_dataframe(
-            restricted_concentration,
-            restricted_concentration_axis,
-        )
-        restricted_concentration_phases = [
-            column
-            for column in restricted_concentration_df.columns
-            if column != restricted_concentration_axis
-            and float(restricted_concentration_df[column].max())
-            >= concentration_threshold
-        ]
-        st.pyplot(
-            plot_phase_fraction_scan(
-                restricted_concentration_df,
-                restricted_concentration_axis,
-                restricted_concentration_phases,
-                "ThermoGar: Fe-скан по составу",
-                database_key,
-            )
-        )
-        st.dataframe(
-            restricted_concentration_df,
-            width="stretch",
-            hide_index=True,
-        )
 
-    if database_key != "fe" and concentration_b3_state_key in st.session_state:
+    if concentration_b3_state_key in st.session_state:
         result = st.session_state[concentration_b3_state_key]["display"]
 
         st.pyplot(result["figure"])
