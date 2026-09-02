@@ -67,6 +67,7 @@ VIAddVersionKey /LANG=0 "CompanyName" "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=0 "FileDescription" "${PRODUCT_DESCRIPTION}"
 VIAddVersionKey /LANG=0 "FileVersion" "${PRODUCT_DISPLAY_VERSION}"
 VIAddVersionKey /LANG=0 "ProductVersion" "${PRODUCT_DISPLAY_VERSION}"
+VIAddVersionKey /LANG=0 "LegalCopyright" "${PRODUCT_PUBLISHER}"
 
 ShowInstDetails show
 ShowUninstDetails show
