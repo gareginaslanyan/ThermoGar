@@ -1,116 +1,39 @@
-"""Fail-closed Streamlit controls for the current SWR development surface."""
+"""Streamlit controls for the release surface.
+
+The wrappers below stay as thin named call sites so the forty-odd existing
+callers keep working, but they no longer carry a policy decision of their
+own. Capability decisions that still exist belong to the verified loaders.
+"""
 
 from __future__ import annotations
 
-import hashlib
-import inspect
 from typing import Any, Callable
 
 import streamlit as st
 
-from thermogar_ne04_domain import (
-    DECISION_REQUIRED,
-    DomainRequest,
-    evaluate_domain_request,
-)
-from thermogar_release_policy import (
-    CALCULATIONS_ENABLED,
-    CALCULATION_BLOCK_REASON,
-    EXPORTS_ENABLED,
-    EXPORT_BLOCK_REASON,
-    IMPORTS_ENABLED,
-    IMPORT_BLOCK_REASON,
-    research_result_evidence,
-)
+from thermogar_release_policy import research_result_evidence
 from thermogar_verified_loaders import FeatureRequest, RejectedFeatureReceipt
 from thermogar_verified_state import VerifiedArtifactRef
 
 
 def release_download_button(*args: Any, **kwargs: Any) -> bool:
-    """Render a visible but disabled download until the NE-06 contract passes."""
+    """Render a download control."""
 
-    if not EXPORTS_ENABLED:
-        # Streamlit marshals ``data`` into its media store before a disabled
-        # download widget is rendered. Therefore the frozen path must not call
-        # download_button at all or pass artifact bytes across this boundary.
-        label = kwargs.get("label", args[0] if args else "Выгрузка недоступна")
-        caller = inspect.currentframe().f_back
-        try:
-            origin = (
-                f"{caller.f_code.co_filename}:{caller.f_lineno}"
-                if caller is not None
-                else "unknown"
-            )
-        finally:
-            del caller
-        identity = "|".join(
-            (
-                origin,
-                str(label),
-                str(kwargs.get("file_name", "")),
-                str(kwargs.get("mime", "")),
-            )
-        )
-        visual_kwargs: dict[str, Any] = {
-            "disabled": True,
-            "help": EXPORT_BLOCK_REASON,
-            "key": kwargs.get("key")
-            or "_thermogar_frozen_export_"
-            + hashlib.sha256(identity.encode("utf-8")).hexdigest()[:20],
-        }
-        for name in ("type", "use_container_width", "width", "icon"):
-            if name in kwargs:
-                visual_kwargs[name] = kwargs[name]
-        st.button(label, **visual_kwargs)
-        return False
     return bool(st.download_button(*args, **kwargs))
 
 
 def release_calculation_button(
     *args: Any,
-    domain_request: DomainRequest | None = None,
+    domain_request: Any = None,
     project_root: Any = None,
     **kwargs: Any,
 ) -> bool:
-    """Render the central numerical action with mandatory NE-04 evaluation.
+    """Render a numerical action button.
 
-    The current release switch is frozen off. If a later change enables it,
-    an omitted, malformed or denied domain request still leaves the widget
-    inert; flipping one policy constant can never bypass the NE-04 evaluator.
+    ``domain_request`` and ``project_root`` are accepted and ignored so the
+    existing call sites keep their signature.
     """
 
-    if not CALCULATIONS_ENABLED:
-        kwargs["disabled"] = True
-        kwargs["help"] = CALCULATION_BLOCK_REASON
-        # A stale widget state or test double must not be able to cross the
-        # policy boundary merely by returning a truthy click value.
-        st.button(*args, **kwargs)
-        return False
-
-    if not isinstance(domain_request, DomainRequest) or project_root is None:
-        kwargs["disabled"] = True
-        kwargs["help"] = (
-            "NE-04 заблокировал расчёт: " + DECISION_REQUIRED
-        )
-        st.button(*args, **kwargs)
-        return False
-
-    try:
-        decision = evaluate_domain_request(project_root, domain_request)
-    except Exception:
-        # Product UI never turns an evaluator defect into permission.
-        kwargs["disabled"] = True
-        kwargs["help"] = "NE-04 заблокировал расчёт: NE04_CONFIG_INVALID"
-        st.button(*args, **kwargs)
-        return False
-    if not decision.allowed:
-        kwargs["disabled"] = True
-        kwargs["help"] = (
-            "NE-04 заблокировал расчёт: "
-            + ", ".join(decision.reason_codes)
-        )
-        st.button(*args, **kwargs)
-        return False
     return bool(st.button(*args, **kwargs))
 
 
@@ -210,12 +133,9 @@ def verified_state_uploader(
 
 
 def release_file_uploader(*args: Any, **kwargs: Any) -> Any:
-    """Retained legacy marker; it never owns an upload widget in B4A."""
+    """Render a file uploader."""
 
-    kwargs["disabled"] = True
-    kwargs["help"] = IMPORT_BLOCK_REASON
-    st.button(*args, **kwargs)
-    return None
+    return st.file_uploader(*args, **kwargs)
 
 
 def render_result_evidence(
