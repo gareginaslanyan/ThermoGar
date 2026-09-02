@@ -1,0 +1,469 @@
+{
+  "schema_version": "thermogar.ne03.wave1-config.v1",
+  "status": "WAVE1_EVIDENCE_CANDIDATE_NOT_NE03_ACCEPTANCE",
+  "features": [
+    "elastic_vrh",
+    "strengthening_contributions"
+  ],
+  "required_evidence_classes": [
+    "unit",
+    "analytic_manufactured",
+    "property_based",
+    "convergence",
+    "conservation",
+    "determinism",
+    "invalid_input",
+    "byte_replay",
+    "isolation"
+  ],
+  "cold_runs": 3,
+  "cases": [
+    {
+      "case_id": "EV-001",
+      "feature_id": "elastic_vrh",
+      "driver_id": "elastic_vrh",
+      "scenario": "closed_form_and_two_phase_vrh",
+      "evidence_classes": ["unit", "analytic_manufactured"],
+      "seed": 2026082401,
+      "inputs": {
+        "young_gpa": "200",
+        "poisson": "0.3",
+        "phases": [
+          {"phase": "A", "volume_fraction": "0.5", "bulk_gpa": "100", "shear_gpa": "50"},
+          {"phase": "B", "volume_fraction": "0.5", "bulk_gpa": "200", "shear_gpa": "100"}
+        ]
+      },
+      "oracle": {
+        "outcome": "PASS",
+        "reason_code": "",
+        "expected_values": [{
+          "K_Reuss_GPa": "133.33333333333334",
+          "K_Hill_GPa": "141.66666666666669",
+          "K_Voigt_GPa": "150",
+          "G_Reuss_GPa": "66.66666666666667",
+          "G_Hill_GPa": "70.83333333333334",
+          "G_Voigt_GPa": "75",
+          "E_Reuss_GPa": "171.42857142857142",
+          "E_Hill_GPa": "182.1428571428572",
+          "E_Voigt_GPa": "192.85714285714286",
+          "nu_Hill": "0.28571428571428575",
+          "K_over_G_Hill": "2"
+        }],
+        "relation": "CLOSED_FORM_AND_ROUNDTRIP"
+      },
+      "tolerance": "1e-10"
+    },
+    {
+      "case_id": "EV-002",
+      "feature_id": "elastic_vrh",
+      "driver_id": "elastic_vrh",
+      "scenario": "seeded_metamorphic_128",
+      "evidence_classes": ["property_based", "conservation"],
+      "seed": 2026082402,
+      "inputs": {
+        "sample_count": 128,
+        "bulk_range_gpa": ["25", "350"],
+        "shear_range_gpa": ["10", "175"],
+        "scale_range": ["0.25", "4"]
+      },
+      "oracle": {
+        "outcome": "PASS",
+        "reason_code": "",
+        "expected_values": [{"sample_count": "128"}],
+        "relation": "VRH_BOUNDS_PERMUTATION_SPLIT_SCALING"
+      },
+      "tolerance": "1e-10"
+    },
+    {
+      "case_id": "EV-003",
+      "feature_id": "elastic_vrh",
+      "driver_id": "elastic_vrh",
+      "scenario": "symmetric_contrast_convergence",
+      "evidence_classes": ["convergence"],
+      "seed": 2026082403,
+      "inputs": {
+        "base_bulk_gpa": "100",
+        "base_shear_gpa": "50",
+        "deltas": ["0.01", "0.001", "0.0001"]
+      },
+      "oracle": {
+        "outcome": "PASS",
+        "reason_code": "",
+        "expected_values": [{"gap_order": "2", "ratio": "100"}],
+        "relation": "SYMMETRIC_VOIGT_REUSS_GAP_SECOND_ORDER"
+      },
+      "tolerance": "1e-8"
+    },
+    {
+      "case_id": "EV-004",
+      "feature_id": "elastic_vrh",
+      "driver_id": "elastic_vrh",
+      "scenario": "invalid_nonfinite_overflow_matrix",
+      "evidence_classes": ["invalid_input"],
+      "seed": 2026082404,
+      "inputs": {
+        "probes": [
+          {"probe_id": "empty", "api": "vrh_homogenization", "arguments": {"phase_rows": []}, "expected_reason_code": "ELASTIC_INPUT_INVALID"},
+          {"probe_id": "bool_fraction", "api": "vrh_homogenization", "arguments": {"phase_rows": [{"phase": "A", "volume_fraction": true, "bulk_gpa": "100", "shear_gpa": "50"}]}, "expected_reason_code": "ELASTIC_INPUT_INVALID"},
+          {"probe_id": "missing_shear", "api": "vrh_homogenization", "arguments": {"phase_rows": [{"phase": "A", "volume_fraction": "1", "bulk_gpa": "100"}]}, "expected_reason_code": "ELASTIC_INPUT_INVALID"},
+          {"probe_id": "extra_field", "api": "vrh_homogenization", "arguments": {"phase_rows": [{"phase": "A", "volume_fraction": "1", "bulk_gpa": "100", "shear_gpa": "50", "unexpected": "1"}]}, "expected_reason_code": "ELASTIC_INPUT_INVALID"},
+          {"probe_id": "negative_fraction", "api": "vrh_homogenization", "arguments": {"phase_rows": [{"phase": "A", "volume_fraction": "-0.1", "bulk_gpa": "100", "shear_gpa": "50"}]}, "expected_reason_code": "ELASTIC_INPUT_INVALID"},
+          {"probe_id": "zero_bulk", "api": "vrh_homogenization", "arguments": {"phase_rows": [{"phase": "A", "volume_fraction": "1", "bulk_gpa": "0", "shear_gpa": "50"}]}, "expected_reason_code": "ELASTIC_INPUT_INVALID"},
+          {"probe_id": "negative_shear", "api": "vrh_homogenization", "arguments": {"phase_rows": [{"phase": "A", "volume_fraction": "1", "bulk_gpa": "100", "shear_gpa": "-1"}]}, "expected_reason_code": "ELASTIC_INPUT_INVALID"},
+          {"probe_id": "nan_fraction", "api": "vrh_homogenization", "arguments": {"phase_rows": [{"phase": "A", "volume_fraction": "NaN", "bulk_gpa": "100", "shear_gpa": "50"}]}, "expected_reason_code": "ELASTIC_NONFINITE_INPUT"},
+          {"probe_id": "positive_infinite_bulk", "api": "vrh_homogenization", "arguments": {"phase_rows": [{"phase": "A", "volume_fraction": "1", "bulk_gpa": "Infinity", "shear_gpa": "50"}]}, "expected_reason_code": "ELASTIC_NONFINITE_INPUT"},
+          {"probe_id": "negative_infinite_shear", "api": "vrh_homogenization", "arguments": {"phase_rows": [{"phase": "A", "volume_fraction": "1", "bulk_gpa": "100", "shear_gpa": "-Infinity"}]}, "expected_reason_code": "ELASTIC_NONFINITE_INPUT"},
+          {"probe_id": "finite_overflow_e_nu", "api": "moduli_from_e_nu", "arguments": {"young_gpa": "1e308", "poisson": "0.49999999999999994"}, "expected_reason_code": "ELASTIC_NONFINITE_OUTPUT"},
+          {"probe_id": "positive_underflow_k_g", "api": "moduli_from_k_g", "arguments": {"bulk_gpa": "5e-324", "shear_gpa": "1e308"}, "expected_reason_code": "ELASTIC_NONFINITE_OUTPUT"},
+          {"probe_id": "positive_underflow_vrh", "api": "vrh_homogenization", "arguments": {"phase_rows": [{"phase": "A", "volume_fraction": "1", "bulk_gpa": "5e-324", "shear_gpa": "1e308"}]}, "expected_reason_code": "ELASTIC_NONFINITE_OUTPUT"}
+        ],
+        "signed_zero_probe": {
+          "probe_id": "signed_zero_canonicalization",
+          "api": "vrh_homogenization",
+          "arguments": {"phase_rows": [
+            {"phase": "ZERO", "volume_fraction": "-0", "bulk_gpa": "100", "shear_gpa": "50"},
+            {"phase": "ACTIVE", "volume_fraction": "1", "bulk_gpa": "200", "shear_gpa": "100"}
+          ]},
+          "expected_policy": "NEGATIVE_ZERO_INPUT_RETAINED_IN_MANIFEST_PRODUCT_CANONICALIZES_TO_POSITIVE_ZERO"
+        }
+      },
+      "oracle": {
+        "outcome": "PASS",
+        "reason_code": "",
+        "expected_values": [{"probe_count": "13"}],
+        "relation": "EXACT_REASON_CODE_MATRIX"
+      },
+      "tolerance": "1e-10"
+    },
+    {
+      "case_id": "EV-005",
+      "feature_id": "elastic_vrh",
+      "driver_id": "elastic_vrh",
+      "scenario": "cold_replay_and_isolation",
+      "evidence_classes": ["determinism", "byte_replay", "isolation"],
+      "seed": 2026082405,
+      "inputs": {
+        "phases": [
+          {"phase": "A", "volume_fraction": "0.2", "bulk_gpa": "70", "shear_gpa": "25"},
+          {"phase": "B", "volume_fraction": "0.3", "bulk_gpa": "140", "shear_gpa": "65"},
+          {"phase": "C", "volume_fraction": "0.5", "bulk_gpa": "250", "shear_gpa": "120"}
+        ]
+      },
+      "oracle": {
+        "outcome": "PASS",
+        "reason_code": "",
+        "expected_values": [{
+          "K_Reuss_GPa": "142.85714285714286",
+          "K_Hill_GPa": "161.92857142857144",
+          "K_Voigt_GPa": "181",
+          "G_Reuss_GPa": "59.58747135217724",
+          "G_Hill_GPa": "72.04373567608862",
+          "G_Voigt_GPa": "84.5",
+          "E_Reuss_GPa": "156.9416498993964",
+          "E_Hill_GPa": "188.2178375359155",
+          "E_Voigt_GPa": "219.36334661354581",
+          "nu_Hill": "0.30627483270821815",
+          "K_over_G_Hill": "2.2476426285917275"
+        }],
+        "relation": "THREE_IDENTICAL_COLD_REPLAYS"
+      },
+      "tolerance": "1e-10"
+    },
+    {
+      "case_id": "SC-001",
+      "feature_id": "strengthening_contributions",
+      "driver_id": "strengthening_contributions",
+      "scenario": "manufactured_mechanisms_and_sum_rules",
+      "evidence_classes": ["unit", "analytic_manufactured"],
+      "seed": 2026082411,
+      "inputs": {
+        "calls": [
+          {
+            "input_provenance": "SYNTHETIC_NE03_WAVE1_MANUFACTURED",
+            "input_confirmation": true,
+            "sigma_internal_mpa": "50",
+            "hall_petch": {"k_y_mpa_sqrt_m": "0.70", "grain_size_um": "20"},
+            "taylor": {"taylor_factor": "3.06", "alpha": "0.30", "shear_gpa": "80", "burgers_nm": "0.248", "dislocation_density_m2": "1e13"},
+            "solid_solution_mpa": "20",
+            "orowan": {"taylor_factor": "3", "shear_gpa": "70", "burgers_nm": "0.25", "poisson": "0.3", "particle_radius_nm": "5", "spacing_nm": "50"},
+            "other_mpa": "10",
+            "summation_rule": "Не суммировать"
+          },
+          {
+            "input_provenance": "SYNTHETIC_NE03_WAVE1_MANUFACTURED",
+            "input_confirmation": true,
+            "sigma_internal_mpa": "50",
+            "hall_petch": {"k_y_mpa_sqrt_m": "0.70", "grain_size_um": "20"},
+            "taylor": {"taylor_factor": "3.06", "alpha": "0.30", "shear_gpa": "80", "burgers_nm": "0.248", "dislocation_density_m2": "1e13"},
+            "solid_solution_mpa": "20",
+            "orowan": {"taylor_factor": "3", "shear_gpa": "70", "burgers_nm": "0.25", "poisson": "0.3", "particle_radius_nm": "5", "spacing_nm": "50"},
+            "other_mpa": "10",
+            "summation_rule": "Линейная сумма"
+          },
+          {
+            "input_provenance": "SYNTHETIC_NE03_WAVE1_MANUFACTURED",
+            "input_confirmation": true,
+            "sigma_internal_mpa": "50",
+            "hall_petch": {"k_y_mpa_sqrt_m": "0.70", "grain_size_um": "20"},
+            "taylor": {"taylor_factor": "3.06", "alpha": "0.30", "shear_gpa": "80", "burgers_nm": "0.248", "dislocation_density_m2": "1e13"},
+            "solid_solution_mpa": "20",
+            "orowan": {"taylor_factor": "3", "shear_gpa": "70", "burgers_nm": "0.25", "poisson": "0.3", "particle_radius_nm": "5", "spacing_nm": "50"},
+            "other_mpa": "10",
+            "summation_rule": "Квадратичное объединение вкладов"
+          }
+        ]
+      },
+      "oracle": {
+        "outcome": "PASS",
+        "reason_code": "",
+        "expected_values": [
+          {"total_mpa": null, "contributions": [
+            {"mechanism": "Внутреннее сопротивление / базовый уровень", "value_mpa": "50"},
+            {"mechanism": "Hall–Petch", "value_mpa": "156.52475842498527"},
+            {"mechanism": "Дислокационное упрочнение Taylor", "value_mpa": "57.59494249796592"},
+            {"mechanism": "Твёрдорастворное упрочнение", "value_mpa": "20"},
+            {"mechanism": "Обход частиц Orowan", "value_mpa": "239.3444714052929"},
+            {"mechanism": "Другой калиброванный вклад", "value_mpa": "10"}
+          ]},
+          {"total_mpa": "533.4641723282441", "contributions": [
+            {"mechanism": "Внутреннее сопротивление / базовый уровень", "value_mpa": "50"},
+            {"mechanism": "Hall–Petch", "value_mpa": "156.52475842498527"},
+            {"mechanism": "Дислокационное упрочнение Taylor", "value_mpa": "57.59494249796592"},
+            {"mechanism": "Твёрдорастворное упрочнение", "value_mpa": "20"},
+            {"mechanism": "Обход частиц Orowan", "value_mpa": "239.3444714052929"},
+            {"mechanism": "Другой калиброванный вклад", "value_mpa": "10"}
+          ]},
+          {"total_mpa": "342.5798239688155", "contributions": [
+            {"mechanism": "Внутреннее сопротивление / базовый уровень", "value_mpa": "50"},
+            {"mechanism": "Hall–Petch", "value_mpa": "156.52475842498527"},
+            {"mechanism": "Дислокационное упрочнение Taylor", "value_mpa": "57.59494249796592"},
+            {"mechanism": "Твёрдорастворное упрочнение", "value_mpa": "20"},
+            {"mechanism": "Обход частиц Orowan", "value_mpa": "239.3444714052929"},
+            {"mechanism": "Другой калиброванный вклад", "value_mpa": "10"}
+          ]}
+        ],
+        "relation": "HP_TAYLOR_OROWAN_AND_THREE_SUM_RULES"
+      },
+      "tolerance": "1e-9"
+    },
+    {
+      "case_id": "SC-002",
+      "feature_id": "strengthening_contributions",
+      "driver_id": "strengthening_contributions",
+      "scenario": "seeded_metamorphic_128",
+      "evidence_classes": ["property_based", "conservation"],
+      "seed": 2026082412,
+      "inputs": {"sample_count": 128, "value_range_mpa": ["0.25", "250"]},
+      "oracle": {
+        "outcome": "PASS",
+        "reason_code": "",
+        "expected_values": [{"sample_count": "128"}],
+        "relation": "LINEAR_DECOMPOSITION_PERMUTATION_SCALING"
+      },
+      "tolerance": "1e-10"
+    },
+    {
+      "case_id": "SC-003",
+      "feature_id": "strengthening_contributions",
+      "driver_id": "strengthening_contributions",
+      "scenario": "centered_derivative_convergence",
+      "evidence_classes": ["convergence"],
+      "seed": 2026082413,
+      "inputs": {
+        "steps": ["0.1", "0.01", "0.001"],
+        "hall_petch": {
+          "call": {
+            "input_provenance": "SYNTHETIC_NE03_WAVE1_CONVERGENCE",
+            "input_confirmation": true,
+            "sigma_internal_mpa": "0",
+            "hall_petch": {"k_y_mpa_sqrt_m": "0.70", "grain_size_um": "20"},
+            "taylor": null,
+            "solid_solution_mpa": null,
+            "orowan": null,
+            "other_mpa": null,
+            "summation_rule": "Линейная сумма"
+          },
+          "variable": ["hall_petch", "grain_size_um"],
+          "base_value": "20",
+          "normalized_derivative": "-78.26237921249264"
+        },
+        "taylor": {
+          "call": {
+            "input_provenance": "SYNTHETIC_NE03_WAVE1_CONVERGENCE",
+            "input_confirmation": true,
+            "sigma_internal_mpa": "0",
+            "hall_petch": null,
+            "taylor": {"taylor_factor": "3.06", "alpha": "0.30", "shear_gpa": "80", "burgers_nm": "0.248", "dislocation_density_m2": "1e13"},
+            "solid_solution_mpa": null,
+            "orowan": null,
+            "other_mpa": null,
+            "summation_rule": "Линейная сумма"
+          },
+          "variable": ["taylor", "dislocation_density_m2"],
+          "base_value": "1e13",
+          "normalized_derivative": "28.79747124898296"
+        },
+        "orowan": {
+          "call": {
+            "input_provenance": "SYNTHETIC_NE03_WAVE1_CONVERGENCE",
+            "input_confirmation": true,
+            "sigma_internal_mpa": "0",
+            "hall_petch": null,
+            "taylor": null,
+            "solid_solution_mpa": null,
+            "orowan": {"taylor_factor": "3", "shear_gpa": "70", "burgers_nm": "0.25", "poisson": "0.3", "particle_radius_nm": "5", "spacing_nm": "50"},
+            "other_mpa": null,
+            "summation_rule": "Линейная сумма"
+          },
+          "variable": ["orowan", "spacing_nm"],
+          "base_value": "50",
+          "normalized_derivative": "-239.3444714052929"
+        }
+      },
+      "oracle": {
+        "outcome": "PASS",
+        "reason_code": "",
+        "expected_values": [{"method": "CENTERED_RELATIVE_DERIVATIVE", "order": "2"}],
+        "relation": "HP_TAYLOR_OROWAN_SECOND_ORDER_REFINEMENT"
+      },
+      "tolerance": "1e-8"
+    },
+    {
+      "case_id": "SC-004",
+      "feature_id": "strengthening_contributions",
+      "driver_id": "strengthening_contributions",
+      "scenario": "invalid_nonfinite_overflow_matrix",
+      "evidence_classes": ["invalid_input"],
+      "seed": 2026082414,
+      "inputs": {
+        "probes": [
+          {
+            "probe_id": "missing_provenance",
+            "api": "calculate_strengthening",
+            "call": {"input_provenance": "", "input_confirmation": true, "sigma_internal_mpa": "10", "hall_petch": null, "taylor": null, "solid_solution_mpa": null, "orowan": null, "other_mpa": null, "summation_rule": "Линейная сумма"},
+            "expected_reason_code": "STRENGTHENING_PROVENANCE_REQUIRED"
+          },
+          {
+            "probe_id": "confirmation_false",
+            "api": "calculate_strengthening",
+            "call": {"input_provenance": "SYNTHETIC", "input_confirmation": false, "sigma_internal_mpa": "10", "hall_petch": null, "taylor": null, "solid_solution_mpa": null, "orowan": null, "other_mpa": null, "summation_rule": "Линейная сумма"},
+            "expected_reason_code": "STRENGTHENING_CONFIRMATION_REQUIRED"
+          },
+          {
+            "probe_id": "bool_sigma",
+            "api": "calculate_strengthening",
+            "call": {"input_provenance": "SYNTHETIC", "input_confirmation": true, "sigma_internal_mpa": true, "hall_petch": null, "taylor": null, "solid_solution_mpa": null, "orowan": null, "other_mpa": null, "summation_rule": "Линейная сумма"},
+            "expected_reason_code": "STRENGTHENING_INPUT_INVALID"
+          },
+          {
+            "probe_id": "negative_contribution",
+            "api": "calculate_strengthening",
+            "call": {"input_provenance": "SYNTHETIC", "input_confirmation": true, "sigma_internal_mpa": "10", "hall_petch": null, "taylor": null, "solid_solution_mpa": "-1", "orowan": null, "other_mpa": null, "summation_rule": "Линейная сумма"},
+            "expected_reason_code": "STRENGTHENING_INPUT_INVALID"
+          },
+          {
+            "probe_id": "missing_hall_petch",
+            "api": "calculate_strengthening",
+            "call": {"input_provenance": "SYNTHETIC", "input_confirmation": true, "sigma_internal_mpa": "10", "hall_petch": {"k_y_mpa_sqrt_m": "0.7"}, "taylor": null, "solid_solution_mpa": null, "orowan": null, "other_mpa": null, "summation_rule": "Линейная сумма"},
+            "expected_reason_code": "STRENGTHENING_INPUT_INVALID"
+          },
+          {
+            "probe_id": "extra_taylor",
+            "api": "calculate_strengthening",
+            "call": {"input_provenance": "SYNTHETIC", "input_confirmation": true, "sigma_internal_mpa": "10", "hall_petch": null, "taylor": {"taylor_factor": "3", "alpha": "0.3", "shear_gpa": "80", "burgers_nm": "0.25", "dislocation_density_m2": "1e13", "unexpected": "1"}, "solid_solution_mpa": null, "orowan": null, "other_mpa": null, "summation_rule": "Линейная сумма"},
+            "expected_reason_code": "STRENGTHENING_INPUT_INVALID"
+          },
+          {
+            "probe_id": "nan_sigma",
+            "api": "calculate_strengthening",
+            "call": {"input_provenance": "SYNTHETIC", "input_confirmation": true, "sigma_internal_mpa": "NaN", "hall_petch": null, "taylor": null, "solid_solution_mpa": null, "orowan": null, "other_mpa": null, "summation_rule": "Линейная сумма"},
+            "expected_reason_code": "STRENGTHENING_NONFINITE_INPUT"
+          },
+          {
+            "probe_id": "positive_infinite_taylor",
+            "api": "calculate_strengthening",
+            "call": {"input_provenance": "SYNTHETIC", "input_confirmation": true, "sigma_internal_mpa": "10", "hall_petch": null, "taylor": {"taylor_factor": "3", "alpha": "0.3", "shear_gpa": "Infinity", "burgers_nm": "0.25", "dislocation_density_m2": "1e13"}, "solid_solution_mpa": null, "orowan": null, "other_mpa": null, "summation_rule": "Линейная сумма"},
+            "expected_reason_code": "STRENGTHENING_NONFINITE_INPUT"
+          },
+          {
+            "probe_id": "negative_infinite_other",
+            "api": "calculate_strengthening",
+            "call": {"input_provenance": "SYNTHETIC", "input_confirmation": true, "sigma_internal_mpa": "10", "hall_petch": null, "taylor": null, "solid_solution_mpa": null, "orowan": null, "other_mpa": "-Infinity", "summation_rule": "Линейная сумма"},
+            "expected_reason_code": "STRENGTHENING_NONFINITE_INPUT"
+          },
+          {
+            "probe_id": "unknown_rule",
+            "api": "calculate_strengthening",
+            "call": {"input_provenance": "SYNTHETIC", "input_confirmation": true, "sigma_internal_mpa": "10", "hall_petch": null, "taylor": null, "solid_solution_mpa": null, "orowan": null, "other_mpa": null, "summation_rule": "UNKNOWN"},
+            "expected_reason_code": "STRENGTHENING_RULE_INVALID"
+          },
+          {
+            "probe_id": "finite_overflow",
+            "api": "calculate_strengthening",
+            "call": {"input_provenance": "SYNTHETIC", "input_confirmation": true, "sigma_internal_mpa": "1e308", "hall_petch": null, "taylor": null, "solid_solution_mpa": "1e308", "orowan": null, "other_mpa": null, "summation_rule": "Линейная сумма"},
+            "expected_reason_code": "STRENGTHENING_NONFINITE_OUTPUT"
+          },
+          {
+            "probe_id": "positive_underflow",
+            "api": "calculate_strengthening",
+            "call": {"input_provenance": "SYNTHETIC", "input_confirmation": true, "sigma_internal_mpa": "0", "hall_petch": {"k_y_mpa_sqrt_m": "5e-324", "grain_size_um": "1e308"}, "taylor": null, "solid_solution_mpa": null, "orowan": null, "other_mpa": null, "summation_rule": "Линейная сумма"},
+            "expected_reason_code": "STRENGTHENING_NONFINITE_OUTPUT"
+          }
+        ],
+        "signed_zero_probe": {
+          "probe_id": "signed_zero_canonicalization",
+          "api": "calculate_strengthening",
+          "call": {"input_provenance": "SYNTHETIC_SIGNED_ZERO", "input_confirmation": true, "sigma_internal_mpa": "-0", "hall_petch": null, "taylor": null, "solid_solution_mpa": null, "orowan": null, "other_mpa": null, "summation_rule": "Линейная сумма"},
+          "expected_policy": "NEGATIVE_ZERO_INPUT_RETAINED_IN_MANIFEST_PRODUCT_CANONICALIZES_TO_POSITIVE_ZERO"
+        }
+      },
+      "oracle": {
+        "outcome": "PASS",
+        "reason_code": "",
+        "expected_values": [{"probe_count": "12"}],
+        "relation": "EXACT_REASON_CODE_MATRIX"
+      },
+      "tolerance": "1e-10"
+    },
+    {
+      "case_id": "SC-005",
+      "feature_id": "strengthening_contributions",
+      "driver_id": "strengthening_contributions",
+      "scenario": "cold_replay_and_isolation",
+      "evidence_classes": ["determinism", "byte_replay", "isolation"],
+      "seed": 2026082415,
+      "inputs": {
+        "calls": [{
+          "input_provenance": "SYNTHETIC_NE03_WAVE1_COLD_REPLAY",
+          "input_confirmation": true,
+          "sigma_internal_mpa": "25",
+          "hall_petch": {"k_y_mpa_sqrt_m": "0.5", "grain_size_um": "25"},
+          "taylor": {"taylor_factor": "3", "alpha": "0.2", "shear_gpa": "70", "burgers_nm": "0.25", "dislocation_density_m2": "9e12"},
+          "solid_solution_mpa": "20",
+          "orowan": {"taylor_factor": "3", "shear_gpa": "70", "burgers_nm": "0.25", "poisson": "0.3", "particle_radius_nm": "5", "spacing_nm": "50"},
+          "other_mpa": "10",
+          "summation_rule": "Линейная сумма"
+        }]
+      },
+      "oracle": {
+        "outcome": "PASS",
+        "reason_code": "",
+        "expected_values": [{"total_mpa": "425.8444714052929", "contributions": [
+          {"mechanism": "Внутреннее сопротивление / базовый уровень", "value_mpa": "25"},
+          {"mechanism": "Hall–Petch", "value_mpa": "100"},
+          {"mechanism": "Дислокационное упрочнение Taylor", "value_mpa": "31.5"},
+          {"mechanism": "Твёрдорастворное упрочнение", "value_mpa": "20"},
+          {"mechanism": "Обход частиц Orowan", "value_mpa": "239.3444714052929"},
+          {"mechanism": "Другой калиброванный вклад", "value_mpa": "10"}
+        ]}],
+        "relation": "THREE_IDENTICAL_COLD_REPLAYS"
+      },
+      "tolerance": "1e-9"
+    }
+  ],
+  "claim_boundary": "Candidate software evidence only; separate NE03 acceptance review and NE06 remain required.",
+  "counts_toward_feature_coverage": false,
+  "acceptance_claim": false,
+  "production_use": "DENIED",
+  "release_switches_unchanged": true
+}

@@ -1,0 +1,10 @@
+.venv-windows/
+__pycache__/
+*.pyc
+dist/
+ThermoGar-Installer-Assets/
+_archive_codex/
+user_data/
+.streamlit/secrets.toml
+*.log
+.DS_Store

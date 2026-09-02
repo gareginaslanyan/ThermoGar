@@ -1,0 +1,229 @@
+{
+  "diagnostic_branch_classifier": {
+    "closure_tolerance": 1e-06,
+    "cu_enriched": {
+      "maximum_atomic_fraction_c": 0.1,
+      "maximum_atomic_fraction_n": 0.1,
+      "maximum_atomic_fraction_nb": 0.1,
+      "minimum_atomic_fraction_cu": 0.2,
+      "minimum_cu_enrichment_ratio_over_bulk": 5.0,
+      "positive_driving_force_required": true
+    },
+    "cu_rich": {
+      "cu_must_be_dominant": true,
+      "maximum_atomic_fraction_c": 0.1,
+      "maximum_atomic_fraction_n": 0.1,
+      "maximum_atomic_fraction_nb": 0.1,
+      "minimum_atomic_fraction_cu": 0.5,
+      "minimum_cu_enrichment_ratio_over_bulk": 5.0,
+      "positive_driving_force_required": true
+    },
+    "nbc_like": {
+      "minimum_atomic_fraction_c": 0.25,
+      "minimum_atomic_fraction_nb": 0.25,
+      "minimum_sum_c_plus_nb": 0.8
+    },
+    "purpose": "Conservative computational screen only. Passing the screen does not physically qualify a phase or a KWN model."
+  },
+  "kawin_model_constraints": {
+    "composition_order": "Multicomponent compositions are passed and returned in the solute order used to construct the thermodynamics object.",
+    "driving_force_return": "getDrivingForce returns driving force and precipitate composition; positive driving force alone does not identify the desired physical branch.",
+    "matrix_phase_position": "The first phase supplied to the thermodynamics object is the parent or matrix phase.",
+    "order_disorder": "For an order/disorder model, Kawin assumes the parent matrix is the disordered part.",
+    "status": "SOFTWARE_CONSTRAINT"
+  },
+  "matrix_target": {
+    "database_proxy_under_review": "BCC_A2",
+    "limitations": [
+      "A CALPHAD BCC_A2 phase does not reproduce the non-equilibrium martensitic transformation, lath structure, dislocation substructure or retained/reverted austenite by itself.",
+      "The actual initial matrix state and complete thermal history must be supplied independently for the material being modeled."
+    ],
+    "physical_description": "Martensitic alpha-prime matrix after a documented solution treatment and cooling route",
+    "status": "PROVISIONAL_PROXY"
+  },
+  "profile_id": "TG-17-4PH-PHYSICAL-BASIS-STAGE15-4-R2",
+  "safety": {
+    "application_source_modified": false,
+    "composition_set_directive_activated": false,
+    "kwn_setup_called": false,
+    "kwn_solve_called": false,
+    "mobility_database_modified": false,
+    "phase_alias_or_copy_created": false,
+    "precipitate_model_imported_or_created": false,
+    "strength_publication_authorized": false,
+    "thermodynamic_database_modified": false
+  },
+  "schema_version": "1.3",
+  "scope": "Read-only qualification of explicit FCC_A1 branch addressability under phase-local site-fraction constraints. This is not a material card, does not create a separately assessed Cu phase, and does not permit Fe KWN integration, strength prediction or publication.",
+  "secondary_phases": {
+    "examples": [
+      "NbC or M(C,N)",
+      "retained or reverted austenite",
+      "other carbides or intermetallics depending on manufacturing and heat treatment"
+    ],
+    "note": "Secondary phases may affect mass balance and properties but must not be mistaken for the Cu-rich age-hardening precipitate.",
+    "status": "SEPARATE_FROM_PRIMARY_CU_HARDENING_MODEL"
+  },
+  "sources": [
+    {
+      "id": "KAWIN_THERMODYNAMICS_DOCS",
+      "locator": "https://kawin.org/docs/02-examples/thermodynamics/",
+      "supports": "matrix phase ordering, order/disorder parent rule and multicomponent composition ordering",
+      "title": "Kawin — Thermodynamics",
+      "type": "official_software_documentation"
+    },
+    {
+      "id": "KAWIN_API_DRIVING_FORCE",
+      "locator": "https://kawin.org/docs/06-api/kawin-thermo-thermodynamics/",
+      "supports": "getDrivingForce return contract",
+      "title": "Kawin thermodynamics API",
+      "type": "official_software_documentation"
+    },
+    {
+      "id": "ROWOLT_2020",
+      "locator": "https://doi.org/10.1007/s10853-020-04880-4",
+      "supports": "Cu-rich precipitation sequence from clusters through 9R and FCC structures",
+      "title": "Dissolution and precipitation of copper-rich phases during heating and cooling of precipitation-hardening steel X5CrNiCuNb16-4 (17-4 PH)",
+      "type": "primary_research"
+    },
+    {
+      "id": "WANG_2017_APT",
+      "locator": "https://doi.org/10.1017/S1431927616012629",
+      "supports": "temperature-dependent Cu-rich cluster chemistry and interfacial segregation",
+      "title": "Atom Probe Tomographic Characterization of Nanoscale Cu-Rich Precipitates in 17-4 Precipitate Hardened Stainless Steel Tempered at Different Temperatures",
+      "type": "primary_research"
+    },
+    {
+      "id": "CHERUVATHUR_2015_NIST",
+      "locator": "https://doi.org/10.1007/s11837-015-1754-4",
+      "supports": "martensitic matrix and Cu-rich strengthening in wrought material; retained austenite and Nb carbides in AM material",
+      "title": "Additive Manufacturing of 17-4 PH Stainless Steel: Post Processing Heat Treatment to Achieve Uniform Reproducible Microstructure",
+      "type": "primary_research_repository_record"
+    },
+    {
+      "id": "LI_2022",
+      "locator": "https://doi.org/10.1016/j.addma.2022.102672",
+      "supports": "distinct NbC and Cu-rich precipitate populations and sensitivity to heat-treatment history",
+      "title": "Homogenization timing effect on microstructure and precipitation strengthening of 17–4PH stainless steel fabricated by laser powder bed fusion",
+      "type": "primary_research"
+    }
+  ],
+  "stage": "15.4",
+  "stage15_3_observation": {
+    "full_witness_working": {
+      "classification": "NBC_LIKE_FCC",
+      "representative_450c_atomic": {
+        "C": 0.4872278377522647,
+        "CR": 1.962068460001202e-06,
+        "CU": 8.159482969873088e-09,
+        "FE": 6.892264536872972e-13,
+        "MN": 2.3859946380977628e-11,
+        "NB": 0.512770191994894,
+        "NI": 3.389955815743287e-13,
+        "P": 5.127721622475758e-15,
+        "SI": 5.127721622475758e-15
+      },
+      "representative_450c_driving_force_j_mol": 55050.06539071698,
+      "temperatures_c": [
+        450.0,
+        480.0,
+        620.0
+      ]
+    },
+    "reduced_or_no_carbon_systems": {
+      "cu_rich_branch_detected": true,
+      "interpretation": "A Cu-rich branch exists, but reduced systems are only branch-existence diagnostics and are not a complete 17-4PH model.",
+      "no_carbon_450c_atomic": {
+        "CR": 1.1164781772017935e-06,
+        "CU": 0.9997833065266258,
+        "FE": 2.8034385163300257e-06,
+        "MN": 1.721072430184309e-05,
+        "NB": 1.5658273915640833e-09,
+        "NI": 0.00019556126588383068,
+        "P": 9.999999999999904e-15,
+        "SI": 6.575647942117173e-13
+      },
+      "no_carbon_450c_driving_force_j_mol": 30699.321294206064
+    },
+    "result_archive": "ThermoGar_Stage15_3_results_r2_20260822_234614.zip",
+    "result_archive_sha256": "8a06d734839ed224b27558ad1ebedd12da0aa8d79283c64fa89a1084563fa3cd",
+    "working_vs_unpatched_450c": {
+      "interpretation": "The NbC-like endpoint is numerically independent of the experimental C15_LAVES deactivation at this witness point.",
+      "unpatched_driving_force_j_mol": 55050.06539064578,
+      "working_driving_force_j_mol": 55050.06539071698
+    }
+  },
+  "stage15_4_branch_experiment": {
+    "branches": {
+      "CU_VA": {
+        "conditions": [
+          "Y(FCC_A1,1,VA)=1"
+        ],
+        "physical_status": "DIAGNOSTIC_DOMAIN_RESTRICTION_ONLY",
+        "purpose": "Restrict the interstitial sublattice to vacancies and test whether a Cu-rich substitutional branch is addressable in the complete witness."
+      },
+      "NBC_C": {
+        "conditions": [
+          "Y(FCC_A1,1,C)=1"
+        ],
+        "physical_status": "DIAGNOSTIC_POSITIVE_CONTROL_ONLY",
+        "purpose": "Positive control that the carbon-bearing NbC-like branch can be selected explicitly."
+      },
+      "UNCONSTRAINED": {
+        "conditions": [],
+        "purpose": "Reproduce the Stage 15.3 global NbC-like endpoint for the complete witness."
+      }
+    },
+    "limitations": [
+      "A site-fraction condition selects a domain of the shared FCC_A1 model; it does not create or independently assess a new thermodynamic phase.",
+      "The tangent endpoint may relax away because the phase-local condition is used to select the sampled starting CompositionSet and is not necessarily imposed on the subsequent local-equilibrium refinement.",
+      "A positive Cu-rich branch is not sufficient to qualify a KWN model without source-backed phase identity, thermodynamic provenance, kinetic parameters and validation data."
+    ],
+    "methods": [
+      "audited private sampling helper to retain the selected CompositionSet and site fractions",
+      "public getDrivingForce sampling path with the same local phase condition",
+      "tangent path seeded from the same constrained sampling condition to test whether the branch persists after unconstrained local-equilibrium refinement"
+    ],
+    "phase": "FCC_A1",
+    "phase_sublattices": {
+      "0": "substitutional metal sublattice",
+      "1": "interstitial/vacancy sublattice"
+    },
+    "temperatures_c": [
+      450.0,
+      480.0,
+      620.0
+    ],
+    "unpatched_profile_comparison_c": [
+      450.0
+    ]
+  },
+  "stage15_4_r1_result": {
+    "archive": "ThermoGar_Stage15_4_results_r1_20260823_005136.zip",
+    "archive_sha256": "1a18b0ecc696c2e7a1e5a14b52696bb596c4073ed03057d106df8cf1c72bf9bf",
+    "gate_error": "The r1 static source audit looked only in MultiTherm.py even though the relevant methods are inherited from GeneralThermodynamics.",
+    "private_sampling_findings": {
+      "CU_VA": "positive CU_RICH_FCC at 450, 480 and 620 C with Y(FCC_A1,1,VA) approximately 1",
+      "NBC_C": "positive NBC_LIKE_FCC at 450, 480 and 620 C with Y(FCC_A1,1,C) approximately 1",
+      "unconstrained": "NBC_LIKE_FCC at 450, 480 and 620 C"
+    },
+    "report_sha256": "f05b738cd2d468911c8000a2dcac20e49740cff3e7db300f2de0ecb4f9fa0f2c",
+    "tangent_limitation": "The generic tangent path relaxes away from the constrained branch after using the condition only to seed the initial composition set.",
+    "worker_count": 10
+  },
+  "stage15_4_r2_objective": {
+    "permission_if_passed": "Stage 15.5 read-only branch-aware proxy/adapter design only; no KWN setup/solve.",
+    "purpose": "Repeat the exact 10-point diagnostic matrix, audit each inherited declaring method through the MRO, trace the condition object through the public sampling path, and compare all private sampling results against the exact r1 report."
+  },
+  "strengthening_precipitate_target": {
+    "important_distinction": "A generic FCC_A1 calculation is not automatically a Cu-rich precipitation calculation. The returned precipitate composition must be decoded in the solute order used to construct the Kawin thermodynamics object.",
+    "physical_description": "Cu-rich precipitation responsible for age hardening of 17-4PH",
+    "reported_sequence": [
+      "Cu-Fe-rich clusters or coherent Cu-rich BCC precipitates",
+      "9R transition structure",
+      "Cu-rich twinned FCC precursor",
+      "FCC copper at later aging stages"
+    ],
+    "status": "PHYSICAL_TARGET_ONLY"
+  }
+}

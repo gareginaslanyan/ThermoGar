@@ -1,0 +1,125 @@
+{
+  "schema_version": "1.0",
+  "profile_id": "TG-17-4PH-KWN-QUALIFICATION-TEMPLATE",
+  "purpose": "Template for source-backed qualification. Copy to configs/stage15/qualification_17_4ph.json only after each item is reviewed. The template itself never grants calculation permission.",
+  "approval": {
+    "status": "NOT_REVIEWED",
+    "reviewed_by": "",
+    "review_date": "",
+    "scope": "diagnostic KWN only"
+  },
+  "items": {
+    "thermodynamic_database_provenance": {
+      "status": "UNQUALIFIED",
+      "value": null,
+      "unit": null,
+      "evidence": [],
+      "note": "Must address the experimental C15_LAVES deactivation and identify database origin/version/license."
+    },
+    "matrix_phase_model": {
+      "status": "UNQUALIFIED",
+      "value": "BCC_A2",
+      "unit": null,
+      "evidence": [],
+      "note": "Must justify BCC_A2 as the chosen proxy for the intended martensitic state and document limitations."
+    },
+    "precipitate_phase_model": {
+      "status": "UNQUALIFIED",
+      "value": null,
+      "unit": null,
+      "evidence": [],
+      "note": "Must represent the intended Cu-rich precipitation stage, not merely any positive-driving-force phase."
+    },
+    "precipitation_sequence_scope": {
+      "status": "UNQUALIFIED",
+      "value": null,
+      "unit": null,
+      "evidence": [],
+      "note": "State whether the model targets coherent BCC clusters, 9R, FCC epsilon-Cu, or an explicitly calibrated effective phase."
+    },
+    "initial_state_and_thermal_history": {
+      "status": "UNQUALIFIED",
+      "value": null,
+      "unit": null,
+      "evidence": [],
+      "note": "Include solution treatment, cooling history, initial precipitates, retained austenite and aging schedule."
+    },
+    "interfacial_energy": {
+      "status": "UNQUALIFIED",
+      "value": null,
+      "unit": "J/m^2",
+      "evidence": [],
+      "note": "No Stage 15.2 placeholder may be reused as a material value."
+    },
+    "matrix_molar_volume": {
+      "status": "UNQUALIFIED",
+      "value": null,
+      "unit": "m^3/mol",
+      "evidence": [],
+      "note": "Provide source or derivation at the modeled temperature."
+    },
+    "precipitate_molar_volume": {
+      "status": "UNQUALIFIED",
+      "value": null,
+      "unit": "m^3/mol",
+      "evidence": [],
+      "note": "Must match the selected precipitate representation."
+    },
+    "nucleation_site_model": {
+      "status": "UNQUALIFIED",
+      "value": null,
+      "unit": null,
+      "evidence": [],
+      "note": "Bulk, dislocation, lath/interface or other site model must be justified."
+    },
+    "nucleation_site_density": {
+      "status": "UNQUALIFIED",
+      "value": null,
+      "unit": "1/m^3",
+      "evidence": [],
+      "note": "Must be consistent with the selected site model."
+    },
+    "dislocation_density": {
+      "status": "UNQUALIFIED",
+      "value": null,
+      "unit": "1/m^2",
+      "evidence": [],
+      "note": "Required if dislocations influence nucleation or strengthening."
+    },
+    "grain_or_lath_size": {
+      "status": "UNQUALIFIED",
+      "value": null,
+      "unit": "m",
+      "evidence": [],
+      "note": "Use the microstructural length scale relevant to the selected model."
+    },
+    "elastic_strain_energy_or_justified_omission": {
+      "status": "UNQUALIFIED",
+      "value": null,
+      "unit": null,
+      "evidence": [],
+      "note": "Coherent BCC Cu-rich precipitation may require eigenstrain and elastic constants, or a documented reason for omission."
+    },
+    "precipitate_shape": {
+      "status": "UNQUALIFIED",
+      "value": null,
+      "unit": null,
+      "evidence": [],
+      "note": "Sphere, rod, ellipsoid or effective morphology must match the modeled aging stage."
+    },
+    "validation_dataset": {
+      "status": "UNQUALIFIED",
+      "value": null,
+      "unit": null,
+      "evidence": [],
+      "note": "Need time/temperature-resolved particle size, number density, volume fraction and/or hardness data suitable for calibration and validation."
+    },
+    "strength_model_inputs": {
+      "status": "UNQUALIFIED",
+      "value": null,
+      "unit": null,
+      "evidence": [],
+      "note": "Keep strength prediction blocked until shear modulus, Burgers vector and mechanism-specific parameters are independently qualified."
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "source": "/Volumes/Disk/Pet/ThermoGar/databases/original/ni/mc_ni_v2036.tdb",
+  "destination": "/Volumes/Disk/Pet/ThermoGar/databases/converted/mc_ni_v2036.garcalc.tdb",
+  "source_encoding": "cp1252",
+  "source_sha256": "84BA813156E1F7D8BDE495D74420319AFEC03572B981F6B56103807F305313AB",
+  "changes": {
+    "phase_descriptions_preserved_as_comments": 99,
+    "attach_contribution_translated": 1,
+    "sequence_type_definition_added": 1,
+    "phase_type_characters_added": 2,
+    "reference_element_disabled": 1,
+    "composition_sets_disabled": 9,
+    "hmva_parameters_disabled": 13,
+    "duplicated_decimal_temperatures_repaired": 2,
+    "reference_keys_normalized": 0,
+    "reference_list_marker_added": 1
+  },
+  "warnings": [],
+  "destination_sha256": "1DC72C5501EB2D9A1778C5A5622728257572A1DCD0EE218C9B4F9A00E0AD08F8",
+  "destination_size": 410655,
+  "order_disorder_pairs": [
+    {
+      "ordered": "BCC_B2",
+      "disordered": "BCC_A2",
+      "type_char": "X"
+    }
+  ]
+}

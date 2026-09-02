@@ -1,0 +1,52 @@
+{
+  "thermodynamic_source": "/Volumes/Disk/Pet/ThermoGar/databases/converted/al/mc_al_v2037.thermogar.tdb",
+  "mobility_source": "/Volumes/Disk/Pet/ThermoGar/databases/original/al/mc_al_v2008.ddb",
+  "destination": "/Volumes/Disk/Pet/ThermoGar/databases/converted/al/mc_al_v2037_with_mobility.thermogar.tdb",
+  "thermodynamic_source_encoding": "utf-8-sig",
+  "mobility_source_encoding": "cp1252",
+  "thermodynamic_source_sha256": "F02BDA0E42FF0733E4B647CBC904643A46C46FC996C57383815ADE032A750C45",
+  "mobility_source_sha256": "BF192D8C39992D2CABD1E7E36D124C5CDD0FF919B996D876505680D5E6341FB0",
+  "destination_sha256": "F9BDF21D434FBE78B5EF3F7F2DE69763FA40B81335CDC58889907D41C80CD717",
+  "thermodynamic_elements": [
+    "AL",
+    "CR",
+    "CU",
+    "FE",
+    "MG",
+    "MN",
+    "NI",
+    "SC",
+    "SI",
+    "TI",
+    "VA",
+    "ZN",
+    "ZR"
+  ],
+  "thermodynamic_phase_count": 195,
+  "mobility_block_inserted_before_list_of_references": true,
+  "mobility": {
+    "ddb_active_commands_total": 163,
+    "retained_functions": 12,
+    "retained_diffusion_commands": 0,
+    "retained_mobility_parameters": 147,
+    "retained_parameters_by_type": {
+      "MQ": 147
+    },
+    "retained_parameters_by_phase": {
+      "FCC_A1": 143,
+      "LIQUID": 4
+    },
+    "disabled_commands": 3,
+    "disabled_commands_by_reason": {
+      "species absent from thermodynamic TDB: LI": 2,
+      "species absent from thermodynamic TDB: SN": 1
+    },
+    "disabled_parameters_by_missing_species": {
+      "LI": 2,
+      "SN": 1
+    },
+    "duplicate_functions": [],
+    "reference_keys_normalized": 10,
+    "decimal_commas_normalized": 1
+  }
+}

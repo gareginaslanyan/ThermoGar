@@ -1,0 +1,68 @@
+{
+  "thermodynamic_source": "/Volumes/Disk/Pet/ThermoGar/databases/converted/mc_ni_v2036.garcalc.tdb",
+  "mobility_source": "/Volumes/Disk/Pet/ThermoGar/databases/original/ni/mc_ni_v2012.ddb",
+  "destination": "/Volumes/Disk/Pet/ThermoGar/databases/converted/mc_ni_v2036_with_mobility.garcalc.tdb",
+  "thermodynamic_source_encoding": "utf-8-sig",
+  "mobility_source_encoding": "cp1252",
+  "thermodynamic_source_sha256": "1DC72C5501EB2D9A1778C5A5622728257572A1DCD0EE218C9B4F9A00E0AD08F8",
+  "mobility_source_sha256": "744D67B93843C579C3323A215F4CCB7E265FF3282C3D4C10C1CEF0A6E5CABE4D",
+  "destination_sha256": "1882D841A337063E0585D261C690AE7E565838234E231E21B8541A5CB0DBA391",
+  "thermodynamic_elements": [
+    "AL",
+    "B",
+    "C",
+    "CO",
+    "CR",
+    "CU",
+    "FE",
+    "HF",
+    "LA",
+    "MN",
+    "MO",
+    "N",
+    "NB",
+    "NI",
+    "O",
+    "S",
+    "SI",
+    "TI",
+    "V",
+    "VA",
+    "W",
+    "Y",
+    "ZR"
+  ],
+  "thermodynamic_phase_count": 99,
+  "mobility_block_inserted_before_list_of_references": true,
+  "mobility": {
+    "ddb_active_commands_total": 213,
+    "retained_functions": 8,
+    "retained_diffusion_commands": 1,
+    "retained_mobility_parameters": 181,
+    "retained_parameters_by_type": {
+      "MF": 4,
+      "MQ": 177
+    },
+    "retained_parameters_by_phase": {
+      "BCC_A2": 8,
+      "BCC_B2": 4,
+      "FCC_A1": 152,
+      "NIAL": 17
+    },
+    "disabled_commands": 22,
+    "disabled_commands_by_reason": {
+      "species absent from thermodynamic TDB: GE": 4,
+      "species absent from thermodynamic TDB: RE": 5,
+      "species absent from thermodynamic TDB: RU": 7,
+      "species absent from thermodynamic TDB: TA": 6
+    },
+    "disabled_parameters_by_missing_species": {
+      "GE": 4,
+      "RE": 5,
+      "RU": 7,
+      "TA": 6
+    },
+    "duplicate_functions": [],
+    "reference_keys_normalized": 1
+  }
+}

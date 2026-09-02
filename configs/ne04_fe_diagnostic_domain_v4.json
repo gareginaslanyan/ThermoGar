@@ -1,0 +1,197 @@
+{
+  "schema_version": "SWR-NE04-FE-DIAGNOSTIC-DOMAIN-4",
+  "gate": "NE-04",
+  "status": "SIDE_CAR_STATIC_DIAGNOSTIC_ONLY_NOT_INTEGRATED",
+  "claim": "DIAGNOSTIC_DOMAIN_ONLY_NOT_NE04_ACCEPTANCE",
+  "calculations_enabled": false,
+  "production_use": "DENIED",
+  "release_eligible": false,
+  "database_key": "fe",
+  "release_disposition": "DIAGNOSTIC_ONLY",
+  "integration": {
+    "central_contract_integration": false,
+    "release_ui_callsite_bound": false,
+    "status": "DEFERRED_PIN_ROTATION_REQUIRED",
+    "observed_central_v3_relative_path": "configs/ne04_database_domains.json",
+    "observed_central_v3_sha256": "2d588fe38a0f7c2c746b60e49d0c029a17721665400290233a0a22ec79db7204"
+  },
+  "provenance": {
+    "thermodynamic_source": {
+      "relative_path": "databases/original/fe/mc_fe_v2062.tdb",
+      "sha256": "aa02077eac3f602dd7479cbeafb09b450e282716752b3ae2b1fc3a57d9c64865",
+      "bytes": 489296,
+      "version": "2.062",
+      "exact_ascii_header_line_numbers": [
+        59,
+        60,
+        61,
+        62,
+        63,
+        64
+      ],
+      "exact_ascii_header_lines": [
+        "$ This database has been optimised inside the following limits:",
+        "$ Temperature: 673 K - 2000 K",
+        "$",
+        "$ Alloy composition (wt.%): Al<3  B<0.5  C<0.5  Co<3  Cr<25  Cu<1  H<0.1 Hf<0.5\u0020\u0020",
+        "$ La<0.5  Mn<25  Mo<5  N<1  Nb<1  Ni<26  O<0.5  P<0.05  Pd<4  S<0.1  Si<3.5\u0020\u0020",
+        "$ Ta<0.5 Ti<0.5  V<0.5  W<3  Y<0.5\u0020"
+      ]
+    },
+    "mobility_source": {
+      "relative_path": "databases/original/fe/mc_fe_v2016.ddb",
+      "sha256": "92c3f6b9652a8c1d163bdf7c92cd694d6e9932b1e15022a98535176cbacab7ad",
+      "bytes": 57291,
+      "version": "2.016"
+    },
+    "profiles": {
+      "thermogar_patch": {
+        "role": "PATCHED_DIAGNOSTIC_ONLY",
+        "relative_path": "databases/converted/fe/mc_fe_v2062_with_mobility.thermogar.tdb",
+        "sha256": "236ec4d9b0540de04e4e6305faa208672f31fbdf45b2ae84e92f80bd98053612",
+        "bytes": 568690,
+        "patch_id": "TG-FE-2062-C15-001",
+        "upstream_confirmation": "PENDING_CONFIRMATION"
+      },
+      "upstream_original": {
+        "role": "UPSTREAM_CONTROL_DIAGNOSTIC_ONLY",
+        "relative_path": "databases/diagnostic/fe/mc_fe_v2062_unpatched_with_mobility.thermogar.tdb",
+        "sha256": "f9375c3a7a8649bace698e2177f2cc964bce3f8a19f08ae05d88840abd77b112",
+        "bytes": 568418,
+        "patch_id": null,
+        "upstream_confirmation": "SOURCE_CONTROL_NOT_ACCEPTED_OUTPUT"
+      }
+    },
+    "artifacts": [
+      {
+        "role": "PATCH_PASSPORT_INTERNAL_DIAGNOSTIC_ONLY",
+        "relative_path": "databases/converted/fe/mc_fe_v2062_with_mobility.thermogar.passport.json",
+        "sha256": "c818f3132840304ea38017cb7419790a290a1ca2e949b01e8954931ac8f17491",
+        "bytes": 12393
+      },
+      {
+        "role": "CONVERSION_REPORT_INTERNAL_DIAGNOSTIC_ONLY",
+        "relative_path": "databases/converted/fe/mc_fe_v2062_with_mobility.thermogar.tdb.json",
+        "sha256": "9f630e2a77441dcc0b20ba82c448b98413ff4a2cd358c2d8b66229567d811ded",
+        "bytes": 14562
+      },
+      {
+        "role": "PATCH_NOTICE_INTERNAL_DIAGNOSTIC_ONLY",
+        "relative_path": "FE_DATABASE_C15_LAVES_NOTICE.md",
+        "sha256": "8642287417e98a8698e2749af11a3114e041bafb03dde15d21722ae4ffe81ad4",
+        "bytes": 2645
+      },
+      {
+        "role": "UPSTREAM_QUERY_DRAFT_NOT_CONFIRMATION",
+        "relative_path": "UPSTREAM_QUERY_C15_LAVES.md",
+        "sha256": "48979c8cec6d2e8cbb730a3dba84949ec82960c74895b9f24f3eb9a51724e639",
+        "bytes": 4943
+      },
+      {
+        "role": "LOCAL_INTERNAL_SMOKE_NOT_SEALED_REPLAY",
+        "relative_path": "results/validation/stage13_2/fe_internal_smoke_20260827_132243.json",
+        "sha256": "f76f90448ba97100f0a5bf8a1d46976e40d6e9bbbcc47242e6b87aa6064f2d1b",
+        "bytes": 3800
+      },
+      {
+        "role": "LEGACY_HIGH_TEMPERATURE_REPORT_NOT_NE04_ACCEPTANCE",
+        "relative_path": "results/validation/stage13_2/high_temperature_liquidus_check.csv",
+        "sha256": "0d7b592ea630327d7c974432357ef055824a3593dd1a167960d22545fee5d5f4",
+        "bytes": 286
+      },
+      {
+        "role": "LEGACY_INTERNAL_ACCEPTANCE_REPORT_NOT_NE04_ACCEPTANCE",
+        "relative_path": "results/validation/stage13_2/stage13_2_acceptance.json",
+        "sha256": "c42dc450a672f0cc7e22a8321ecffac951cf3268cb733219e82b49e19d3bcac7",
+        "bytes": 1963
+      }
+    ]
+  },
+  "domain": {
+    "composition": {
+      "status": "SOURCE_HEADER_LIMITS_MACHINE_ENFORCED_DIAGNOSTIC_ONLY",
+      "source_semantic": "DATABASE_OPTIMISED_INSIDE_LIMITS",
+      "request_basis": "MASS_FRACTION",
+      "source_limit_unit": "WT_PERCENT",
+      "no_implicit_mole_mass_conversion": true,
+      "complete_element_set_required": true,
+      "balance_element": "FE",
+      "balance_minimum_exclusive": 0.0,
+      "balance_maximum": null,
+      "fraction_sum": 1.0,
+      "fraction_sum_absolute_tolerance": 1e-12,
+      "strict_upper_operator": "<",
+      "strict_upper_bounds_wt_percent": {
+        "AL": 3.0,
+        "B": 0.5,
+        "C": 0.5,
+        "CO": 3.0,
+        "CR": 25.0,
+        "CU": 1.0,
+        "H": 0.1,
+        "HF": 0.5,
+        "LA": 0.5,
+        "MN": 25.0,
+        "MO": 5.0,
+        "N": 1.0,
+        "NB": 1.0,
+        "NI": 26.0,
+        "O": 0.5,
+        "P": 0.05,
+        "PD": 4.0,
+        "S": 0.1,
+        "SI": 3.5,
+        "TA": 0.5,
+        "TI": 0.5,
+        "V": 0.5,
+        "W": 3.0,
+        "Y": 0.5
+      }
+    },
+    "temperature_k": {
+      "status": "SOURCE_HEADER_LIMITS_MACHINE_ENFORCED_DIAGNOSTIC_ONLY",
+      "source_semantic": "DATABASE_OPTIMISED_INSIDE_LIMITS",
+      "minimum": 673.0,
+      "maximum": 2000.0,
+      "minimum_inclusive": true,
+      "maximum_inclusive": true
+    },
+    "pressure_pa": {
+      "status": "UNKNOWN_BLOCKED",
+      "minimum": null,
+      "maximum": null,
+      "positive_finite_request_required": true
+    },
+    "g_function_temperature_observation": {
+      "minimum": 273.0,
+      "maximum": 6000.0,
+      "accepted_as_database_domain": false,
+      "semantic": "G_FUNCTION_EXPRESSION_LIMIT_NOT_DATABASE_OPTIMISATION_DOMAIN"
+    }
+  },
+  "mandatory_report_reason_codes": [
+    "NE04_FE_DIAGNOSTIC_NOT_RELEASED",
+    "NE04_PRESSURE_DOMAIN_UNKNOWN",
+    "NE04_FE_LEGAL_REVIEW_OPEN",
+    "NE04_FE_UPSTREAM_CONFIRMATION_OPEN",
+    "NE04_FE_RUNTIME_REPLAY_NOT_SEALED",
+    "NE04_FE_SIDECAR_NOT_INTEGRATED"
+  ],
+  "reason_code_registry": {
+    "NE04_FE_DIAGNOSTIC_NOT_RELEASED": "The Fe database and every side-car report remain diagnostic-only and cannot authorize release execution.",
+    "NE04_PRESSURE_DOMAIN_UNKNOWN": "No source-backed Fe pressure domain is available; every pressure request remains blocked.",
+    "NE04_FE_LEGAL_REVIEW_OPEN": "Redistribution and legal review remains open.",
+    "NE04_FE_UPSTREAM_CONFIRMATION_OPEN": "The patched Fe profile remains pending independent upstream or native MatCalc confirmation.",
+    "NE04_FE_RUNTIME_REPLAY_NOT_SEALED": "Existing local Fe smoke evidence is not an independently anchored sealed NE-04 replay.",
+    "NE04_FE_SIDECAR_NOT_INTEGRATED": "This side-car is not connected to the central NE-04 contract or any release UI callsite.",
+    "NE04_FE_PROVENANCE_INVALID": "A pinned source, profile, passport, report, header line, path, size, or SHA-256 identity failed closed.",
+    "NE04_FE_CONFIG_INVALID": "The side-car JSON schema or fixed safety semantics failed closed.",
+    "NE04_FE_PROFILE_INVALID": "The diagnostic profile key is absent, unknown, or not one of the two distinct pinned Fe identities.",
+    "NE04_FE_COMPOSITION_BASIS_UNSUPPORTED": "Only a complete MASS_FRACTION request is accepted for comparison with source wt.% limits; no implicit conversion is allowed.",
+    "NE04_FE_COMPOSITION_INPUT_INVALID": "The composition is incomplete, contains unknown or VA species, duplicates after normalization, non-finite or negative values, a missing/non-positive Fe balance, or does not close to one.",
+    "NE04_FE_COMPOSITION_OUTSIDE_SOURCE_DOMAIN": "At least one non-Fe element is not strictly below the source header wt.% upper limit.",
+    "NE04_FE_TEMPERATURE_INPUT_INVALID": "Temperature bounds must be finite positive kelvin values in nondecreasing order.",
+    "NE04_FE_TEMPERATURE_OUTSIDE_SOURCE_DOMAIN": "The requested temperature interval is outside the source-reported 673–2000 K optimisation limits.",
+    "NE04_FE_PRESSURE_REQUEST_INVALID": "Pressure must be a finite positive absolute value in pascals; even a structurally valid pressure remains UNKNOWN_BLOCKED."
+  }
+}

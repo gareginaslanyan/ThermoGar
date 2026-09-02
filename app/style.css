@@ -1,0 +1,30 @@
+/* ThermoGar — минимальный слой поверх штатной темы Streamlit. */
+
+/* L-6: контейнер рассчитан под графики 11.5 in × 100 dpi. */
+.main .block-container {
+    max-width: 1150px;
+    padding-top: 24px;
+    padding-bottom: 32px;
+}
+
+/* T-6 / D-27: сплошной текст не растягивается на всю ширину. */
+.stMarkdown p,
+.stCaption,
+div[data-testid="stAlert"] p {
+    max-width: 60ch;
+}
+
+/* C-12: вторичный текст берётся из активной темы, а не из alpha-канала. */
+.stCaption {
+    color: var(--st-gray-text-color, var(--st-text-color));
+}
+
+/* L-2: подпись ближе к своему полю, чем к следующей группе. */
+div[data-testid="stWidgetLabel"] {
+    margin-bottom: 4px;
+}
+
+/* Явный межгрупповой ритм. */
+div[data-testid="stVerticalBlock"] {
+    row-gap: 16px;
+}

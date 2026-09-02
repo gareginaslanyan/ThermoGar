@@ -1,0 +1,18 @@
+GarCalc reference pair for studying MatCalc -> pycalphad adaptation
+
+1) mc_ni_v2.034.original.tdb
+Source:
+https://github.com/by-student-2017/OpenCALPHAD-v6-examples/blob/main/TDB_files/MatCalc6/Thermodynamic_databases_original/mc_ni_v2.034.tdb
+SHA-256:
+6ffaf67146f37f9871281356291b5b4c2174b6677a59630c4a17d59fc0befbfd
+
+2) mc_ni_v2.034.pycalphad.tdb
+Source:
+https://groups.google.com/g/pycalphad/c/_WanDJwZGWA
+Attachment published in the pycalphad discussion; UTF-8 version posted by Brandon Bocklund on 2021-04-15.
+SHA-256:
+9e1b354efcd1c6f9974a7635c0540e545d6375461aaf08c13d9e5a0615145ab6
+
+License notices are retained inside the database files. The database headers state ODbL/DbCL licensing.
+
+Important: The pycalphad discussion explicitly warns that the adapted databases had only spot checks and were not fully validated against MatCalc energetics or physical accuracy. Use this pair to derive syntax transformations, then validate calculations independently.

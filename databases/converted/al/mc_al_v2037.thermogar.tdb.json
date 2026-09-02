@@ -1,0 +1,36 @@
+{
+  "source": "/Volumes/Disk/Pet/ThermoGar/databases/original/al/mc_al_v2037.tdb",
+  "destination": "/Volumes/Disk/Pet/ThermoGar/databases/converted/al/mc_al_v2037.thermogar.tdb",
+  "source_encoding": "utf-8-sig",
+  "source_sha256": "87EC595F2CAAE189227ED11D5598C899B436B866CCFEFEA91304CA57188817C4",
+  "changes": {
+    "phase_descriptions_preserved_as_comments": 195,
+    "attach_contribution_translated": 1,
+    "sequence_type_definition_added": 1,
+    "phase_type_characters_added": 2,
+    "reference_element_disabled": 1,
+    "composition_sets_disabled": 3,
+    "create_new_phase_disabled": 0,
+    "hmva_parameters_disabled": 7,
+    "se_parameters_disabled": 1,
+    "duplicated_decimal_temperatures_repaired": 0,
+    "reference_keys_normalized": 0,
+    "g_phase_parameter_separator_repaired": 0,
+    "missing_terminal_bangs_repaired": 0,
+    "duplicated_temperature_tokens_repaired": 0,
+    "duplicated_function_tails_repaired": 0,
+    "mnb4_constituent_relics_repaired": 0,
+    "create_new_phase_lines_disabled": 0,
+    "reference_list_marker_added": 0
+  },
+  "warnings": [],
+  "destination_sha256": "F02BDA0E42FF0733E4B647CBC904643A46C46FC996C57383815ADE032A750C45",
+  "destination_size": 314577,
+  "order_disorder_pairs": [
+    {
+      "ordered": "GP_MAT",
+      "disordered": "FCC_A1",
+      "type_char": "X"
+    }
+  ]
+}

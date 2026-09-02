@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.1",
+  "profile_id": "TG-WITNESS-17-4PH-CHEN-2026",
+  "name": "17-4PH powder — diagnostic witness composition",
+  "purpose": "Stage 15 validation witness only; not a universal nominal composition for all 17-4PH products",
+  "basis": "wt_pct",
+  "balance": "FE",
+  "composition": {
+    "CR": 16.47,
+    "NI": 4.69,
+    "CU": 4.55,
+    "MN": 0.4,
+    "NB": 0.33,
+    "P": 0.025,
+    "C": 0.045,
+    "SI": 0.49
+  },
+  "kinetic_screen": {
+    "candidate_parent_phases": [
+      "BCC_A2",
+      "BCC_B2",
+      "FCC_A1"
+    ],
+    "independent_components": [
+      "CR",
+      "NI",
+      "CU",
+      "MN",
+      "NB",
+      "P",
+      "C",
+      "SI"
+    ],
+    "coverage_rule": "Each listed component must occur as the diffusing species after '&' in at least one active MQ/MF/DQ/DF parameter for a candidate parent phase. This text-level screen is necessary but not sufficient for KWN."
+  },
+  "source": {
+    "title": "Performance prediction and multi-objective optimization of 17-4PH stainless steel prepared by selective laser melting",
+    "authors": "B. Chen et al.",
+    "journal": "Journal of Manufacturing Processes 161 (2026) 79–100",
+    "location": "Table 3",
+    "note": "The profile reproduces the powder chemistry reported by the paper. ThermoGar must explicitly report any element unsupported by the selected database."
+  }
+}

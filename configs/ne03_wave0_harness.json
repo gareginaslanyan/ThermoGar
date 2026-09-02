@@ -1,0 +1,246 @@
+{
+  "acceptance_claim": false,
+  "artifact_contracts": {
+    "check_artifact": {
+      "exact_keys": ["schema_version", "check_id", "status", "reason_code", "detail"],
+      "schema_version": "thermogar.ne03.wave0-check.v1"
+    },
+    "cold_audit": {
+      "exact_keys": ["schema_version", "run_ordinal", "returncode", "timed_out", "output_limited", "duration_ns", "stdout_bytes", "stderr_bytes", "stdout_observed_bytes", "stderr_observed_bytes", "stdout_sha256", "stderr_sha256", "replay_sha256", "payload_sha256", "acceptance_claim", "production_use"],
+      "schema_version": "thermogar.ne03.case-audit.v1"
+    },
+    "cold_replay": {
+      "exact_keys": ["schema_version", "case_id", "feature_id", "counts_toward_feature_coverage", "driver_id", "seed", "environment_lock_sha256", "package_manifest_sha256", "source_manifest_sha256", "status", "assertions", "outputs", "acceptance_claim", "production_use"],
+      "schema_version": "thermogar.ne03.case-replay.v1"
+    },
+    "entry_anchors": {
+      "exact_keys": ["schema_version", "files", "acceptance_claim", "production_use"],
+      "schema_version": "thermogar.ne03.entry-anchors.v1"
+    },
+    "environment_lock": {
+      "exact_keys": ["schema_version", "platform_system", "platform_release", "platform_version", "machine", "python_version", "python_implementation", "python_executable_sha256", "python_relative_path", "direct_pins", "installed_distributions", "thread_policy", "python_hash_seed", "locale_policy", "timezone_policy", "acceptance_claim", "production_use"],
+      "schema_version": "thermogar.ne03.environment-lock.v1"
+    },
+    "evidence_anchor": {
+      "exact_keys": ["schema_version", "index_file", "index_bytes", "index_sha256", "summary_file", "summary_bytes", "summary_sha256", "status", "acceptance_claim", "production_use"],
+      "schema_version": "thermogar.ne03.evidence-anchor.v1"
+    },
+    "evidence_index": {
+      "exact_keys": ["schema_version", "artifacts", "artifact_count", "total_bytes", "status", "acceptance_claim", "production_use"],
+      "schema_version": "thermogar.ne03.evidence-index.v1"
+    },
+    "harness_source_pins": {
+      "exact_keys": ["schema_version", "files", "config_sha256", "acceptance_claim", "production_use"],
+      "schema_version": "thermogar.ne03.harness-source-pins.v1"
+    },
+    "package_manifest": {
+      "exact_keys": ["schema_version", "feature_id", "counts_toward_feature_coverage", "case_id", "inputs", "databases", "acceptance_claim", "production_use"],
+      "schema_version": "thermogar.ne03.wave0-package.v1"
+    },
+    "probe_audit": {
+      "exact_keys": ["schema_version", "check_id", "driver_id", "returncode", "timed_out", "output_limited", "duration_ns", "stdout_observed_bytes", "stderr_observed_bytes", "stdout_sha256", "stderr_sha256", "replay_present", "replay_sha256", "acceptance_claim", "production_use"],
+      "schema_version": "thermogar.ne03.probe-audit.v1"
+    },
+    "source_manifest": {
+      "exact_keys": ["schema_version", "phase", "file_count", "records_sha256", "files", "acceptance_claim", "production_use"],
+      "schema_version": "thermogar.ne03.source-manifest.v1"
+    },
+    "summary": {
+      "exact_keys": ["schema_version", "status", "feature_id", "counts_toward_feature_coverage", "cold_run_count", "cold_replay_files", "required_checks", "checks", "acceptance_claim", "production_use", "scientific_material_status"],
+      "schema_version": "thermogar.ne03.wave0-summary.v1"
+    }
+  },
+  "artifact_layout": {
+    "check_pattern": "checks/W0-{check:03d}.json",
+    "cold_audit_pattern": "cold/run-{attempt:02d}/audit.json",
+    "cold_payload_pattern": "cold/run-{attempt:02d}/canonical_payload.json",
+    "cold_replay_pattern": "cold/run-{attempt:02d}/replay.json",
+    "entry_anchors": "inputs/NE03_ENTRY_ANCHORS.json",
+    "environment_lock": "inputs/NE03_ENVIRONMENT_LOCK.json",
+    "evidence_anchor": "NE03_WAVE0_EVIDENCE_ANCHOR.json",
+    "evidence_index": "NE03_WAVE0_EVIDENCE_INDEX.json",
+    "harness_source_pins": "inputs/NE03_HARNESS_SOURCE_PINS.json",
+    "package_manifest": "package/CASE_MANIFEST.json",
+    "probe_pattern": "probes/{check_id}-{driver_id}/{artifact}",
+    "source_manifest_after": "inputs/NE03_SOURCE_MANIFEST_AFTER.json",
+    "source_manifest_before": "inputs/NE03_SOURCE_MANIFEST_BEFORE.json",
+    "summary": "NE03_WAVE0_SUMMARY.json"
+  },
+  "canonical_profiles": {
+    "csv": {
+      "column_order": "EXPLICIT",
+      "encoding": "UTF-8_NO_BOM",
+      "float_encoding": "TAGGED_IEEE754_BINARY64_BIG_ENDIAN_HEX",
+      "line_ending": "LF",
+      "quoting": "ALL_FIELDS",
+      "row_order": "PRESERVE_UNLESS_CASE_DECLARES_SORT_KEYS",
+      "schema_version": "THERMOGAR-NE03-CANONICAL-CSV-1"
+    },
+    "json": {
+      "encoding": "UTF-8_NO_BOM",
+      "float_encoding": "TAGGED_IEEE754_BINARY64_BIG_ENDIAN_HEX",
+      "nonfinite_policy": "REJECT",
+      "object_key_order": "NFC_UNICODE_CODEPOINT_ASCENDING",
+      "schema_version": "THERMOGAR-NE03-CANONICAL-JSON-1",
+      "signed_zero_policy": "PRESERVE",
+      "terminal_lf": true
+    },
+    "npz": {
+      "array_order": "C",
+      "byte_order": "LITTLE_ENDIAN",
+      "container": "ZIP_STORED",
+      "member_order": "ASCII_NAME_ASCENDING",
+      "member_timestamp": "1980-01-01T00:00:00",
+      "nonfinite_policy": "REJECT",
+      "pickle_allowed": false,
+      "schema_version": "THERMOGAR-NE03-DETERMINISTIC-NPZ-1"
+    }
+  },
+  "claim_boundary": "WAVE0_HARNESS_PRIMITIVES_ONLY_NOT_NE03_ACCEPTANCE_NOT_PRODUCT_ENABLEMENT",
+  "counts_toward_feature_coverage": false,
+  "feature_id": "_ne03_harness_wave0",
+  "gate": "NE-03",
+  "isolation_contract": {
+    "cold_process_runs_required": 3,
+    "network_policy": "PYTHON_AUDIT_DENY_OS_OFFLINE_REQUIRED_FOR_ACCEPTANCE",
+    "platform": "WINDOWS_FIRST",
+    "production_use": "DENIED",
+    "project_tree_mutation_policy": "ZERO_CHANGES",
+    "redirected_profile_and_temp": true,
+    "reparse_points": "REJECT",
+    "status": "CONTRACT_ONLY_NOT_EXECUTED",
+    "subprocess_policy": "DENY_IN_WORKER",
+    "temporary_workspace_per_attempt": true,
+    "worker_site_initialization": "DISABLED_WITH_-S"
+  },
+  "plan_anchors": {
+    "api_inventory": {
+      "bytes": 142563,
+      "relative_path": "results/validation/swr_ne02_feature_freeze/run_r1_20260824_023443/API_INVENTORY.csv",
+      "sha256": "f47a7f9f6aaa2884f5912b3d0ad6678cfcb355e32071408ef24d740be77b75c7"
+    },
+    "coverage_matrix": {
+      "bytes": 17488,
+      "relative_path": "results/validation/swr_ne03_numerical_verification/run_r0_plan_20260824_023443/NE03_COVERAGE_MATRIX.csv",
+      "sha256": "39ad5fe3068cfc72fe27cc256f46e7ddcb686592ecb914955b94f18e44ee0545"
+    },
+    "entry_plan": {
+      "bytes": 10336,
+      "relative_path": "results/validation/swr_ne03_numerical_verification/run_r0_plan_20260824_023443/NE03_ENTRY_PLAN.md",
+      "sha256": "615d1fcea68fb6adf7d35aab41c0b6ab13afe67b109397d3d0a27e7243b4b636"
+    }
+  },
+  "product_enablement": {
+    "calculations_enabled": false,
+    "exports_enabled": false,
+    "imports_enabled": false,
+    "policy_mutation_allowed": false
+  },
+  "production_use": "DENIED",
+  "reason_code_registry": {
+    "NE03_ACCEPTANCE_CLAIM_FORBIDDEN": "Wave 0 cannot make an NE-03 acceptance claim.",
+    "NE03_CONFIG_INVALID": "The Wave 0 configuration is absent, malformed, or inconsistent.",
+    "NE03_CSV_CELL_INVALID": "A CSV cell has no canonical scalar representation.",
+    "NE03_CSV_COLUMNS_INVALID": "CSV columns are empty, duplicated, or invalid.",
+    "NE03_CSV_ROW_INVALID": "A CSV row does not exactly match the declared columns.",
+    "NE03_EVIDENCE_INDEX_INVALID": "The evidence index is malformed or inconsistent.",
+    "NE03_F64_TAG_INVALID": "A tagged binary64 value is malformed or non-finite.",
+    "NE03_FILE_HASH_MISMATCH": "A file SHA-256 differs from its sealed record.",
+    "NE03_FILE_MISSING": "A required file is missing.",
+    "NE03_FILE_NOT_REGULAR": "A required path is not a regular file.",
+    "NE03_FILE_SIZE_MISMATCH": "A file size differs from its sealed record.",
+    "NE03_JSON_BOM_FORBIDDEN": "Canonical JSON must be UTF-8 without a byte-order mark.",
+    "NE03_JSON_DECODE_ERROR": "JSON bytes or syntax are invalid.",
+    "NE03_JSON_DEPTH_EXCEEDED": "A JSON value exceeds the bounded nesting depth.",
+    "NE03_JSON_DUPLICATE_KEY": "A JSON object contains a duplicate key.",
+    "NE03_JSON_NONFINITE_LITERAL": "NaN and Infinity JSON literals are forbidden.",
+    "NE03_JSON_RAW_FLOAT_FORBIDDEN": "Raw JSON floating-point numbers are forbidden; tagged f64 is required.",
+    "NE03_MANIFEST_EMPTY": "A manifest or snapshot has no file entries.",
+    "NE03_MANIFEST_INVALID": "A manifest violates its exact schema or ordering contract.",
+    "NE03_MANIFEST_ORDER_INVALID": "Manifest entries are not in canonical path order.",
+    "NE03_NFC_KEY_COLLISION": "Two object keys collide after Unicode NFC normalization.",
+    "NE03_NONFINITE_FLOAT": "A non-finite floating-point value is forbidden.",
+    "NE03_NPZ_ARRAY_INVALID": "An NPZ value has an unsupported dtype, layout, or shape.",
+    "NE03_NPZ_NAME_INVALID": "An NPZ member name is unsafe, duplicated, or non-canonical.",
+    "NE03_NPZ_NONFINITE": "An NPZ numerical array contains a non-finite value.",
+    "NE03_NUMPY_UNAVAILABLE": "NumPy is required only for deterministic NPZ serialization.",
+    "NE03_PATH_CASE_COLLISION": "Two paths collide under Windows case-insensitive comparison.",
+    "NE03_PATH_ESCAPE": "A resolved path escapes its declared root.",
+    "NE03_PATH_REPARSE_POINT": "A symlink, junction, or other reparse point is forbidden.",
+    "NE03_PRODUCT_ENABLEMENT_FORBIDDEN": "Wave 0 cannot enable calculations, imports, exports, or policy mutation.",
+    "NE03_RESERVED_KEY": "A reserved canonical object key is used incorrectly.",
+    "NE03_ROLE_INVALID": "A source-manifest role is empty or malformed.",
+    "NE03_SCHEMA_KEYS_MISMATCH": "An object does not have the exact required key set.",
+    "NE03_SCHEMA_VERSION_MISMATCH": "An artifact schema version is unknown or incorrect.",
+    "NE03_SHA256_INVALID": "A SHA-256 value is not 64 lowercase hexadecimal characters.",
+    "NE03_SOURCE_CHANGED_DURING_READ": "A source file changed while its stable hash was computed.",
+    "NE03_SOURCE_SCOPE_DUPLICATE": "A source scope contains a duplicate path.",
+    "NE03_SOURCE_SCOPE_EMPTY": "The explicit source scope is empty.",
+    "NE03_TEXT_NOT_NFC": "Loaded canonical text is not Unicode NFC.",
+    "NE03_UNSAFE_RELATIVE_PATH": "A path is not a safe canonical POSIX relative path.",
+    "NE03_UNSUPPORTED_TYPE": "A value type is outside the canonical serialization contract.",
+    "NE03_WINDOWS_RESERVED_PATH": "A path contains a Windows-reserved or ambiguous component."
+  },
+  "required_evidence_classes": [
+    "unit",
+    "analytic_manufactured",
+    "property_based",
+    "convergence",
+    "conservation",
+    "determinism",
+    "invalid_input",
+    "byte_replay",
+    "isolation"
+  ],
+  "required_checks": [
+    "W0-001",
+    "W0-002",
+    "W0-003",
+    "W0-004",
+    "W0-005",
+    "W0-006",
+    "W0-007",
+    "W0-008",
+    "W0-009",
+    "W0-010",
+    "W0-011",
+    "W0-012",
+    "W0-013",
+    "W0-014",
+    "W0-015",
+    "W0-016",
+    "W0-017",
+    "W0-018",
+    "W0-019",
+    "W0-020",
+    "W0-021",
+    "W0-022"
+  ],
+  "schema_version": "THERMOGAR-NE03-WAVE0-HARNESS-1",
+  "scope": "HARNESS_PRIMITIVES_ONLY_NO_NUMERICAL_ACCEPTANCE",
+  "scientific_material_status": "PERMANENTLY_UNQUALIFIED_WITHIN_NO_EXPERIMENT_SCOPE",
+  "source_manifest_contract": {
+    "casefold_collision_rejection": true,
+    "empty_scope_allowed": false,
+    "entry_order": "UNICODE_CODEPOINT_ASCENDING",
+    "excluded_component_names": [
+      ".venv-mac",
+      ".venv-windows",
+      "__pycache__",
+      "backups",
+      "projects",
+      "results",
+      "update_backups",
+      "user_data"
+    ],
+    "hash_algorithm": "SHA256",
+    "path_style": "SAFE_POSIX_RELATIVE",
+    "pre_resolve_reparse_rejection": true,
+    "scope_mode": "RECURSIVE_REGULAR_FILE_TREE_WITH_FIXED_COMPONENT_EXCLUSIONS",
+    "stable_read_required": true
+  },
+  "status": "WAVE0_PRIMITIVES_ONLY_NOT_EXECUTED_NOT_NE03_ACCEPTANCE",
+  "success_status": "WAVE0_HARNESS_QUALIFIED_NOT_NE03_ACCEPTANCE",
+  "wave": "WAVE_0_HARNESS_QUALIFICATION",
+  "wave0_qualification_claim": false
+}

@@ -1,0 +1,221 @@
+{
+  "schema_version": 2,
+  "profile_id": "mc_fe_v2062_thermogar_working",
+  "status": "validated_internal_pending_upstream_confirmation",
+  "created_at": "2026-08-22T10:57:51.028516+00:00",
+  "patch_id": "TG-FE-2062-C15-001",
+  "compatibility_patches": [
+    {
+      "patch_id": "TG-FE-2062-C15-001",
+      "database": "mc_fe_v2.062",
+      "action": "disable_exact_thermodynamic_parameter",
+      "phase": "C15_LAVES",
+      "parameter_type": "G",
+      "constituents": "FE,NI:MN,SI",
+      "parameter_order": 0,
+      "signature": "G(C15_LAVES,FE,NI:MN,SI;0)",
+      "original_expression": "-9e6",
+      "original_command": "PARAMETER G(C15_LAVES,FE,NI:MN,SI;0) 273.00 -9e6; 6000.00  N \nREF:287 !",
+      "original_command_sha256": "E4BE33368B8FDA9BE68C7CFFAB5A7C5884E33D4CC38E9A52570E4AF1A66BB4F4",
+      "reason_code": "HIGH_TEMPERATURE_LIQUIDUS_BLOCKING_ANOMALY",
+      "reason": "Lilith/ThermoGar cross-check found residual C15_LAVES at 1800-2000 K that can prevent full liquid and liquidus determination in pycalphad. The value is not replaced or guessed.",
+      "reason_ru": "Сверка Лилит/ThermoGar выявила сохранение около 3–3,5 мол.% C15_LAVES при 1800–2000 K и отсутствие однофазной жидкости для части легированных сталей. Отключается только точная исходная команда; новое значение не подбирается.",
+      "evidence": {
+        "reported_failed_grades": 74,
+        "reported_total_steel_grades": 91,
+        "reported_temperature_range_K": [
+          1800,
+          1900,
+          2000
+        ],
+        "source_document": "docs/evidence/SPRAVKA_LILIT_SVERKA_BAZ.md, 22.08.2026",
+        "conversion_changed_original_parameter": false
+      },
+      "status": "pending_upstream_confirmation",
+      "upstream_reference": null,
+      "matched_commands": 1,
+      "matched_active_commands": 1,
+      "c15_laves_parameters_before": 19,
+      "laves_phase_parameters_before": 125,
+      "laves_phase_parameter_sha256_before": "D2B092D8BC1EB000852DBD754DB4839AB594AB0CD8FE66F5CE8778CE084B169B",
+      "applied": true,
+      "c15_laves_parameters_after": 18,
+      "laves_phase_parameters_after": 125,
+      "laves_phase_parameter_sha256_after": "D2B092D8BC1EB000852DBD754DB4839AB594AB0CD8FE66F5CE8778CE084B169B"
+    }
+  ],
+  "disabled_thermodynamic_parameters": [
+    {
+      "patch_id": "TG-FE-2062-C15-001",
+      "database": "mc_fe_v2.062",
+      "action": "disable_exact_thermodynamic_parameter",
+      "phase": "C15_LAVES",
+      "parameter_type": "G",
+      "constituents": "FE,NI:MN,SI",
+      "parameter_order": 0,
+      "signature": "G(C15_LAVES,FE,NI:MN,SI;0)",
+      "original_expression": "-9e6",
+      "original_command": "PARAMETER G(C15_LAVES,FE,NI:MN,SI;0) 273.00 -9e6; 6000.00  N \nREF:287 !",
+      "original_command_sha256": "E4BE33368B8FDA9BE68C7CFFAB5A7C5884E33D4CC38E9A52570E4AF1A66BB4F4",
+      "reason_code": "HIGH_TEMPERATURE_LIQUIDUS_BLOCKING_ANOMALY",
+      "reason": "Lilith/ThermoGar cross-check found residual C15_LAVES at 1800-2000 K that can prevent full liquid and liquidus determination in pycalphad. The value is not replaced or guessed.",
+      "reason_ru": "Сверка Лилит/ThermoGar выявила сохранение около 3–3,5 мол.% C15_LAVES при 1800–2000 K и отсутствие однофазной жидкости для части легированных сталей. Отключается только точная исходная команда; новое значение не подбирается.",
+      "evidence": {
+        "reported_failed_grades": 74,
+        "reported_total_steel_grades": 91,
+        "reported_temperature_range_K": [
+          1800,
+          1900,
+          2000
+        ],
+        "source_document": "docs/evidence/SPRAVKA_LILIT_SVERKA_BAZ.md, 22.08.2026",
+        "conversion_changed_original_parameter": false
+      },
+      "status": "pending_upstream_confirmation",
+      "upstream_reference": null,
+      "matched_commands": 1,
+      "matched_active_commands": 1,
+      "c15_laves_parameters_before": 19,
+      "laves_phase_parameters_before": 125,
+      "laves_phase_parameter_sha256_before": "D2B092D8BC1EB000852DBD754DB4839AB594AB0CD8FE66F5CE8778CE084B169B",
+      "applied": true,
+      "c15_laves_parameters_after": 18,
+      "laves_phase_parameters_after": 125,
+      "laves_phase_parameter_sha256_after": "D2B092D8BC1EB000852DBD754DB4839AB594AB0CD8FE66F5CE8778CE084B169B"
+    }
+  ],
+  "patch_policy": {
+    "exact_match_only": true,
+    "matched_active_commands": 1,
+    "replacement_value_introduced": false,
+    "phase_removed": false,
+    "c15_laves_active_g_parameters_before": 19,
+    "c15_laves_active_g_parameters_after": 18,
+    "laves_phase_touched": false
+  },
+  "source_database": {
+    "thermodynamic_path": "/Volumes/Disk/Pet/ThermoGar/databases/original/fe/mc_fe_v2062.tdb",
+    "thermodynamic_sha256": "AA02077EAC3F602DD7479CBEAFB09B450E282716752B3AE2B1FC3A57D9C64865",
+    "mobility_path": "/Volumes/Disk/Pet/ThermoGar/databases/original/fe/mc_fe_v2016.ddb",
+    "mobility_sha256": "92C3F6B9652A8C1D163BDF7C92CD694D6E9932B1E15022A98535176CBACAB7AD",
+    "source_files_unchanged": true
+  },
+  "working_profile": {
+    "thermodynamic_database": {
+      "path": "/Volumes/Disk/Pet/ThermoGar/databases/converted/fe/mc_fe_v2062.thermogar.tdb",
+      "sha256": "DEF6C6862458E879B75CABB32E3BFC93A674F981DF7C89E5F0E6E40C246620ED",
+      "report_path": "/Volumes/Disk/Pet/ThermoGar/databases/converted/fe/mc_fe_v2062.thermogar.tdb.json",
+      "report_sha256": "32C7BC75ED1FA0F7279891C5C58F399CF6F0B740BE3A78143ADE383ED236BFFD"
+    },
+    "thermodynamic_plus_mobility_database": {
+      "path": "/Volumes/Disk/Pet/ThermoGar/databases/converted/fe/mc_fe_v2062_with_mobility.thermogar.tdb",
+      "sha256": "236EC4D9B0540DE04E4E6305FAA208672F31FBDF45B2AE84E92F80BD98053612",
+      "report_path": "/Volumes/Disk/Pet/ThermoGar/databases/converted/fe/mc_fe_v2062_with_mobility.thermogar.tdb.json",
+      "report_sha256": "9F630E2A77441DCC0B20BA82C448B98413FF4A2CD358C2D8B66229567D811DED"
+    }
+  },
+  "upstream_unpatched_diagnostic_profile": {
+    "thermodynamic_database": {
+      "path": "/Volumes/Disk/Pet/ThermoGar/databases/diagnostic/fe/mc_fe_v2062_unpatched.thermogar.tdb",
+      "sha256": "99B5CD56A52B857521122E93F61BAF3CAED120D1A37E562902EE6AA12F10692C",
+      "report_path": "/Volumes/Disk/Pet/ThermoGar/databases/diagnostic/fe/mc_fe_v2062_unpatched.thermogar.tdb.json",
+      "report_sha256": "AAAB23A108E9EF9EDF55E9F18ECB9D65E3585F8DA2FC15E12E7015D5583005BB"
+    },
+    "thermodynamic_plus_mobility_database": {
+      "path": "/Volumes/Disk/Pet/ThermoGar/databases/diagnostic/fe/mc_fe_v2062_unpatched_with_mobility.thermogar.tdb",
+      "sha256": "F9375C3A7A8649BACE698E2177F2CC964BCE3F8A19F08AE05D88840ABD77B112",
+      "report_path": "/Volumes/Disk/Pet/ThermoGar/databases/diagnostic/fe/mc_fe_v2062_unpatched_with_mobility.thermogar.tdb.json",
+      "report_sha256": "76DE93AB8D0C2D9F64DC7299CEA457AB6B1AA5A12D4AC9B4FFE3E8486B8A690D"
+    },
+    "conversion_patch_record": {
+      "patch_id": "TG-FE-2062-C15-001",
+      "database": "mc_fe_v2.062",
+      "action": "preserve_upstream_parameter_for_diagnostic_profile",
+      "phase": "C15_LAVES",
+      "parameter_type": "G",
+      "constituents": "FE,NI:MN,SI",
+      "parameter_order": 0,
+      "signature": "G(C15_LAVES,FE,NI:MN,SI;0)",
+      "original_expression": "-9e6",
+      "original_command": "PARAMETER G(C15_LAVES,FE,NI:MN,SI;0) 273.00 -9e6; 6000.00  N \nREF:287 !",
+      "original_command_sha256": "E4BE33368B8FDA9BE68C7CFFAB5A7C5884E33D4CC38E9A52570E4AF1A66BB4F4",
+      "reason_code": "HIGH_TEMPERATURE_LIQUIDUS_BLOCKING_ANOMALY",
+      "reason": "Lilith/ThermoGar cross-check found residual C15_LAVES at 1800-2000 K that can prevent full liquid and liquidus determination in pycalphad. The value is not replaced or guessed.",
+      "reason_ru": "Сверка Лилит/ThermoGar выявила сохранение около 3–3,5 мол.% C15_LAVES при 1800–2000 K и отсутствие однофазной жидкости для части легированных сталей. Отключается только точная исходная команда; новое значение не подбирается.",
+      "evidence": {
+        "reported_failed_grades": 74,
+        "reported_total_steel_grades": 91,
+        "reported_temperature_range_K": [
+          1800,
+          1900,
+          2000
+        ],
+        "source_document": "docs/evidence/SPRAVKA_LILIT_SVERKA_BAZ.md, 22.08.2026",
+        "conversion_changed_original_parameter": false
+      },
+      "status": "pending_upstream_confirmation",
+      "upstream_reference": null,
+      "matched_commands": 1,
+      "matched_active_commands": 1,
+      "c15_laves_parameters_before": 19,
+      "laves_phase_parameters_before": 125,
+      "laves_phase_parameter_sha256_before": "D2B092D8BC1EB000852DBD754DB4839AB594AB0CD8FE66F5CE8778CE084B169B",
+      "applied": false,
+      "c15_laves_parameters_after": 19,
+      "laves_phase_parameters_after": 125,
+      "laves_phase_parameter_sha256_after": "D2B092D8BC1EB000852DBD754DB4839AB594AB0CD8FE66F5CE8778CE084B169B"
+    }
+  },
+  "structural_verification": {
+    "working_exact_minus_9e6_active": 0,
+    "upstream_exact_minus_9e6_active": 1,
+    "working_c15_laves_g_parameter_count": 18,
+    "upstream_c15_laves_g_parameter_count": 19,
+    "working_laves_phase_g_parameter_count": 125,
+    "upstream_laves_phase_g_parameter_count": 125,
+    "laves_phase_parameter_sha256_working": "D2B092D8BC1EB000852DBD754DB4839AB594AB0CD8FE66F5CE8778CE084B169B",
+    "laves_phase_parameter_sha256_upstream": "D2B092D8BC1EB000852DBD754DB4839AB594AB0CD8FE66F5CE8778CE084B169B",
+    "laves_phase_untouched": true
+  },
+  "reason": {
+    "code": "HIGH_TEMPERATURE_LIQUIDUS_BLOCKING_ANOMALY",
+    "source": "docs/evidence/SPRAVKA_LILIT_SVERKA_BAZ.md, 22.08.2026",
+    "reported_effect": "C15_LAVES remains about 3-3.5 mol.% up to 2000 K for alloyed steels; liquidus was not found for 74 of 91 grades.",
+    "conversion_changed_original_parameter": false
+  },
+  "acceptance": {
+    "high_temperature": "At 1800, 1900 and 2000 K the explicit 20Kh12VNMF midpoint proxy (or an exact heat analysis supplied by the user) must give LIQUID >= 0.999999 and C15_LAVES <= 1e-8 in the working profile.",
+    "phase_survival": "C15_LAVES remains defined with 18 active G parameters and must appear in at least one documented SEW 410 Nb duplex benchmark at 600-900 K. This is a database-survival check, not a reproduction of precipitation kinetics.",
+    "laves_phase": "LAVES_PHASE parameters must remain unchanged.",
+    "test_command": "./.venv-mac/bin/python tools/thermogar_fe_database_test.py"
+  },
+  "upstream": {
+    "status": "pending_upstream_confirmation",
+    "reference": null,
+    "query_document": "UPSTREAM_QUERY_C15_LAVES.md",
+    "update_rule": "If upstream confirms a replacement value or a different reciprocal-parameter semantic, update this passport with the primary source and rerun the full acceptance suite."
+  },
+  "internal_validation": {
+    "status": "validated_internal",
+    "validated_at": "2026-08-22T16:06:27+03:00",
+    "high_temperature_liquidus_restored": true,
+    "unpatched_high_temperature_symptom_reproduced": true,
+    "c15_laves_survives_within_673_2000_K": true,
+    "patch_inactive_subsystem_invariance": true,
+    "best_in_range_witness": {
+      "T_K": 700.0,
+      "MN_at_percent": 33.33333333333333,
+      "NI_at_percent": 53.333333333333336,
+      "SI_at_percent": 13.33333333333334,
+      "working_C15_LAVES": 1.0,
+      "diagnostic_C15_LAVES": 1.0,
+      "maximum_phase_difference": 0.0
+    },
+    "evidence": {
+      "high_temperature_csv": "/Volumes/Disk/Pet/ThermoGar/results/validation/stage13_2/high_temperature_liquidus_check.csv",
+      "mn_ni_si_search_csv": "/Volumes/Disk/Pet/ThermoGar/results/validation/stage13_2/mn_ni_si_c15_combined.csv",
+      "acceptance_json": "/Volumes/Disk/Pet/ThermoGar/results/validation/stage13_2/stage13_2_acceptance.json"
+    },
+    "meaning": "The exact one-parameter compatibility patch passed internal structural and numerical acceptance. This does not confirm the correct upstream reciprocal parameter value."
+  }
+}

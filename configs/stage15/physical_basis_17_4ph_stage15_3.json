@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.1",
+  "stage": "15.3",
+  "profile_id": "TG-17-4PH-PHYSICAL-BASIS-R1",
+  "scope": "Physical phase-branch and input qualification for a future diagnostic KWN model; this file is not a material card and does not permit Fe KWN integration or publication.",
+  "matrix_target": {
+    "physical_description": "Martensitic alpha-prime matrix after a documented solution treatment and cooling route",
+    "database_proxy_under_review": "BCC_A2",
+    "status": "PROVISIONAL_PROXY",
+    "limitations": [
+      "A CALPHAD BCC_A2 phase does not reproduce the non-equilibrium martensitic transformation, lath structure, dislocation substructure or retained/reverted austenite by itself.",
+      "The actual initial matrix state and complete thermal history must be supplied independently for the material being modeled."
+    ]
+  },
+  "strengthening_precipitate_target": {
+    "physical_description": "Cu-rich precipitation responsible for age hardening of 17-4PH",
+    "reported_sequence": [
+      "Cu-Fe-rich clusters or coherent Cu-rich BCC precipitates",
+      "9R transition structure",
+      "Cu-rich twinned FCC precursor",
+      "FCC copper at later aging stages"
+    ],
+    "status": "PHYSICAL_TARGET_ONLY",
+    "important_distinction": "A generic FCC_A1 calculation is not automatically a Cu-rich precipitation calculation. The returned precipitate composition must be decoded in the solute order used to construct the Kawin thermodynamics object."
+  },
+  "secondary_phases": {
+    "examples": [
+      "NbC or M(C,N)",
+      "retained or reverted austenite",
+      "other carbides or intermetallics depending on manufacturing and heat treatment"
+    ],
+    "status": "SEPARATE_FROM_PRIMARY_CU_HARDENING_MODEL",
+    "note": "Secondary phases may affect mass balance and properties but must not be mistaken for the Cu-rich age-hardening precipitate."
+  },
+  "diagnostic_branch_classifier": {
+    "purpose": "Conservative computational screen only. Passing the screen does not physically qualify a phase or a KWN model.",
+    "cu_rich": {
+      "positive_driving_force_required": true,
+      "cu_must_be_dominant": true,
+      "minimum_atomic_fraction_cu": 0.5,
+      "minimum_cu_enrichment_ratio_over_bulk": 5.0,
+      "maximum_atomic_fraction_c": 0.1,
+      "maximum_atomic_fraction_n": 0.1,
+      "maximum_atomic_fraction_nb": 0.1
+    },
+    "nbc_like": {
+      "minimum_atomic_fraction_c": 0.25,
+      "minimum_atomic_fraction_nb": 0.25,
+      "minimum_sum_c_plus_nb": 0.8
+    },
+    "closure_tolerance": 1e-06,
+    "cu_enriched": {
+      "positive_driving_force_required": true,
+      "minimum_atomic_fraction_cu": 0.2,
+      "minimum_cu_enrichment_ratio_over_bulk": 5.0,
+      "maximum_atomic_fraction_c": 0.1,
+      "maximum_atomic_fraction_n": 0.1,
+      "maximum_atomic_fraction_nb": 0.1
+    }
+  },
+  "kawin_model_constraints": {
+    "matrix_phase_position": "The first phase supplied to the thermodynamics object is the parent or matrix phase.",
+    "composition_order": "Multicomponent compositions are passed and returned in the solute order used to construct the thermodynamics object.",
+    "order_disorder": "For an order/disorder model, Kawin assumes the parent matrix is the disordered part.",
+    "driving_force_return": "getDrivingForce returns driving force and precipitate composition; positive driving force alone does not identify the desired physical branch.",
+    "status": "SOFTWARE_CONSTRAINT"
+  },
+  "sources": [
+    {
+      "id": "KAWIN_THERMODYNAMICS_DOCS",
+      "type": "official_software_documentation",
+      "title": "Kawin — Thermodynamics",
+      "locator": "https://kawin.org/docs/02-examples/thermodynamics/",
+      "supports": "matrix phase ordering, order/disorder parent rule and multicomponent composition ordering"
+    },
+    {
+      "id": "KAWIN_API_DRIVING_FORCE",
+      "type": "official_software_documentation",
+      "title": "Kawin thermodynamics API",
+      "locator": "https://kawin.org/docs/06-api/kawin-thermo-thermodynamics/",
+      "supports": "getDrivingForce return contract"
+    },
+    {
+      "id": "ROWOLT_2020",
+      "type": "primary_research",
+      "title": "Dissolution and precipitation of copper-rich phases during heating and cooling of precipitation-hardening steel X5CrNiCuNb16-4 (17-4 PH)",
+      "locator": "https://doi.org/10.1007/s10853-020-04880-4",
+      "supports": "Cu-rich precipitation sequence from clusters through 9R and FCC structures"
+    },
+    {
+      "id": "WANG_2017_APT",
+      "type": "primary_research",
+      "title": "Atom Probe Tomographic Characterization of Nanoscale Cu-Rich Precipitates in 17-4 Precipitate Hardened Stainless Steel Tempered at Different Temperatures",
+      "locator": "https://doi.org/10.1017/S1431927616012629",
+      "supports": "temperature-dependent Cu-rich cluster chemistry and interfacial segregation"
+    },
+    {
+      "id": "CHERUVATHUR_2015_NIST",
+      "type": "primary_research_repository_record",
+      "title": "Additive Manufacturing of 17-4 PH Stainless Steel: Post Processing Heat Treatment to Achieve Uniform Reproducible Microstructure",
+      "locator": "https://doi.org/10.1007/s11837-015-1754-4",
+      "supports": "martensitic matrix and Cu-rich strengthening in wrought material; retained austenite and Nb carbides in AM material"
+    },
+    {
+      "id": "LI_2022",
+      "type": "primary_research",
+      "title": "Homogenization timing effect on microstructure and precipitation strengthening of 17–4PH stainless steel fabricated by laser powder bed fusion",
+      "locator": "https://doi.org/10.1016/j.addma.2022.102672",
+      "supports": "distinct NbC and Cu-rich precipitate populations and sensitivity to heat-treatment history"
+    }
+  ]
+}

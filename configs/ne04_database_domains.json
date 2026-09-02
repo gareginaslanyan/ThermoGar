@@ -1,0 +1,403 @@
+{
+  "schema_version": "SWR-NE04-DATABASE-DOMAINS-3",
+  "gate": "NE-04",
+  "status": "IN_PROGRESS_NOT_ACCEPTED",
+  "claim": "STATIC_CONTRACT_ONLY_NOT_NE04_ACCEPTANCE",
+  "calculations_enabled": false,
+  "production_use": "DENIED",
+  "release_database_keys": [
+    "ni",
+    "al"
+  ],
+  "diagnostic_database_keys": [
+    "fe"
+  ],
+  "phase_request_contract": {
+    "normalization": "STRIP_AND_UPPERCASE",
+    "requested_phases_required": true,
+    "explicit_exclusions_required": true,
+    "unknown_phase_policy": "BLOCK",
+    "duplicate_phase_policy": "BLOCK",
+    "request_exclusion_overlap_policy": "BLOCK",
+    "empty_effective_phase_set_policy": "BLOCK",
+    "silent_phase_drop_allowed": false
+  },
+  "evaluator_integration": {
+    "status": "CENTRAL_BOUNDARY_INTEGRATED_FEATURE_BINDINGS_PENDING",
+    "module_relative_path": "app/thermogar_ne04_domain.py",
+    "release_boundary_relative_path": "app/thermogar_release_ui.py",
+    "release_boundary_callable": "release_calculation_button",
+    "enabled_calculation_requires_domain_request": true,
+    "missing_request_policy": "BLOCK",
+    "denied_decision_policy": "BLOCK",
+    "canonical_release_entrypoint": "STREAMLIT_UI_ONLY",
+    "direct_python_api_disposition": "INTERNAL_VERIFICATION_ONLY_NOT_RELEASE_ENTRYPOINT",
+    "legacy_notebook_disposition": "ARCHIVE_ONLY_EXCLUDED_FROM_RELEASE_PACKAGE",
+    "release_calculation_calls_discovered": 23,
+    "release_calculation_calls_bound": 0
+  },
+  "reason_code_registry": {
+    "NE04_CALCULATIONS_DISABLED": "The release calculation switch remains disabled until every required gate is accepted.",
+    "NE04_COMPOSITION_BASIS_INVALID": "The complete normalized composition basis must be MOLE_FRACTION or MASS_FRACTION.",
+    "NE04_COMPOSITION_DOMAIN_NOT_MACHINE_ENFORCED": "Only database-element membership is pinned; numerical composition limits are not yet an accepted machine-enforced domain.",
+    "NE04_COMPOSITION_ELEMENT_INVALID": "A composition element is duplicated after normalization, is not a permitted user element, or is VA.",
+    "NE04_COMPOSITION_REQUIRED": "A complete normalized composition including the configured balance element is required.",
+    "NE04_COMPOSITION_TOTAL_INVALID": "The complete normalized composition must contain a positive balance fraction and sum to one.",
+    "NE04_COMPOSITION_VALUE_INVALID": "Every composition fraction must be a finite real number between zero and one.",
+    "NE04_CONFIG_INVALID": "The NE-04 contract, database identity, or unsupported contract state failed closed.",
+    "NE04_DATABASE_DIAGNOSTIC_ONLY": "The requested database is diagnostic-only and is outside the Ni/Al release surface.",
+    "NE04_DATABASE_IDENTITY_MISMATCH": "A configured database file, path, or SHA-256 identity does not match the pinned contract.",
+    "NE04_DOMAIN_DECISION_REQUIRED": "An enabled numerical release action must provide a complete request evaluated by the NE-04 domain boundary.",
+    "NE04_DOMAIN_FEATURE_BINDINGS_PENDING": "The central release boundary is fail-closed, but feature-specific request envelopes and receipts are not yet bound to every calculation callsite.",
+    "NE04_DUPLICATE_PHASE_INPUT": "A phase request or exclusion contains a duplicate after canonical normalization.",
+    "NE04_EMPTY_EFFECTIVE_PHASE_SET": "No phase remains for the requested calculation.",
+    "NE04_EXCLUDED_PHASE_NOT_PRESENT": "An explicit exclusion is not a real phase of the selected database.",
+    "NE04_EXPLICIT_EXCLUSIONS_REQUIRED": "The caller did not provide the mandatory explicit exclusions array.",
+    "NE04_FEATURE_ID_REQUIRED": "Every numerical domain request must identify the release feature being evaluated.",
+    "NE04_LEGAL_REDISTRIBUTION_REVIEW_OPEN": "License-header observations have not yet been converted into a completed redistribution review.",
+    "NE04_PHASE_METADATA_INCONSISTENT": "Source, converted, merged, manifest, or runtime phase metadata do not agree exactly.",
+    "NE04_PHASE_REQUEST_EXCLUSION_OVERLAP": "The same canonical phase is both requested and explicitly excluded.",
+    "NE04_PRESSURE_DOMAIN_UNKNOWN": "No accepted pressure domain is available; pressure requests remain fail-closed.",
+    "NE04_PRESSURE_REQUEST_INVALID": "Pressure must be a finite positive absolute value in pascals.",
+    "NE04_REQUESTED_PHASE_NOT_PRESENT": "A requested phase is not a real phase of the selected database.",
+    "NE04_REQUESTED_PHASES_REQUIRED": "The caller did not provide the mandatory non-empty requested phase array.",
+    "NE04_RUNTIME_REPLAY_NOT_SEALED": "A local runtime replay is not an independently anchored sealed NE-04 acceptance record.",
+    "NE04_TEMPERATURE_DOMAIN_UNKNOWN": "No accepted temperature domain is available; temperature requests remain fail-closed.",
+    "NE04_TEMPERATURE_REQUEST_INVALID": "Temperature bounds must be finite positive kelvin values in nondecreasing order.",
+    "NE04_UNKNOWN_DATABASE": "The requested database key is not part of the NE-04 contract."
+  },
+  "databases": {
+    "ni": {
+      "label": "Nickel alloys - mc_ni 2.036",
+      "release_disposition": "RUNTIME_CANDIDATE_PENDING_NE04",
+      "identity": {
+        "original_relative_path": "databases/original/ni/mc_ni_v2036.tdb",
+        "original_sha256": "84ba813156e1f7d8bde495d74420319afec03572b981f6b56103807f305313ab",
+        "thermodynamic_relative_path": "databases/converted/mc_ni_v2036.garcalc.tdb",
+        "thermodynamic_sha256": "1dc72c5501eb2d9a1778c5a5622728257572a1dcd0ee218c9b4f9a00e0ad08f8",
+        "mobility_relative_path": "databases/original/ni/mc_ni_v2012.ddb",
+        "mobility_sha256": "744d67b93843c579c3323a215f4ccb7e265ff3282c3d4c10c1cef0a6e5cabe4d",
+        "runtime_relative_path": "databases/converted/mc_ni_v2036_with_mobility.garcalc.tdb",
+        "runtime_sha256": "1882d841a337063e0585d261c690ae7e565838234e231e21b8541a5cb0dba391",
+        "manifest_relative_path": "databases/converted/mc_ni_v2036_with_mobility.garcalc.tdb.json"
+      },
+      "elements": {
+        "balance": "NI",
+        "vacancy_species": "VA",
+        "allowed_user_elements": [
+          "AL",
+          "B",
+          "C",
+          "CO",
+          "CR",
+          "CU",
+          "FE",
+          "HF",
+          "LA",
+          "MN",
+          "MO",
+          "N",
+          "NB",
+          "NI",
+          "O",
+          "S",
+          "SI",
+          "TI",
+          "V",
+          "W",
+          "Y",
+          "ZR"
+        ]
+      },
+      "phases": {
+        "expected_count": 99,
+        "sorted_lf_sha256": "0772268425e14b126c98d4a343c9035fb5b8cd80ad6716b2cb1c1e6be1d65b96",
+        "required_members": {
+          "equilibrium_witness": [
+            "FCC_A1",
+            "GAMMA_PRIME"
+          ],
+          "mobility_references": [
+            "BCC_A2",
+            "BCC_B2",
+            "FCC_A1",
+            "NIAL"
+          ],
+          "solidification": [
+            "LIQUID"
+          ]
+        },
+        "parser_non_phase_witnesses": [
+          "DIAGRAM",
+          "EQUILBRIA",
+          "EQUILIBRIA",
+          "STABILITY"
+        ],
+        "runtime_explicit_exclusions": []
+      },
+      "composition": {
+        "status": "ELEMENT_MEMBERSHIP_ONLY_BLOCKED",
+        "numeric_limits_machine_enforced": false,
+        "reason_codes": [
+          "NE04_COMPOSITION_DOMAIN_NOT_MACHINE_ENFORCED"
+        ],
+        "header_observations": [
+          "The source header reports weight-percent limits for a classical Ni-superalloy subset.",
+          "The source header lists Mo twice with different upper limits; no value is promoted into this machine contract."
+        ]
+      },
+      "temperature_k": {
+        "status": "UNKNOWN_BLOCKED",
+        "minimum": null,
+        "maximum": null,
+        "reason_codes": [
+          "NE04_TEMPERATURE_DOMAIN_UNKNOWN"
+        ],
+        "header_observations": [
+          {
+            "kind": "GIBBS_EXPRESSION_LIMIT_NOT_ACCEPTED_RUNTIME_DOMAIN",
+            "minimum": 273.0,
+            "maximum": 6000.0
+          }
+        ]
+      },
+      "pressure_pa": {
+        "status": "UNKNOWN_BLOCKED",
+        "minimum": null,
+        "maximum": null,
+        "reason_codes": [
+          "NE04_PRESSURE_DOMAIN_UNKNOWN"
+        ],
+        "header_observations": []
+      },
+      "legal": {
+        "status": "REVIEW_REQUIRED_BLOCKED",
+        "redistribution_allowed": null,
+        "reviewer": null,
+        "review_date": null,
+        "reason_codes": [
+          "NE04_LEGAL_REDISTRIBUTION_REVIEW_OPEN"
+        ],
+        "header_observations": [
+          "ODbL-1.0 text is present in the thermodynamic database header.",
+          "DbCL-1.0 text is present in the thermodynamic database header.",
+          "Header text alone is not a completed review of the thermodynamic source, mobility source, or merged derivative."
+        ]
+      },
+      "blockers": [
+        "NE04_COMPOSITION_DOMAIN_NOT_MACHINE_ENFORCED",
+        "NE04_TEMPERATURE_DOMAIN_UNKNOWN",
+        "NE04_PRESSURE_DOMAIN_UNKNOWN",
+        "NE04_LEGAL_REDISTRIBUTION_REVIEW_OPEN",
+        "NE04_DOMAIN_FEATURE_BINDINGS_PENDING",
+        "NE04_RUNTIME_REPLAY_NOT_SEALED"
+      ]
+    },
+    "al": {
+      "label": "Aluminium alloys - mc_al 2.037",
+      "release_disposition": "RUNTIME_CANDIDATE_PENDING_NE04",
+      "identity": {
+        "original_relative_path": "databases/original/al/mc_al_v2037.tdb",
+        "original_sha256": "87ec595f2caae189227ed11d5598c899b436b866ccfefea91304ca57188817c4",
+        "thermodynamic_relative_path": "databases/converted/al/mc_al_v2037.thermogar.tdb",
+        "thermodynamic_sha256": "f02bda0e42ff0733e4b647cbc904643a46c46fc996c57383815ade032a750c45",
+        "mobility_relative_path": "databases/original/al/mc_al_v2008.ddb",
+        "mobility_sha256": "bf192d8c39992d2cabd1e7e36d124c5cdd0ff919b996d876505680d5e6341fb0",
+        "runtime_relative_path": "databases/converted/al/mc_al_v2037_with_mobility.thermogar.tdb",
+        "runtime_sha256": "f9bdf21d434fbe78b5ef3f7f2de69763fa40b81335cdc58889907d41c80cd717",
+        "manifest_relative_path": "databases/converted/al/mc_al_v2037_with_mobility.thermogar.tdb.json"
+      },
+      "elements": {
+        "balance": "AL",
+        "vacancy_species": "VA",
+        "allowed_user_elements": [
+          "AL",
+          "CR",
+          "CU",
+          "FE",
+          "MG",
+          "MN",
+          "NI",
+          "SC",
+          "SI",
+          "TI",
+          "ZN",
+          "ZR"
+        ]
+      },
+      "phases": {
+        "expected_count": 195,
+        "sorted_lf_sha256": "a75b39db8c5dada60308b73ee1fd68f05c4f7d4d4f004d46505a865e7c2f34da",
+        "required_members": {
+          "equilibrium_witness": [
+            "GP_MAT",
+            "THETA_AL2CU"
+          ],
+          "mobility_references": [
+            "FCC_A1",
+            "LIQUID"
+          ],
+          "solidification": [
+            "LIQUID"
+          ]
+        },
+        "parser_non_phase_witnesses": [
+          "RELATIONS"
+        ],
+        "runtime_explicit_exclusions": []
+      },
+      "composition": {
+        "status": "ELEMENT_MEMBERSHIP_ONLY_BLOCKED",
+        "numeric_limits_machine_enforced": false,
+        "reason_codes": [
+          "NE04_COMPOSITION_DOMAIN_NOT_MACHINE_ENFORCED"
+        ],
+        "header_observations": [
+          "The source header reports an Al-rich focus with X(AL)>0.9.",
+          "The source header's prose is not promoted into an accepted machine-enforced composition domain."
+        ]
+      },
+      "temperature_k": {
+        "status": "UNKNOWN_BLOCKED",
+        "minimum": null,
+        "maximum": null,
+        "reason_codes": [
+          "NE04_TEMPERATURE_DOMAIN_UNKNOWN"
+        ],
+        "header_observations": [
+          {
+            "kind": "GIBBS_EXPRESSION_LIMIT_NOT_ACCEPTED_RUNTIME_DOMAIN",
+            "minimum": 273.0,
+            "maximum": 6000.0
+          }
+        ]
+      },
+      "pressure_pa": {
+        "status": "UNKNOWN_BLOCKED",
+        "minimum": null,
+        "maximum": null,
+        "reason_codes": [
+          "NE04_PRESSURE_DOMAIN_UNKNOWN"
+        ],
+        "header_observations": []
+      },
+      "legal": {
+        "status": "REVIEW_REQUIRED_BLOCKED",
+        "redistribution_allowed": null,
+        "reviewer": null,
+        "review_date": null,
+        "reason_codes": [
+          "NE04_LEGAL_REDISTRIBUTION_REVIEW_OPEN"
+        ],
+        "header_observations": [
+          "ODbL-1.0 text is present in the thermodynamic database header.",
+          "DbCL-1.0 text is present in the thermodynamic database header.",
+          "Header text alone is not a completed review of the thermodynamic source, mobility source, or merged derivative."
+        ]
+      },
+      "blockers": [
+        "NE04_COMPOSITION_DOMAIN_NOT_MACHINE_ENFORCED",
+        "NE04_TEMPERATURE_DOMAIN_UNKNOWN",
+        "NE04_PRESSURE_DOMAIN_UNKNOWN",
+        "NE04_LEGAL_REDISTRIBUTION_REVIEW_OPEN",
+        "NE04_DOMAIN_FEATURE_BINDINGS_PENDING",
+        "NE04_RUNTIME_REPLAY_NOT_SEALED"
+      ]
+    },
+    "fe": {
+      "label": "Iron alloys - mc_fe 2.062 diagnostic card",
+      "release_disposition": "DIAGNOSTIC_ONLY",
+      "diagnostic_identity": {
+        "working_profile": "thermogar_patch",
+        "working_runtime_relative_path": "databases/converted/fe/mc_fe_v2062_with_mobility.thermogar.tdb",
+        "working_runtime_sha256": "236ec4d9b0540de04e4e6305faa208672f31fbdf45b2ae84e92f80bd98053612",
+        "upstream_profile": "upstream_original",
+        "upstream_control_relative_path": "databases/diagnostic/fe/mc_fe_v2062_unpatched_with_mobility.thermogar.tdb",
+        "upstream_control_sha256": "f9375c3a7a8649bace698e2177f2cc964bce3f8a19f08ae05d88840abd77b112",
+        "upstream_confirmation_status": "PENDING_CONFIRMATION",
+        "patch_id": "TG-FE-2062-C15-001"
+      },
+      "elements": {
+        "balance": "FE",
+        "vacancy_species": "VA",
+        "allowed_user_elements": [
+          "AL",
+          "B",
+          "C",
+          "CO",
+          "CR",
+          "CU",
+          "FE",
+          "H",
+          "HF",
+          "LA",
+          "MN",
+          "MO",
+          "N",
+          "NB",
+          "NI",
+          "O",
+          "P",
+          "PD",
+          "S",
+          "SI",
+          "TA",
+          "TI",
+          "V",
+          "W",
+          "Y"
+        ]
+      },
+      "phases": {
+        "runtime_expected_count": 132,
+        "sorted_uppercase_lf_sha256": "f6a545c3e6a2a8d497caa00eb2fe439a28d91689646f679038c485704dd44ad4",
+        "legacy_reported_count": 136,
+        "legacy_reported_count_drift": 4
+      },
+      "composition": {
+        "status": "ELEMENT_MEMBERSHIP_ONLY_BLOCKED",
+        "numeric_limits_machine_enforced": false,
+        "reason_codes": [
+          "NE04_COMPOSITION_DOMAIN_NOT_MACHINE_ENFORCED"
+        ],
+        "header_observations": []
+      },
+      "temperature_k": {
+        "status": "UNKNOWN_BLOCKED",
+        "minimum": null,
+        "maximum": null,
+        "reason_codes": [
+          "NE04_TEMPERATURE_DOMAIN_UNKNOWN"
+        ],
+        "header_observations": []
+      },
+      "pressure_pa": {
+        "status": "UNKNOWN_BLOCKED",
+        "minimum": null,
+        "maximum": null,
+        "reason_codes": [
+          "NE04_PRESSURE_DOMAIN_UNKNOWN"
+        ],
+        "header_observations": []
+      },
+      "legal": {
+        "status": "REVIEW_REQUIRED_BLOCKED",
+        "redistribution_allowed": null,
+        "reviewer": null,
+        "review_date": null,
+        "reason_codes": [
+          "NE04_LEGAL_REDISTRIBUTION_REVIEW_OPEN"
+        ],
+        "header_observations": []
+      },
+      "blockers": [
+        "NE04_COMPOSITION_DOMAIN_NOT_MACHINE_ENFORCED",
+        "NE04_TEMPERATURE_DOMAIN_UNKNOWN",
+        "NE04_PRESSURE_DOMAIN_UNKNOWN",
+        "NE04_LEGAL_REDISTRIBUTION_REVIEW_OPEN",
+        "NE04_DOMAIN_FEATURE_BINDINGS_PENDING",
+        "NE04_RUNTIME_REPLAY_NOT_SEALED"
+      ]
+    }
+  }
+}

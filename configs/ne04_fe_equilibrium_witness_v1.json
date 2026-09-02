@@ -1,0 +1,453 @@
+{
+  "schema_version": "SWR-NE04-FE-EQUILIBRIUM-WITNESS-2",
+  "stage": "S2-CODE-A",
+  "claim": "LOCAL_INTERNAL_DIAGNOSTIC_REAL_EQUILIBRIUM_NOT_NE04_RELEASE",
+  "acceptance": false,
+  "counts_toward_ne04_acceptance": false,
+  "execution_eligible": false,
+  "execution_eligible_semantic": "NOT_RELEASE_OR_PRODUCT_ELIGIBILITY",
+  "local_diagnostic_execution_capable": true,
+  "local_diagnostic_execution_permitted": "ONLY_EXACT_BOUNDED_S2_WORKER",
+  "release_eligible": false,
+  "production_use": "DENIED",
+  "pressure_domain_status": "UNKNOWN_BLOCKED",
+  "product_ui_connected": false,
+  "real_equilibrium_executed_in_code_stage": false,
+  "s1_external_anchor": {
+    "anchor_id": "NE04_FE_S1_R2_20260827T125427Z",
+    "role": "INERT_PROVENANCE_NOT_RUNTIME_DEPENDENCY_NOT_S2_ACCEPTANCE",
+    "anchor_json_bytes": 4108,
+    "anchor_json_sha256": "f20b5a0ca903e6b7bb5f923aedfd30ae6782996d116e70a4ae5d5e9a638b6de9",
+    "anchor_verifier_bytes": 2838,
+    "anchor_verifier_sha256": "597350de774b6d6581fe93bf32438a4595f3305497d82c177f70a84871637e48",
+    "anchor_contents_manifest_sha256": "89a17ae5d2180c848a0aa9c113ecf5af42e8bef645224607dd66fa03defe9c16",
+    "external_path_is_runtime_dependency": false,
+    "frozen_s1_subjects": {
+      "app/thermogar_fe_local_witness.py": {
+        "bytes": 12533,
+        "sha256": "794c91ba91c7425555826e12c23a5e2b57038972aedc4738735fc692e1c38a34"
+      },
+      "app/thermogar_fe_local_witness_backend.py": {
+        "bytes": 12635,
+        "sha256": "0cf26df0be078776a20c0f08a51b4986b8e03481e3bb366256cea47b88171ae1"
+      },
+      "app/thermogar_fe_local_witness_receipts.py": {
+        "bytes": 57092,
+        "sha256": "8fa97befa0f2d7d287c1a1f51d446429ffca61dde68107203cf57e9e3b6c0706"
+      },
+      "configs/ne04_fe_local_witness_profiles.json": {
+        "bytes": 10421,
+        "sha256": "fcda7fffac6f3b792f6cacdafc35a09cf7f756bff4694bb1ded22b04593f0776"
+      },
+      "tools/thermogar_fe_local_witness_test.py": {
+        "bytes": 23760,
+        "sha256": "97e55c4665c564c78423610dd412613fbaa1ae3bf6157d65e2a2b2f26baa0654"
+      },
+      "tools/verify_ne04_fe_local_witness.py": {
+        "bytes": 22695,
+        "sha256": "319fd97b076d022b288a13a82959356210b338580a1767d09ef419b88799d550"
+      }
+    }
+  },
+  "runtime_profiles": {
+    "thermogar_patch": {
+      "role": "PATCHED_LOCAL_DIAGNOSTIC_ONLY",
+      "relative_path": "databases/converted/fe/mc_fe_v2062_with_mobility.thermogar.tdb",
+      "bytes": 568690,
+      "sha256": "236ec4d9b0540de04e4e6305faa208672f31fbdf45b2ae84e92f80bd98053612"
+    },
+    "upstream_original": {
+      "role": "UPSTREAM_LOCAL_DIAGNOSTIC_CONTROL_ONLY",
+      "relative_path": "databases/diagnostic/fe/mc_fe_v2062_unpatched_with_mobility.thermogar.tdb",
+      "bytes": 568418,
+      "sha256": "f9375c3a7a8649bace698e2177f2cc964bce3f8a19f08ae05d88840abd77b112"
+    }
+  },
+  "pinned_inputs": {
+    "source": {
+      "relative_path": "databases/original/fe/mc_fe_v2062.tdb",
+      "bytes": 489296,
+      "sha256": "aa02077eac3f602dd7479cbeafb09b450e282716752b3ae2b1fc3a57d9c64865"
+    },
+    "equilibrium_core": {
+      "relative_path": "app/thermogar_equilibrium_core.py",
+      "bytes": 27988,
+      "sha256": "24734a4c404d7a60220f18a956c884e06ff8dfcfec2ecc10b417f912ecf46bd3"
+    },
+    "numerical_grid_dependency": {
+      "relative_path": "app/thermogar_numerical_grid.py",
+      "bytes": 19791,
+      "sha256": "7115ae94edeb7522c40bd8991b70c568f71e80b8dcd20c94277293bcd239e63f"
+    },
+    "worker_python": {
+      "relative_path": ".venv-windows/Scripts/python.exe",
+      "bytes": 274712,
+      "sha256": "21bb438c0d4a6f1f164b9a646f6ee000340185e5871180aec06db8d3f07c0082"
+    },
+    "pycalphad_workspace_policy": {
+      "relative_path": ".venv-windows/Lib/site-packages/pycalphad/core/workspace.py",
+      "bytes": 27628,
+      "sha256": "b567955bc03fc2d9977976c02abefbed3221e1ddda2e91662ad5a81726a31a4d"
+    },
+    "pycalphad_equilibrium_api": {
+      "relative_path": ".venv-windows/Lib/site-packages/pycalphad/core/equilibrium.py",
+      "bytes": 4304,
+      "sha256": "939696bd5f7a64dcde08591de66828988a8eb45964c3f9ebc1d74686301fdbb8"
+    },
+    "pycalphad_solver": {
+      "relative_path": ".venv-windows/Lib/site-packages/pycalphad/core/solver.py",
+      "bytes": 9983,
+      "sha256": "308b844ad74929b7d46c093a197006167e0a2e88037d657ab5e3af667fdc2608"
+    },
+    "pycalphad_utils_filter": {
+      "relative_path": ".venv-windows/Lib/site-packages/pycalphad/core/utils.py",
+      "bytes": 22838,
+      "sha256": "1705991a0984401993805e7231278b1005ff7d1da984704132d28e163d3af258"
+    }
+  },
+  "runtime_dependencies": {
+    "python_major_minor": "3.11",
+    "python_architecture": "64bit",
+    "pycalphad_version": "0.11.2",
+    "psutil_version": "7.2.2",
+    "missing_resource_monitor_policy": "BLOCK_BEFORE_SPAWN"
+  },
+  "request_contract": {
+    "public_api_parameters": [
+      "profile_id",
+      "mass_fractions",
+      "temperature_k"
+    ],
+    "profile_order_for_pair_cli": [
+      "thermogar_patch",
+      "upstream_original"
+    ],
+    "composition_basis": "MASS_FRACTION",
+    "mass_fraction_elements": [
+      "AL", "B", "C", "CO", "CR", "CU", "FE", "H", "HF", "LA",
+      "MN", "MO", "N", "NB", "NI", "O", "P", "PD", "S", "SI",
+      "TA", "TI", "V", "W", "Y"
+    ],
+    "full_inventory_filter_components": [
+      "AL", "B", "C", "CO", "CR", "CU", "H", "HF", "LA", "MN",
+      "MO", "N", "NB", "NI", "O", "P", "PD", "S", "SI", "TA",
+      "TI", "V", "W", "Y", "FE", "VA"
+    ],
+    "solver_component_projection": {
+      "algorithm": "MASS_ORDER_STRICTLY_POSITIVE_NORMALIZED_MASS_V1",
+      "source": "NORMALIZED_PUBLIC_25_MASS_ROWS",
+      "active_non_fe_rule": "STRICTLY_GREATER_THAN_ZERO",
+      "ordering": "MASS_ORDER_FILTERED_THEN_FE_VA",
+      "zero_sign_normalization": "PLUS_ZERO_BEFORE_HASH_PROJECTION_AND_RECEIPT",
+      "caller_selectable": false
+    },
+    "balance_element": "FE",
+    "positive_balance_required": true,
+    "vacancy_in_user_composition": false,
+    "vacancy_solver_component_only": true,
+    "vacancy_condition_forbidden": true,
+    "fraction_sum": 1.0,
+    "fraction_sum_absolute_tolerance": 1e-12,
+    "source_limit_unit": "WT_PERCENT",
+    "request_fraction_unit": "FRACTION_OF_ONE",
+    "wt_percent_to_mass_fraction_factor": 0.01,
+    "strict_upper_operator": "<",
+    "strict_upper_bounds_wt_percent": {
+      "AL": 3.0,
+      "B": 0.5,
+      "C": 0.5,
+      "CO": 3.0,
+      "CR": 25.0,
+      "CU": 1.0,
+      "H": 0.1,
+      "HF": 0.5,
+      "LA": 0.5,
+      "MN": 25.0,
+      "MO": 5.0,
+      "N": 1.0,
+      "NB": 1.0,
+      "NI": 26.0,
+      "O": 0.5,
+      "P": 0.05,
+      "PD": 4.0,
+      "S": 0.1,
+      "SI": 3.5,
+      "TA": 0.5,
+      "TI": 0.5,
+      "V": 0.5,
+      "W": 3.0,
+      "Y": 0.5
+    },
+    "temperature_k": {
+      "minimum": 673.0,
+      "maximum": 2000.0,
+      "minimum_inclusive": true,
+      "maximum_inclusive": true
+    },
+    "pressure_pa": {
+      "value": 101325.0,
+      "arbitrary_input_allowed": false,
+      "domain_status": "UNKNOWN_BLOCKED"
+    },
+    "solver_options": {
+      "pdens": 25,
+      "arbitrary_input_allowed": false,
+      "semantic": "LOW_RESOLUTION_LOCAL_NUMERICAL_DIAGNOSTIC_NOT_SOURCE_DOMAIN_CLAIM"
+    },
+    "phase_selection": {
+      "policy": "FROZEN_131_CANDIDATES_THEN_ACTIVE_COMPONENT_FILTER",
+      "active_projection_algorithm": "PYCALPHAD_0_11_2_FILTER_PHASES_FROZEN_131_V1",
+      "arbitrary_input_allowed": false,
+      "exclusions": [],
+      "count": 131,
+      "sha256": "facf84563f444d5bdca2d16f22689a2e8dd6bc6a331d7f188dfcf4d8f2ed91b4",
+      "fingerprint_algorithm": "SHA256_SORTED_UPPERCASE_UTF8_LF",
+      "c15_laves_mandatory": true,
+      "liquid_mandatory": true,
+      "phases": [
+        "ALN", "ALN_EQU", "ALPHA_MN", "ANILITE", "A_CHALC", "BCC_B2",
+        "BCC_DISL", "BETA_MN", "BETA_RHOMBO_B", "BN_HP4", "B_CHALC",
+        "C15_LAVES", "CEMENTITE", "CHI_A12", "CO3MO", "CO3V", "CORUND",
+        "COV3", "COVELLITE", "CR2B", "CR2VC2", "CR3MN5", "CR5B3",
+        "CRB", "CU2S", "DIAMOND_A4", "DIGENITE", "DISULF", "DJURLEITE",
+        "EPS_CARB", "ETA", "ETA_CARB", "FCC_A1", "FC_MONO", "FE17Y2",
+        "FE24C10", "FE3NB3B4", "FE4N", "FEB", "FENBB", "FES_P",
+        "GAMMA_PRIME", "GRAPHITE", "G_PHASE", "HALITE", "HCP_A3",
+        "HF1O2_C", "HF1O2_M", "HF1O2_T", "H_BCC", "KSI_CARBIDE",
+        "KSI_FE5C2", "K_CARB", "LA2O3_A", "LA2O3_C", "LA2O3_H",
+        "LAVES_PHASE", "LIQUID", "M12C", "M23C6", "M2B", "M2P", "M3C2",
+        "M3P", "M5B6", "M6C", "M7C3", "MN3B4", "MN6N4", "MN6N5",
+        "MNB2", "MNB4", "MNNI", "MNNI2", "MNSIN2", "MNS_Q", "MO2M1B2",
+        "MOB", "MOB2", "MOC_ETA", "MU_PHASE", "MU_PHASE_I", "NB3B2",
+        "NBB", "NI2SIH", "NI2SIL", "NI3SI2", "NI3SIH", "NI3SIL",
+        "NI5SI2", "NI5Y", "NISI", "NITI2", "O1_GAS", "O_MN2B", "PD2MN",
+        "PD3MN", "PD5MN3", "PD6FE5MN2", "PDFE_L12", "PDMN_AF", "PDMN_B2",
+        "PDMN_P", "PI_PHASE", "PYRR", "R_PHASE", "SI3N4", "SIGMA", "SIO2",
+        "SPINEL", "T2_MNNISI", "T4", "T7", "TAN_EPS", "TI2O3", "TI3B4",
+        "TI4C2S2", "TIB", "TIB2", "TIO2", "TIS", "TRID", "V3C2", "WC",
+        "Y2O3_C", "Y2O3_H", "Y2TI2O7", "Y2TIO5", "Y4AL2O9", "YALO3",
+        "ZET"
+      ]
+    }
+  },
+  "atomic_mass_contract": {
+    "source": "EXACT_SELECTED_DATABASE_REFSTATES_MASS",
+    "profile_vectors_must_match": true,
+    "vector_sha256": "b1d3ab2a3c238c00654e32aadce6c14e22af3434349c00e354ef729d8f4014a2",
+    "ordered_rows": [
+      ["AL", 26.98154], ["B", 10.811], ["C", 12.011], ["CO", 58.933],
+      ["CR", 51.996], ["CU", 63.546], ["FE", 55.847], ["H", 1.0079],
+      ["HF", 178.49], ["LA", 138.91], ["MN", 54.938], ["MO", 95.94],
+      ["N", 14.007], ["NB", 92.9064], ["NI", 58.69], ["O", 15.999],
+      ["P", 30.974], ["PD", 106.42], ["S", 32.066], ["SI", 28.0855],
+      ["TA", 180.9479], ["TI", 47.88], ["V", 50.9415], ["W", 183.85],
+      ["Y", 88.9059]
+    ]
+  },
+  "worker_protocol": {
+    "request_schema": "SWR-NE04-FE-EQUILIBRIUM-WORKER-REQUEST-2",
+    "response_schema": "SWR-NE04-FE-EQUILIBRIUM-WORKER-RESPONSE-2",
+    "encoding": "UTF-8_STRICT_CANONICAL_JSON",
+    "database_payload_encoding": "BASE64_OF_VERIFIED_IMMUTABLE_BYTES",
+    "profiles_per_worker": 1,
+    "database_transport": "STDIN_BASE64_ONLY",
+    "database_path_argument_allowed": false,
+    "database_env_path_allowed": false,
+    "selected_snapshot_pre_post_sha256_required": true,
+    "decoded_snapshot_must_match_selected_profile": true,
+    "max_decoded_snapshot_bytes": 568690,
+    "database_parser_input": "IO_STRINGIO_UTF8_SIG_DECODED",
+    "approved_scientific_api": "pycalphad.equilibrium",
+    "approved_scientific_api_calls_per_worker": 1,
+    "submitted_non_fe_x_count_minimum": 0,
+    "submitted_non_fe_x_count_maximum": 24,
+    "submitted_non_fe_x_exactly_matches_active_non_fe": true,
+    "submitted_non_fe_x_includes_nominal_zeros": false,
+    "workspace_effective_x_floor": 1e-10,
+    "workspace_effective_x_floor_semantic": "ACTIVE_POSITIVE_ONLY_PINNED_PYCALPHAD_0_11_2_RUNTIME_POLICY",
+    "inactive_exact_zero_remains_exact_zero": true,
+    "dependent_fe_recomputed_after_effective_floor": true,
+    "workspace_effective_x_ceiling": 0.9999999999,
+    "upper_x_clamp_reachable_for_submitted_non_fe": false,
+    "upper_x_clamp_prevention": "EXPLICIT_PRECALL_NON_FE_X_LESS_THAN_CEILING_GATE",
+    "nominal_and_effective_vectors_both_required": true,
+    "convergence_status": "NOT_EXPORTED_BY_DATASET",
+    "scientific_failure_diagnostic": {
+      "applies_only_to_failure_code": "FE_EQ_WORKER_SCIENTIFIC_API_FAILED",
+      "stage": "EQUILIBRIUM_CALL",
+      "scientific_api_invocation_count": 1,
+      "dataset_returned": false,
+      "exception_chain_maximum_items": 4,
+      "exception_chain_policy": "CAUSE_ELSE_CONTEXT_ID_CYCLE_GUARD",
+      "category_allowlist": [
+        "MEMORY_ALLOCATION",
+        "MODEL_CONSTRUCTION",
+        "CONDITION_CONTRACT",
+        "SOLVER_FAILURE",
+        "OTHER"
+      ],
+      "exception_token_allowlist": [
+        "MEMORY_ERROR",
+        "PYCALPHAD_DOF_ERROR",
+        "PYCALPHAD_CONDITION_ERROR",
+        "PYCALPHAD_EQUILIBRIUM_ERROR",
+        "NUMPY_LINALG_ERROR",
+        "OTHER"
+      ],
+      "classification_precedence": [
+        "MEMORY_ERROR",
+        "PYCALPHAD_DOF_ERROR",
+        "PYCALPHAD_CONDITION_ERROR",
+        "PYCALPHAD_EQUILIBRIUM_ERROR",
+        "NUMPY_LINALG_ERROR",
+        "OTHER"
+      ],
+      "unknown_exception_collapses_to": "OTHER",
+      "fingerprint_algorithm": "SHA256_CANONICAL_ASCII_JSON",
+      "fingerprint_payload_keys": ["stage", "category", "exception_tokens"],
+      "raw_exception_included": false,
+      "path_included": false,
+      "forbidden_exception_observations": [
+        "CLASS_NAME_OR_MODULE_OUTSIDE_ALLOWLIST",
+        "STR",
+        "REPR",
+        "ARGS",
+        "MESSAGE",
+        "TRACEBACK",
+        "PATH"
+      ],
+      "required_limitation": "DIAGNOSTIC_MESSAGE_REDACTED"
+    },
+    "max_input_bytes": 1048576,
+    "max_stdout_bytes": 262144,
+    "max_stderr_tail_bytes": 8192,
+    "max_raw_result_rows": 512
+  },
+  "process_contract": {
+    "cross_process_lock_id": "Global\\ThermoGar.NE04.FeWitness.S2.v1",
+    "cross_process_lock_wait_milliseconds": 0,
+    "lock_busy_policy": "FAIL_IMMEDIATELY_NO_QUEUE",
+    "scientific_processes_must_be_serial": true,
+    "windows_creation": "CREATEPROCESSW_SUSPENDED_STARTUPINFOEX_HANDLE_LIST_ONLY",
+    "windows_creation_flags_required": [
+      "CREATE_SUSPENDED",
+      "CREATE_NEW_PROCESS_GROUP",
+      "CREATE_NO_WINDOW",
+      "CREATE_UNICODE_ENVIRONMENT",
+      "EXTENDED_STARTUPINFO_PRESENT"
+    ],
+    "windows_creation_flags_forbidden": [
+      "CREATE_BREAKAWAY_FROM_JOB",
+      "DETACHED_PROCESS"
+    ],
+    "windows_job_limits": "KILL_ON_JOB_CLOSE_AND_JOB_MEMORY",
+    "job_object_limit_kill_on_job_close": true,
+    "job_object_limit_job_memory": true,
+    "assign_job_before_resume": true,
+    "job_assignment_failure_policy": "KILL_SUSPENDED_CHILD_AND_BLOCK",
+    "resume_failure_policy": "TERMINATE_JOB_AND_BLOCK",
+    "rss_monitor_required": true,
+    "rss_monitor_failure": "TERMINATE_JOB_AND_BLOCK",
+    "rss_limit_action": "TERMINATE_JOB",
+    "worker_current_directory": "PRIVATE_NON_REPARSE_TEMP_DIRECTORY",
+    "worker_private_root": "%LOCALAPPDATA%/ThermoGar/S2",
+    "worker_private_root_dacl": "CURRENT_USER_AND_SYSTEM_FULL_CONTROL_PROTECTED",
+    "worker_private_directory_sddl": "D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;OW)",
+    "worker_private_directory_components": [
+      "ThermoGar",
+      "S2",
+      "run-*",
+      "pycache"
+    ],
+    "worker_private_directory_creation": "CREATEDIRECTORYW_SECURITY_ATTRIBUTES_FULL_SELF_RELATIVE_PROTECTED_DESCRIPTOR",
+    "worker_existing_directory_policy": "READ_ONLY_HANDLE_REPARSE_IDENTITY_FINAL_PATH_AND_EXACT_DACL_OR_FAIL_CLOSED",
+    "worker_private_dacl_mismatch_policy": "BLOCK_BEFORE_ENV_LOCK_PIPE_PROCESS_OR_RESUME",
+    "private_containment_diagnostics": "PRIVATE_OPERATION_AND_IMMEDIATE_WIN32_CODE_PUBLIC_FIXED_REDACTED_CODE",
+    "worker_private_directory_cleanup": "HANDLE_ANCHORED_REPARSE_REJECTING_DELETE",
+    "worker_environment": "MINIMAL_ALLOWLIST_NO_PROJECT_PATH",
+    "python_bytecode_policy": "PYTHONDONTWRITEBYTECODE_AND_VERIFIED_EMPTY_PRIVATE_PYTHONPYCACHEPREFIX",
+    "executable_code_read_locks": {
+      "share_mode": "FILE_SHARE_READ_ONLY_DENY_WRITE_AND_DELETE",
+      "held_from_pre_spawn_through_child_termination": true,
+      "locked_roles": [
+        "worker_python",
+        "s2_worker",
+        "equilibrium_core",
+        "numerical_grid_dependency",
+        "pycalphad_workspace_policy",
+        "pycalphad_equilibrium_api",
+        "pycalphad_solver",
+        "pycalphad_utils_filter"
+      ],
+      "rehash_from_locked_handle_before_spawn": true
+    },
+    "popen_fallback_allowed": false,
+    "timeout_seconds_per_attempt": 300.0,
+    "tree_rss_limit_bytes": 4294967296,
+    "resource_poll_interval_seconds": 0.1,
+    "max_attempts": 2,
+    "retry_count_max": 1,
+    "retry_requires_no_parseable_matched_response": true,
+    "retry_optional": true,
+    "retry_only_failure_codes": [
+      "FE_EQ_WORKER_CHILD_EXIT_NO_RESPONSE",
+      "FE_EQ_WORKER_PIPE_BROKEN"
+    ],
+    "timeout_retry_allowed": false,
+    "retry_forbidden_classes": [
+      "TIMEOUT",
+      "RSS_LIMIT_OR_MONITOR_FAILURE",
+      "STDOUT_LIMIT",
+      "MALFORMED_OR_NONCANONICAL_RESPONSE",
+      "RECEIPT_MISMATCH",
+      "PIN_OR_TOCTOU_FAILURE",
+      "VALID_WORKER_TERMINAL_FAILURE"
+    ],
+    "retry_scope_mutation_allowed": false,
+    "process_tree_termination_required": true
+  },
+  "identity_ownership": {
+    "runtime_direction": "CONTROLLER_AND_WORKER_PIN_CONFIG_ONE_WAY",
+    "config_pins_controller_or_worker": false,
+    "external_static_scope_anchor_required_after_r2": true,
+    "external_static_scope_anchor_is_runtime_dependency": false
+  },
+  "success_contract": {
+    "all_25_chemical_output_coordinates_required": true,
+    "solver_component_axis_dynamic_exact": true,
+    "dataset_nonvacant_component_axis_dynamic_exact": true,
+    "projected_active_phase_list_count_sha_algorithm_required": true,
+    "vacancy_output_coordinate": "NULL_WHEN_AXIS_ABSENT_ELSE_FINITE_NONNEGATIVE",
+    "phase_rows_nonempty": true,
+    "raw_active_vertex_np_must_be_finite_positive": true,
+    "raw_active_vertex_all_emitted_x_must_be_finite_nonnegative": true,
+    "raw_active_vertex_x_sum_absolute_tolerance": 1e-8,
+    "raw_active_vertices_preserved_for_validation_not_serialized": true,
+    "raw_active_vertex_projection_digest_required": true,
+    "raw_active_vertices_may_repeat_phase_name": true,
+    "terminal_phase_rows_are_fraction_weighted_aggregates": true,
+    "terminal_phase_rows_sorted_and_unique": true,
+    "max_raw_active_vertex_rows": 512,
+    "max_terminal_phase_rows": 131,
+    "max_projected_phase_rows": 131,
+    "phase_inventory_must_be_within_exact_131": true,
+    "finite_values_required": true,
+    "dataset_phase_shape_must_equal_np_shape": true,
+    "dataset_x_prefix_shape_must_equal_phase_shape": true,
+    "dataset_nonvacant_component_axis_exact_projected_once": true,
+    "raw_rows_may_not_be_squeezed_or_renormalized": true,
+    "phase_fraction_sum_absolute_tolerance": 1e-8,
+    "component_bulk_balance_against_runtime_effective_vector_absolute_tolerance": 1e-8,
+    "numerical_zero_floor_limitation_required": true,
+    "convergence_status_not_exported_limitation_required": true,
+    "expected_phase_claim_allowed": false,
+    "c15_scope_included_required": true,
+    "c15_terminal_presence_is_observation_not_expectation": true,
+    "physics_claim_allowed": false,
+    "raw_xarray_allowed_in_public_output": false,
+    "raw_dataset_serialization_forbidden": true,
+    "canonical_response_bytes_maximum_including_lf": 262144,
+    "raw_active_vertex_rows_allowed_in_public_output": false,
+    "path_allowed_in_public_output": false
+  }
+}

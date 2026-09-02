@@ -1,0 +1,62 @@
+[theme]
+baseFontSize = 18
+headingFontSizes = ["31px", "22px", "22px", "18px", "18px", "18px"]
+chartCategoricalColors = ["#0D2768", "#4587DE", "#000000", "#D55E00", "#009E73", "#CC79A7", "#0072B2"]
+chartSequentialColors = ["#00224E", "#123570", "#3B496C", "#575D6D", "#707173", "#8A8678", "#A59C74", "#C3B369", "#E1CC55", "#FEE838"]
+showSidebarBorder = true
+
+[theme.light]
+primaryColor = "#1F60C1"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F1EFEA"
+textColor = "#2A2722"
+linkColor = "#133B8B"
+borderColor = "#D8D4CC"
+dataframeBorderColor = "#D8D4CC"
+codeBackgroundColor = "#F1EFEA"
+redColor = "#C93425"
+redBackgroundColor = "#FDF0EE"
+redTextColor = "#A62A1E"
+yellowColor = "#5A4500"
+yellowBackgroundColor = "#FFF6D6"
+yellowTextColor = "#2A2722"
+greenColor = "#146C33"
+greenBackgroundColor = "#EFFAF4"
+greenTextColor = "#146C33"
+blueColor = "#1F60C1"
+blueBackgroundColor = "#EFF6FA"
+blueTextColor = "#133B8B"
+grayColor = "#8A857A"
+grayBackgroundColor = "#F1EFEA"
+grayTextColor = "#57534A"
+showWidgetBorder = false
+
+[theme.dark]
+primaryColor = "#5C97E8"
+backgroundColor = "#1A1816"
+secondaryBackgroundColor = "#24211D"
+textColor = "#F1EFEA"
+linkColor = "#9CC0F2"
+borderColor = "#3A362F"
+dataframeBorderColor = "#3A362F"
+codeBackgroundColor = "#2C2822"
+redColor = "#F06157"
+redBackgroundColor = "#2E1512"
+redTextColor = "#F5A79F"
+yellowColor = "#E8B200"
+yellowBackgroundColor = "#2E2609"
+yellowTextColor = "#F1EFEA"
+greenColor = "#3FBE77"
+greenBackgroundColor = "#15281E"
+greenTextColor = "#8FE0B4"
+blueColor = "#5C97E8"
+blueBackgroundColor = "#16233B"
+blueTextColor = "#9CC0F2"
+grayColor = "#8A857A"
+grayBackgroundColor = "#2C2822"
+grayTextColor = "#C7C1B6"
+showWidgetBorder = false
+
+[client]
+toolbarMode = "minimal"
+disableDataExport = true
