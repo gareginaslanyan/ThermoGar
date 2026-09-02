@@ -40,6 +40,11 @@ REQUIRED_DIRECTORIES = (
 )
 DATABASE_DIR = "databases/converted"
 MAX_REQUIRED_BYTES = 64 * 1024 * 1024
+# How long shutdown has to prove the child is gone before the supervisor
+# refuses to release run.lock. See _cleanup.
+CLEANUP_CONFIRM_SECONDS = 60.0
+# How long to keep retrying the run-record delete against a concurrent reader.
+RECORD_CLEAR_SECONDS = 30.0
 RUN_KEYS = (
     "schema",
     "state",
@@ -687,13 +692,19 @@ def _has_only_owned_listener(rows: list[tuple[str, int, int]], address: str, por
     return len(owned) == 1 and owned[0] == (address, port, pid) and _has_exact_listener(rows, address, port, pid)
 
 
-def _validate_run_record(raw: bytes, install_root: str, current_identity: str) -> dict[str, object]:
+def _validate_run_record(
+    raw: bytes, install_root: str, current_identity: str, allow_foreign: bool = False,
+) -> dict[str, object]:
     value = _strict_json(raw, 4096, RUN_KEYS)
     if type(value["schema"]) is not int or value["schema"] != 1 or value["state"] != "RUNNING":
         raise ValueError("record state")
     if not isinstance(value["install_identity_sha256"], str) or SHA_RE.fullmatch(value["install_identity_sha256"]) is None:
         raise ValueError("record identity SHA")
-    if value["install_identity_sha256"] != current_identity:
+    # A record written by a different install (an upgrade, or a second copy)
+    # is not ours to trust, but it still has to be cleared out of the way --
+    # only after its processes are proved dead. Recovery therefore reads it
+    # with allow_foreign; everything else demands an exact binding.
+    if not allow_foreign and value["install_identity_sha256"] != current_identity:
         raise ValueError("record identity binding")
     for key in ("supervisor_pid", "child_pid", "control_port", "ui_port"):
         if _is_bool_int(value[key]) or value[key] <= 0:
@@ -712,9 +723,12 @@ def _validate_run_record(raw: bytes, install_root: str, current_identity: str) -
     if not isinstance(value["published_utc"], str) or RFC3339_RE.fullmatch(value["published_utc"]) is None:
         raise ValueError("record time")
     child_path = value["child_image_path"]
-    expected_child = _normal_abs(os.path.join(install_root, "runtime", "python.exe"))
-    if not isinstance(child_path, str) or _normal_abs(child_path) != expected_child or child_path != expected_child:
+    if not isinstance(child_path, str) or _normal_abs(child_path) != child_path:
         raise ValueError("record child path")
+    if not allow_foreign:
+        expected_child = _normal_abs(os.path.join(install_root, "runtime", "python.exe"))
+        if child_path != expected_child:
+            raise ValueError("record child path")
     return value
 
 
@@ -731,9 +745,11 @@ def _record_is_proved_dead(record: dict[str, object]) -> bool:
     return True
 
 
-def _read_record(path: str, state_root: str, install_root: str, current_identity: str) -> tuple[bytes, dict[str, object]]:
+def _read_record(
+    path: str, state_root: str, install_root: str, current_identity: str, allow_foreign: bool = False,
+) -> tuple[bytes, dict[str, object]]:
     raw, _sha = _stable_read(path, state_root, 4096)
-    return raw, _validate_run_record(raw, install_root, current_identity)
+    return raw, _validate_run_record(raw, install_root, current_identity, allow_foreign)
 
 
 def _open_exact_mutation_handle(path: str, state_root: str, expected_raw: bytes) -> int:
@@ -803,7 +819,7 @@ def _recover_stale(paths: dict[str, str], install_root: str, current_identity: s
     if not os.path.lexists(record_path):
         return
     try:
-        raw, record = _read_record(record_path, paths["state"], install_root, current_identity)
+        raw, record = _read_record(record_path, paths["state"], install_root, current_identity, True)
     except Exception as exc:
         raise LauncherError(5, "existing run record invalid") from exc
     if not _record_is_proved_dead(record):
@@ -811,7 +827,7 @@ def _recover_stale(paths: dict[str, str], install_root: str, current_identity: s
     stale_path = paths["stale"]
     if os.path.lexists(stale_path):
         try:
-            stale_raw, stale = _read_record(stale_path, paths["state"], install_root, current_identity)
+            stale_raw, stale = _read_record(stale_path, paths["state"], install_root, current_identity, True)
         except Exception as exc:
             raise LauncherError(5, "existing stale record invalid") from exc
         if not _record_is_proved_dead(stale):
@@ -1287,11 +1303,44 @@ def _guard_forever() -> None:
         time.sleep(60.0)
 
 
+def _log_cleanup_stall(
+    state_root: str, child_done: bool, active: int, process_ids: list[int], ports_gone: bool,
+) -> None:
+    """Record why shutdown could not be confirmed, then let the caller guard.
+
+    Without this a stalled cleanup is a silent hang: the supervisor never
+    exits, run.json is never cleared and there is nothing to look at.
+    """
+    try:
+        path = os.path.join(state_root, "logs", "cleanup-stall.log")
+        entry = {
+            "utc": _datetime.datetime.now(_datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+            "child_done": bool(child_done),
+            "job_active_processes": int(active),
+            "job_process_ids": [int(value) for value in process_ids],
+            "ports_released": bool(ports_gone),
+            "confirm_seconds": CLEANUP_CONFIRM_SECONDS,
+        }
+        with open(path, "a", encoding="utf-8") as handle:
+            handle.write(json.dumps(entry, separators=(",", ":")) + "\n")
+    except Exception:
+        pass
+
+
 def _cleanup(job: int, child_handle: int, child_pid: int, supervisor_pid: int, ui_port: int, control_port: int, record_path: str | None, state_root: str, record_raw: bytes | None) -> None:
     if not kernel32.TerminateJobObject(job, 0):
         _guard_forever()
-    deadline = time.monotonic() + 5.0
+    # Tearing down Streamlit plus the pycalphad/numpy DLL set takes well over
+    # five seconds the first time a fresh install is exercised. Guarding
+    # forever is still the answer when the child cannot be proved dead --
+    # releasing run.lock while it might be alive is what the guard prevents --
+    # but the budget has to be realistic or every clean stop hangs.
+    deadline = time.monotonic() + CLEANUP_CONFIRM_SECONDS
     safe = False
+    child_done = False
+    active = -1
+    process_ids: list[int] = [-1]
+    ports_gone = False
     while time.monotonic() < deadline:
         child_done = kernel32.WaitForSingleObject(child_handle, 0) == WAIT_OBJECT_0
         try:
@@ -1305,12 +1354,26 @@ def _cleanup(job: int, child_handle: int, child_pid: int, supervisor_pid: int, u
             break
         time.sleep(0.1)
     if not safe:
+        _log_cleanup_stall(state_root, child_done, active, process_ids, ports_gone)
         _guard_forever()
     if record_path is not None and record_raw is not None:
-        try:
-            _clear_record_exact(record_path, state_root, record_raw)
-        except Exception:
-            _guard_forever()
+        # stop.pyw polls run.json while waiting for shutdown, and the delete
+        # opens it exclusively, so a single attempt loses the race often. The
+        # child is already proved dead here; only bookkeeping is left, so
+        # retrying is safe where guarding forever would just strand the
+        # supervisor and leave a stale record behind.
+        deadline = time.monotonic() + RECORD_CLEAR_SECONDS
+        while True:
+            try:
+                _clear_record_exact(record_path, state_root, record_raw)
+                break
+            except Exception:
+                if not os.path.lexists(record_path):
+                    break
+                if time.monotonic() >= deadline:
+                    _log_cleanup_stall(state_root, child_done, active, process_ids, ports_gone)
+                    _guard_forever()
+                time.sleep(0.2)
 
 
 def _preassignment_cleanup(child_handle: int) -> None:

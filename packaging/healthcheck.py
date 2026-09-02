@@ -35,6 +35,8 @@ REQUIRED_DIRECTORIES = (
 )
 DATABASE_DIR = "databases/converted"
 MAX_REQUIRED_BYTES = 64 * 1024 * 1024
+# Must stay >= launcher.pyw's CLEANUP_CONFIRM_SECONDS plus slack.
+STOP_WAIT_SECONDS = 90.0
 SHA_RE = re.compile(r"^[0-9A-F]{64}$")
 LOWER_HEX_RE = re.compile(r"^[0-9a-f]{64}$")
 DECIMAL_RE = re.compile(r"^(0|[1-9][0-9]*)$")
@@ -789,7 +791,10 @@ def run_observer(role: str, caller_file: str) -> int:
             })
             return 0
         _request(record, role, time.monotonic() + 3.0)
-        deadline = time.monotonic() + 5.0
+        # The supervisor confirms the child is gone before it releases
+        # run.lock, and on a cold install that takes longer than five
+        # seconds. Match the launcher's own confirmation budget.
+        deadline = time.monotonic() + STOP_WAIT_SECONDS
         _before_deadline(deadline)
         while True:
             _before_deadline(deadline)

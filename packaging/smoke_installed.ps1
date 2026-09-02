@@ -27,7 +27,9 @@ param(
     [string]$InstallerPath,
     [string]$RepoRoot,
     [string]$InstallRoot = "$env:ProgramFiles\ThermoGar",
-    [int]$HealthTimeoutSeconds = 60,
+    # Cold start imports pycalphad and starts Streamlit; 60 s is too tight on
+    # a first run against a freshly written Program Files tree.
+    [int]$HealthTimeoutSeconds = 180,
     # Leave the product installed after the run (skips step 7).
     [switch]$SkipUninstall
 )
@@ -152,11 +154,20 @@ try {
     $launcher = Join-Path $InstallRoot 'launcher.pyw'
     $launcherProcess = $null
     try {
-        $launcherProcess = Start-Process -FilePath $pythonw -ArgumentList @("`"$launcher`"") `
-            -WorkingDirectory $WorkDir -PassThru -WindowStyle Hidden -ErrorAction Stop
-        Start-Sleep -Seconds 2
+        # ProcessStartInfo rather than Start-Process: the latter rejects
+        # -WorkingDirectory in some PowerShell 7 builds.
+        $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+        $startInfo.FileName = $pythonw
+        $startInfo.Arguments = '"' + $launcher + '"'
+        $startInfo.WorkingDirectory = $WorkDir
+        $startInfo.UseShellExecute = $false
+        $startInfo.CreateNoWindow = $true
+        $launcherProcess = [System.Diagnostics.Process]::Start($startInfo)
+        Start-Sleep -Seconds 3
         $alive = -not $launcherProcess.HasExited
-        Add-Result 3 'launcher started' $alive "pid=$($launcherProcess.Id) alive=$alive"
+        $detail = "pid=$($launcherProcess.Id) alive=$alive cwd=$WorkDir"
+        if (-not $alive) { $detail += " exit=$($launcherProcess.ExitCode)" }
+        Add-Result 3 'launcher started' $alive $detail
     }
     catch {
         Add-Result 3 'launcher started' $false $_.Exception.Message
@@ -189,24 +200,34 @@ try {
     Add-Result 4 'healthcheck HEALTHY' $healthy "after ${elapsedHealth}s ui_port=$uiPort control_port=$controlPort last=$lastHealth"
 
     # --- 5. UI responds on loopback -----------------------------------------
+    # The served HTML is Streamlit's shell: <title>Streamlit</title>, with the
+    # ThermoGar title applied client-side, so no server-side response ever
+    # contains the string "ThermoGar". The equivalent server-side proof that
+    # app\ThermoGar_app.py actually ran is /_stcore/script-health-check, which
+    # the launcher enables with --server.scriptHealthCheckEnabled=true: it
+    # returns 200 only when the script completes without an uncaught
+    # exception, and 503 otherwise.
     if ($healthy -and $uiPort -gt 0) {
         $uiOk = $false
         $uiDetail = ''
         for ($attempt = 1; $attempt -le 10; $attempt++) {
             try {
-                $response = Invoke-WebRequest -Uri "http://127.0.0.1:$uiPort/" -UseBasicParsing -TimeoutSec 20
-                $body = [string]$response.Content
-                $uiOk = ($response.StatusCode -eq 200) -and ($body -match 'ThermoGar')
-                $uiDetail = "HTTP $($response.StatusCode), $($body.Length) bytes, ThermoGar in HTML: $($body -match 'ThermoGar')"
+                $page = Invoke-WebRequest -Uri "http://127.0.0.1:$uiPort/" -UseBasicParsing -TimeoutSec 20
+                $body = [string]$page.Content
+                $isStreamlitShell = $body -match 'streamlit'
+                $script = Invoke-WebRequest -Uri "http://127.0.0.1:$uiPort/_stcore/script-health-check" -UseBasicParsing -TimeoutSec 60
+                $uiOk = ($page.StatusCode -eq 200) -and $isStreamlitShell -and ($script.StatusCode -eq 200)
+                $uiDetail = "GET / -> $($page.StatusCode) ($($body.Length) bytes, Streamlit shell: $isStreamlitShell); " +
+                            "script-health-check -> $($script.StatusCode) '$([string]$script.Content)'"
                 if ($uiOk) { break }
             }
             catch { $uiDetail = $_.Exception.Message }
-            Start-Sleep -Seconds 2
+            Start-Sleep -Seconds 3
         }
-        Add-Result 5 'UI 200 with ThermoGar' $uiOk $uiDetail
+        Add-Result 5 'UI 200, app script runs clean' $uiOk $uiDetail
     }
     else {
-        Add-Result 5 'UI 200 with ThermoGar' $false 'skipped: no healthy UI port'
+        Add-Result 5 'UI 200, app script runs clean' $false 'skipped: no healthy UI port'
     }
 
     # --- 6. stop -------------------------------------------------------------
@@ -214,19 +235,21 @@ try {
     $stopRaw = & $python $stopScript '--json' 2>&1 | Out-String
     $stopExit = $LASTEXITCODE
     $global:LASTEXITCODE = 0
+    # PowerShell unwraps single-element arrays returned from a function, so
+    # every call site has to re-wrap before asking for .Count.
     $stopped = Wait-ForCondition -Condition {
-        (Get-ThermoGarProcesses -Root $InstallRoot).Count -eq 0
+        @(Get-ThermoGarProcesses -Root $InstallRoot).Count -eq 0
     } -TimeoutSeconds 30 -IntervalSeconds 0.5
     $portsFree = $true
     foreach ($port in @($uiPort, $controlPort)) {
         if ($port -gt 0 -and (Test-PortListening -Port $port)) { $portsFree = $false }
     }
-    $remaining = (Get-ThermoGarProcesses -Root $InstallRoot).Count
+    $remaining = @(Get-ThermoGarProcesses -Root $InstallRoot).Count
     Add-Result 6 'stop: no processes, ports free' ($stopExit -eq 0 -and $stopped -and $portsFree) `
         "stop exit $stopExit, remaining processes $remaining, ports free $portsFree, out=$($stopRaw.Trim())"
 
     # Nothing below should race with a surviving supervisor.
-    foreach ($process in (Get-ThermoGarProcesses -Root $InstallRoot)) {
+    foreach ($process in @(Get-ThermoGarProcesses -Root $InstallRoot)) {
         try { $process.Kill() } catch { }
     }
 
