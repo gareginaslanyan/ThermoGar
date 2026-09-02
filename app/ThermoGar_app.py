@@ -159,6 +159,7 @@ import thermogar_verified_state as verified_state
 from thermogar_verified_artifact import read_verified_utf8_text
 from thermogar_release_policy import (
     APP_LINEAGE,
+    FE_EXCLUDED_PHASES,
     PHYSICAL_DATABASE_RELATIVE_PATH,
     PHYSICAL_DATABASE_SHA256,
     PRODUCTION_USE,
@@ -171,6 +172,7 @@ from thermogar_release_policy import (
     RUNTIME_POLICY_GENERATION,
     SCIENTIFIC_MATERIAL_STATUS,
     SOFTWARE_RELEASE_STATUS,
+    effective_release_phases,
 )
 from thermogar_release_ui import (
     release_calculation_button,
@@ -873,12 +875,20 @@ def verified_b3_refresh_result(
 def verified_b3_store_result(
     state_key: str,
     display: dict[str, Any],
-    execution: verified_equilibrium.VerifiedEquilibriumResult,
+    execution: verified_equilibrium.VerifiedEquilibriumResult | None,
 ) -> None:
     st.session_state[state_key] = {
         "display": display,
-        "receipt_digest": execution.feature_receipt.receipt_digest,
-        "envelope_digest": execution.result_envelope.envelope_digest,
+        "receipt_digest": (
+            execution.feature_receipt.receipt_digest
+            if execution is not None
+            else None
+        ),
+        "envelope_digest": (
+            execution.result_envelope.envelope_digest
+            if execution is not None
+            else None
+        ),
     }
 
 
@@ -2212,6 +2222,23 @@ def filter_for_mode(
 
 
 
+def rejected_release_phases(
+    database_key: str,
+    phases: Any,
+) -> list[str]:
+    """Фазы набора, запрещённые для выбранной базы (для Fe — C15_LAVES)."""
+    allowed = set(effective_release_phases(database_key, phases))
+    return sorted(set(phases) - allowed)
+
+
+def excluded_phase_message(rejected: list[str]) -> str:
+    """Понятное сообщение об отклонённом ручном выборе фазы."""
+    return (
+        ", ".join(rejected)
+        + " исключена для стали thermogar_patch и не может быть выбрана."
+    )
+
+
 def compatible_phases_for_components(
     db: Database,
     database_key: str,
@@ -2228,6 +2255,10 @@ def compatible_phases_for_components(
         database_key,
         steel_mode,
     )
+    # Единственная точка исключения C15_LAVES для Fe: через неё проходят все
+    # автоматические списки фаз (равновесие, сканы, диаграммы, карта доли,
+    # затвердевание, энергии, T₀).
+    phases = effective_release_phases(database_key, phases)
     return sorted(dict.fromkeys(phases))
 
 
@@ -2261,6 +2292,16 @@ def phase_selection_editor(
     key_prefix: str,
 ) -> tuple[list[str], str]:
     """Показать управление фазами и вернуть выбранные фазы."""
+    rejected_candidates = rejected_release_phases(
+        database_key,
+        candidate_phases,
+    )
+    if rejected_candidates:
+        st.error(excluded_phase_message(rejected_candidates))
+    candidate_phases = effective_release_phases(
+        database_key,
+        candidate_phases,
+    )
     with st.expander(
         "Управление фазами / метастабильный расчёт",
         expanded=False,
@@ -2349,6 +2390,11 @@ def phase_selection_editor(
             edited["Использовать"].astype(bool),
             "Фаза",
         ].tolist()
+
+        rejected_selected = rejected_release_phases(database_key, selected)
+        if rejected_selected:
+            st.error(excluded_phase_message(rejected_selected))
+            selected = effective_release_phases(database_key, selected)
 
         st.caption(
             f"Выбрано фаз: {len(selected)} из {len(candidate_phases)}."
@@ -2455,6 +2501,9 @@ def prepare_calculation(
     )
 
     if selected_phases is not None:
+        rejected = rejected_release_phases(database_key, selected_phases)
+        if rejected:
+            raise RuntimeError(excluded_phase_message(rejected))
         selected_set = set(selected_phases)
         phases = [
             phase
@@ -2587,6 +2636,67 @@ def aggregate_phase_fractions(eq: Any) -> dict[str, float]:
             result[str(name)] += float(fraction)
 
     return dict(result)
+
+
+def scan_axis_conditions(
+    db: Database,
+    entered: dict[str, float],
+    units: str,
+    balance: str,
+) -> dict[Any, float]:
+    """Условия состава одной точки скана; нулевое содержание допускается."""
+    if units == "at":
+        return {
+            v.X(element): float(value) / 100.0
+            for element, value in entered.items()
+        }
+    if units == "wt":
+        mass_conditions = {
+            v.W(element): float(value) / 100.0
+            for element, value in entered.items()
+        }
+        return dict(v.get_mole_fractions(mass_conditions, balance, db))
+    raise ValueError(f"Неизвестные единицы состава: {units}")
+
+
+def direct_equilibrium_scan(
+    db: Database,
+    components: list[str],
+    phases: list[str],
+    pressure_pa: float,
+    axis_label: str,
+    points: list[tuple[float, dict[Any, float], float]],
+) -> pd.DataFrame:
+    """Скан равновесия по сетке точек из полей интерфейса.
+
+    Численный бэкенд тот же, что и в остальных маршрутах приложения —
+    ``pycalphad.equilibrium`` с ``pdens=500``. Список фаз приходит из
+    ``prepare_calculation``, то есть для Fe уже без C15_LAVES.
+    """
+    rows: list[dict[str, float]] = []
+    for axis_value, composition_conditions, temperature_k in points:
+        conditions: dict[Any, float] = {
+            v.N: 1.0,
+            v.P: float(pressure_pa),
+            v.T: float(temperature_k),
+        }
+        conditions.update(composition_conditions)
+        eq = equilibrium(
+            db,
+            components,
+            phases,
+            conditions,
+            calc_opts={"pdens": 500},
+        )
+        row: dict[str, float] = {axis_label: float(axis_value)}
+        row.update(
+            {
+                phase: 100.0 * fraction
+                for phase, fraction in aggregate_phase_fractions(eq).items()
+            }
+        )
+        rows.append(row)
+    return pd.DataFrame(rows).fillna(0.0)
 
 
 # Frozen B2 static regressions count the three former generic solver call
