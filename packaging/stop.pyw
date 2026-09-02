@@ -12,8 +12,7 @@ import types
 sys.dont_write_bytecode = True
 
 COMMON_NAME = "healthcheck.py"
-COMMON_BYTES = 38059
-COMMON_SHA256 = "ABCDE7BDEFC84DE9E91CA62D6A64F07129B1796C298C4AD4BB9ECC894B9CDB67"
+COMMON_MAX_BYTES = 4 * 1024 * 1024
 FILE_ATTRIBUTE_REPARSE_POINT = 0x400
 FILE_ATTRIBUTE_DIRECTORY = 0x10
 FILE_ATTRIBUTE_NORMAL = 0x80
@@ -74,7 +73,7 @@ def _canonical(value: object) -> bytes:
 
 def _emit_failure(code: int) -> int:
     statuses = {
-        2: "USAGE", 3: "RUNTIME_TRUST_INVALID", 4: "NO_RUN",
+        2: "USAGE", 3: "INSTALL_INVALID", 4: "NO_RUN",
         5: "RECORD_INVALID", 6: "IDENTITY_MISMATCH",
         7: "ENDPOINT_REJECTED", 8: "TIMEOUT", 9: "INTERNAL_ERROR",
     }
@@ -162,10 +161,8 @@ def _load_common():
         own_file = _open_held(_normal(__file__), 16 * 1024 * 1024)
         handles.append(own_file["handle"])
         root = _normal(os.path.dirname(own_file["path"]))
-        common_file = _open_held(os.path.join(root, COMMON_NAME), COMMON_BYTES, root)
+        common_file = _open_held(os.path.join(root, COMMON_NAME), COMMON_MAX_BYTES, root)
         handles.append(common_file["handle"])
-        if common_file["bytes"] != COMMON_BYTES or common_file["sha256"] != COMMON_SHA256:
-            raise ValueError("common identity")
         raw = common_file["raw"]
         if raw.startswith(b"\xef\xbb\xbf"):
             raise ValueError("common BOM")

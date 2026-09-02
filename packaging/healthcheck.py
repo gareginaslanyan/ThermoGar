@@ -15,29 +15,40 @@ import time
 
 sys.dont_write_bytecode = True
 
-P0_ROOT = "42455F51E284BAD35F5BFD4971F5099889A2A0D4518FFB95310FC5C400461F7F"
-RUNTIME_ROOT = "58F81C014DF3C3E8AA6F85517BCEE4263C0AE751365B53CA0ED197964538121C"
-NATIVE_ROOT = "A08EC90744637E0CFE3F7E72D8F4564F58D37C190704B660F4267AF02616604C"
-TRUST_MANIFEST_REL = "manifests/runtime-trust-manifest.json"
-TRUST_RECEIPT_REL = "manifests/runtime-trust-manifest.receipt.json"
-EXPECTED_EXECUTION_ROWS = 15035
-EXPECTED_PROJECT_ROWS = 29
-EXPECTED_PROJECT_BYTES = 2674489
-EXPECTED_RUNTIME_ROWS = 15003
-EXPECTED_RUNTIME_BYTES = 575844438
 HELPERS = {"launcher.pyw", "stop.pyw", "healthcheck.py"}
+# Kept in step with launcher.pyw: the same required set produces the same
+# install identity, which binds the run record to this install.
+REQUIRED_FILES = (
+    "app/ThermoGar_app.py",
+    "healthcheck.py",
+    "launcher.pyw",
+    "runtime/python.exe",
+    "runtime/pythonw.exe",
+    "stop.pyw",
+)
+REQUIRED_DIRECTORIES = (
+    "app",
+    "configs",
+    "databases/converted",
+    "databases/physical",
+    "runtime",
+)
+DATABASE_DIR = "databases/converted"
+MAX_REQUIRED_BYTES = 64 * 1024 * 1024
+# Must stay >= launcher.pyw's CLEANUP_CONFIRM_SECONDS plus slack.
+STOP_WAIT_SECONDS = 90.0
 SHA_RE = re.compile(r"^[0-9A-F]{64}$")
 LOWER_HEX_RE = re.compile(r"^[0-9a-f]{64}$")
 DECIMAL_RE = re.compile(r"^(0|[1-9][0-9]*)$")
 RFC3339_RE = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{6}Z$")
 RUN_KEYS = (
-    "schema", "state", "runtime_trust_manifest_sha256", "supervisor_pid",
+    "schema", "state", "install_identity_sha256", "supervisor_pid",
     "supervisor_creation_filetime", "supervisor_image_sha256", "child_pid",
     "child_creation_filetime", "child_image_path", "child_image_sha256",
     "control_port", "ui_port", "nonce", "token", "published_utc",
 )
 STATUS = {
-    2: "USAGE", 3: "RUNTIME_TRUST_INVALID", 4: "NO_RUN",
+    2: "USAGE", 3: "INSTALL_INVALID", 4: "NO_RUN",
     5: "RECORD_INVALID", 6: "IDENTITY_MISMATCH",
     7: "ENDPOINT_REJECTED", 8: "TIMEOUT", 9: "INTERNAL_ERROR",
 }
@@ -316,134 +327,61 @@ def _current_process_image_path() -> str:
     return _normal_abs(buffer.value)
 
 
-def _validate_trust(caller_file: str, role: str) -> dict[str, object]:
+def _has_database(install_root: str) -> bool:
+    root = os.path.join(install_root, *DATABASE_DIR.split("/"))
+    for current, _directories, files in os.walk(root):
+        del current
+        for name in files:
+            if name.lower().endswith(".tdb"):
+                return True
+    return False
+
+
+def _install_identity(critical: dict[str, dict[str, object]]) -> str:
+    literals = [
+        f"{relative}|{critical[relative]['bytes']}|{critical[relative]['sha256']}"
+        for relative in sorted(critical)
+    ]
+    return hashlib.sha256("\r\n".join(literals).encode("utf-8")).hexdigest().upper()
+
+
+def _validate_install(caller_file: str, role: str) -> dict[str, object]:
+    """Confirm the install tree the observer was launched from is complete."""
     expected_caller = {"health": "healthcheck.py", "stop": "stop.pyw"}.get(role)
     if expected_caller is None:
         raise ValueError("role")
     held_handles: list[int] = []
-    critical_authority: dict[str, dict[str, object]] = {}
+    critical: dict[str, dict[str, object]] = {}
+    rows: dict[str, tuple[int, str]] = {}
     success = False
     try:
-        caller_file_authority = _open_held(_normal_abs(caller_file), 16 * 1024 * 1024)
-        held_handles.append(caller_file_authority["handle"])
-        caller = caller_file_authority["path"]
+        caller_authority = _open_held(_normal_abs(caller_file), MAX_REQUIRED_BYTES)
+        held_handles.append(caller_authority["handle"])
+        caller = caller_authority["path"]
+        if os.path.basename(caller).lower() != expected_caller.lower():
+            raise ValueError("caller name")
         install_root = _normal_abs(os.path.dirname(caller))
-        manifest_path = os.path.join(install_root, *TRUST_MANIFEST_REL.split("/"))
-        receipt_path = os.path.join(install_root, *TRUST_RECEIPT_REL.split("/"))
-        manifest_file = _open_held(manifest_path, 64 * 1024 * 1024, install_root)
-        held_handles.append(manifest_file["handle"])
-        manifest_raw = manifest_file["raw"]; manifest_sha = manifest_file["sha256"]
-        manifest = _json(manifest_raw, 64 * 1024 * 1024, (
-            "schema", "version", "algorithm", "p0_root_sha256",
-            "runtime_input_root_sha256", "native_closure_root_sha256",
-            "rows", "execution_root_sha256",
-        ))
-        if type(manifest["schema"]) is not int or manifest["schema"] != 1 or type(manifest["version"]) is not int or manifest["version"] != 1 or manifest["algorithm"] != "SHA-256":
-            raise ValueError("manifest metadata")
-        if manifest["p0_root_sha256"] != P0_ROOT or manifest["runtime_input_root_sha256"] != RUNTIME_ROOT or manifest["native_closure_root_sha256"] != NATIVE_ROOT:
-            raise ValueError("manifest anchors")
-        rows = manifest["rows"]
-        if not isinstance(rows, list) or len(rows) != EXPECTED_EXECUTION_ROWS:
-            raise ValueError("rows")
-        previous: str | None = None
-        folded: set[str] = set()
-        row_map: dict[str, tuple[int, str]] = {}
-        all_literals: list[str] = []
-        project_literals: list[str] = []
-        runtime_literals: list[str] = []
-        project_bytes = 0; runtime_bytes = 0; total = 0
-        helpers: set[str] = set()
-        for row in rows:
-            if not isinstance(row, dict) or tuple(row.keys()) != ("path", "bytes", "sha256"):
-                raise ValueError("row schema")
-            path = _relative(row["path"])
-            count = _int(row["bytes"], 0, 1024 * 1024 * 1024)
-            sha = row["sha256"]
-            if not isinstance(sha, str) or SHA_RE.fullmatch(sha) is None:
-                raise ValueError("row SHA")
-            if previous is not None and previous >= path or path.casefold() in folded:
-                raise ValueError("row order/collision")
-            previous = path; folded.add(path.casefold()); row_map[path] = (count, sha)
-            literal = f"{path}|{count}|{sha}"; all_literals.append(literal); total += count
-            if total > (1 << 63) - 1:
-                raise ValueError("total")
-            if path.startswith("runtime/"):
-                runtime_literals.append(literal); runtime_bytes += count
-            elif path in HELPERS:
-                helpers.add(path)
-            else:
-                project_literals.append(literal); project_bytes += count
-        project_root = hashlib.sha256("\r\n".join(project_literals).encode()).hexdigest().upper()
-        runtime_root = hashlib.sha256("\r\n".join(runtime_literals).encode()).hexdigest().upper()
-        execution_root = hashlib.sha256("\r\n".join(all_literals).encode()).hexdigest().upper()
-        if len(project_literals) != EXPECTED_PROJECT_ROWS or project_bytes != EXPECTED_PROJECT_BYTES or project_root != P0_ROOT:
-            raise ValueError("project root")
-        if len(runtime_literals) != EXPECTED_RUNTIME_ROWS or runtime_bytes != EXPECTED_RUNTIME_BYTES or runtime_root != RUNTIME_ROOT:
-            raise ValueError("runtime root")
-        if helpers != HELPERS or manifest["execution_root_sha256"] != execution_root:
-            raise ValueError("execution root/helpers")
-        caller_rel = os.path.basename(caller).casefold()
-        critical = {
-            "launcher.pyw", "healthcheck.py", "stop.pyw",
-            "runtime/python.exe", "runtime/pythonw.exe",
-        }
-        if caller_rel not in {item.casefold() for item in HELPERS}:
-            raise ValueError("caller")
-        for path in critical:
-            if path not in row_map:
-                raise ValueError("critical row")
-            expected_count, expected_sha = row_map[path]
-            physical = os.path.join(install_root, *path.split("/"))
-            physical_file = _open_held(physical, expected_count, install_root)
-            retained = False
-            try:
-                if physical_file["bytes"] != expected_count or physical_file["sha256"] != expected_sha:
-                    raise ValueError("critical identity")
-                held_handles.append(physical_file["handle"]); retained = True
-                critical_authority[path] = {
-                    key: physical_file[key]
-                    for key in ("handle", "path", "volume", "index", "bytes", "sha256")
-                }
-            finally:
-                if not retained:
-                    _close_handle(physical_file["handle"])
-        caller_key = next(item for item in HELPERS if item.casefold() == caller_rel)
-        if caller_key != expected_caller or not _same_authority(
-            caller_file_authority, critical_authority[caller_key]
-        ):
-            raise ValueError("caller authority")
-        current_image = _current_process_image_path()
-        expected_python = critical_authority["runtime/python.exe"]
-        if current_image != expected_python["path"]:
-            raise ValueError("observer process image")
-        current_image_file = _open_held(
-            current_image, int(expected_python["bytes"]), install_root
-        )
-        held_handles.append(current_image_file["handle"])
-        if not _same_authority(current_image_file, expected_python):
-            raise ValueError("observer process authority")
-        receipt_file = _open_held(receipt_path, 65536, install_root)
-        held_handles.append(receipt_file["handle"])
-        receipt_raw = receipt_file["raw"]; receipt_sha = receipt_file["sha256"]
-        receipt = _json(receipt_raw, 65536, (
-            "schema", "version", "algorithm", "manifest_sha256",
-            "execution_root_sha256", "row_count", "total_bytes",
-            "producer_sha256", "verifier_sha256",
-        ))
-        if type(receipt["schema"]) is not int or receipt["schema"] != 1 or type(receipt["version"]) is not int or receipt["version"] != 1 or receipt["algorithm"] != "SHA-256":
-            raise ValueError("receipt metadata")
-        if receipt["manifest_sha256"] != manifest_sha or receipt["execution_root_sha256"] != execution_root:
-            raise ValueError("receipt roots")
-        if _int(receipt["row_count"], 0, 1_000_000) != len(rows) or _int(receipt["total_bytes"], 0, (1 << 63) - 1) != total:
-            raise ValueError("receipt counts")
-        for key in ("producer_sha256", "verifier_sha256"):
-            if not isinstance(receipt[key], str) or SHA_RE.fullmatch(receipt[key]) is None:
-                raise ValueError("receipt identity")
+        _assert_plain(install_root, True)
+        for relative in REQUIRED_DIRECTORIES:
+            _assert_plain(os.path.join(install_root, *relative.split("/")), True)
+        for relative in REQUIRED_FILES:
+            physical = os.path.join(install_root, *relative.split("/"))
+            held = _open_held(physical, MAX_REQUIRED_BYTES, install_root)
+            held_handles.append(held["handle"])
+            critical[relative] = {
+                key: held[key]
+                for key in ("handle", "path", "volume", "index", "bytes", "sha256")
+            }
+            rows[relative] = (held["bytes"], held["sha256"])
+        if not _has_database(install_root):
+            raise ValueError("no thermodynamic database in install")
         success = True
         return {
-            "install_root": install_root, "manifest_sha256": manifest_sha,
-            "receipt_sha256": receipt_sha, "rows": row_map,
-            "critical": critical_authority, "held_handles": held_handles,
+            "install_root": install_root,
+            "identity_sha256": _install_identity(critical),
+            "rows": rows,
+            "critical": critical,
+            "held_handles": held_handles,
         }
     finally:
         if not success:
@@ -485,10 +423,10 @@ def _state_root() -> str:
     return state
 
 
-def _validate_record(raw: bytes, install_root: str, manifest_sha: str) -> dict[str, object]:
+def _validate_record(raw: bytes, install_root: str, identity: str) -> dict[str, object]:
     value = _json(raw, 4096, RUN_KEYS)
-    if type(value["schema"]) is not int or value["schema"] != 1 or value["state"] != "RUNNING" or value["runtime_trust_manifest_sha256"] != manifest_sha:
-        raise ValueError("record state/trust")
+    if type(value["schema"]) is not int or value["schema"] != 1 or value["state"] != "RUNNING" or value["install_identity_sha256"] != identity:
+        raise ValueError("record state/identity")
     for key in ("supervisor_pid", "child_pid"):
         _int(value[key], 1, (1 << 32) - 1)
     for key in ("control_port", "ui_port"):
@@ -521,11 +459,11 @@ def _validate_record(raw: bytes, install_root: str, manifest_sha: str) -> dict[s
     return value
 
 
-def _read_record(state: str, trust: dict[str, object]) -> tuple[bytes, dict[str, object]]:
+def _read_record(state: str, install: dict[str, object]) -> tuple[bytes, dict[str, object]]:
     path = os.path.join(state, "runtime", "run.json")
     try:
         raw, _sha = _stable_read(path, state, 4096)
-        return raw, _validate_record(raw, trust["install_root"], trust["manifest_sha256"])
+        return raw, _validate_record(raw, install["install_root"], install["identity_sha256"])
     except HeldOpenError as exc:
         if exc.winerror_code in (ERROR_FILE_NOT_FOUND, ERROR_PATH_NOT_FOUND):
             raise ObserverError(4, "no run") from exc
@@ -543,7 +481,7 @@ def _creation_value(value: FILETIME) -> str:
 
 
 def _open_process_authority(
-    pid: int, creation: str, path: str, sha: str, trust: dict[str, object]
+    pid: int, creation: str, path: str, sha: str, install: dict[str, object]
 ) -> dict[str, object]:
     ctypes.set_last_error(0)
     handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION | SYNCHRONIZE, False, pid)
@@ -560,14 +498,14 @@ def _open_process_authority(
         observed_path = _normal_abs(buffer.value)
         if _creation_value(created) != creation or observed_path != _normal_abs(path):
             raise ValueError("process identity")
-        relative = os.path.relpath(observed_path, trust["install_root"]).replace("\\", "/")
-        expected = trust["rows"].get(relative)
+        relative = os.path.relpath(observed_path, install["install_root"]).replace("\\", "/")
+        expected = install["rows"].get(relative)
         if expected is None or expected[1] != sha:
             raise ValueError("process row")
-        expected_authority = trust["critical"].get(relative)
+        expected_authority = install["critical"].get(relative)
         if expected_authority is None:
             raise ValueError("process authority row")
-        image_file = _open_held(observed_path, expected[0], trust["install_root"])
+        image_file = _open_held(observed_path, expected[0], install["install_root"])
         try:
             if image_file["sha256"] != sha or not _same_authority(image_file, expected_authority):
                 raise ValueError("process image authority")
@@ -624,9 +562,9 @@ def _listeners(error_code: int) -> list[tuple[str, int, int]]:
 
 
 def _validate_identities(
-    record: dict[str, object], trust: dict[str, object]
+    record: dict[str, object], install: dict[str, object]
 ) -> dict[str, dict[str, object]]:
-    root = trust["install_root"]
+    root = install["install_root"]
     supervisor_path = _normal_abs(os.path.join(root, "runtime", "pythonw.exe"))
     child_path = _normal_abs(os.path.join(root, "runtime", "python.exe"))
     processes: dict[str, dict[str, object]] = {}
@@ -634,11 +572,11 @@ def _validate_identities(
     try:
         processes["supervisor"] = _open_process_authority(
             record["supervisor_pid"], record["supervisor_creation_filetime"],
-            supervisor_path, record["supervisor_image_sha256"], trust,
+            supervisor_path, record["supervisor_image_sha256"], install,
         )
         processes["child"] = _open_process_authority(
             record["child_pid"], record["child_creation_filetime"],
-            child_path, record["child_image_sha256"], trust,
+            child_path, record["child_image_sha256"], install,
         )
         rows = _listeners(7)
         control = [(a, p, pid) for a, p, pid in rows if p == record["control_port"]]
@@ -827,23 +765,23 @@ def run_observer(role: str, caller_file: str) -> int:
         return _failure(9)
     if sys.argv != [sys.argv[0], "--json"]:
         return _failure(2)
-    trust: dict[str, object] | None = None
+    install: dict[str, object] | None = None
     processes: dict[str, dict[str, object]] | None = None
     try:
         try:
-            trust = _validate_trust(caller_file, role)
+            install = _validate_install(caller_file, role)
         except Exception as exc:
-            raise ObserverError(3, "trust") from exc
+            raise ObserverError(3, "install") from exc
         state = _state_root()
-        record_raw, record = _read_record(state, trust)
-        processes = _validate_identities(record, trust)
+        record_raw, record = _read_record(state, install)
+        processes = _validate_identities(record, install)
         _require_processes_live(processes)
         if role == "health":
             _request(record, role, time.monotonic() + 3.0)
             _require_processes_live(processes)
             _emit({
                 "schema": 1, "status": "HEALTHY",
-                "runtime_trust_manifest_sha256": trust["manifest_sha256"],
+                "install_identity_sha256": install["identity_sha256"],
                 "supervisor_pid": record["supervisor_pid"],
                 "supervisor_creation_filetime": record["supervisor_creation_filetime"],
                 "child_pid": record["child_pid"],
@@ -853,7 +791,10 @@ def run_observer(role: str, caller_file: str) -> int:
             })
             return 0
         _request(record, role, time.monotonic() + 3.0)
-        deadline = time.monotonic() + 5.0
+        # The supervisor confirms the child is gone before it releases
+        # run.lock, and on a cold install that takes longer than five
+        # seconds. Match the launcher's own confirmation budget.
+        deadline = time.monotonic() + STOP_WAIT_SECONDS
         _before_deadline(deadline)
         while True:
             _before_deadline(deadline)
@@ -878,8 +819,8 @@ def run_observer(role: str, caller_file: str) -> int:
         if processes is not None:
             for authority in reversed(tuple(processes.values())):
                 _close_handle(authority.get("handle"))
-        if trust is not None:
-            for handle in reversed(trust.get("held_handles", [])):
+        if install is not None:
+            for handle in reversed(install.get("held_handles", [])):
                 _close_handle(handle)
 
 
