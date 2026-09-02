@@ -24,7 +24,15 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
 if (-not $RepoRoot)      { $RepoRoot = Split-Path -Parent $PSScriptRoot }
-if (-not $RuntimeSource) { $RuntimeSource = Join-Path $RepoRoot 'ThermoGar-Installer-Assets\runtime-clean-3119' }
+if (-not $RuntimeSource) {
+    # The runtime lives in the main checkout; a git worktree does not carry it.
+    $candidates = @(
+        (Join-Path $RepoRoot 'ThermoGar-Installer-Assets\runtime-clean-3119'),
+        'C:\Users\gareg\Desktop\ThermoGar\ThermoGar-Installer-Assets\runtime-clean-3119'
+    )
+    $RuntimeSource = $candidates | Where-Object { Test-Path -LiteralPath (Join-Path $_ 'python.exe') } | Select-Object -First 1
+    if (-not $RuntimeSource) { throw "RUNTIME_SOURCE_NOT_FOUND: tried $($candidates -join '; ')" }
+}
 if (-not $StageRoot)     { $StageRoot = Join-Path $RepoRoot 'dist\stage' }
 
 $RepoRoot      = [IO.Path]::GetFullPath($RepoRoot).TrimEnd('\')
@@ -49,6 +57,7 @@ $SingleFiles = @(
     @{ Source = 'packaging\launcher.pyw';   Dest = 'launcher.pyw';               Required = $true  }
     @{ Source = 'packaging\stop.pyw';       Dest = 'stop.pyw';                   Required = $true  }
     @{ Source = 'packaging\healthcheck.py'; Dest = 'healthcheck.py';             Required = $true  }
+    @{ Source = 'packaging\assets\ThermoGar.ico'; Dest = 'ThermoGar.ico';        Required = $true  }
     @{ Source = 'README.md';                Dest = 'README.md';                  Required = $false }
     @{ Source = 'USER_GUIDE_THERMOGAR.md';  Dest = 'USER_GUIDE_THERMOGAR.md';    Required = $false }
     @{ Source = 'QUICK_START_THERMOGAR.md'; Dest = 'QUICK_START_THERMOGAR.md';   Required = $false }
