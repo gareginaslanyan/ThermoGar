@@ -94,12 +94,23 @@ DEFAULTS = {
         "single_phase": "FCC_A1",
         "homogenization_phases": ["FCC_A1", "LIQUID"],
     },
+    "fe": {
+        "balance": "FE",
+        "left": "C=0.1, CR=8",
+        "right": "C=0.3, CR=14",
+        "units": "wt",
+        "temperature_C": 900.0,
+        "length_um": 100.0,
+        "interface_pct": 50.0,
+        "time_h": 1.0,
+        "nodes": 80,
+        "single_phase": "FCC_A1",
+        "homogenization_phases": ["FCC_A1", "BCC_A2"],
+    },
 }
 
-FE_DIFFUSION_BLOCK_MESSAGE = (
-    "Fe diffusion отклонён: Fe-база является только diagnostic evidence и "
-    "не входит в no-experiment SWR release surface."
-)
+# Fe-профиль исключает C15_LAVES из фаз, предлагаемых пользователю.
+EXCLUDED_PHASES = {"fe": ("C15_LAVES",)}
 
 HOMOGENIZATION_FUNCTIONS = {
     "Нижняя граница Хашина—Штрикмана": "hashin lower",
@@ -165,8 +176,6 @@ def _bind_release_database(
     if not isinstance(database_key, str):
         raise ValueError("Ключ базы diffusion должен быть строкой.")
     canonical_key = database_key.strip().casefold()
-    if canonical_key == "fe":
-        raise RuntimeError(FE_DIFFUSION_BLOCK_MESSAGE)
     if canonical_key not in RELEASE_DATABASE_KEYS:
         raise ValueError(
             f"База {canonical_key!r} не входит в SWR release surface."
@@ -431,6 +440,12 @@ def _phase_mobility_coverage(db: Any) -> dict[str, set[str]]:
         if phase and species:
             coverage.setdefault(phase, set()).add(species)
     return coverage
+
+
+def _selectable_phases(database_key: str, phases: list[str]) -> list[str]:
+    """Убрать из списка фазы, недоступные пользователю для данной базы."""
+    excluded = EXCLUDED_PHASES.get(str(database_key).strip().casefold(), ())
+    return [phase for phase in phases if phase not in excluded]
 
 
 def _compatible_mobility_phases(db: Any, elements: list[str]) -> list[str]:
@@ -1266,7 +1281,10 @@ def render_kinetics_section(
                 common["right_text"],
                 common["units"],
             )
-            phase_options = _compatible_mobility_phases(db, preview_couple.elements)
+            phase_options = _selectable_phases(
+                database_key,
+                _compatible_mobility_phases(db, preview_couple.elements),
+            )
         except Exception as preview_error:
             preview_couple = None
             phase_options = []
@@ -1370,7 +1388,10 @@ def render_kinetics_section(
                 common["right_text"],
                 common["units"],
             )
-            phase_options = _compatible_mobility_phases(db, preview_couple.elements)
+            phase_options = _selectable_phases(
+                database_key,
+                _compatible_mobility_phases(db, preview_couple.elements),
+            )
         except Exception as preview_error:
             preview_couple = None
             phase_options = []
