@@ -158,9 +158,7 @@ import thermogar_verified_properties as verified_properties
 import thermogar_verified_state as verified_state
 from thermogar_verified_artifact import read_verified_utf8_text
 from thermogar_release_policy import (
-    APP_GATE,
     APP_LINEAGE,
-    CALCULATIONS_ENABLED,
     PHYSICAL_DATABASE_RELATIVE_PATH,
     PHYSICAL_DATABASE_SHA256,
     PRODUCTION_USE,
@@ -553,8 +551,14 @@ PROJECT_ROOT = find_project_root()
 LEGACY_MIGRATION_RECEIPT = migrate_legacy_state(THERMOGAR_PATHS, PROJECT_ROOT)
 
 
+# Case-sensitive on purpose. A TDB keyword is uppercase, while the indented
+# bibliography inside REFERENCE_FILE contains lines such as
+# "Phase diagram in the iron-rich corner ...". Matching those case-insensitively
+# returned "diagram", "equilibria", "relations" and "stability" as phase names,
+# which the verified loader then rejected as non-canonical, so binding any
+# database failed and the application stopped before rendering any control.
 _TDB_PHASE_DECLARATION = re.compile(
-    r"(?im)^\s*PHASE\s+([A-Z][A-Z0-9_]*)\s"
+    r"(?m)^\s*PHASE\s+([A-Z][A-Z0-9_]*)\s"
 )
 
 
@@ -625,7 +629,7 @@ def load_database(
     database_key = database_key.strip().casefold()
     if database_key not in DATABASE_DEFINITIONS:
         raise ValueError(
-            f"База {database_key!r} отсутствует в SWR release surface."
+            f"База {database_key!r} не входит в список доступных баз."
         )
     definition = DATABASE_DEFINITIONS[database_key]
     if database_key == "fe":
@@ -4091,7 +4095,7 @@ def dataframe_to_excel(
                         ).get("label", context.get("database_key", "")),
                         "Файл базы": context.get("database_path", ""),
                         "SHA-256 базы": context.get("database_sha256", ""),
-                        "Линия / gate": f"{APP_LINEAGE}/{APP_GATE}",
+                        "Линия": APP_LINEAGE,
                         "Версия ThermoGar": APP_VERSION,
                         "Класс выпуска": RELEASE_CLASS,
                         "Статус программы": SOFTWARE_RELEASE_STATUS,
@@ -5452,6 +5456,11 @@ except Exception as pending_context_error:
 
 st.title(DISPLAY_APP_NAME)
 
+st.sidebar.caption(
+    "ThermoGar 0.3.0 — исследовательское ПО. "
+    "Экспериментальная квалификация: NOT_PERFORMED."
+)
+
 st.sidebar.header("Настройки расчётных разделов")
 st.sidebar.caption(
     "Параметры ниже относятся ко всем семи рабочим разделам."
@@ -5708,9 +5717,7 @@ CURRENT_CONTEXT = context_snapshot(
 CURRENT_CONTEXT["database_label"] = definition["label"]
 
 # A result calculated for another database/composition/pressure must never be
-# shown as if it belonged to the current global context. Feature-local input
-# signatures and export envelopes remain separate NE-06/NE-07 gates; until
-# then exports are disabled by thermogar_release_ui.
+# shown as if it belonged to the current global context.
 CURRENT_CONTEXT_SIGNATURE = hashlib.sha256(
     json.dumps(
         CURRENT_CONTEXT,
@@ -5732,7 +5739,7 @@ context_or_release_changed = (
     previous_context_signature != CURRENT_CONTEXT_SIGNATURE
     or previous_release_generation != RUNTIME_POLICY_GENERATION
 )
-if context_or_release_changed or not CALCULATIONS_ENABLED:
+if context_or_release_changed:
     stale_result_keys = [
         key
         for key in list(st.session_state)
@@ -10301,7 +10308,7 @@ USER_GUIDE_MD = r"""
 4. В поле **Добавки** введите состав, например `AL=15, CR=10`.
 5. Для Steel доступны обычные действия в трёх вкладках раздела **Расчёты**:
    одна температура, три точки по температуре и три точки по составу.
-6. Выгрузки видимы, но заблокированы до evidence-contract NE-06.
+6. Результат каждого раздела можно выгрузить в Excel, CSV или PNG.
 
 ## Что делает каждый раздел
 
@@ -10369,11 +10376,11 @@ USER_GUIDE_MD = r"""
 
 Учебные примеры служат только для проверки функций и не являются промышленными марками.
 
-### Пакетный расчёт — заморожен до NE-07
+### Пакетный расчёт
 
-Элементы интерфейса показаны для инвентаризации, но загрузка внешних файлов
-отключена до строгой схемы, миграции и восстановления базы на NE-07. Шаблоны
-и результаты нельзя выгружать до evidence-contract NE-06.
+Загрузите CSV или XLSX со списком составов, выполните расчёт для всей
+таблицы и выгрузите результат. Шаблон входного файла доступен на той же
+вкладке.
 
 ### Сохранить проект и повторить работу
 
@@ -10650,24 +10657,16 @@ with reference_tab:
         render_quick_examples(queue_context_load)
         st.divider()
         st.subheader("Как пользоваться ThermoGar")
-        st.warning(
-            "NE-02: все численные кнопки отключены до NE-03/NE-04. "
-            "Показанные инструкции описывают целевой workflow после gates."
-        )
-        st.caption(
-            "Короткое описание целевых workflow. Сейчас можно проверить "
-            "поверхность интерфейса, но нельзя выполнить новый расчёт."
-        )
+        st.caption("Короткое описание рабочих сценариев.")
 
-        st.markdown("### Целевой первый расчёт после NE-03/NE-04")
+        st.markdown("### Первый расчёт")
         st.markdown(
             "1. Выберите базу в боковой панели.  \n"
             "2. Выберите основу и единицы состава.  \n"
             "3. Введите добавки, например `AL=15`.  \n"
             "4. Откройте нужный расчётный раздел.  \n"
             "5. Задайте температуру или диапазон.  \n"
-            "6. После прохождения gates выполните расчёт; выгрузка станет "
-            "доступна отдельно после NE-06."
+            "6. Выполните расчёт и при необходимости выгрузите результат."
         )
 
         with st.expander("Что находится в каждом разделе", expanded=True):
@@ -10778,8 +10777,8 @@ with reference_tab:
             st.markdown(
                 "1. **Марки и составы:** сохраните текущую боковую панель "
                 "под понятным именем.  \n"
-                "2. **Пакетный расчёт:** внешняя загрузка заморожена до NE-07, "
-                "а выгрузка — до NE-06.  \n"
+                "2. **Пакетный расчёт:** загрузите таблицу составов, "
+                "посчитайте её целиком и выгрузите результат.  \n"
                 "3. **Проекты и история:** проект сохраняет настройки, "
                 "а история — факт расчёта и отпечаток базы.  \n"
                 "4. После загрузки проекта или истории расчёт нужно повторить "

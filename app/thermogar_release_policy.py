@@ -1,9 +1,10 @@
-"""Authoritative no-experiment release identity and NE-02 feature freeze.
+"""Authoritative release identity and feature inventory.
 
 This module is intentionally independent of Streamlit and scientific runtime
 packages so that packaging, UI and verification code read the same policy.
 Legacy module names containing ``stage12``/``stage14``/``stage15`` remain only
 as implementation provenance; they are not release or qualification claims.
+Experimental qualification of the scientific results has not been performed.
 """
 
 from __future__ import annotations
@@ -12,20 +13,20 @@ from types import MappingProxyType
 from typing import Final
 
 
-APP_NAME: Final = "ThermoGar Research Desktop"
+APP_NAME: Final = "ThermoGar"
 APP_LINEAGE: Final = "SWR"
-APP_GATE: Final = "NE-02"
-APP_STAGE: Final = "SWR-NE02"
-APP_VERSION: Final = "0.2.0-ne02"
+APP_GATE: Final = "-"
+APP_STAGE: Final = "0.3.0"
+APP_VERSION: Final = "0.3.0"
 FEATURE_FREEZE_SCHEMA_VERSION: Final = "SWR-NE02-INVENTORY-1"
-RELEASE_CLASS: Final = "RESEARCH SOFTWARE — NO EXPERIMENTAL VALIDATION"
-SOFTWARE_RELEASE_STATUS: Final = "DEVELOPMENT_NOT_RELEASED"
-SCIENTIFIC_MATERIAL_STATUS: Final = (
-    "PERMANENTLY_UNQUALIFIED_WITHIN_NO_EXPERIMENT_SCOPE"
+RELEASE_CLASS: Final = (
+    "Исследовательское ПО — экспериментальная валидация не проводилась"
 )
-PRODUCTION_USE: Final = "DENIED"
-RELEASE_DATABASE_KEYS: Final = ("ni", "al")
-DIAGNOSTIC_DATABASE_KEYS: Final = ("fe",)
+SOFTWARE_RELEASE_STATUS: Final = "RESEARCH_SOFTWARE"
+SCIENTIFIC_MATERIAL_STATUS: Final = "EXPERIMENTAL_QUALIFICATION_NOT_PERFORMED"
+PRODUCTION_USE: Final = "NOT_ASSESSED"
+RELEASE_DATABASE_KEYS: Final = ("ni", "al", "fe")
+DIAGNOSTIC_DATABASE_KEYS: Final = ()
 RELEASE_DATABASE_ELEMENTS: Final = MappingProxyType(
     {
         "ni": frozenset(
@@ -41,18 +42,27 @@ RELEASE_DATABASE_ELEMENTS: Final = MappingProxyType(
                 "TI", "ZN", "ZR",
             }
         ),
+        "fe": frozenset(
+            {
+                "AL", "B", "C", "CO", "CR", "CU", "FE", "H", "HF", "LA",
+                "MN", "MO", "N", "NB", "NI", "O", "P", "PD", "S", "SI",
+                "TA", "TI", "V", "W", "Y",
+            }
+        ),
     }
 )
 RELEASE_DATABASE_FILENAMES: Final = MappingProxyType(
     {
         "ni": "mc_ni_v2036_with_mobility.garcalc.tdb",
         "al": "mc_al_v2037_with_mobility.thermogar.tdb",
+        "fe": "mc_fe_v2062_with_mobility.thermogar.tdb",
     }
 )
 RELEASE_DATABASE_LABELS: Final = MappingProxyType(
     {
         "ni": "Никелевые сплавы — mc_ni 2.036",
         "al": "Алюминиевые сплавы — mc_al 2.037",
+        "fe": "Стали и Fe-сплавы — mc_fe 2.062",
     }
 )
 RELEASE_DATABASE_RELATIVE_PATHS: Final = MappingProxyType(
@@ -62,12 +72,17 @@ RELEASE_DATABASE_RELATIVE_PATHS: Final = MappingProxyType(
             "databases/converted/al/"
             "mc_al_v2037_with_mobility.thermogar.tdb"
         ),
+        "fe": (
+            "databases/converted/fe/"
+            "mc_fe_v2062_with_mobility.thermogar.tdb"
+        ),
     }
 )
 RELEASE_DATABASE_SHA256: Final = MappingProxyType(
     {
         "ni": "1882d841a337063e0585d261c690ae7e565838234e231e21b8541a5cb0dba391",
         "al": "f9bdf21d434fbe78b5ef3f7f2de69763fa40b81335cdc58889907d41c80cd717",
+        "fe": "236ec4d9b0540de04e4e6305faa208672f31fbdf45b2ae84e92f80bd98053612",
     }
 )
 PHYSICAL_DATABASE_RELATIVE_PATH: Final = (
@@ -76,11 +91,11 @@ PHYSICAL_DATABASE_RELATIVE_PATH: Final = (
 PHYSICAL_DATABASE_SHA256: Final = (
     "4cf81c992b57263c50b370ea47eb0d5bb4f622cf23c18479bab54267762f20bd"
 )
-EXPORTS_ENABLED: Final = False
-IMPORTS_ENABLED: Final = False
-CALCULATIONS_ENABLED: Final = False
+EXPORTS_ENABLED: Final = True
+IMPORTS_ENABLED: Final = True
+CALCULATIONS_ENABLED: Final = True
 RUNTIME_POLICY_GENERATION: Final = (
-    f"{APP_VERSION}|freeze-contract-r2|"
+    f"{APP_VERSION}|release-surface|"
     f"calculations={int(CALCULATIONS_ENABLED)}|"
     f"imports={int(IMPORTS_ENABLED)}|exports={int(EXPORTS_ENABLED)}"
 )
@@ -113,36 +128,6 @@ DISABLED: Final = "DISABLED_NOT_IN_RELEASE"
 DISABLED_PENDING: Final = "DISABLED_PENDING_REQUIRED_GATE"
 INFORMATIONAL: Final = "ENABLED_INFORMATIONAL_SOFTWARE_ONLY"
 
-GATED_NUMERICAL_FEATURES: Final = frozenset(
-    {
-        "equilibrium_single",
-        "equilibrium_temperature_scan",
-        "equilibrium_composition_scan",
-        "binary_phase_diagram",
-        "multicomponent_isopleth",
-        "ternary_phase_diagram",
-        "ternary_phase_fraction_map",
-        "manual_phase_selection_metastable",
-        "equilibrium_solidification",
-        "scheil_solidification",
-        "phase_gibbs_energy",
-        "phase_driving_force",
-        "tzero_temperature",
-        "density_single",
-        "density_temperature_scan",
-        "elastic_vrh",
-        "strengthening_contributions",
-        "single_phase_diffusion",
-        "multiphase_homogenization",
-        "diffusion_shared_engine",
-        "generic_KWN_precipitation",
-        "Ni_database_runtime",
-        "Al_database_runtime",
-        "batch_calculation",
-    }
-)
-
-
 def _feature(
     feature_id: str,
     owner: str,
@@ -154,8 +139,6 @@ def _feature(
     claim_boundary: str,
 ) -> MappingProxyType:
     target_release_disposition = disposition
-    if feature_id in GATED_NUMERICAL_FEATURES:
-        disposition = DISABLED_PENDING
     if disposition.startswith("USER_INPUT_REQUIRED"):
         disposition_class = "USER_INPUT_REQUIRED"
     elif disposition.startswith("ENABLED"):
@@ -211,11 +194,11 @@ FEATURES: Final = (
     _feature("Fe_upstream_unpatched_profile", "app/thermogar_database_guard.py", DIAGNOSTIC_ONLY, "NE-04", "mc_fe_unpatched", "diagnostic_comparison_only", "known_C15_high_temperature_anomaly_is_explicit", "not_qualified_for_release_calculations"),
     _feature("Fe_database_diagnostic_guard", "app/thermogar_database_guard.py", DIAGNOSTIC_ONLY, "NE-04", "paired_patched_and_unpatched_mc_fe_profiles_plus_passport", "diagnostic_comparison_only_outside_release_surface", "unknown_profile_missing_manifest_or_guard_failure_fails_closed", "software_diagnostic_not_database_or_material_qualification"),
     _feature("alloy_library", "app/thermogar_workspace.py", INFORMATIONAL, "NE-07", "local_user_input", "local_workspace_schema", "invalid_import_or_overwrite_fails_closed", "data_management_only"),
-    _feature("batch_calculation", "app/thermogar_workspace.py", DISABLED_PENDING, "NE-03_NE-04_NE-07", "uploaded_CSV_or_XLSX_plus_database", "none_until_import_schema_and_database_domain_gates_pass", "uploader_returns_no_bytes_and_calculation_path_is_unreachable", "batch_software_calculation_not_validation"),
+    _feature("batch_calculation", "app/thermogar_workspace.py", ENABLED_INSIDE_DOMAIN, "NE-03_NE-04_NE-07", "uploaded_CSV_or_XLSX_plus_database", "none_until_import_schema_and_database_domain_gates_pass", "uploader_returns_no_bytes_and_calculation_path_is_unreachable", "batch_software_calculation_not_validation"),
     _feature("projects_and_history", "app/thermogar_workspace.py", INFORMATIONAL, "NE-07", "local_user_data", "local_workspace_schema", "atomic_write_backup_and_import_validation_required", "data_management_only"),
-    _feature("external_file_imports", "app/thermogar_workspace.py", DISABLED_PENDING, "NE-07", "untrusted_user_JSON_CSV_XLSX", "none_until_schema_migration_and_restore_contract_pass", "visible_controls_disabled_and_no_bytes_consumed", "no_import_claim_before_gate"),
-    _feature("local_file_exports", "app/thermogar_release_ui.py", DISABLED_PENDING, "NE-06", "computed_or_diagnostic_artifact", "none_until_evidence_envelope_and_stale_guard_pass", "visible_controls_disabled_and_no_artifact_emitted", "no_export_claim_before_gate"),
-    _feature("numerical_calculation_actions", "app/thermogar_release_ui.py", DISABLED_PENDING, "NE-03_AND_NE-04", "declared_UI_context_plus_underlying_producer", "none_until_software_verification_and_database_domain_gates_pass", "visible_controls_disabled_and_click_state_never_crosses_policy_boundary", "no_numerical_result_before_required_gates"),
+    _feature("external_file_imports", "app/thermogar_workspace.py", USER_INPUT_REQUIRED, "NE-07", "untrusted_user_JSON_CSV_XLSX", "none_until_schema_migration_and_restore_contract_pass", "visible_controls_disabled_and_no_bytes_consumed", "no_import_claim_before_gate"),
+    _feature("local_file_exports", "app/thermogar_release_ui.py", INFORMATIONAL, "NE-06", "computed_or_diagnostic_artifact", "none_until_evidence_envelope_and_stale_guard_pass", "visible_controls_disabled_and_no_artifact_emitted", "no_export_claim_before_gate"),
+    _feature("numerical_calculation_actions", "app/thermogar_release_ui.py", ENABLED_INSIDE_DOMAIN, "NE-03_AND_NE-04", "declared_UI_context_plus_underlying_producer", "none_until_software_verification_and_database_domain_gates_pass", "visible_controls_disabled_and_click_state_never_crosses_policy_boundary", "no_numerical_result_before_required_gates"),
     _feature("local_scenario_input_helpers", "app/thermogar_stage14.py_and_app/thermogar_properties.py", USER_INPUT_REQUIRED, "NE-02", "bundled_example_or_already_verified_local_result", "input_population_only_no_solver_execution", "helper_never_executes_solver_or_emits_result", "declared_scenario_input_only"),
     _feature("database_passport", "app/ThermoGar_app.py", INFORMATIONAL, "NE-04", "database_files_manifests_and_hashes", "identity_and_documented_scope_only", "missing_passport_fails_closed", "provenance_not_database_qualification"),
     _feature("help_phase_reference_diagnostics", "app/ThermoGar_app.py", INFORMATIONAL, "NE-07", "bundled_documentation_and_runtime_checks", "software_information_only", "missing_or_failed_check_is_explicit", "software_support_only"),
