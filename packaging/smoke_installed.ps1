@@ -34,9 +34,12 @@ param(
     [string]$InstallerPath,
     [string]$RepoRoot,
     [string]$InstallRoot = "$env:ProgramFiles\ThermoGar",
-    # Cold start imports pycalphad and starts Streamlit; 60 s is too tight on
-    # a first run against a freshly written Program Files tree.
-    [int]$HealthTimeoutSeconds = 180,
+    # Cold start imports pycalphad, starts Streamlit and runs the app script
+    # once before the launcher will publish a run record. Measured at ~17 s for
+    # the script alone on a warm cache; the launcher's own discovery budget is
+    # 240 s, so this has to be larger than that or a slow first start reads as
+    # a failure that is really just a timeout.
+    [int]$HealthTimeoutSeconds = 300,
     # Leave the product installed after the run (skips step 7).
     [switch]$SkipUninstall
 )

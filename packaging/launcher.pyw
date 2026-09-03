@@ -45,6 +45,16 @@ MAX_REQUIRED_BYTES = 64 * 1024 * 1024
 CLEANUP_CONFIRM_SECONDS = 60.0
 # How long to keep retrying the run-record delete against a concurrent reader.
 RECORD_CLEAR_SECONDS = 30.0
+# The two Streamlit probes answer on completely different timescales and cannot
+# share a socket timeout. /_stcore/health replies as soon as the server is
+# listening. /_stcore/script-health-check replies only once ThermoGar_app.py has
+# run to completion, which on a cold start means importing pycalphad and binding
+# the default database — measured at 16.6 s on a fresh 0.3.0 install, and slower
+# on a cold filesystem cache.
+SERVER_HEALTH_TIMEOUT = 1.0
+SCRIPT_HEALTH_TIMEOUT = 60.0
+# Budget for the whole discovery loop, which needs two consecutive good probes.
+UI_DISCOVERY_SECONDS = 240.0
 RUN_KEYS = (
     "schema",
     "state",
@@ -902,8 +912,8 @@ def _bind_control() -> socket.socket:
         raise
 
 
-def _http_health(port: int, path: str) -> bool:
-    connection = http.client.HTTPConnection("127.0.0.1", port, timeout=1.0)
+def _http_health(port: int, path: str, timeout: float = SERVER_HEALTH_TIMEOUT) -> bool:
+    connection = http.client.HTTPConnection("127.0.0.1", port, timeout=timeout)
     try:
         connection.request("GET", path, headers={"Host": f"127.0.0.1:{port}"})
         response = connection.getresponse()
@@ -915,7 +925,7 @@ def _http_health(port: int, path: str) -> bool:
         connection.close()
 
 
-def _discover_ui(child_pid: int, control_port: int, timeout_seconds: float = 60.0) -> int:
+def _discover_ui(child_pid: int, control_port: int, timeout_seconds: float = UI_DISCOVERY_SECONDS) -> int:
     deadline = time.monotonic() + timeout_seconds
     stable_port: int | None = None
     while time.monotonic() < deadline:
@@ -924,7 +934,12 @@ def _discover_ui(child_pid: int, control_port: int, timeout_seconds: float = 60.
         if len(owned) == 1:
             address, port, _pid = owned[0]
             canonical = address == "127.0.0.1" and port != control_port and _has_exact_listener(listeners, address, port, child_pid)
-            if canonical and 1024 <= port <= 65535 and _http_health(port, "/_stcore/health") and _http_health(port, "/_stcore/script-health-check"):
+            if (
+                canonical
+                and 1024 <= port <= 65535
+                and _http_health(port, "/_stcore/health")
+                and _http_health(port, "/_stcore/script-health-check", SCRIPT_HEALTH_TIMEOUT)
+            ):
                 if stable_port == port:
                     fresh = _tcp_listeners()
                     if _has_only_owned_listener(fresh, "127.0.0.1", port, child_pid):
@@ -1066,7 +1081,9 @@ def _assert_prepublication(
             raise LauncherError(7, "Job TCP ownership before publication")
         if not _has_only_owned_listener(listeners, "127.0.0.1", control_port, supervisor_pid):
             raise LauncherError(7, "control TCP ownership before publication")
-        if not _http_health(ui_port, "/_stcore/health") or not _http_health(ui_port, "/_stcore/script-health-check"):
+        if not _http_health(ui_port, "/_stcore/health") or not _http_health(
+            ui_port, "/_stcore/script-health-check", SCRIPT_HEALTH_TIMEOUT
+        ):
             raise LauncherError(8, "UI health before publication")
 
         listeners = _tcp_listeners()

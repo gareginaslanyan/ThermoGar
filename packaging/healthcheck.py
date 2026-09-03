@@ -67,6 +67,13 @@ ERROR_INVALID_PARAMETER = 87
 ERROR_ACCESS_DENIED = 5
 ERROR_FILE_NOT_FOUND = 2
 ERROR_PATH_NOT_FOUND = 3
+ERROR_SHARING_VIOLATION = 32
+ERROR_LOCK_VIOLATION = 33
+# The supervisor clears run.json through a delete-access open of its own, so a
+# reader that lands inside that window is told the file is in use rather than
+# that it is gone. That is contention between two correct participants, not
+# evidence that anything is wrong: the answer is to probe again.
+RECORD_CONTENDED_ERRORS = (ERROR_SHARING_VIOLATION, ERROR_LOCK_VIOLATION)
 WAIT_OBJECT_0 = 0
 WAIT_TIMEOUT = 258
 AF_INET = 2
@@ -704,6 +711,10 @@ def _record_after_stop(path: str, state: str, expected_raw: bytes) -> str:
     except HeldOpenError as exc:
         if exc.winerror_code in (ERROR_FILE_NOT_FOUND, ERROR_PATH_NOT_FOUND):
             return "ABSENT"
+        if exc.winerror_code in RECORD_CONTENDED_ERRORS:
+            # Report the record as still present so the caller keeps waiting;
+            # STOP_WAIT_SECONDS bounds how long that can go on.
+            return "SAME"
         raise ObserverError(9, "record open uncertainty after stop") from exc
     except OSError as exc:
         raise ObserverError(9, "record probe after stop") from exc
