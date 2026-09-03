@@ -24,6 +24,7 @@ from pycalphad import Database
 
 from thermogar_palette import chart_roles, phase_styles
 from thermogar_release_policy import (
+    PRODUCTION_USE,
     RELEASE_DATABASE_FILENAMES,
     RELEASE_DATABASE_KEYS,
     RELEASE_DATABASE_LABELS,
@@ -111,6 +112,11 @@ DEFAULTS = {
 
 # Fe-профиль исключает C15_LAVES из фаз, предлагаемых пользователю.
 EXCLUDED_PHASES = {"fe": ("C15_LAVES",)}
+
+# Строка происхождения входов по умолчанию. Поле остаётся редактируемым и
+# попадает в Excel, историю расчётов и JSON происхождения, но пустое поле
+# больше не выключает кнопку расчёта.
+DEFAULT_INPUT_PROVENANCE = "DECLARED_SCENARIO_INPUT_NOT_MATERIAL_QUALIFICATION"
 
 HOMOGENIZATION_FUNCTIONS = {
     "Нижняя граница Хашина—Штрикмана": "hashin lower",
@@ -225,6 +231,13 @@ def _bind_release_database(
         canonical_label,
         database,
     )
+
+
+def _as_text(value: Any) -> str:
+    """Привести значение таблицы параметров к строке без потери точности."""
+    if isinstance(value, float):
+        return f"{value:.10g}"
+    return str(value)
 
 
 def _theme_type() -> str:
@@ -774,13 +787,26 @@ def _run_model(
     if hasattr(model, "setHashSensitivity"):
         model.setHashSensitivity(4)
 
-    model.solve(
-        time_s,
-        iterator=explicitEulerIterator,
-        verbose=False,
-        vIt=500,
-        minDtFrac=1e-10,
-    )
+    try:
+        model.solve(
+            time_s,
+            iterator=explicitEulerIterator,
+            verbose=False,
+            vIt=500,
+            minDtFrac=1e-10,
+        )
+    except Exception as solver_error:
+        # Отказ приходит из pycalphad/kawin («Singular matrix», отсутствие
+        # равновесия) и означает не ошибку ввода, а то, что выбранная фаза
+        # при этой температуре и этих составах не решается.
+        raise RuntimeError(
+            "Решатель Kawin не смог продолжить расчёт для фаз "
+            f"{', '.join(phases)} при {float(temperature_C):.6g} °C. "
+            "Чаще всего это значит, что выбранная фаза при этой температуре "
+            "не устойчива в заданных составах: проверьте температуру, состав "
+            "сторон пары и выбор фазы. Сообщение решателя: "
+            f"{solver_error}"
+        ) from solver_error
 
     z_m = np.asarray(model.mesh.z, dtype=float).reshape(-1)
     z_um = z_m * 1e6
@@ -826,8 +852,8 @@ def _run_model(
         ("Элементы", ", ".join(couple.elements)),
         ("Фазы", ", ".join(phases)),
         ("Источник/назначение входов", input_provenance),
-        ("Research-only сценарий подтверждён", "да"),
-        ("Материальная квалификация", "отсутствует; production use denied"),
+        ("Класс расчёта", "исследовательский сценарий, не прогноз материала"),
+        ("Материальная квалификация", f"не проводилась; production use — {PRODUCTION_USE}"),
     ]
     if method_key == "homogenization":
         settings_rows.extend(
@@ -837,7 +863,13 @@ def _run_model(
                 ("Лабиринтный фактор", float(labyrinth_factor)),
             ]
         )
-    settings = pd.DataFrame(settings_rows, columns=["Параметр", "Значение"])
+    # Колонка значений намеренно текстовая: строки и числа в одном столбце
+    # object не переводятся в Arrow, и Streamlit печатает ArrowTypeError
+    # в журнал при каждом показе таблицы параметров.
+    settings = pd.DataFrame(
+        [(name, _as_text(value)) for name, value in settings_rows],
+        columns=["Параметр", "Значение"],
+    )
 
     profile_figure = _profile_figure(
         z_um,
@@ -1013,7 +1045,7 @@ def _result_display(
     with metric_col1:
         st.metric("Метод", result.method_label)
     with metric_col2:
-        st.metric("Время выдержки, ч", f"{float(result.settings.loc[result.settings['Параметр'] == 'Время, ч', 'Значение'].iloc[0]):.3g}")
+        st.metric("Время выдержки, ч", f"{result.actual_time_s / 3600.0:.3g}")
     with metric_col3:
         st.metric("Макс. ошибка баланса, ат.%", f"{100.0 * result.max_balance_error:.3e}")
 
@@ -1099,6 +1131,12 @@ def _result_display(
                 mime="image/png",
                 key=f"{state_key}_phase_png",
             )
+
+    if figure is not result.profile_figure:
+        # График в мас.% строится заново на каждом прогоне скрипта. Без этого
+        # matplotlib копит фигуры до предупреждения «More than 20 figures».
+        # Сохранённый в результате профиль не трогаем: он нужен и дальше.
+        plt.close(figure)
 
 
 def _common_inputs(
@@ -1187,19 +1225,21 @@ def _common_inputs(
 
     input_provenance = st.text_area(
         "Источник и назначение diffusion inputs",
-        value="",
+        value=DEFAULT_INPUT_PROVENANCE,
         help=(
-            "Укажите источник состава, температуры и времени либо явно "
-            "пометьте синтетический software-сценарий. Это не является "
-            "экспериментальной валидацией."
+            "Строка попадает в лист «Параметры» Excel, в историю расчётов и "
+            "в JSON происхождения. Укажите источник состава, температуры и "
+            "времени; значение по умолчанию помечает их как объявленный "
+            "software-сценарий без экспериментальной валидации."
         ),
         key=f"{prefix}_input_provenance_{database_key}",
     )
-    input_confirmation = st.checkbox(
-        "Подтверждаю: это research-only сценарий без материальной квалификации",
-        value=False,
-        key=f"{prefix}_input_confirmation_{database_key}",
-    )
+    # Раздел целиком объявлен исследовательским: подпись под заголовком и
+    # блок «Ограничения исследовательского diffusion mode» в конце вкладки.
+    # Отдельная галочка это дублировала и держала кнопку расчёта выключенной,
+    # поэтому убрана; проверки самого ввода (составы, фазы, геометрия, время,
+    # число ячеек) остались на месте и сообщают об ошибке текстом.
+    research_scenario_declared = True
 
     return {
         "balance": balance,
@@ -1212,8 +1252,10 @@ def _common_inputs(
         "interface_pct": float(interface_pct),
         "time_h": float(time_h),
         "nodes": int(nodes),
-        "input_provenance": input_provenance,
-        "input_confirmation": bool(input_confirmation),
+        "input_provenance": (
+            str(input_provenance).strip() or DEFAULT_INPUT_PROVENANCE
+        ),
+        "input_confirmation": research_scenario_declared,
     }
 
 
@@ -1314,10 +1356,6 @@ def render_kinetics_section(
                 "Рассчитать однофазную диффузию",
                 type="primary",
                 key=f"kin_single_run_{database_key}",
-                disabled=(
-                    not bool(str(common["input_provenance"]).strip())
-                    or not common["input_confirmation"]
-                ),
             ):
                 try:
                     with st.spinner("Расчёт диффузионного профиля…"):
@@ -1397,6 +1435,20 @@ def render_kinetics_section(
             phase_options = []
             st.warning(f"Исправьте составы пары: {preview_error}")
 
+        # Гомогенизация требует минимум две фазы с полным набором MQ/MF для
+        # всех элементов пары. В mc_al такая фаза одна (FCC_A1), поэтому
+        # объясняем это до нажатия, а не после отказа расчёта.
+        homogenization_possible = len(phase_options) >= 2
+        if phase_options and not homogenization_possible:
+            st.warning(
+                "Для элементов "
+                + ", ".join(preview_couple.elements if preview_couple else [])
+                + " в этой базе есть параметры подвижности только у фазы "
+                + phase_options[0]
+                + ". Многофазная гомогенизация требует минимум две такие фазы, "
+                "поэтому для этого состава доступна только однофазная пара."
+            )
+
         default_phases = [
             phase for phase in defaults["homogenization_phases"] if phase in phase_options
         ]
@@ -1452,10 +1504,7 @@ def render_kinetics_section(
             "Рассчитать гомогенизацию",
             type="primary",
             key=f"kin_hom_run_{database_key}",
-            disabled=(
-                not bool(str(common["input_provenance"]).strip())
-                or not common["input_confirmation"]
-            ),
+            disabled=not homogenization_possible,
         ):
             try:
                 if len(phases) < 2:
