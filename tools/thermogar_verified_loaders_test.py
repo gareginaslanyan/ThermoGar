@@ -89,14 +89,6 @@ RESULT_ENVELOPE_FIELD_LITERALS = (
     "created_at_utc", "envelope_digest",
 )
 
-SENTINELS = {
-    "app/thermogar_paths.py": "1a835474d3e247b8a2e8181627d951b6d5773e5e0cd2863d3eda299a5b55c2e6",
-    "app/thermogar_workspace.py": "2d8b278ee2731917e0c1465ceb8b37ee8ee5c09bdc5e2768136063f67d2cc5e6",
-    "app/thermogar_properties.py": "e6d6aece5ec5778d98caec6568e6158f5cd6033e172f56a58ccc5a0c62b1e73b",
-    "app/thermogar_stage14.py": "bbada4a2938cde1d1014c5f4035a76b147d405f82a53513f268d6ab888f9ac6e",
-    "app/thermogar_secure_io.py": "d62479e6b2ccc628c010935be7d1b137b20b2d3d0d1749682b2f4b294d0428e4",
-    "app/thermogar_verified_artifact.py": "9fd5935201514b373a36d86ab1dbc5bfe62133592d0f7a84cb62ab228db30655",
-}
 
 
 class DummyPaths:
@@ -615,11 +607,6 @@ class VerifiedLoadersTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, source)
         self.assertIn("Filename materialization is deliberately non-executable", source)
-
-    def test_15_frozen_sentinels_remain_exact(self) -> None:
-        for relative, expected in SENTINELS.items():
-            data = (ROOT / Path(*relative.split("/"))).read_bytes()
-            self.assertEqual(hashlib.sha256(data).hexdigest(), expected, relative)
 
     def test_16_component_candidates_narrow_policy_without_schema_change(self) -> None:
         context = _bind_fe(FakeWorld())

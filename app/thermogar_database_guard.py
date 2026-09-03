@@ -36,9 +36,9 @@ FE_PROFILE_CANONICAL = FE_PROFILE_WORKING
 FE_PROFILE_EXPERIMENTAL = FE_PROFILE_UPSTREAM
 
 FE_PROFILE_LABELS = {
-    FE_PROFILE_WORKING: "Диагностическая mc_fe 2.062 + патч TG-FE-2062-C15-001",
+    FE_PROFILE_WORKING: "mc_fe 2.062, профиль thermogar_patch (патч TG-FE-2062-C15-001, C15_LAVES исключена)",
     FE_PROFILE_UPSTREAM: (
-        "Исходная mc_fe 2.062 — без патча, только для диагностики"
+        "Исходная mc_fe 2.062 без патча (не используется в расчётах)"
     ),
 }
 

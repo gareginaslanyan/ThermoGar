@@ -1062,14 +1062,14 @@ class VerifiedB3BatchBroker:
         rebound = self._bind(clean["database_key"])
         if clean.get("database_sha256") not in (
             None,
-            rebound.tdb_evidence.sha256,
+            rebound.tdb.sha256,
         ):
             raise ValueError("Imported database digest does not rebind.")
         if clean["database_key"] == "fe" and clean.get(
             "fe_profile_key"
         ) != FE_PROFILE_CANONICAL:
             raise ValueError("Imported Fe profile does not rebind.")
-        clean["database_sha256"] = rebound.tdb_evidence.sha256
+        clean["database_sha256"] = rebound.tdb.sha256
         return dict(clean)
 
     def execute_row(self, row: dict[str, Any]) -> dict[str, Any]:
@@ -5784,8 +5784,8 @@ workspace_state_store = verified_state.StateStore(
     THERMOGAR_PATHS,
     st,
     binding_probe=lambda: (
-        vlb_active_context.binding_digest,
-        vlb_active_context.binding_generation,
+        vlb_bound_context.binding_digest,
+        vlb_bound_context.binding_generation,
     ),
 )
 
