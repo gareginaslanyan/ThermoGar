@@ -1,0 +1,6 @@
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.tdb -text
+*.pdb -text
