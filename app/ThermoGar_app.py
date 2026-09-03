@@ -237,8 +237,7 @@ DATABASE_DEFINITIONS = {
         ),
         "default_balance": "FE",
         "default_composition": (
-            "C=0.20, CR=11.5, NI=0.7, MN=0.7, SI=0.3, "
-            "MO=0.6, W=0.9, V=0.225"
+            "C=0.20, CR=11.5, NI=0.7"
         ),
         "default_units": "wt",
         "default_temperature": 700.0,
