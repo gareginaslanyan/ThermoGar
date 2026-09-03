@@ -7,6 +7,7 @@
 
 Тесты: `tools\test_ui_h.py` — `streamlit.testing.v1.AppTest`, `default_timeout=900`,
 приватный `THERMOGAR_STATE_ROOT` на каждый тест.
+Прогон 2026-09-03: **26 passed за 1063 с** (включая `slow`).
 
 ```bat
 .venv-windows\Scripts\python.exe -X utf8 -B -m pytest tools/test_ui_h.py -q -m "not slow"
@@ -27,36 +28,44 @@ Fe–0,2C–11,5Cr–0,7Ni мас.% при 700 °C (профиль `thermogar_pa
 
 ## Матрица
 
+31 строк: 27 OK, 2 OK-с-оговоркой, 1 FAIL.
+
+Обозначения: **OK** — ячейка прогнана на этой базе; **OK (общий путь)** — код
+базы не различает, прогнано на одной базе (в скобках какой); **—** — к базе
+не относится.
+
 | Действие | Ni | Al | Fe | Тест |
 |---|---|---|---|---|
 | Библиотека: сохранить текущий состав | OK | OK | OK | `test_library_save_appears_in_the_list_and_loads_back` |
 | Библиотека: запись появилась в списке | OK | OK | OK | там же |
-| Библиотека: загрузить обратно в сайдбар | OK | OK | OK | там же |
-| Библиотека: экспорт JSON | OK | OK | OK | `test_library_export_and_import_round_trip` |
-| Библиотека: импорт JSON | OK | OK | OK | там же |
-| Библиотека: удаление записи | OK | OK | OK | ручная проверка |
+| Библиотека: загрузить обратно в сайдбар (со сменой базы) | OK | OK | OK | там же |
+| Библиотека: удаление с подтверждением и `.bak` | OK | OK | OK | там же |
+| Библиотека: экспорт JSON | OK (общий путь, Fe) | OK (общий путь, Fe) | OK | `test_library_export_and_import_round_trip` |
+| Библиотека: импорт JSON в чистый профиль | OK (общий путь, Fe) | OK (общий путь, Fe) | OK | там же |
 | Проект: сохранить (14 ключей) | OK | OK | OK | `test_project_saves_fourteen_keys_and_restores_state` |
 | Проект: новый сеанс → загрузить → состояние восстановлено | OK | OK | OK | там же |
-| Проект: экспорт JSON | OK | OK | OK-с-оговоркой | `test_project_export_is_portable_and_imports_back` |
-| Проект: импорт JSON | OK | OK | OK | там же |
-| Проект: удаление | OK | OK | OK | ручная проверка |
-| История: запись после сохранения состава/проекта | OK | OK | OK | `test_history_records_events_exports_csv_and_clears` |
+| Проект: экспорт JSON | OK-с-оговоркой | OK-с-оговоркой | OK-с-оговоркой | `test_project_export_is_portable_and_imports_back` |
+| Проект: импорт JSON в чистый профиль | OK (общий путь, Fe) | OK (общий путь, Fe) | OK | там же |
+| Проект: удаление с подтверждением и `.deleted` | OK (общий путь, Fe) | OK (общий путь, Fe) | OK | там же |
+| Подтверждения переживают `st.rerun` и не уезжают в чужую вкладку | OK (общий путь, Fe) | OK (общий путь, Fe) | OK | `test_confirmations_survive_the_rerun_and_stay_in_their_own_section` |
+| История: запись после сохранения состава/проекта | OK (общий путь, Fe) | OK (общий путь, Fe) | OK | `test_history_records_events_exports_csv_and_clears` |
 | История: запись после расчёта | OK-с-оговоркой | OK-с-оговоркой | OK-с-оговоркой | см. ниже |
-| История: цепочка контрольных сумм | OK | OK | OK | там же |
-| История: экспорт CSV | OK | OK | OK | там же |
-| История: восстановить материал из записи | OK | OK | OK | там же |
-| История: очистка с подтверждением | OK | OK | OK | там же |
-| Batch: шаблон CSV | OK | OK | OK | `test_batch_template_downloads_open_as_excel_and_csv` |
-| Batch: шаблон XLSX | OK | OK | OK | там же |
-| Batch: загрузка CSV `,` / `;`, UTF-8 / UTF-8-SIG | OK | OK | OK | `test_batch_accepts_both_separators_and_both_encodings` |
-| Batch: расчёт трёх составов | OK | OK | OK | `test_batch_calculates_three_databases_and_exports_excel` (`slow`) |
-| Batch: таблица результатов | OK | OK | OK | там же |
+| История: цепочка контрольных сумм | OK (общий путь, Fe) | OK (общий путь, Fe) | OK | `test_history_records_events_exports_csv_and_clears` |
+| История: экспорт CSV | OK (общий путь, Fe) | OK (общий путь, Fe) | OK | там же |
+| История: восстановить материал из записи | OK (общий путь, Fe) | OK (общий путь, Fe) | OK | там же |
+| История: очистка с подтверждением и резервной копией | OK (общий путь, Fe) | OK (общий путь, Fe) | OK | там же |
+| Batch: шаблон XLSX и CSV | — | — | — | `test_batch_template_downloads_open_as_excel_and_csv` (шаблон один на все базы) |
+| Batch: загрузка CSV `,` / `;`, UTF-8 / UTF-8-SIG | OK | OK | OK | `test_batch_accepts_both_separators_and_both_encodings` (все три базы в одном файле) |
+| Batch: расчёт | OK | OK | OK | `test_batch_calculates_three_databases_and_exports_excel` (`slow`) |
+| Batch: таблица результатов, Σ долей = 100 % | OK | OK | OK | там же |
+| Batch: экспорт XLSX (5 листов) | OK | OK | OK | там же |
+| Batch: пропуски в составах фаз не ломают выгрузку | OK | OK | OK | там же (был `CANONICAL_JSON_INVALID`, починено) |
+| Batch: сводка без receipt-колонок | OK | — | — | `test_batch_summary_has_no_receipt_columns` |
 | Batch: колонка «Фазы» без C15 | — | — | OK | `test_batch_rejects_c15_for_steel_before_any_calculation` (`slow`) |
-| Batch: экспорт XLSX | OK | OK | OK | `test_batch_calculates_three_databases_and_exports_excel` |
-| Импорт: мусор отклоняется понятным сообщением | OK | OK | OK | `test_batch_rejects_a_junk_file_with_a_readable_message` |
-| Пути: чистый `%LOCALAPPDATA%` — первый запуск | OK | OK | OK | `test_first_run_creates_the_profile_and_writes_nothing_into_the_program` |
-| Пути: программа ничего не пишет в свою папку | OK | OK | OK | там же |
-| Быстрые примеры: заполняют сайдбар | OK | OK | OK | `test_quick_examples_cover_three_databases_and_carry_a_steel` |
+| Импорт: мусор отклоняется понятным сообщением | OK (общий путь, Fe) | OK (общий путь, Fe) | OK | `test_batch_rejects_a_junk_file_with_a_readable_message` |
+| Пути: чистый `%LOCALAPPDATA%` — первый запуск | OK (общий путь, Fe) | OK (общий путь, Fe) | OK | `test_first_run_creates_the_profile_and_writes_nothing_into_the_program` |
+| Пути: программа ничего не пишет в свою папку | OK (общий путь, Fe) | OK (общий путь, Fe) | OK | там же |
+| Быстрые примеры: контекст и температура для трёх баз | OK | OK | OK | `test_quick_examples_cover_three_databases_and_carry_a_steel` |
 | Быстрые примеры: показаны в приложении | FAIL | FAIL | FAIL | недостижимый код в `ThermoGar_app.py:10464` |
 
 ### Оговорки

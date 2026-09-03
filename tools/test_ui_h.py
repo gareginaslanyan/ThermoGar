@@ -74,10 +74,10 @@ UPSTREAM_PATCHES: tuple[tuple[str, str], ...] = (
 )
 
 # The copy has to live beside the original: the app derives PROJECT_ROOT from
-# its own __file__. A run killed mid-flight leaves it behind, so sweep it here
-# as well as in the fixture.
+# its own __file__. The fixture removes it when the session ends; a run killed
+# mid-flight leaves it behind and the next run overwrites it. Do not delete it
+# at import time — that would pull the file out from under a parallel session.
 PATCHED_APP = APP / "_test_ui_h_app.py"
-PATCHED_APP.unlink(missing_ok=True)
 
 
 def batch_csv(
@@ -204,13 +204,22 @@ def download_keys(at) -> set[str]:
 
 
 def stored_artifacts(state_root: Path) -> dict[str, bytes]:
-    """Prepared export/import artifacts, keyed by content kind."""
+    """Newest prepared export/import artifact per content kind.
 
-    result: dict[str, bytes] = {}
+    A kind accumulates one file per prepared payload (they are named by
+    digest), so the newest one is the artifact behind the download button
+    currently on the page.
+    """
+
+    newest: dict[str, tuple[float, Path]] = {}
     for path in (state_root / "state").rglob("*"):
-        if path.is_file():
-            result[path.parent.name] = path.read_bytes()
-    return result
+        if not path.is_file():
+            continue
+        kind = path.parent.name
+        stamp = path.stat().st_mtime_ns
+        if kind not in newest or stamp >= newest[kind][0]:
+            newest[kind] = (stamp, path)
+    return {kind: path.read_bytes() for kind, (_stamp, path) in newest.items()}
 
 
 # ---------------------------------------------------------------------------
@@ -328,6 +337,21 @@ def test_library_save_appears_in_the_list_and_loads_back(app, database_key):
     assert at.session_state[f"thermogar_composition_{database_key}"] == composition
     assert at.session_state["_thermogar_loaded_context"]["label"] == name
 
+    # Deleting the record needs the confirmation checkbox and keeps a backup.
+    delete_button = f"alloy_delete_button_{saved[0]['id']}"
+    widget(at.checkbox, f"alloy_delete_confirm_{saved[0]['id']}").set_value(True)
+    at.run()
+    widget(at.button, delete_button).click()
+    at.run()
+    assert not section_errors(at)
+    assert (
+        json.loads(
+            (state_root / "workspace" / "alloys.json").read_text(encoding="utf-8")
+        )["alloys"]
+        == []
+    )
+    assert (state_root / "workspace" / "alloys.json.bak").is_file()
+
 
 def test_library_export_and_import_round_trip(app, tmp_path):
     at, state_root = app()
@@ -419,6 +443,36 @@ def test_project_export_is_portable_and_imports_back(app, tmp_path):
     second.run()
     assert not section_errors(second)
     assert list((second_root / "workspace" / "projects").glob("*.thermogar.json"))
+
+    # Deleting keeps the file under a .deleted name and drops it from the list.
+    widget(second.checkbox, "project_delete_confirm").set_value(True)
+    second.run()
+    widget(second.button, "project_delete_button").click()
+    second.run()
+    assert not section_errors(second)
+    projects = second_root / "workspace" / "projects"
+    assert not list(projects.glob("*.thermogar.json"))
+    assert list(projects.glob("*.thermogar.json.deleted"))
+
+
+def test_confirmations_survive_the_rerun_and_stay_in_their_own_section(app):
+    """A durable write is followed by st.rerun, which discards st.success."""
+
+    at, _ = app()
+    labelled(at.text_input, "Название проекта").set_value("Проект H")
+    labelled(at.button, "Сохранить проект в папке ThermoGar").click()
+    at.run()
+    messages = [message.value for message in at.success]
+    assert any(text.startswith("Проект сохранён:") for text in messages)
+    assert not any(text.startswith("Состав ") for text in messages)
+
+    labelled(at.text_input, "Название марки или состава").set_value("Марка H")
+    labelled(at.button, "Сохранить текущий состав").click()
+    at.run()
+    messages = [message.value for message in at.success]
+    assert any(text.startswith("Состав «Марка H»") for text in messages)
+    # The project confirmation was consumed by its own section, not this one.
+    assert not any(text.startswith("Проект сохранён:") for text in messages)
 
 
 def test_history_records_events_exports_csv_and_clears(app):
