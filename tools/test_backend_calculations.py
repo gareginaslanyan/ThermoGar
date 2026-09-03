@@ -950,16 +950,8 @@ def test_vrh_and_strengthening(case: Case) -> None:
 
 
 @pytest.mark.timeout(DEFAULT_TIMEOUT)
-def test_diffusion_module(request: pytest.FixtureRequest, case: Case) -> None:
+def test_diffusion_module(case: Case) -> None:
     """Level (b): short 1D diffusion couple through ``thermogar_diffusion``."""
-
-    if case.key == "fe":
-        request.node.add_marker(
-            pytest.mark.xfail(
-                strict=True,
-                reason="Fe hard-reject в thermogar_diffusion.py:167, снимается в Э2",
-            )
-        )
 
     from thermogar_diffusion import run_diffusion
     from thermogar_release_policy import RELEASE_DATABASE_LABELS
@@ -999,9 +991,9 @@ def test_diffusion_module(request: pytest.FixtureRequest, case: Case) -> None:
 def test_diffusion_direct_kawin(db: Database, case: Case) -> None:
     """Level (a): the same 1D couple straight through kawin, no ThermoGar code.
 
-    This is what tells Fe apart: if this passes while ``test_diffusion_module``
-    is xfail, the database and the library are fine and only the application's
-    hard reject stands in the way.
+    This is what told Fe apart while ``test_diffusion_module`` was xfail: the
+    database and the library were fine and only the application's hard reject
+    stood in the way. Both levels are expected to pass now.
     """
 
     pytest.importorskip("kawin")
@@ -1040,16 +1032,8 @@ def test_diffusion_direct_kawin(db: Database, case: Case) -> None:
 
 
 @pytest.mark.timeout(SLOW_TIMEOUT)
-def test_kwn_module(request: pytest.FixtureRequest, case: Case) -> None:
+def test_kwn_module(case: Case) -> None:
     """Level (b): short KWN run through ``thermogar_precipitation``."""
-
-    if case.key == "fe":
-        request.node.add_marker(
-            pytest.mark.xfail(
-                strict=True,
-                reason="Fe hard-reject в thermogar_precipitation.py:514, снимается в Э2",
-            )
-        )
 
     pytest.importorskip("kawin")
     from thermogar_precipitation import run_precipitation

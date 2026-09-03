@@ -106,12 +106,6 @@ def main() -> int:
             raise AssertionError(f"Expected {exception.__name__}: {label}")
 
     expect_rejected(
-        "Fe database rejected",
-        RuntimeError,
-        "Fe diffusion отклонён",
-        database_key=" fe ",
-    )
-    expect_rejected(
         "unknown database rejected",
         ValueError,
         "не входит в SWR release surface",
