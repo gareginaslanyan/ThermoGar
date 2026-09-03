@@ -436,9 +436,9 @@ def passport_dataframe(
                 normalize_profile_key(selected_profile), selected_profile
             ),
         ),
-        ("Патчированная диагностическая база", str(working)),
+        ("Рабочая база (thermogar_patch)", str(working)),
         (
-            "SHA-256 патчированной диагностической базы",
+            "SHA-256 рабочей базы",
             file_sha256(working) if working.is_file() else "не найдена",
         ),
         ("Патч", PATCH_ID),
@@ -446,14 +446,14 @@ def passport_dataframe(
         ("Действие", patch.get("action", "не найдено")),
         ("Совпавших активных команд", patch.get("matched_active_commands", "—")),
         (
-            "Активных G-параметров C15_LAVES в патчированной копии",
+            "Активных G-параметров C15_LAVES в рабочей базе",
             len(working_c15),
         ),
         (
-            "Активна команда -9e6 в патчированной копии",
+            "Активна команда -9e6 в рабочей базе",
             "да" if working.is_file() and find_exact_suspect_commands(working) else "нет",
         ),
-        ("Непатченная диагностическая база", str(upstream)),
+        ("Исходная база без патча (в расчётах не используется)", str(upstream)),
         (
             "SHA-256 непатченной базы",
             file_sha256(upstream) if upstream.is_file() else "не найдена",
@@ -473,6 +473,6 @@ def passport_dataframe(
             == command_list_sha256(upstream_laves)
             else "нет / не проверено",
         ),
-        ("Проверка в нативном MatCalc", "ожидается ответ апстрима"),
+        ("Проверка в нативном MatCalc", "не проводилась"),
     ]
-    return pd.DataFrame(rows, columns=["Поле", "Значение"])
+    return pd.DataFrame([(k, str(v)) for k, v in rows], columns=["Поле", "Значение"])
