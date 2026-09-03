@@ -1,8 +1,8 @@
-"""ThermoGar library, batch calculations, projects and history.
+"""Библиотека составов, пакетный расчёт, проекты и история ThermoGar.
 
-Имя и структура модуля происходят из исторического Stage 14. Модуль получает
-расчётные функции из основного приложения и хранит пользовательские данные
-только в каноническом профиле ``ThermoGarPaths``.
+Модуль получает расчётные функции из основного приложения и хранит
+пользовательские данные только в каноническом профиле ``ThermoGarPaths``
+(``%LOCALAPPDATA%\\ThermoGar`` либо ``THERMOGAR_STATE_ROOT``).
 """
 
 from __future__ import annotations
@@ -72,6 +72,56 @@ from thermogar_secure_io import (
 
 STORAGE_SCHEMA_VERSION = 1
 
+# Версия набора настроек, который проект сохраняет и восстанавливает.
+# Восстанавливаются только числовые и логические настройки расчётных
+# разделов: их нельзя сделать недопустимыми для выпадающего списка,
+# поэтому загрузка чужого проекта не может сломать интерфейс.
+WIDGET_STATE_VERSION = 1
+WIDGET_STATE_VERSION_FIELD = "_version"
+RESTORABLE_WIDGET_PREFIXES: tuple[str, ...] = (
+    "b4b2_hall_",
+    "b4b2_orowan_",
+    "b4b2_other_",
+    "b4b2_solid_",
+    "b4b2_taylor_",
+    "b4b2_elastic_temperature_",
+    "binary_c_",
+    "binary_nodes_",
+    "binary_t_",
+    "binary_tielines_",
+    "concentration_temperature_",
+    "concentration_threshold",
+    "driving_exclude_target_",
+    "driving_t_",
+    "energy_t_",
+    "isopleth_nodes_",
+    "isopleth_t_",
+    "physical_t_",
+    "physical_temperature_",
+    "single_temperature_",
+    "solidification_adaptive_",
+    "solidification_auto_start_",
+    "solidification_binary_tol_",
+    "solidification_pdens_",
+    "solidification_start_increment_",
+    "solidification_step_",
+    "solidification_stop_",
+    "t_max_",
+    "t_min_",
+    "t_step_",
+    "ternary_map_step_",
+    "ternary_map_temperature_",
+    "ternary_map_threshold_",
+    "ternary_nodes_",
+    "ternary_step_",
+    "ternary_temperature_",
+    "ternary_tieline_every_",
+    "ternary_tielines_",
+    "tzero_c_",
+    "tzero_t_",
+)
+MAX_WIDGET_STATE_KEYS = 200
+
 FE_DATABASE_KEY = "fe"
 FE_PROFILE_CANONICAL = "thermogar_patch"
 # Fe-профиль исключает C15_LAVES из фаз, доступных пользователю.
@@ -91,6 +141,91 @@ FE_DATABASE_ELEMENTS = frozenset(
     }
 )
 PRODUCT_DATABASE_KEYS = frozenset((*RELEASE_DATABASE_KEYS, FE_DATABASE_KEY))
+
+
+# Понятные пользователю причины отказа. Ключ — код проверки схемы; сам код
+# и техническая деталь проверки в интерфейс не выводятся.
+REJECTION_MESSAGES: dict[str, str] = {
+    "USER_INPUT_REQUIRED": "Выберите файл.",
+    "IMPORT_SCHEMA_REJECTED": (
+        "Файл не соответствует ожидаемой структуре и не был принят."
+    ),
+    "C15_PHASE_REJECTED": (
+        "В файле указана фаза C15_LAVES. Для стального профиля "
+        "thermogar_patch она исключена; уберите её и повторите загрузку."
+    ),
+    "ARTIFACT_OVERSIZE": "Файл слишком большой и не был прочитан.",
+    "ARTIFACT_MISSING": "Файл не найден.",
+    "ARTIFACT_IO_FAILED": "Файл не удалось прочитать целиком.",
+    "ARTIFACT_WRITE_FAILED": "Не удалось записать файл в папку данных ThermoGar.",
+    "CANONICAL_JSON_INVALID": "Файл не является корректным JSON.",
+    "SCHEMA_INVALID": "Структура файла не совпадает с ожидаемой.",
+    "INPUT_INVALID": "Введённые значения не проходят проверку.",
+    "DATABASE_KEY_REJECTED": "В файле указана база, которой нет в ThermoGar.",
+    "PROFILE_KEY_REJECTED": "В файле указан недопустимый профиль базы.",
+    "PATCH_ID_MISMATCH": "Профиль стальной базы в файле не совпадает с текущим.",
+    "TDB_HASH_MISMATCH": "Контрольная сумма базы в файле не совпадает с текущей.",
+    "PASSPORT_REQUIRED": "Для стальной базы требуется паспорт профиля.",
+    "BINDING_STALE": (
+        "Выбор базы изменился, пока готовился файл. Повторите действие."
+    ),
+    "GENERATION_STALE": (
+        "Выбор базы изменился, пока готовился файл. Повторите действие."
+    ),
+    "BINDING_IDENTITY_MISMATCH": (
+        "Данные файла не соответствуют выбранной базе."
+    ),
+    "STATE_CONFLICT": "Файл изменился во время операции; повторите действие.",
+    "CAPABILITY_UNAVAILABLE": "Это действие недоступно для выбранного файла.",
+    "EXPORT_SOURCE_REJECTED": "Нечего выгружать: исходные данные не приняты.",
+}
+
+
+def rejection_text(receipt: Any) -> str:
+    """Перевести отказ проверки схемы в сообщение для пользователя."""
+
+    code = str(getattr(receipt, "reason_code", "") or "")
+    return REJECTION_MESSAGES.get(
+        code,
+        "Действие отклонено проверкой данных. Проверьте выбранный файл "
+        "и текущую базу.",
+    )
+
+
+def show_rejection(receipt: Any, prefix: str = "") -> None:
+    """Показать понятный отказ вместо технической квитанции."""
+
+    text = rejection_text(receipt)
+    st.error(f"{prefix} {text}".strip() if prefix else text)
+
+
+def flash(kind: str, message: str) -> None:
+    """Запомнить сообщение, которое переживёт немедленный ``st.rerun``."""
+
+    pending = st.session_state.get("_thermogar_flash")
+    if not isinstance(pending, list):
+        pending = []
+    pending.append({"kind": kind, "message": message})
+    st.session_state["_thermogar_flash"] = pending
+
+
+def render_flash() -> None:
+    """Показать сообщения, отложенные предыдущим прогоном."""
+
+    pending = st.session_state.pop("_thermogar_flash", None)
+    if not isinstance(pending, list):
+        return
+    renderers = {
+        "success": st.success,
+        "warning": st.warning,
+        "error": st.error,
+        "info": st.info,
+    }
+    for item in pending:
+        if not isinstance(item, dict):
+            continue
+        renderer = renderers.get(str(item.get("kind", "info")), st.info)
+        renderer(str(item.get("message", "")))
 
 
 DEMO_ALLOYS: list[dict[str, Any]] = [
@@ -464,7 +599,7 @@ def context_from_history_entry(entry: Any) -> dict[str, Any]:
 
 
 def validate_project_payload(payload: Any) -> dict[str, Any]:
-    """Validate the complete current project schema; no migration at NE-02."""
+    """Проверить схему проекта целиком; автоматическая миграция не делается."""
 
     if not isinstance(payload, dict):
         raise ValueError("Данные проекта должны быть JSON-объектом.")
@@ -515,8 +650,8 @@ def validate_project_payload(payload: Any) -> dict[str, Any]:
     }
     if drift:
         raise ValueError(
-            "Версия или release identity проекта не совпадает; "
-            "автоматическая миграция отключена до NE-07: " + repr(drift)
+            "Проект сохранён другой версией ThermoGar; автоматическое "
+            "приведение не выполняется: " + repr(drift)
         )
     name = payload.get("name")
     description = payload.get("description")
@@ -526,16 +661,11 @@ def validate_project_payload(payload: Any) -> dict[str, Any]:
         raise ValueError("Описание проекта должно быть строкой.")
     validate_iso_timestamp(payload.get("created_at"), "created_at")
     validate_iso_timestamp(payload.get("updated_at"), "updated_at")
-    if payload.get("widget_state") != {}:
-        raise ValueError(
-            "Проект содержит произвольный widget_state; восстановление и "
-            "миграция этого поля отключены до NE-07."
-        )
     clean = dict(payload)
     clean["name"] = name.strip()
     clean["description"] = description.strip()
     clean["context"] = validate_context_payload(payload.get("context"))
-    clean["widget_state"] = {}
+    clean["widget_state"] = validate_widget_state(payload.get("widget_state"))
     return clean
 
 
@@ -593,16 +723,16 @@ def queue_context_load(
     clean_context = validate_context_payload(context)
     st.session_state["_thermogar_pending_context"] = clean_context
     st.session_state["_thermogar_pending_context_label"] = label
-    # Saved arbitrary widget state is deliberately not restored until NE-07
-    # introduces a versioned allowlist and migrations. Only validated material
-    # inputs above can cross the persistence boundary.
+    st.session_state["_thermogar_pending_widget_state"] = (
+        validate_widget_state(widget_state) if widget_state else {}
+    )
 
 def apply_pending_state() -> None:
     """Применить отложенную загрузку до создания виджетов Streamlit."""
-    # An older in-memory session may still contain this key. Discard it rather
-    # than applying an unversioned denylist of arbitrary widget names. A strict
-    # versioned allowlist and migrations are an explicit NE-07 requirement.
-    st.session_state.pop("_thermogar_pending_widget_state", None)
+    pending_widgets = st.session_state.pop(
+        "_thermogar_pending_widget_state",
+        None,
+    )
 
     context = st.session_state.pop("_thermogar_pending_context", None)
     label = st.session_state.pop("_thermogar_pending_context_label", "")
@@ -637,46 +767,82 @@ def apply_pending_state() -> None:
         "database_sha256": str(context.get("database_sha256", "")),
         "fe_profile_key": context.get("fe_profile_key"),
     }
+    if isinstance(pending_widgets, dict):
+        for key, value in pending_widgets.items():
+            if key == WIDGET_STATE_VERSION_FIELD:
+                continue
+            st.session_state[key] = value
+
+
+def is_restorable_widget_key(key: Any) -> bool:
+    """Настройка входит в разрешённый набор и не может сломать виджет."""
+
+    return isinstance(key, str) and key.startswith(RESTORABLE_WIDGET_PREFIXES)
+
 
 def capture_widget_state() -> dict[str, Any]:
-    """Сохранить только безопасные сериализуемые настройки виджетов."""
-    excluded_fragments = (
-        "result",
-        "figure",
-        "uploader",
-        "editor",
-        "download",
-        "project_",
-        "alloy_",
-        "batch_",
-    )
+    """Собрать настройки расчётных разделов из разрешённого набора.
 
-    def serializable(value: Any) -> bool:
-        if value is None or isinstance(value, (str, int, float, bool)):
-            return True
-        if isinstance(value, list):
-            return all(serializable(item) for item in value)
-        if isinstance(value, tuple):
-            return all(serializable(item) for item in value)
-        if isinstance(value, dict):
-            return all(
-                isinstance(key, str) and serializable(item)
-                for key, item in value.items()
-            )
-        return False
+    Сохраняются только числа и флажки: их значение нельзя сделать
+    недопустимым для списка вариантов, поэтому загрузка чужого проекта
+    не может привести к отказу интерфейса.
+    """
 
-    result: dict[str, Any] = {}
-    for key, value in st.session_state.items():
-        if key.startswith("_"):
+    result: dict[str, Any] = {WIDGET_STATE_VERSION_FIELD: WIDGET_STATE_VERSION}
+    for key in sorted(st.session_state.keys()):
+        if not is_restorable_widget_key(key):
             continue
-        lower_key = key.lower()
-        if any(fragment in lower_key for fragment in excluded_fragments):
-            continue
-        if serializable(value):
-            if isinstance(value, tuple):
-                value = list(value)
+        value = st.session_state[key]
+        if isinstance(value, bool):
             result[key] = value
+        elif isinstance(value, int):
+            result[key] = int(value)
+        elif isinstance(value, float) and math.isfinite(value):
+            result[key] = float(value)
+        if len(result) > MAX_WIDGET_STATE_KEYS:
+            raise ValueError(
+                "Настроек расчётных разделов больше, чем допускает проект."
+            )
     return result
+
+
+def validate_widget_state(widget_state: Any) -> dict[str, Any]:
+    """Принять только текущую версию набора настроек и только её ключи."""
+
+    if not isinstance(widget_state, dict):
+        raise ValueError("Настройки проекта должны быть JSON-объектом.")
+    if not widget_state:
+        return {}
+    version = widget_state.get(WIDGET_STATE_VERSION_FIELD)
+    if type(version) is not int or version != WIDGET_STATE_VERSION:
+        raise ValueError(
+            "Настройки расчётных разделов сохранены другой версией "
+            f"({version!r}); ожидается {WIDGET_STATE_VERSION!r}. "
+            "Материал проекта загружается, настройки — нет."
+        )
+    if len(widget_state) - 1 > MAX_WIDGET_STATE_KEYS:
+        raise ValueError(
+            "Настроек расчётных разделов больше, чем допускает проект."
+        )
+    clean: dict[str, Any] = {WIDGET_STATE_VERSION_FIELD: WIDGET_STATE_VERSION}
+    for key, value in widget_state.items():
+        if key == WIDGET_STATE_VERSION_FIELD:
+            continue
+        if not is_restorable_widget_key(key):
+            raise ValueError(
+                f"Настройка {key!r} не входит в восстанавливаемый набор."
+            )
+        if isinstance(value, bool):
+            clean[key] = value
+        elif type(value) is int:
+            clean[key] = value
+        elif type(value) is float and math.isfinite(value):
+            clean[key] = value
+        else:
+            raise ValueError(
+                f"Настройка {key!r} должна быть числом или флажком."
+            )
+    return clean
 
 
 # ---------------------------------------------------------------------------
@@ -912,6 +1078,7 @@ def render_alloy_library(
         "Сохранённая запись запоминает базу, основу, единицы и состав. "
         "Учебные примеры помечены отдельно и не являются промышленными марками."
     )
+    render_flash()
 
     current = pd.DataFrame(
         [
@@ -960,14 +1127,14 @@ def render_alloy_library(
                 context,
                 {"name": saved["name"]},
             )
-            st.success(f"Состав «{saved['name']}» сохранён.")
+            flash("success", f"Состав «{saved['name']}» сохранён.")
             if history_warning:
-                st.warning(
+                flash(
+                    "warning",
                     "Состав сохранён, но запись в историю не добавлена: "
-                    f"{history_warning}"
+                    f"{history_warning}",
                 )
-            else:
-                st.rerun()
+            st.rerun()
         except Exception as error:
             st.error(str(error))
 
@@ -1043,9 +1210,10 @@ def render_alloy_library(
                 key=f"alloy_delete_button_{selected_id}",
             ):
                 delete_user_alloy(paths, selected_id)
-                st.success(
+                flash(
+                    "success",
                     "Запись удалена; предыдущая версия файла библиотеки "
-                    "сохранена как alloys.json.bak."
+                    "сохранена как alloys.json.bak.",
                 )
                 st.rerun()
         else:
@@ -1076,14 +1244,9 @@ def render_alloy_library(
                 key="alloy_library_download",
             )
         else:
-            st.error(
-                f"{alloy_export.reason_code}: {alloy_export.reason_detail}"
-            )
+            show_rejection(alloy_export, "Библиотека не выгружена:")
     else:
-        st.error(
-            f"{alloy_export_request.reason_code}: "
-            f"{alloy_export_request.reason_detail}"
-        )
+        show_rejection(alloy_export_request, "Библиотека не выгружена:")
 
     alloy_import_request = state_broker.state_decision(
         "data_alloy_transfer",
@@ -1102,6 +1265,18 @@ def render_alloy_library(
             key,
         ),
     )
+    if (
+        type(imported_library) is not VerifiedArtifactRef
+        and getattr(imported_library, "reason_code", "") != "USER_INPUT_REQUIRED"
+    ):
+        show_rejection(
+            imported_library,
+            "Файл библиотеки не принят:",
+        )
+        st.caption(
+            "Импортировать можно только файл, выгруженный кнопкой "
+            "«Скачать пользовательскую библиотеку»."
+        )
     allow_import_overwrite = st.checkbox(
         "Разрешить заменить записи с совпадающим ID",
         key="alloy_import_overwrite",
@@ -1121,7 +1296,7 @@ def render_alloy_library(
                 imported,
                 overwrite=allow_import_overwrite,
             )
-            st.success(f"Импортировано записей: {imported_count}.")
+            flash("success", f"Импортировано записей: {imported_count}.")
             st.rerun()
         except Exception as error:
             st.error(f"Библиотеку импортировать не удалось: {error}")
@@ -1352,8 +1527,7 @@ def build_project_payload(
         "scientific_material_status": SCIENTIFIC_MATERIAL_STATUS,
         "production_use": PRODUCTION_USE,
         "context": validate_context_payload(context),
-        # Arbitrary widget-state migrations are explicitly deferred to NE-07.
-        "widget_state": {},
+        "widget_state": capture_widget_state(),
     }
     return validate_project_payload(payload)
 
@@ -1410,6 +1584,18 @@ def scan_projects(
     return result, errors
 
 
+def portable_project_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    """Копия проекта для переноса на другой компьютер.
+
+    Настройки расчётных разделов в переносимый файл не попадают: их набор
+    привязан к версии интерфейса, а материал — нет.
+    """
+
+    portable = dict(payload)
+    portable["widget_state"] = {}
+    return portable
+
+
 def list_projects(paths: ThermoGarPaths) -> list[tuple[Path, dict[str, Any]]]:
     """Return only projects that pass the complete current schema."""
 
@@ -1428,9 +1614,10 @@ def render_projects_and_history(
 ) -> None:
     st.subheader("Проекты и история")
     st.caption(
-        "Проект сохраняет материал и доступные настройки интерфейса. "
+        "Проект сохраняет материал и числовые настройки расчётных разделов. "
         "История хранит отпечаток базы и цепочку контрольных сумм."
     )
+    render_flash()
 
     view_mode = st.radio(
         "Что открыть",
@@ -1476,14 +1663,14 @@ def render_projects_and_history(
                     context,
                     {"name": payload["name"], "path": str(path)},
                 )
-                st.success(f"Проект сохранён: {path.name}")
+                flash("success", f"Проект сохранён: {path.name}")
                 if history_warning:
-                    st.warning(
+                    flash(
+                        "warning",
                         "Проект сохранён, но запись в историю не добавлена: "
-                        f"{history_warning}"
+                        f"{history_warning}",
                     )
-                else:
-                    st.rerun()
+                st.rerun()
             except Exception as error:
                 st.error(str(error))
 
@@ -1556,12 +1743,14 @@ def render_projects_and_history(
                         )
                         queue_context_load(
                             selected_context,
+                            selected_payload.get("widget_state"),
                             label=selected_payload.get("name", "Проект"),
                         )
                         st.rerun()
                     except Exception as error:
                         st.error(f"Проект не открыт: {error}")
 
+                portable_payload = portable_project_payload(selected_payload)
                 project_export_request = state_broker.state_decision(
                     "data_project_state",
                     {
@@ -1569,7 +1758,7 @@ def render_projects_and_history(
                         "content_kind": "project-json",
                         "semantic_digest": semantic_digest_for(
                             "project-json",
-                            selected_payload,
+                            portable_payload,
                         ),
                     },
                 )
@@ -1577,7 +1766,7 @@ def render_projects_and_history(
                     project_export = state_store.prepare_egress(
                         project_export_request,
                         "project-json",
-                        selected_payload,
+                        portable_payload,
                     )
                     if type(project_export) is VerifiedArtifactRef:
                         state_store.render_download(
@@ -1586,15 +1775,18 @@ def render_projects_and_history(
                             "Скачать выбранный проект",
                             key="project_download",
                         )
+                        if selected_payload.get("widget_state"):
+                            st.caption(
+                                "В переносимый файл попадает материал; "
+                                "числовые настройки разделов остаются "
+                                "в локальном проекте."
+                            )
                     else:
-                        st.error(
-                            f"{project_export.reason_code}: "
-                            f"{project_export.reason_detail}"
-                        )
+                        show_rejection(project_export, "Проект не выгружен:")
                 else:
-                    st.error(
-                        f"{project_export_request.reason_code}: "
-                        f"{project_export_request.reason_detail}"
+                    show_rejection(
+                        project_export_request,
+                        "Проект не выгружен:",
                     )
 
             with col2:
@@ -1618,9 +1810,10 @@ def render_projects_and_history(
                                 paths
                             ),
                         )
-                        st.success(
+                        flash(
+                            "success",
                             "Проект убран из списка; исходный файл сохранён "
-                            "с окончанием .deleted."
+                            "с окончанием .deleted.",
                         )
                         st.rerun()
                     except Exception as error:
@@ -1643,6 +1836,16 @@ def render_projects_and_history(
                 key,
             ),
         )
+        if (
+            type(uploaded_project) is not VerifiedArtifactRef
+            and getattr(uploaded_project, "reason_code", "")
+            != "USER_INPUT_REQUIRED"
+        ):
+            show_rejection(uploaded_project, "Файл проекта не принят:")
+            st.caption(
+                "Импортировать можно только файл, выгруженный кнопкой "
+                "«Скачать выбранный проект» этой же версии ThermoGar."
+            )
         import_overwrite = st.checkbox(
             "Разрешить заменить одноимённый локальный проект",
             key="project_import_overwrite",
@@ -1669,7 +1872,7 @@ def render_projects_and_history(
                     payload,
                     overwrite=import_overwrite,
                 )
-                st.success(f"Проект импортирован: {imported_path.name}")
+                flash("success", f"Проект импортирован: {imported_path.name}")
                 st.rerun()
             except Exception as error:
                 st.error(f"Проект импортировать не удалось: {error}")
@@ -1715,7 +1918,10 @@ def render_projects_and_history(
             restore_col, download_col = st.columns(2)
             with restore_col:
                 if not restorable_entries:
-                    st.info("В истории нет записей с допустимым Ni/Al-контекстом.")
+                    st.info(
+                        "В истории нет записей, из которых можно восстановить "
+                        "материал."
+                    )
                 else:
                     context_by_index = dict(restorable_entries)
                     entry_options = sorted(context_by_index, reverse=True)
@@ -1778,15 +1984,9 @@ def render_projects_and_history(
                             key="history_download",
                         )
                     else:
-                        st.error(
-                            f"{history_export.reason_code}: "
-                            f"{history_export.reason_detail}"
-                        )
+                        show_rejection(history_export, "История не выгружена:")
                 else:
-                    st.error(
-                        f"{history_request.reason_code}: "
-                        f"{history_request.reason_detail}"
-                    )
+                    show_rejection(history_request, "История не выгружена:")
 
             confirm_clear = st.checkbox(
                 "Подтверждаю очистку всей истории",
@@ -1810,10 +2010,11 @@ def render_projects_and_history(
                         canonical_root=_workspace_canonical_root(paths),
                         missing_ok=True,
                     )
-                    st.success(
+                    flash(
+                        "success",
                         "История очищена; резервная копия сохранена."
                         if archived
-                        else "История уже пуста."
+                        else "История уже пуста.",
                     )
                     st.rerun()
                 except Exception as error:
@@ -2073,7 +2274,7 @@ def run_batch_calculations(
                 if type(rejection) is not RejectedFeatureReceipt or rejection.backend_calls != 0:
                     raise RuntimeError("Verified broker rejection evidence is invalid.")
                 child_evidence.append({"rejection": rejection})
-                raise RuntimeError(f"{rejection.reason_code}: {rejection.reason_detail}")
+                raise RuntimeError(rejection_text(rejection))
             if (
                 status != "success"
                 or type(feature_receipt) is not FeatureReceipt
@@ -2112,8 +2313,6 @@ def run_batch_calculations(
                     "Фазовые доли": phase_text,
                     "Сумма фазовых долей, %": fraction_sum,
                     "База SHA-256": feature_receipt.tdb_evidence.sha256,
-                    "Receipt SHA-256": feature_receipt.receipt_digest,
-                    "Envelope SHA-256": result_envelope.envelope_digest,
                 }
             )
 
@@ -2214,10 +2413,7 @@ def render_batch_calculation(
                     key="batch_template_xlsx_download",
                 )
             else:
-                st.error(
-                    f"{template_xlsx.reason_code}: "
-                    f"{template_xlsx.reason_detail}"
-                )
+                show_rejection(template_xlsx, "Шаблон не подготовлен:")
     with template_col2:
         template_csv_decision = broker.export_decision()
         if verified_batch_export_button(
@@ -2238,10 +2434,7 @@ def render_batch_calculation(
                     key="batch_template_csv_download",
                 )
             else:
-                st.error(
-                    f"{template_csv.reason_code}: "
-                    f"{template_csv.reason_detail}"
-                )
+                show_rejection(template_csv, "Шаблон не подготовлен:")
 
     with st.expander("Требуемые столбцы", expanded=False):
         st.markdown(
@@ -2269,6 +2462,17 @@ def render_batch_calculation(
             key,
         ),
     )
+
+    if (
+        type(uploaded) is not VerifiedArtifactRef
+        and getattr(uploaded, "reason_code", "") != "USER_INPUT_REQUIRED"
+    ):
+        show_rejection(uploaded, "Файл составов не принят:")
+        st.caption(
+            "Скачайте шаблон выше и заполните его, не меняя названий "
+            "столбцов. Разделитель CSV — запятая или точка с запятой, "
+            "кодировка — UTF-8."
+        )
 
     if type(uploaded) is VerifiedArtifactRef:
         try:
@@ -2361,7 +2565,4 @@ def render_batch_calculation(
                     key="batch_result_export_download",
                 )
             else:
-                st.error(
-                    f"{batch_export.reason_code}: "
-                    f"{batch_export.reason_detail}"
-                )
+                show_rejection(batch_export, "Результат не выгружен:")
