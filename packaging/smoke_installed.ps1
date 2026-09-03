@@ -13,9 +13,16 @@
     5. GET the loopback UI port -> HTTP 200 with "ThermoGar" in the HTML
     6. stop.pyw -> no ThermoGar processes, both ports free
     7. silent uninstall -> Program Files entry gone, %LOCALAPPDATA%\ThermoGar kept
+    8. upgrade over an existing install: install -> start -> stop -> install the
+       same version silently over the top -> start -> health OK -> stop ->
+       uninstall, with a user project file written into
+       %LOCALAPPDATA%\ThermoGar\workspace\projects before the upgrade and
+       checked byte for byte after it and after the uninstall
 
-  Install and uninstall are elevated via Start-Process -Verb RunAs. Everything
-  else runs unelevated. Per-step PASS/FAIL goes to stdout and to
+  Install and uninstall are elevated via Start-Process -Verb RunAs, so a full
+  run raises five UAC prompts: install and uninstall for steps 1-7, then
+  install, upgrade-install and uninstall for step 8. Everything else runs
+  unelevated. Per-step PASS/FAIL goes to stdout and to
   dist\smoke-<timestamp>.json; the exit code is 0 only when every step passed.
 
 .EXAMPLE
@@ -99,6 +106,53 @@ function Get-ThermoGarProcesses {
 function Test-PortListening {
     param([int]$Port)
     return @(Get-NetTCPConnection -State Listen -LocalPort $Port -ErrorAction SilentlyContinue).Count -gt 0
+}
+
+# Steps 3, 4 and 6 do this inline against the shared $Results bookkeeping. Step 8
+# runs the same three moves twice more, so it uses these instead of repeating the
+# bodies; steps 1-7 are left exactly as they were.
+function Start-InstalledApp {
+    param([string]$Root, [string]$Cwd)
+    $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+    $startInfo.FileName = Join-Path $Root 'runtime\pythonw.exe'
+    $startInfo.Arguments = '"' + (Join-Path $Root 'launcher.pyw') + '"'
+    $startInfo.WorkingDirectory = $Cwd
+    $startInfo.UseShellExecute = $false
+    $startInfo.CreateNoWindow = $true
+    return [System.Diagnostics.Process]::Start($startInfo)
+}
+
+function Wait-InstalledHealthy {
+    param([string]$Root, [int]$TimeoutSeconds)
+    $python = Join-Path $Root 'runtime\python.exe'
+    $healthScript = Join-Path $Root 'healthcheck.py'
+    $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    while ((Get-Date) -lt $deadline) {
+        $raw = & $python $healthScript '--json' 2>&1 | Out-String
+        $global:LASTEXITCODE = 0
+        try {
+            $parsed = $raw.Trim() | ConvertFrom-Json
+            if ($parsed.status -eq 'HEALTHY') { return $parsed }
+        }
+        catch { }
+        Start-Sleep -Milliseconds 500
+    }
+    return $null
+}
+
+function Stop-InstalledApp {
+    param([string]$Root)
+    $python = Join-Path $Root 'runtime\python.exe'
+    & $python (Join-Path $Root 'stop.pyw') '--json' 2>&1 | Out-Null
+    $exit = $LASTEXITCODE
+    $global:LASTEXITCODE = 0
+    $gone = Wait-ForCondition -Condition {
+        @(Get-ThermoGarProcesses -Root $Root).Count -eq 0
+    } -TimeoutSeconds 30 -IntervalSeconds 0.5
+    foreach ($process in @(Get-ThermoGarProcesses -Root $Root)) {
+        try { $process.Kill() } catch { }
+    }
+    return [pscustomobject]@{ ExitCode = $exit; Stopped = $gone }
 }
 
 Write-Host "ThermoGar installed smoke test"
@@ -282,6 +336,105 @@ try {
         catch {
             Add-Result 7 'silent uninstall, LOCALAPPDATA kept' $false $_.Exception.Message
         }
+    }
+
+    # --- 8. upgrade over an existing install ---------------------------------
+    # A whole second lifecycle: install, start, stop, install the same version
+    # silently over the top, start, health OK, stop, uninstall. A user project
+    # file is written into the workspace before the upgrade and has to come
+    # back byte for byte afterwards, and still be there once the product is
+    # uninstalled again. Steps 1-7 leave nothing installed, so this starts from
+    # the same clean state they did.
+    if ($SkipUninstall) {
+        Add-Result 8 'upgrade over existing install, user project kept' $true 'skipped by -SkipUninstall'
+    }
+    else {
+        $probeDir = Join-Path $LocalAppState 'workspace\projects'
+        $probePath = Join-Path $probeDir 'wave4a-upgrade-probe.thermogar.json'
+        $probeBody = '{"schema":1,"name":"wave4a upgrade probe","note":"must survive an upgrade over an existing install"}'
+        $upgradeWork = Join-Path ([IO.Path]::GetTempPath()) ("thermogar-upgrade-" + [Guid]::NewGuid().ToString('N').Substring(0, 8))
+        $upgradeDetail = New-Object System.Collections.Generic.List[string]
+        $upgradePass = $false
+        New-Item -ItemType Directory -Path $upgradeWork -Force | Out-Null
+        try {
+            # 8a. install
+            $exitFirst = Invoke-Elevated -FilePath $InstallerPath -Arguments @('/S')
+            $installedFirst = Wait-ForCondition -Condition {
+                Test-Path -LiteralPath (Join-Path $InstallRoot 'launcher.pyw')
+            } -TimeoutSeconds 300 -IntervalSeconds 1
+            $upgradeDetail.Add("install exit $exitFirst, files $installedFirst")
+
+            # 8b. start, then stop
+            Start-InstalledApp -Root $InstallRoot -Cwd $upgradeWork | Out-Null
+            $healthFirst = Wait-InstalledHealthy -Root $InstallRoot -TimeoutSeconds $HealthTimeoutSeconds
+            $stopFirst = Stop-InstalledApp -Root $InstallRoot
+            $upgradeDetail.Add("start healthy $([bool]$healthFirst), stop exit $($stopFirst.ExitCode) clean $($stopFirst.Stopped)")
+
+            # 8c. the user's project, written before the upgrade
+            if (-not (Test-Path -LiteralPath $probeDir)) { New-Item -ItemType Directory -Path $probeDir -Force | Out-Null }
+            [IO.File]::WriteAllText($probePath, $probeBody, [Text.UTF8Encoding]::new($false))
+            $probeHashBefore = (Get-FileHash -LiteralPath $probePath -Algorithm SHA256).Hash
+
+            # 8d. the same version, installed silently over the top
+            $exitUpgrade = Invoke-Elevated -FilePath $InstallerPath -Arguments @('/S')
+            $installedUpgrade = Wait-ForCondition -Condition {
+                Test-Path -LiteralPath (Join-Path $InstallRoot 'launcher.pyw')
+            } -TimeoutSeconds 300 -IntervalSeconds 1
+            $upgradeDetail.Add("upgrade install exit $exitUpgrade, files $installedUpgrade")
+
+            # 8e. start again: healthy, and the app script still runs clean
+            Start-InstalledApp -Root $InstallRoot -Cwd $upgradeWork | Out-Null
+            $healthUpgrade = Wait-InstalledHealthy -Root $InstallRoot -TimeoutSeconds $HealthTimeoutSeconds
+            $upgradePort = 0
+            if ($healthUpgrade) { $upgradePort = [int]$healthUpgrade.ui_port }
+            $upgradeUi = $false
+            if ($upgradePort -gt 0) {
+                for ($attempt = 1; $attempt -le 10; $attempt++) {
+                    try {
+                        $upgradePage = Invoke-WebRequest -Uri "http://127.0.0.1:$upgradePort/" -UseBasicParsing -TimeoutSec 20
+                        $upgradeCheck = Invoke-WebRequest -Uri "http://127.0.0.1:$upgradePort/_stcore/script-health-check" -UseBasicParsing -TimeoutSec 60
+                        $upgradeUi = ($upgradePage.StatusCode -eq 200) -and ($upgradeCheck.StatusCode -eq 200)
+                        if ($upgradeUi) { break }
+                    }
+                    catch { }
+                    Start-Sleep -Seconds 3
+                }
+            }
+            $upgradeDetail.Add("restart healthy $([bool]$healthUpgrade) ui_port $upgradePort, UI and script-health-check 200 $upgradeUi")
+
+            # 8f. stop again
+            $stopUpgrade = Stop-InstalledApp -Root $InstallRoot
+            $upgradeDetail.Add("stop exit $($stopUpgrade.ExitCode) clean $($stopUpgrade.Stopped)")
+
+            # 8g. the project survived the upgrade unchanged
+            $probeKept = Test-Path -LiteralPath $probePath
+            $probeSame = $false
+            if ($probeKept) {
+                $probeSame = (Get-FileHash -LiteralPath $probePath -Algorithm SHA256).Hash -eq $probeHashBefore
+            }
+            $upgradeDetail.Add("project kept across upgrade $probeKept, identical $probeSame")
+
+            # 8h. uninstall, project still there
+            $exitRemove = Invoke-Elevated -FilePath (Join-Path $InstallRoot 'Uninstall.exe') -Arguments @('/S')
+            $removed = Wait-ForCondition -Condition {
+                -not (Test-Path -LiteralPath (Join-Path $InstallRoot 'launcher.pyw'))
+            } -TimeoutSeconds 180 -IntervalSeconds 1
+            $probeAfterRemove = Test-Path -LiteralPath $probePath
+            $upgradeDetail.Add("uninstall exit $exitRemove removed $removed, project kept $probeAfterRemove")
+
+            $upgradePass = ($exitFirst -eq 0) -and $installedFirst -and [bool]$healthFirst -and $stopFirst.Stopped -and
+                           ($exitUpgrade -eq 0) -and $installedUpgrade -and [bool]$healthUpgrade -and $upgradeUi -and $stopUpgrade.Stopped -and
+                           $probeKept -and $probeSame -and
+                           ($exitRemove -eq 0) -and $removed -and $probeAfterRemove
+        }
+        catch {
+            $upgradeDetail.Add("exception: $($_.Exception.Message)")
+        }
+        finally {
+            Remove-Item -LiteralPath $upgradeWork -Recurse -Force -ErrorAction SilentlyContinue
+            Remove-Item -LiteralPath $probePath -Force -ErrorAction SilentlyContinue
+        }
+        Add-Result 8 'upgrade over existing install, user project kept' $upgradePass ($upgradeDetail -join '; ')
     }
 }
 finally {
