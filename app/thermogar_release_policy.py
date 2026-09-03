@@ -9,6 +9,7 @@ Experimental qualification of the scientific results has not been performed.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from types import MappingProxyType
 from typing import Final
 
@@ -85,6 +86,23 @@ RELEASE_DATABASE_SHA256: Final = MappingProxyType(
         "fe": "236ec4d9b0540de04e4e6305faa208672f31fbdf45b2ae84e92f80bd98053612",
     }
 )
+FE_EXCLUDED_PHASES: Final = frozenset({"C15_LAVES"})
+
+
+def effective_release_phases(
+    database_key: str,
+    phases: Iterable[str],
+) -> list[str]:
+    """Список фаз для расчёта: для Fe (thermogar_patch) убирает C15_LAVES."""
+
+    result = [
+        phase
+        for phase in phases
+        if not (database_key == "fe" and phase in FE_EXCLUDED_PHASES)
+    ]
+    return result
+
+
 PHYSICAL_DATABASE_RELATIVE_PATH: Final = (
     "databases/physical/original/physical_data_v103.pdb"
 )
