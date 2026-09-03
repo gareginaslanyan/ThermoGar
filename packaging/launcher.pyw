@@ -925,6 +925,34 @@ def _http_health(port: int, path: str, timeout: float = SERVER_HEALTH_TIMEOUT) -
         connection.close()
 
 
+_ui_opened = False
+
+
+def _open_ui(port: int) -> None:
+    """Put the app in front of the user as soon as Streamlit answers at all.
+
+    The child is started with --server.headless=true, so Streamlit opens no
+    browser, and nothing else here used to open one either: clicking the Start
+    Menu shortcut showed the user nothing, ever. Measured on an installed 0.3.0,
+    from the click: /_stcore/health answers 200 at 2.6 s, the app script
+    finishes at 32.2 s and the run record is published at 39.4 s. Opening at the
+    first 200 means the user sees the page immediately and Streamlit's own
+    "Running..." indicator covers the rest of the load.
+
+    This is presentation only. It is called once per run, it feeds nothing back
+    into discovery, and a failure to open a browser is not a launch failure, so
+    nothing here is allowed to propagate.
+    """
+    global _ui_opened
+    if _ui_opened:
+        return
+    _ui_opened = True
+    try:
+        os.startfile(f"http://127.0.0.1:{port}/")
+    except OSError:
+        pass
+
+
 def _discover_ui(child_pid: int, control_port: int, timeout_seconds: float = UI_DISCOVERY_SECONDS) -> int:
     deadline = time.monotonic() + timeout_seconds
     stable_port: int | None = None
@@ -934,17 +962,16 @@ def _discover_ui(child_pid: int, control_port: int, timeout_seconds: float = UI_
         if len(owned) == 1:
             address, port, _pid = owned[0]
             canonical = address == "127.0.0.1" and port != control_port and _has_exact_listener(listeners, address, port, child_pid)
-            if (
-                canonical
-                and 1024 <= port <= 65535
-                and _http_health(port, "/_stcore/health")
-                and _http_health(port, "/_stcore/script-health-check", SCRIPT_HEALTH_TIMEOUT)
-            ):
-                if stable_port == port:
-                    fresh = _tcp_listeners()
-                    if _has_only_owned_listener(fresh, "127.0.0.1", port, child_pid):
-                        return port
-                stable_port = port
+            if canonical and 1024 <= port <= 65535 and _http_health(port, "/_stcore/health"):
+                _open_ui(port)
+                if _http_health(port, "/_stcore/script-health-check", SCRIPT_HEALTH_TIMEOUT):
+                    if stable_port == port:
+                        fresh = _tcp_listeners()
+                        if _has_only_owned_listener(fresh, "127.0.0.1", port, child_pid):
+                            return port
+                    stable_port = port
+                else:
+                    stable_port = None
             else:
                 stable_port = None
         else:
