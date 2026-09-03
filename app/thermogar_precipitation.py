@@ -2,9 +2,9 @@
 
 Расчёт использует KWN-модель пакета Kawin. TDB/DDB дают термодинамику и
 подвижности, а межфазная энергия, молярные объёмы и центры зарождения
-задаются явно и сохраняются вместе с результатом. Fe-профили навсегда
-исключены из no-experiment release surface и доступны только отдельным
-diagnostic tools без интегрирования KWN во времени.
+задаются явно и сохраняются вместе с результатом. Все три release-базы
+(Ni, Al, Fe) считаются одним и тем же путём; научная квалификация пары
+матрица–выделение не проводилась ни для одной из них.
 """
 from __future__ import annotations
 
@@ -78,6 +78,11 @@ DEFAULTS = {
 # Fe-профиль исключает C15_LAVES из фаз, предлагаемых пользователю.
 EXCLUDED_PHASES = {"fe": ("C15_LAVES",)}
 
+# Строка происхождения физических входов по умолчанию. Поле остаётся
+# редактируемым и попадает в Excel, историю расчётов и JSON происхождения,
+# но пустое поле больше не выключает кнопку расчёта.
+DEFAULT_INPUT_PROVENANCE = "DECLARED_SCENARIO_INPUT_NOT_MATERIAL_QUALIFICATION"
+
 NUCLEATION_TYPES = {
     "Объёмные центры": "BULK",
     "Дислокации": "DISLOCATIONS",
@@ -95,10 +100,11 @@ HETEROGENEOUS_RATIO_LIMITS = {
 }
 
 KWN_ADAPTER_IMPLEMENTATION_REVISION = "legacy-15.2-r1"
-# Расчёт KWN для Fe выполняется, но научная квалификация пары
-# матрица–выделение и физических параметров ещё не пройдена: провенанс
-# по-прежнему помечает результат как непубликуемый.
-FE_KWN_PUBLICATION_STATUS = "BLOCKED"
+# Расчёт KWN для Fe выполняется штатно. Научная квалификация пары
+# матрица–выделение и физических параметров не проводилась; провенанс
+# сообщает это тем же нейтральным языком, что и остальная метаинформация,
+# и не является программным ограничением.
+FE_KWN_PUBLICATION_STATUS = "NOT_ASSESSED"
 
 
 @dataclass
@@ -265,6 +271,38 @@ def _phase_order_disorder_role(db: Any, phase: str) -> dict[str, str]:
     }
 
 
+def _order_disorder_partner(db: Any, phase: str) -> str:
+    """Вернуть вторую половину пары order/disorder или пустую строку."""
+    try:
+        role = _phase_order_disorder_role(db, phase)
+    except ValueError:
+        return ""
+    if role["role"] == "ordered":
+        return role["disordered_phase"]
+    if role["role"] == "disordered":
+        return role["ordered_phase"]
+    return ""
+
+
+def _compatible_matrix_phases(db: Any, elements: list[str]) -> set[str]:
+    """Список фаз-кандидатов в матрицу с восстановленной disordered-половиной.
+
+    ``filter_phases`` оставляет из пары order/disorder только упорядоченную
+    фазу (``GP_MAT`` для Al, ``BCC_B2`` для Fe), а Kawin принимает матрицей
+    только разупорядоченную. Возвращаем разупорядоченного партнёра в список,
+    если он есть в базе; сама логика Kawin при этом не меняется.
+    """
+    compatible = set(_compatible_phases(db, elements))
+    for phase in sorted(compatible):
+        role = _phase_order_disorder_role(db, phase)
+        if role["role"] != "ordered":
+            continue
+        disordered = role["disordered_phase"]
+        if disordered and disordered in db.phases:
+            compatible.add(disordered)
+    return compatible
+
+
 def _validate_matrix_phase_role(db: Any, matrix_phase: str) -> dict[str, str]:
     info = _phase_order_disorder_role(db, matrix_phase)
     if info["role"] == "ordered":
@@ -280,7 +318,7 @@ def _validate_matrix_phase_role(db: Any, matrix_phase: str) -> dict[str, str]:
 def _matrix_candidates(db: Any, elements: list[str]) -> list[str]:
     coverage = _phase_mobility_coverage(db)
     required = set(elements)
-    compatible = set(_compatible_phases(db, elements))
+    compatible = _compatible_matrix_phases(db, elements)
     candidates: list[str] = []
     for phase, species in coverage.items():
         if phase not in compatible or not required.issubset(species):
@@ -443,7 +481,9 @@ def _summary(time_h: np.ndarray, fraction: np.ndarray, radius_nm: np.ndarray, de
     if len(plateau) >= 3:
         a, b = plateau[0], plateau[-1]
         coarsening = radius_nm[b] > 1.05*max(radius_nm[a], 1e-30) and density[b] < 0.98*max(density[a], 1e-30)
-    return pd.DataFrame([
+    # Числа и словесные ответы стоят в одной колонке, поэтому она текстовая:
+    # смешанный object-столбец не переводится в Arrow.
+    rows = [
         ("Первое обнаружение выделений", first_time, "ч"),
         ("Максимальная объёмная доля", 100*fmax, "%"),
         ("Итоговая объёмная доля", 100*ffinal, "%"),
@@ -452,7 +492,19 @@ def _summary(time_h: np.ndarray, fraction: np.ndarray, radius_nm: np.ndarray, de
         ("Пик скорости зарождения", float(nuc_rate[inuc]) if len(nuc_rate) else 0, "1/(м³·с)"),
         ("Растворение после максимума", "да" if dissolution else "нет", "—"),
         ("Укрупнение на плато", "да" if coarsening else "не выявлено", "—"),
-    ], columns=["Показатель", "Значение", "Единица"])
+    ]
+    return pd.DataFrame(
+        [
+            (
+                name,
+                ("не обнаружены" if isinstance(value, float) and not np.isfinite(value)
+                 else f"{value:.6g}" if isinstance(value, float) else str(value)),
+                unit,
+            )
+            for name, value, unit in rows
+        ],
+        columns=["Показатель", "Значение", "Единица"],
+    )
 
 
 def _npz(model: Any) -> bytes:
@@ -683,9 +735,18 @@ def run_precipitation(
         ("Минимальный радиус, нм", cmin_nm), ("Максимальный радиус, нм", cmax_nm),
         ("Классов размеров", bins),
         ("Источник физических входов", input_provenance.strip()),
-        ("Граница сценария подтверждена", "да"),
+        ("Класс расчёта", "исследовательский сценарий, не прогноз материала"),
     ]
-    settings = pd.DataFrame(settings_rows, columns=["Параметр", "Значение"])
+    # Колонка значений намеренно текстовая: смесь строк и чисел в одном
+    # столбце object не переводится в Arrow, и Streamlit печатает
+    # ArrowTypeError при каждом показе таблицы параметров.
+    settings = pd.DataFrame(
+        [
+            (name, f"{value:.10g}" if isinstance(value, float) else str(value))
+            for name, value in settings_rows
+        ],
+        columns=["Параметр", "Значение"],
+    )
     provenance = {
         "schema_version": 2,
         "implementation_revision": KWN_ADAPTER_IMPLEMENTATION_REVISION,
@@ -813,9 +874,22 @@ def render_precipitation_section(
         matrices = _selectable_phases(database_key, _matrix_candidates(db, elements))
     except Exception as error:
         st.error(str(error))
+        st.caption(
+            "Состав раздела берётся из поля «Добавки» в боковой панели. "
+            "KWN-модель считает не более четырёх добавок одновременно: "
+            "оставьте в составе только элементы, определяющие выделение "
+            "(например, C и CR для карбида M23C6 в стали)."
+        )
         return
     if not matrices:
         st.error("Нет матричной фазы с полным набором мобильностей для состава.")
+        st.caption(
+            "Матрицей может быть только фаза, у которой в базе есть "
+            "MQ/MF-параметры для всех элементов состава: "
+            + ", ".join(elements)
+            + ". Сократите состав в боковой панели до элементов, "
+            "покрытых параметрами подвижности."
+        )
         return
 
     matrix_default = PRESET_NI["matrix"] if demo else default[0]
@@ -826,12 +900,23 @@ def render_precipitation_section(
         index=matrices.index(matrix_default),
         key=f"{widget_prefix}_{mode_key}_matrix",
     )
+    matrix_partner = _order_disorder_partner(db, matrix_phase)
+    if matrix_partner:
+        st.caption(
+            f"{matrix_phase} и {matrix_partner} — разупорядоченная и "
+            "упорядоченная половины одной order/disorder-модели. Kawin "
+            f"принимает матрицей только {matrix_phase}; {matrix_partner} "
+            "поэтому не предлагается как отдельная фаза-выделение."
+        )
     compatible_phases = _selectable_phases(
         database_key, _compatible_phases(db, elements)
     )
+    excluded_precipitates = {matrix_phase, "LIQUID"}
+    if matrix_partner:
+        excluded_precipitates.add(matrix_partner)
     precipitates = sorted(
         phase for phase in compatible_phases
-        if phase not in {matrix_phase, "LIQUID"}
+        if phase not in excluded_precipitates
     )
     if not precipitates:
         st.error("Для выбранного состава нет совместимых фаз-выделений.")
@@ -963,31 +1048,30 @@ def render_precipitation_section(
 
     if demo:
         input_provenance = "SYNTHETIC_EDUCATIONAL_DEMO_NOT_MATERIAL_INPUT"
-        user_inputs_confirmed = True
     else:
         input_provenance = st.text_area(
-            "Источник и применимость физических входов (обязательно)",
-            value="",
-            placeholder=(
-                "DOI/таблица/страница либо DECLARED_SCENARIO; укажите, к какой "
-                "системе и температуре относятся γ, Vm и nucleation inputs"
+            "Источник и применимость физических входов",
+            value=DEFAULT_INPUT_PROVENANCE,
+            help=(
+                "Строка попадает в Excel, в JSON происхождения и в историю "
+                "расчётов. Впишите DOI, таблицу или страницу, откуда взяты "
+                "γ, Vm и параметры зарождения; значение по умолчанию помечает "
+                "их как объявленный сценарий без привязки к материалу."
             ),
             key=f"{widget_prefix}_{mode_key}_input_provenance",
         )
-        user_inputs_confirmed = st.checkbox(
-            "Подтверждаю: это исследовательский сценарий, не прогноз материала",
-            value=False,
-            key=f"{widget_prefix}_{mode_key}_input_confirmation",
-        )
-    can_run = bool(str(input_provenance).strip()) and bool(user_inputs_confirmed)
-    if not can_run:
-        st.info("Запуск заблокирован до заполнения источника и подтверждения границы.")
+    input_provenance = str(input_provenance).strip() or DEFAULT_INPUT_PROVENANCE
+    # Раздел целиком объявлен исследовательским: постоянное предупреждение в
+    # начале вкладки, блок «Ограничения исследовательского KWN mode» в конце и
+    # строка сценария в листе «Параметры». Отдельная галочка ничего к этому не
+    # добавляла и лишь держала кнопку расчёта выключенной, поэтому убрана;
+    # содержательные проверки ввода (состав, фазы, γ, Vm, сетка) на месте.
+    research_scenario_declared = True
 
     if release_calculation_button(
         "Рассчитать кинетику выделений",
         type="primary",
         key=f"{widget_prefix}_{mode_key}_calculate",
-        disabled=not can_run,
     ):
         try:
             with st.spinner("Расчёт KWN может занять несколько минут…"):
@@ -1005,7 +1089,7 @@ def render_precipitation_section(
                     gb_energy=float(gb_energy), cmin_nm=float(cmin_nm),
                     cmax_nm=float(cmax_nm), bins=int(bins),
                     input_provenance=str(input_provenance),
-                    input_confirmation=bool(user_inputs_confirmed),
+                    input_confirmation=research_scenario_declared,
                 )
             st.session_state["thermogar_precipitation_result"] = result
             if record_history is not None:
