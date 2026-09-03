@@ -160,7 +160,6 @@ def run(root: Path) -> dict[str, Any]:
         "app/thermogar_palette.py",
         "app/thermogar_release_policy.py",
         "app/thermogar_release_ui.py",
-        "app/thermogar_ne04_domain.py",
         "app/style.css",
         ".streamlit/config.toml",
         "configs/ne04_database_domains.json",
