@@ -48,7 +48,6 @@ Legacy Stage numbers identify implementation history only.
 from __future__ import annotations
 
 from collections import defaultdict
-from contextlib import suppress
 from datetime import datetime, timezone
 from io import BytesIO
 from pathlib import Path
@@ -138,7 +137,6 @@ from thermogar_precipitation import (
 from thermogar_database_guard import (
     FE_DATABASE_MAX_T_C,
     FE_PROFILE_CANONICAL,
-    FE_PROFILE_LABELS,
     load_profile_manifest,
     passport_dataframe,
 )
@@ -196,9 +194,6 @@ def render_friendly_error(error: Exception, *, context: str) -> None:
 
 DISPLAY_APP_NAME = "ThermoGar"
 
-
-class _CompactHelpRendered(Exception):
-    """Leave the historical help block after rendering compact product help."""
 
 st.set_page_config(
     page_title=DISPLAY_APP_NAME,
@@ -278,6 +273,12 @@ FE_PROFILE_SHA256 = {
         "236ec4d9b0540de04e4e6305faa208672f31fbdf45b2ae84e92f80bd98053612"
     ),
 }
+
+
+# thermogar_database_guard.FE_PROFILE_LABELS всё ещё называет канонический
+# профиль «диагностическим». В 0.3.0 сталь — обычная рабочая база, поэтому в
+# таблицах приложения показывается нейтральная формулировка.
+FE_PROFILE_UI_LABEL = "mc_fe 2.062, профиль thermogar_patch (C15_LAVES исключена)"
 
 
 SOLIDIFICATION_DEFAULTS = {
@@ -430,36 +431,39 @@ BINARY_DIAGRAM_DEFAULTS = {
 }
 
 
+# Шаги по умолчанию подобраны так, чтобы «нажал и получил» укладывалось в
+# одну-две минуты на этой машине. Более подробную сетку пользователь
+# задаёт вручную теми же полями.
 ISOPLETH_DEFAULTS = {
     "ni": {
         "variable": "AL",
         "fixed": "CR=15, CO=10",
         "c_min": 0.0,
         "c_max": 10.0,
-        "c_step": 0.5,
-        "t_min": 500.0,
+        "c_step": 1.0,
+        "t_min": 900.0,
         "t_max": 1500.0,
-        "t_step": 10.0,
+        "t_step": 25.0,
     },
     "fe": {
         "variable": "C",
         "fixed": "CR=18, NI=8",
         "c_min": 0.0,
-        "c_max": 3.0,
-        "c_step": 0.1,
-        "t_min": 400.0,
-        "t_max": 1600.0,
-        "t_step": 10.0,
+        "c_max": 1.5,
+        "c_step": 0.25,
+        "t_min": 600.0,
+        "t_max": 1200.0,
+        "t_step": 25.0,
     },
     "al": {
         "variable": "CU",
         "fixed": "MG=1, SI=1",
         "c_min": 0.0,
-        "c_max": 8.0,
-        "c_step": 0.25,
-        "t_min": 200.0,
-        "t_max": 750.0,
-        "t_step": 10.0,
+        "c_max": 6.0,
+        "c_step": 0.5,
+        "t_min": 300.0,
+        "t_max": 700.0,
+        "t_step": 25.0,
     },
 }
 
@@ -470,7 +474,7 @@ TERNARY_DIAGRAM_DEFAULTS = {
         "y": "CR",
         "dependent": "NI",
         "temperature": 1000.0,
-        "step": 2.5,
+        "step": 5.0,
         "tieline_every": 5,
     },
     "fe": {
@@ -478,7 +482,7 @@ TERNARY_DIAGRAM_DEFAULTS = {
         "y": "NI",
         "dependent": "FE",
         "temperature": 800.0,
-        "step": 2.5,
+        "step": 5.0,
         "tieline_every": 5,
     },
     "al": {
@@ -486,7 +490,7 @@ TERNARY_DIAGRAM_DEFAULTS = {
         "y": "MG",
         "dependent": "AL",
         "temperature": 500.0,
-        "step": 2.5,
+        "step": 10.0,
         "tieline_every": 5,
     },
 }
@@ -498,7 +502,7 @@ TERNARY_PHASE_MAP_DEFAULTS = {
         "y": "CR",
         "dependent": "NI",
         "temperature": 1000.0,
-        "step": 5.0,
+        "step": 20.0,
         "phase": "GAMMA_PRIME",
         "units": "at",
         "appearance_threshold": 0.1,
@@ -508,7 +512,7 @@ TERNARY_PHASE_MAP_DEFAULTS = {
         "y": "CR",
         "dependent": "FE",
         "temperature": 800.0,
-        "step": 5.0,
+        "step": 20.0,
         "phase": "CEMENTITE",
         "units": "wt",
         "appearance_threshold": 0.1,
@@ -518,7 +522,7 @@ TERNARY_PHASE_MAP_DEFAULTS = {
         "y": "MG",
         "dependent": "AL",
         "temperature": 500.0,
-        "step": 5.0,
+        "step": 20.0,
         "phase": "THETA_AL2CU",
         "units": "at",
         "appearance_threshold": 0.1,
@@ -928,6 +932,9 @@ class VerifiedB3BatchBroker:
         )
 
     def _bind(self, database_key: str) -> verified_loaders.BoundDatabaseContext:
+        # Пакетный маршрут Fe идёт через restricted_fe, которому нужен
+        # контекст без PDB; здесь привязка намеренно отличается от
+        # сессионной и поднимает поколение на время выполнения строки.
         selector: dict[str, Any] = {
             "database_key": database_key,
             "include_physical_pdb": False,
@@ -941,13 +948,19 @@ class VerifiedB3BatchBroker:
         )
 
     def _restore_sidebar(self) -> verified_loaders.BoundDatabaseContext:
-        global vlb_bound_context
+        global vlb_bound_context, vlb_active_context
         previous = st.session_state.get("_thermogar_vlb_bound_context_v1")
         vlb_bound_context = verified_loaders.bind_selected_database(
             self._sidebar_selector,
             self._catalog(),
             THERMOGAR_PATHS,
         )
+        # Пересвязывание сдвигает поколение привязки в рантайме, поэтому
+        # активной становится именно эта привязка. Без обновления
+        # vlb_active_context проба StateStore осталась бы на прежнем
+        # поколении, и любой экспорт состояния отклонялся бы ложным
+        # BINDING_STALE ещё до каких-либо действий пользователя.
+        vlb_active_context = vlb_bound_context
         st.session_state["_thermogar_vlb_selector_v1"] = dict(
             self._sidebar_selector
         )
@@ -1351,7 +1364,6 @@ def bind_b4b_physical_context(
     ):
         clear_b4b_physical_session_results()
     st.session_state["_thermogar_b4b_physical_proof_v1"] = proof_digest
-    st.session_state["_thermogar_b4b_physical_binding_active_v1"] = True
     vlb_active_context = context
     return context
 
@@ -1435,48 +1447,63 @@ def _b4b_store_result(
     }
 
 
-def _b4b_render_unavailable_outputs(
-    context: verified_loaders.BoundDatabaseContext,
-    state: dict[str, Any],
+def _b4b_render_result_downloads(
     key: str,
+    sheets: dict[str, pd.DataFrame],
+    *,
+    file_stem: str,
+    figure: Any | None = None,
+    history_label: str | None = None,
+    history_details: dict[str, Any] | None = None,
 ) -> None:
-    candidates = tuple(
-        phase
-        for phase in context.phase_policy.eligible_phases
-        if phase != restricted_fe.C15_PHASE
-    )
-    specifications = (
-        ("data_result_artifact", "physical-result-xlsx", "Скачать Excel", "xlsx"),
-        ("data_result_artifact", "physical-result-png", "Скачать PNG", "png"),
-        ("data_history_state", "physical-history-entry", "Сохранить в историю", "history"),
-    )
-    columns = st.columns(3)
-    for column, (feature_id, content_kind, label, suffix) in zip(
-        columns,
-        specifications,
-    ):
-        decision = verified_loaders.prepare_feature_request(
-            feature_id,
-            context,
-            {
-                "source_envelope_digest": state["envelope_digest"],
-                "source_receipt_digest": state["receipt_digest"],
-            },
-            (),
-            candidate_phases=candidates,
+    """Выгрузки раздела «Свойства».
+
+    Раньше здесь стояли три кнопки, которые всегда оставались
+    заблокированными: они запрашивали у StateStore типы содержимого
+    (``physical-result-xlsx`` и другие), которых нет в его списке
+    ``CONTENT_KINDS``. Выгрузка идёт тем же путём, что и в остальных
+    разделах приложения: Excel и PNG собираются здесь и отдаются
+    ``release_download_button``.
+    """
+
+    controls = 1 + (figure is not None) + (history_label is not None)
+    columns = st.columns(controls)
+    position = 0
+
+    with columns[position]:
+        release_download_button(
+            "Скачать Excel",
+            data=dataframe_to_excel(sheets),
+            file_name=f"{file_stem}.xlsx",
+            mime=(
+                "application/vnd.openxmlformats-officedocument."
+                "spreadsheetml.sheet"
+            ),
+            key=f"{key}_xlsx",
         )
-        if type(decision) is verified_loaders.FeatureRequest:
-            decision = workspace_state_store.prepare_egress(
-                decision,
-                content_kind,
-                None,
+    position += 1
+
+    if figure is not None:
+        with columns[position]:
+            release_download_button(
+                "Скачать PNG",
+                data=figure_to_png(figure),
+                file_name=f"{file_stem}.png",
+                mime="image/png",
+                key=f"{key}_png",
             )
-        with column:
-            verified_physical_button(
-                decision,
-                label,
-                key=f"{key}_{suffix}_unavailable",
-            )
+        position += 1
+
+    if history_label is not None:
+        with columns[position]:
+            if st.button("Сохранить в историю", key=f"{key}_history"):
+                record_calculation_history(
+                    THERMOGAR_PATHS,
+                    history_label,
+                    CURRENT_CONTEXT,
+                    dict(history_details or {}),
+                )
+                st.success("Запись добавлена в историю расчётов.")
 
 
 def render_b4b_density_single(
@@ -1554,10 +1581,71 @@ def render_b4b_density_single(
             else f'{projection["alloy_density_kg_m3"]:.1f}',
         )
         st.caption(f"Режим фаз: {phase_mode}")
+        coverage = pd.DataFrame(
+            [
+                ("Температура, °C", f"{float(temperature_c):.1f}"),
+                (
+                    "Покрытие PDB по массе, %",
+                    f'{projection["mass_coverage_pct"]:.2f}',
+                ),
+                (
+                    "Покрытие PDB по молям, %",
+                    f'{projection["mole_coverage_pct"]:.2f}',
+                ),
+                ("Качество оценки", projection["quality_label"]),
+                (
+                    "Версия физической базы",
+                    projection["physical_database_version"],
+                ),
+            ],
+            columns=["Параметр", "Значение"],
+        )
+        st.dataframe(coverage, width="stretch", hide_index=True)
+        if projection["alloy_density_kg_m3"] is None:
+            # Пустое поле плотности само по себе ничего не объясняет:
+            # у Al-состава для THETA_AL2CU в physical_data_v103.pdb нет
+            # модели плотности, поэтому покрытие меньше 100 % и общая
+            # плотность сплава честно не считается.
+            missing_names = ", ".join(
+                sorted(
+                    {
+                        str(row.get("Фаза") or row.get("phase") or "")
+                        for row in projection["missing_rows"]
+                    }
+                    - {""}
+                )
+            )
+            st.info(
+                "Плотность сплава не рассчитана: покрытие физической базы "
+                f'{projection["mass_coverage_pct"]:.2f} % по массе, '
+                "то есть плотность есть не у всех равновесных фаз."
+                + (
+                    f" Без данных остались: {missing_names}."
+                    if missing_names
+                    else ""
+                )
+                + " Плотности отдельных фаз ниже посчитаны и выгружаются."
+            )
+        for warning_text in projection["warnings"]:
+            st.warning(warning_text)
         st.dataframe(pd.DataFrame(projection["phase_rows"]), width="stretch", hide_index=True)
         if projection["missing_rows"]:
             st.dataframe(pd.DataFrame(projection["missing_rows"]), width="stretch", hide_index=True)
-        _b4b_render_unavailable_outputs(context, state, "physical_single")
+        _b4b_render_result_downloads(
+            "physical_single",
+            {
+                "Параметры": coverage,
+                "Фазы": pd.DataFrame(projection["phase_rows"]),
+                "Без данных PDB": pd.DataFrame(projection["missing_rows"]),
+            },
+            file_stem="ThermoGar_density_single",
+            history_label="Плотность при одной температуре",
+            history_details={
+                "temperature_c": float(temperature_c),
+                "alloy_density_kg_m3": projection["alloy_density_kg_m3"],
+                "mass_coverage_pct": projection["mass_coverage_pct"],
+            },
+        )
 
 
 def render_b4b_density_temperature(
@@ -1646,9 +1734,35 @@ def render_b4b_density_temperature(
             )
         table = pd.DataFrame(rows)
         st.dataframe(table, width="stretch", hide_index=True)
+        figure = None
         if not table.empty:
             st.line_chart(table, x="Температура, K", y="Плотность сплава, кг/м³")
-        _b4b_render_unavailable_outputs(context, state, "physical_scan")
+            figure = plot_density_temperature(table)
+        _b4b_render_result_downloads(
+            "physical_scan",
+            {
+                "Параметры": pd.DataFrame(
+                    [
+                        ("Температура от, °C", minimum_c),
+                        ("Температура до, °C", maximum_c),
+                        ("Шаг, °C", step_c),
+                        ("Основа", balance),
+                        ("Добавки", composition_text),
+                        ("Давление, Па", pressure_pa),
+                    ],
+                    columns=["Параметр", "Значение"],
+                ),
+                "Плотность по температуре": table,
+            },
+            file_stem="ThermoGar_density_scan",
+            figure=figure,
+            history_label="Плотность по температуре",
+            history_details={
+                "temperature_from_c": float(minimum_c),
+                "temperature_to_c": float(maximum_c),
+                "points": int(len(table)),
+            },
+        )
 
 
 def render_b4b_pdb_self_test(
@@ -1714,8 +1828,13 @@ def render_b4b_coverage(
             render_friendly_error(error, context="покрытие physical PDB")
     state = st.session_state.get(state_key)
     if type(state) is dict and state.get("database_key") == database_key:
-        st.dataframe(pd.DataFrame(state["projections"][0]["rows"]), width="stretch", hide_index=True)
-        _b4b_render_unavailable_outputs(context, state, "physical_coverage")
+        coverage_rows = pd.DataFrame(state["projections"][0]["rows"])
+        st.dataframe(coverage_rows, width="stretch", hide_index=True)
+        _b4b_render_result_downloads(
+            "physical_coverage",
+            {"Покрытие PDB": coverage_rows},
+            file_stem="ThermoGar_pdb_coverage",
+        )
 
 
 def _b4b2_store_result(
@@ -1733,47 +1852,6 @@ def _b4b2_store_result(
         "receipt_digest": execution.feature_receipt.receipt_digest,
         "request_digest": execution.feature_receipt.request_digest,
     }
-
-
-def _b4b2_render_unavailable_outputs(
-    context: B4BPhysicalContext,
-    state: dict[str, Any],
-    key: str,
-) -> None:
-    candidates = tuple(
-        phase
-        for phase in context.phase_policy.eligible_phases
-        if phase != restricted_fe.C15_PHASE
-    )
-    columns = st.columns(3)
-    specifications = (
-        ("data_result_artifact", "property-result-xlsx", "Скачать Excel", "xlsx"),
-        ("data_result_artifact", "property-result-png", "Скачать PNG", "png"),
-        ("data_history_state", "property-history-entry", "Сохранить в историю", "history"),
-    )
-    for column, (feature_id, content_kind, label, suffix) in zip(columns, specifications):
-        decision = verified_loaders.prepare_feature_request(
-            feature_id,
-            context,
-            {
-                "source_envelope_digest": state["envelope_digest"],
-                "source_receipt_digest": state["receipt_digest"],
-            },
-            (),
-            candidate_phases=candidates,
-        )
-        if type(decision) is verified_loaders.FeatureRequest:
-            decision = workspace_state_store.prepare_egress(
-                decision,
-                content_kind,
-                None,
-            )
-        with column:
-            verified_physical_button(
-                decision,
-                label,
-                key=f"{key}_{suffix}_unavailable",
-            )
 
 
 def _b4b2_editor_value(value: object) -> object:
@@ -1928,13 +2006,32 @@ def render_b4b2_elastic_properties(
     state = st.session_state.get(vrh_state_key)
     if type(state) is dict and state.get("database_key") == database_key:
         projection = state["projection"]
-        st.dataframe(pd.DataFrame(projection["bounds_rows"]), width="stretch", hide_index=True)
+        bounds_table = pd.DataFrame(projection["bounds_rows"])
+        st.dataframe(bounds_table, width="stretch", hide_index=True)
         summary = projection["summary"]
         metric_columns = st.columns(3)
         metric_columns[0].metric("E Hill, ГПа", f'{summary["E_Hill_GPa"]:.3f}')
         metric_columns[1].metric("G Hill, ГПа", f'{summary["G_Hill_GPa"]:.3f}')
         metric_columns[2].metric("ν Hill", f'{summary["nu_Hill"]:.5f}')
-        _b4b2_render_unavailable_outputs(context, state, "b4b2_elastic")
+        _b4b_render_result_downloads(
+            "b4b2_elastic",
+            {
+                "Voigt-Reuss-Hill": bounds_table,
+                "Итог": pd.DataFrame(
+                    [(name, value) for name, value in summary.items()],
+                    columns=["Величина", "Значение"],
+                ),
+                "Входные значения по фазам": pd.DataFrame(phase_rows),
+            },
+            file_stem="ThermoGar_elastic_vrh",
+            history_label="Упругие свойства (Voigt-Reuss-Hill)",
+            history_details={
+                "temperature_c": float(temperature_c),
+                "E_Hill_GPa": summary["E_Hill_GPa"],
+                "G_Hill_GPa": summary["G_Hill_GPa"],
+                "nu_Hill": summary["nu_Hill"],
+            },
+        )
 
 
 def render_b4b2_strengthening(
@@ -2070,10 +2167,34 @@ def render_b4b2_strengthening(
     state = st.session_state.get(state_key)
     if type(state) is dict and state.get("database_key") == database_key:
         projection = state["projection"]
-        st.dataframe(pd.DataFrame(projection["contribution_rows"]), width="stretch", hide_index=True)
+        contribution_table = pd.DataFrame(projection["contribution_rows"])
+        st.dataframe(contribution_table, width="stretch", hide_index=True)
         if projection["total_mpa"] is not None:
             st.metric("Итог, МПа", f'{projection["total_mpa"]:.3f}')
-        _b4b2_render_unavailable_outputs(context, state, "b4b2_strengthening")
+        _b4b_render_result_downloads(
+            "b4b2_strengthening",
+            {
+                "Вклады механизмов": contribution_table,
+                "Параметры": pd.DataFrame(
+                    [
+                        ("Правило объединения", rule),
+                        (
+                            "Базовое внутреннее сопротивление, МПа",
+                            sigma_internal,
+                        ),
+                        ("Источник входов", provenance),
+                        ("Итог, МПа", projection["total_mpa"]),
+                    ],
+                    columns=["Параметр", "Значение"],
+                ),
+            },
+            file_stem="ThermoGar_strengthening",
+            history_label="Вклады механизмов упрочнения",
+            history_details={
+                "summation_rule": rule,
+                "total_mpa": projection["total_mpa"],
+            },
+        )
 
 
 def parse_composition(text: str) -> dict[str, float]:
@@ -2730,6 +2851,29 @@ def style_chart_axes(
     )
     for spine in axes.spines.values():
         spine.set_color(roles["axis"])
+
+
+def plot_density_temperature(dataframe: pd.DataFrame) -> plt.Figure:
+    """Кривая плотности сплава по температуре для выгрузки PNG."""
+    roles = chart_roles(current_theme_type())
+    figure, axes = plt.subplots(figsize=(9.5, 5.5), dpi=100)
+    axes.plot(
+        np.asarray(dataframe["Температура, K"], dtype=float),
+        np.asarray(dataframe["Плотность сплава, кг/м³"], dtype=float),
+        color=roles["primary"],
+        linewidth=1.8,
+        marker="o",
+        markersize=3.5,
+    )
+    style_chart_axes(
+        figure,
+        axes,
+        "ThermoGar: плотность сплава по температуре",
+        "Температура, K",
+        "Плотность сплава, кг/м³",
+    )
+    figure.tight_layout()
+    return figure
 
 
 def plot_phase_fraction_scan(
@@ -5591,9 +5735,13 @@ if database_key == "fe":
         st.stop()
     fe_profile_key = st.session_state["thermogar_fe_profile"]
 
+# Единая привязка на сессию: тот же селектор, что и у раздела «Свойства».
+# Две разные привязки (с PDB и без) поднимали поколение привязки на каждом
+# прогоне, из-за чего свидетели раздела «Свойства» устаревали между двумя
+# нажатиями и результаты стирались на следующем рендере.
 vlb_selector = {
     "database_key": database_key,
-    "include_physical_pdb": False,
+    "include_physical_pdb": True,
 }
 if database_key == "fe":
     vlb_selector["profile_key"] = FE_PROFILE_CANONICAL
@@ -5603,13 +5751,7 @@ try:
     stored_vlb_context = st.session_state.get(
         "_thermogar_vlb_bound_context_v1"
     )
-    physical_binding_was_active = bool(
-        st.session_state.pop(
-            "_thermogar_b4b_physical_binding_active_v1",
-            False,
-        )
-    )
-    if stored_vlb_selector != vlb_selector or physical_binding_was_active:
+    if stored_vlb_selector != vlb_selector:
         vlb_catalog = verified_loaders.ArtifactCatalog.from_policy(
             PROJECT_ROOT,
             verified_loaders.canonical_release_manifest(),
@@ -5621,8 +5763,7 @@ try:
             THERMOGAR_PATHS,
         )
         clear_restricted_fe_session_results()
-        if physical_binding_was_active:
-            clear_b4b_physical_session_results()
+        clear_b4b_physical_session_results()
         st.session_state["_thermogar_vlb_selector_v1"] = dict(vlb_selector)
         st.session_state["_thermogar_vlb_bound_context_v1"] = (
             vlb_bound_context.to_dict()
@@ -5938,20 +6079,11 @@ with single_tab:
                 steel_mode,
             )
         )
-        single_component_candidates = tuple(single_candidate_phases)
-        if database_key == "fe":
-            single_candidate_phases = list(
-                vlb_bound_context.phase_policy.effective(
-                    (),
-                    candidates=single_component_candidates,
-                )
-            )
-        else:
-            single_component_candidates = verified_b3_candidate_phases(
-                vlb_bound_context,
-                single_component_candidates,
-            )
-            single_candidate_phases = list(single_component_candidates)
+        single_component_candidates = verified_b3_candidate_phases(
+            vlb_bound_context,
+            tuple(single_candidate_phases),
+        )
+        single_candidate_phases = list(single_component_candidates)
         single_selected_phases, single_phase_mode = (
             phase_selection_editor(
                 db,
@@ -5969,196 +6101,166 @@ with single_tab:
         single_selected_phases = None
         single_phase_mode = "Автоматически"
 
-    single_fe_state_key = (
-        "_thermogar_vlb_b2_result_equilibrium_single"
-    )
     single_b3_state_key = "_thermogar_vlb_b3_result_equilibrium_single"
     single_b3_request_key = "_thermogar_vlb_b3_request_equilibrium_single"
-    single_fe_request = None
     single_feature_decision = None
-    single_fe_fingerprint = None
-    if database_key == "fe":
-        try:
-            single_requested_phases = tuple(
-                sorted(single_selected_phases or ())
-            )
-            single_fe_request = restricted_fe.make_restricted_fe_request(
-                "equilibrium_single",
-                balance=balance,
-                units=units,
-                composition_pct=parse_composition(composition_text),
-                pressure_pa=float(pressure_pa),
-                temperatures_k=(float(single_temperature) + 273.15,),
-                requested_phases=tuple(
-                    phase
-                    for phase in single_requested_phases
-                    if phase != restricted_fe.C15_PHASE
-                ),
-            )
-            single_feature_decision = restricted_fe_prepare_b2_decision(
-                vlb_bound_context,
-                single_fe_request,
-                single_component_candidates,
-                single_requested_phases,
-            )
-            if type(single_feature_decision) is verified_loaders.FeatureRequest:
-                single_fe_fingerprint = restricted_fe_b2_fingerprint(
-                    single_fe_request,
-                    single_feature_decision,
-                )
-        except Exception:
-            single_fe_request = None
-            single_feature_decision = None
-            single_fe_fingerprint = None
-        restricted_fe_refresh_session_result(
-            single_fe_state_key,
-            single_fe_fingerprint,
+    try:
+        single_requested_phases = (
+            ()
+            if single_phase_mode == "Автоматически"
+            else tuple(sorted(single_selected_phases or ()))
         )
-    else:
-        try:
-            single_requested_phases = (
-                ()
-                if single_phase_mode == "Автоматически"
-                else tuple(sorted(single_selected_phases or ()))
-            )
-            single_inputs = verified_equilibrium.make_equilibrium_inputs(
-                "equilibrium_single",
-                balance=balance,
-                units=units,
-                composition_pct=parse_composition(composition_text),
-                pressure_pa=float(pressure_pa),
-                temperatures_k=(float(single_temperature) + 273.15,),
-            )
-            single_feature_decision = verified_loaders.prepare_feature_request(
-                "equilibrium_single",
-                vlb_bound_context,
-                single_inputs,
-                single_requested_phases,
-                candidate_phases=single_component_candidates,
-            )
-        except Exception:
-            single_feature_decision = None
-        verified_b3_refresh_result(
-            single_b3_state_key,
-            single_b3_request_key,
+        single_inputs = verified_equilibrium.make_equilibrium_inputs(
+            "equilibrium_single",
+            balance=balance,
+            units=units,
+            composition_pct=parse_composition(composition_text),
+            pressure_pa=float(pressure_pa),
+            temperatures_k=(float(single_temperature) + 273.15,),
+        )
+        single_feature_decision = verified_loaders.prepare_feature_request(
+            "equilibrium_single",
+            vlb_bound_context,
+            single_inputs,
+            single_requested_phases,
+            candidate_phases=single_component_candidates,
+        )
+    except Exception:
+        single_feature_decision = None
+    verified_b3_refresh_result(
+        single_b3_state_key,
+        single_b3_request_key,
+        single_feature_decision,
+    )
+
+    if type(single_feature_decision) in (
+        verified_loaders.FeatureRequest,
+        verified_loaders.RejectedFeatureReceipt,
+    ):
+        single_clicked = verified_equilibrium_button(
             single_feature_decision,
+            "Рассчитать равновесие",
+            type="primary",
+            key="single_calculate",
         )
-
-    if database_key == "fe":
-        if type(single_feature_decision) in (
-            verified_loaders.FeatureRequest,
-            verified_loaders.RejectedFeatureReceipt,
-        ):
-            single_clicked = verified_feature_button(
-                single_feature_decision,
-                "Рассчитать равновесие",
-                type="primary",
-                key="single_calculate",
-            )
-        else:
-            st.button(
-                "Рассчитать равновесие",
-                type="primary",
-                key="single_calculate",
-                disabled=True,
-                help="Параметры Fe-расчёта некорректны.",
-            )
-            single_clicked = False
     else:
-        if type(single_feature_decision) in (
-            verified_loaders.FeatureRequest,
-            verified_loaders.RejectedFeatureReceipt,
-        ):
-            single_clicked = verified_equilibrium_button(
-                single_feature_decision,
-                "Рассчитать равновесие",
-                type="primary",
-                key="single_calculate",
-            )
-        else:
-            st.button(
-                "Рассчитать равновесие",
-                type="primary",
-                key="single_calculate",
-                disabled=True,
-                help="Параметры расчёта некорректны.",
-            )
-            single_clicked = False
-    if database_key == "fe" and single_clicked:
-        try:
-            if (
-                single_fe_request is None
-                or type(single_feature_decision) is not verified_loaders.FeatureRequest
-                or single_fe_fingerprint is None
-            ):
-                raise ValueError("Параметры Fe-расчёта некорректны.")
-            with st.spinner("Расчёт Fe-равновесия…"):
-                with verified_loaders.acquire_execution(
-                    single_feature_decision,
-                    THERMOGAR_PATHS,
-                ) as single_lease:
-                    execution = restricted_fe.execute_bound_restricted_fe(
-                        vlb_bound_context,
-                        single_feature_decision,
-                        single_fe_request,
-                        single_lease,
-                        runner=restricted_fe._default_runner,
-                    )
-            restricted_fe_store_result(
-                single_fe_state_key,
-                single_fe_fingerprint,
-                single_fe_request,
-                single_feature_decision,
-                execution,
-            )
-        except Exception as error:
-            st.session_state.pop(single_fe_state_key, None)
-            render_friendly_error(error, context="Fe-равновесие")
+        st.button(
+            "Рассчитать равновесие",
+            type="primary",
+            key="single_calculate",
+            disabled=True,
+            help="Параметры расчёта некорректны.",
+        )
+        single_clicked = False
 
-    if database_key != "fe" and single_clicked:
+    if single_clicked:
         try:
             if type(single_feature_decision) is not verified_loaders.FeatureRequest:
                 raise ValueError("Параметры расчёта некорректны.")
+            single_execution = None
             with st.spinner("Расчёт равновесия…"):
                 with acquire_b3_execution(
                     single_feature_decision,
                     THERMOGAR_PATHS,
                 ) as single_lease:
-                    execution = verified_equilibrium.execute_verified_equilibrium(
-                        vlb_bound_context,
-                        single_feature_decision,
-                        single_lease,
-                    )
-            point = execution.points[0]
-            summary, phase_at, phase_wt = verified_b3_point_tables(
-                point,
-                database_key,
-            )
-            elements = [element for element, _value in point.call.atomic_fractions]
-            overall_x = dict(point.call.atomic_fractions)
-            overall_w = dict(point.call.mass_fractions)
+                    if database_key == "fe":
+                        # Fe-точка идёт тем же общим маршрутом, что и
+                        # Fe-сканы после волны 2A: список фаз приходит из
+                        # prepare_calculation, то есть уже без C15_LAVES;
+                        # численный бэкенд тот же pycalphad.equilibrium,
+                        # а таблицы и выгрузки — общие с Ni и Al.
+                        (
+                            single_components,
+                            single_conditions,
+                            single_overall_x,
+                            single_overall_w,
+                            single_phases,
+                        ) = prepare_calculation(
+                            db,
+                            database_key,
+                            parse_composition(composition_text),
+                            units,
+                            balance,
+                            steel_mode,
+                            single_selected_phases,
+                        )
+                        single_point_conditions: dict[Any, float] = {
+                            v.N: 1.0,
+                            v.P: float(pressure_pa),
+                            v.T: float(single_temperature) + 273.15,
+                        }
+                        single_point_conditions.update(single_conditions)
+                        single_eq = equilibrium(
+                            db,
+                            single_components,
+                            single_phases,
+                            single_point_conditions,
+                            calc_opts={"pdens": 500},
+                        )
+                        single_elements = [
+                            element
+                            for element in single_components
+                            if element != "VA"
+                        ]
+                        summary, phase_at, phase_wt = summarize_equilibrium(
+                            db,
+                            single_eq,
+                            single_elements,
+                            database_key,
+                        )
+                        overall_x = dict(single_overall_x)
+                        overall_w = dict(single_overall_w)
+                        single_sha256 = str(
+                            CURRENT_CONTEXT["database_sha256"]
+                        )
+                        single_phases_used = list(single_phases)
+                    else:
+                        single_execution = (
+                            verified_equilibrium.execute_verified_equilibrium(
+                                vlb_bound_context,
+                                single_feature_decision,
+                                single_lease,
+                            )
+                        )
+            if single_execution is not None:
+                point = single_execution.points[0]
+                summary, phase_at, phase_wt = verified_b3_point_tables(
+                    point,
+                    database_key,
+                )
+                single_elements = [
+                    element for element, _value in point.call.atomic_fractions
+                ]
+                overall_x = dict(point.call.atomic_fractions)
+                overall_w = dict(point.call.mass_fractions)
+                single_sha256 = (
+                    single_execution.feature_receipt.tdb_evidence.sha256
+                )
+                single_phases_used = list(point.call.phases)
             overall = pd.DataFrame(
                 {
-                    "Элемент": elements,
+                    "Элемент": single_elements,
                     "Содержание, ат.%": [
-                        100.0 * overall_x[element] for element in elements
+                        100.0 * overall_x[element]
+                        for element in single_elements
                     ],
                     "Содержание, мас.%": [
-                        100.0 * overall_w[element] for element in elements
+                        100.0 * overall_w[element]
+                        for element in single_elements
                     ],
                 }
             )
             settings = pd.DataFrame(
                 [
                     ("База", definition["label"]),
-                    ("База SHA-256", execution.feature_receipt.tdb_evidence.sha256),
+                    ("База SHA-256", single_sha256),
                     ("Температура, °C", single_temperature),
                     ("Давление, Па", pressure_pa),
                     ("Основа", balance),
                     ("Единицы ввода", units_label),
                     ("Добавки", composition_text),
                     ("Выбор фаз", single_phase_mode),
-                    ("Фазы в расчёте", ", ".join(point.call.phases)),
+                    ("Фазы в расчёте", ", ".join(single_phases_used)),
                 ],
                 columns=["Параметр", "Значение"],
             )
@@ -6173,25 +6275,23 @@ with single_tab:
                     "phase_wt": phase_wt,
                     "quality": quality,
                 },
-                execution,
+                single_execution,
+            )
+            record_calculation_history(
+                THERMOGAR_PATHS,
+                "Равновесие при одной температуре",
+                CURRENT_CONTEXT,
+                {
+                    "temperature_c": float(single_temperature),
+                    "phases": ", ".join(single_phases_used),
+                    "phase_rows": int(len(summary)),
+                },
             )
         except Exception as error:
             st.session_state.pop(single_b3_state_key, None)
             render_friendly_error(error, context="равновесие при одной температуре")
 
-    if database_key == "fe" and single_fe_state_key in st.session_state:
-        restricted_single = st.session_state[single_fe_state_key]["receipt"]
-        st.markdown("#### Фазовые доли")
-        st.dataframe(
-            restricted_fe_result_dataframe(
-                restricted_single,
-                "Температура, K",
-            ),
-            width="stretch",
-            hide_index=True,
-        )
-
-    if database_key != "fe" and single_b3_state_key in st.session_state:
+    if single_b3_state_key in st.session_state:
         result = st.session_state[single_b3_state_key]["display"]
 
         st.markdown("#### Фазовые доли")
@@ -6511,6 +6611,17 @@ with temperature_tab:
                     "quality": quality,
                 },
                 temperature_execution,
+            )
+            record_calculation_history(
+                THERMOGAR_PATHS,
+                "Скан по температуре",
+                CURRENT_CONTEXT,
+                {
+                    "temperature_from_c": float(t_min),
+                    "temperature_to_c": float(t_max),
+                    "temperature_step_c": float(t_step),
+                    "points": int(len(scan_df)),
+                },
             )
         except Exception as error:
             st.session_state.pop(temperature_b3_state_key, None)
@@ -6880,6 +6991,17 @@ with concentration_tab:
                     "quality": quality,
                 },
                 concentration_execution,
+            )
+            record_calculation_history(
+                THERMOGAR_PATHS,
+                "Скан по составу",
+                CURRENT_CONTEXT,
+                {
+                    "element": variable_element,
+                    "concentration_from_pct": float(c_min),
+                    "concentration_to_pct": float(c_max),
+                    "points": int(len(scan_df)),
+                },
             )
         except Exception as error:
             st.session_state.pop(concentration_b3_state_key, None)
@@ -8226,8 +8348,10 @@ with phase_diagram_tab:
             value=float(map_defaults["step"]),
             step=0.5,
             help=(
-                "5 % — быстрый обзор; 2–2,5 % — подробная карта. "
-                "Меньший шаг резко увеличивает время расчёта."
+                "Число узлов растёт как (100/шаг + 1)(100/шаг + 2)/2: "
+                "20 % — 21 узел, 10 % — 66, 5 % — 231, 2 % — 1326. "
+                "Начните с шага по умолчанию и уменьшайте его только "
+                "для интересующей области."
             ),
             key=f"ternary_map_step_{database_key}",
         )
@@ -8257,6 +8381,8 @@ with phase_diagram_tab:
         st.info(
             f"Будет рассчитано узлов: {map_point_count}. "
             f"Фактический равномерный шаг: {actual_step:.3g} %. "
+            "Один узел — это отдельное равновесие: от нескольких секунд на "
+            "никелевой базе до полутора десятков секунд на алюминиевой. "
             "Карта интерполируется между рассчитанными узлами; "
             "неопределённость положения границы — примерно половина шага."
         )
@@ -9043,7 +9169,7 @@ with solidification_tab:
                         ("Файл базы", str(database_path)),
                         (
                             "Профиль Fe-базы",
-                            FE_PROFILE_LABELS.get(fe_profile_key, "не применяется")
+                            FE_PROFILE_UI_LABEL
                             if database_key == "fe"
                             else "не применяется",
                         ),
@@ -9874,6 +10000,15 @@ with energy_tab:
             key=f"tzero_phase_two_{database_key}_{tzero_variable}_{phase_one}",
         ) if phase_two_options else ""
 
+        st.caption(
+            "Границы задают окно, в котором ищется равенство энергий. "
+            "Окно должно накрывать ожидаемый переход и быть узким: на "
+            "широком окне разность энергий двух фаз перестаёт быть "
+            "монотонной, решение не находится, и это выглядит как сбой. "
+            "Рабочие окна на составах справки: Ni FCC_A1/LIQUID "
+            "1230–1630 °C, Al GP_MAT/LIQUID 530–830 °C, "
+            "Fe BCC_B2/FCC_A1 630–730 °C."
+        )
         tzero_t_min = st.number_input(
             "Нижняя граница поиска T₀, °C",
             value=float(energy_defaults["t_min"]),
@@ -9964,14 +10099,24 @@ with energy_tab:
         if tzero_state and tzero_state.get("database_key") == database_key:
             valid_count = int(tzero_state["data"]["Решение найдено"].sum())
             total_count = len(tzero_state["data"])
-            if valid_count:
+            if valid_count == total_count:
                 st.success(
                     f"T₀ найдено в {valid_count} точках из {total_count}."
                 )
+            elif valid_count:
+                st.warning(
+                    f"T₀ найдено в {valid_count} точках из {total_count}. "
+                    "В остальных точках перехода в заданном окне нет: "
+                    "сдвиньте окно к ожидаемой температуре перехода."
+                )
             else:
                 st.warning(
-                    "В заданном температурном диапазоне T₀ не найдено ни в "
-                    "одной точке. Расширьте диапазон или выберите другую пару фаз."
+                    "В заданном окне T₀ не найдено ни в одной точке. "
+                    "Сдвиньте окно к ожидаемой температуре перехода и "
+                    "сделайте его уже — на широком окне разность энергий "
+                    "немонотонна и корень не находится. Пары «матрица / "
+                    "выделение» (γ/γ′, α/карбид) пересечения по T обычно "
+                    "не имеют: для них T₀ не строится."
                 )
             st.pyplot(tzero_state["figure"])
             st.dataframe(
@@ -10172,9 +10317,11 @@ USER_GUIDE_MD = r"""
 2. Выберите **элемент-основу**. Он автоматически заполняет остаток до 100 %.
 3. Выберите **атомные** или **массовые проценты**.
 4. В поле **Добавки** введите состав, например `AL=15, CR=10`.
-5. Для Steel доступны обычные действия в трёх вкладках раздела **Расчёты**:
-   одна температура, три точки по температуре и три точки по составу.
-6. Результат каждого раздела можно выгрузить в Excel, CSV или PNG.
+5. Стальная база работает как никелевая и алюминиевая: те же разделы,
+   те же поля сетки, тот же набор выгрузок. Отдельных ограничений на число
+   точек у неё нет.
+6. Результат каждого раздела выгружается кнопками под таблицей и графиком:
+   Excel везде, CSV и PNG — там, где есть скан или график.
 
 ## Что делает каждый раздел
 
@@ -10188,8 +10335,8 @@ USER_GUIDE_MD = r"""
 | **Диаграммы → Тройная при T = const** | Нужно увидеть области фаз в системе из трёх элементов | Тройная изотермическая диаграмма и линии связи |
 | **Диаграммы → Карта доли фазы** | Нужно увидеть, где и сколько выбранной фазы в тройной системе | Цветная карта мольной доли фазы |
 | **Затвердевание** | Нужно сравнить равновесный и Scheil–Gulliver пути | Ликвидус, солидус, фазы при кристаллизации и состав остаточного расплава |
-| **Энергии** | Нужно сравнить метастабильность фаз или оценить стимул превращения | GM фаз, движущая сила и T₀ |
-| **Свойства** | Нужны плотность, упругие свойства или вклады упрочнения | Плотность, объёмные доли, VRH и механизм-ориентированные вклады |
+| **Энергии** | Нужно сравнить метастабильность фаз или оценить стимул превращения | GM фаз, движущая сила и T₀ в заданном температурном окне |
+| **Свойства** | Нужны плотность, упругие свойства или вклады упрочнения | Плотность, объёмные доли, покрытие physical_data.pdb, VRH и механизм-ориентированные вклады |
 | **Кинетика** | Нужны диффузионные профили, гомогенизация или изменение выделений во времени | Диффузия, локальные фазовые доли, зарождение, рост, растворение и укрупнение |
 | **Проекты и данные** | Нужно сохранить марку, рассчитать таблицу составов, проверить установку или продолжить работу позже | Марки, пакетный расчёт, проекты, история, справочник, помощь и диагностика |
 
@@ -10261,6 +10408,7 @@ USER_GUIDE_MD = r"""
 - **Состав фазы** — сколько каждого элемента содержится именно внутри этой фазы, а не во всём сплаве.
 - `LIQUID` — расплав.
 - `FCC_A1`, `BCC_B2`, `GP_MAT` могут быть частями связанных моделей упорядочения. Название фазы не всегда означает полное упорядочение; смотрите примечание в справочнике.
+- `filter_phases` оставляет упорядоченную половину пары порядок/беспорядок, поэтому матрицей в таблицах называется `GP_MAT` для алюминиевой базы и `BCC_B2` для стальной. Это не ошибка расчёта.
 - Текущие расчёты являются **равновесными**: они показывают конечное состояние после достаточно долгой выдержки.
 
 ## Как рассчитать затвердевание
@@ -10279,7 +10427,7 @@ USER_GUIDE_MD = r"""
 ### Упругие свойства
 
 1. Откройте **Свойства → Упругие свойства**.
-2. Нажмите **Подготовить равновесные фазы**.
+2. Нажмите **Получить фазовые доли**.
 3. Для каждой фазы задайте `E`, `ν`, происхождение и источник.
 4. Нажмите **Рассчитать Voigt–Reuss–Hill**.
 
@@ -10331,7 +10479,9 @@ ThermoGar не выводит E и ν из одного химического �
 - Scheil–Gulliver не использует DDB: отсутствие обратной диффузии в твёрдом входит в допущения метода;
 - Steel/Fe использует каноническую исправленную mc_fe 2.062 с патчем TG-FE-2062-C15-001; `C15_LAVES` исключена из расчётов и не может быть выбрана вручную;
 - экспериментальная квалификация материалов не выполнялась; это информационная характеристика, а не блокировка функций;
-- legacy KWN implementation 13.2 рассматривает одну однородную матрицу и одну сферическую фазу-выделение; номер реализации не является release status;
+- модель KWN рассматривает одну однородную матрицу и одну сферическую фазу-выделение;
+- окно поиска T₀ должно накрывать ожидаемый переход и быть узким: на широком окне разность энергий двух фаз немонотонна и корень не находится; для пар «матрица / выделение» (γ/γ′, α/карбид) T₀ этим способом не строится;
+- покрытие physical_data.pdb неполное для некоторых составов: например, для Al–4Cu–1Mg нет модели плотности `THETA_AL2CU`, покрытие около 98,9 %, и общая плотность сплава не выводится, а плотности отдельных фаз считаются и выгружаются;
 - межфазная энергия, молярные объёмы и центры зарождения задаются пользователем с обязательным источником и областью применимости;
 - упругая энергия и изменение формы частиц пока не рассчитываются; механические свойства не прогнозируются автоматически, а отдельные вклады упрочнения считаются только по явно введённым микроструктурным параметрам.
 
@@ -10453,37 +10603,64 @@ with reference_tab:
                 with st.expander("JSON-паспорт патча конвертера", expanded=False):
                     st.json(manifest)
 
-    with help_subtab, suppress(_CompactHelpRendered):
+    with help_subtab:
         st.subheader("Как пользоваться ThermoGar")
-        st.markdown(
-            "1. Выберите базу материалов в боковой панели.  \n"
-            "2. Задайте основу, единицы, добавки и давление.  \n"
-            "3. Откройте нужный рабочий раздел в верхней строке вкладок.  \n"
-            "4. Перед расчётом проверьте состав, температуру и выбранные фазы."
+        st.caption(
+            "Версия 0.3.0. Ниже описано то, что приложение делает сейчас."
         )
-        raise _CompactHelpRendered
+        st.markdown(
+            "1. Выберите базу материалов в боковой панели: никелевую, "
+            "алюминиевую или стальную.  \n"
+            "2. Задайте элемент-основу, единицы состава, добавки и "
+            "давление.  \n"
+            "3. Откройте нужный раздел в верхней строке вкладок.  \n"
+            "4. Проверьте температуру и набор фаз и нажмите кнопку "
+            "расчёта.  \n"
+            "5. Результат выгружается кнопками под таблицей и графиком."
+        )
+
         render_quick_examples(queue_context_load)
         st.divider()
-        st.subheader("Как пользоваться ThermoGar")
-        st.caption("Короткое описание рабочих сценариев.")
 
-        st.markdown("### Первый расчёт")
-        st.markdown(
-            "1. Выберите базу в боковой панели.  \n"
-            "2. Выберите основу и единицы состава.  \n"
-            "3. Введите добавки, например `AL=15`.  \n"
-            "4. Откройте нужный расчётный раздел.  \n"
-            "5. Задайте температуру или диапазон.  \n"
-            "6. Выполните расчёт и при необходимости выгрузите результат."
-        )
-
-        with st.expander("Что находится в каждом разделе", expanded=True):
+        with st.expander("Что считает каждый раздел", expanded=True):
             st.markdown(
-                "- **Расчёты → Одна температура** — фазовый состав в одной точке.\n"
-                "- **Расчёты → Температурный диапазон** — изменение фаз при нагреве или охлаждении.\n"
-                "- **Расчёты → Изменение состава** — влияние содержания одного элемента.\n"
-                "- **Диаграммы** — бинарная, многокомпонентная, тройная диаграмма или карта доли фазы.\n"
-                "- **Проекты и данные** — марки, пакетный расчёт, проекты, история, справочник, помощь и проверка установки."
+                "- **Расчёты → Одна температура** — устойчивые фазы, их доли "
+                "и составы в одной точке; выгрузка Excel.\n"
+                "- **Расчёты → Температурный диапазон** — доли фаз по "
+                "температуре; выгрузка Excel, CSV, PNG.\n"
+                "- **Расчёты → Изменение состава** — доли фаз при изменении "
+                "одного элемента; выгрузка Excel, CSV, PNG.\n"
+                "- **Диаграммы** — бинарная T–X, многокомпонентное сечение "
+                "T–X, тройная при постоянной температуре и карта мольной "
+                "доли выбранной фазы.\n"
+                "- **Затвердевание** — равновесный путь, Scheil–Gulliver "
+                "или сравнение обоих: ликвидус, солидус, последовательность "
+                "фаз и состав остаточного расплава.\n"
+                "- **Энергии** — энергии Гиббса выбранных фаз, движущая сила "
+                "образования фазы и T₀.\n"
+                "- **Свойства** — плотность и объёмные доли по "
+                "physical_data.pdb, Voigt–Reuss–Hill и вклады механизмов "
+                "упрочнения по явно введённым коэффициентам.\n"
+                "- **Кинетика** — диффузионные профили и кинетика "
+                "выделений (KWN).\n"
+                "- **Проекты и данные** — марки и составы, пакетный расчёт, "
+                "проекты, история, паспорт базы, справочник фаз и проверка "
+                "установки."
+            )
+
+        with st.expander("Три базы и стальная база", expanded=True):
+            st.markdown(
+                "- Сталь — обычная база наравне с никелевой и алюминиевой: "
+                "те же разделы, те же сетки, те же выгрузки.\n"
+                "- Стальная база — mc_fe 2.062, профиль `thermogar_patch`; "
+                "фаза `C15_LAVES` исключена из расчёта и не выбирается "
+                "вручную.\n"
+                "- Верхняя граница стальной базы — 2000 K (1726,85 °C); "
+                "выше неё расчёт не идёт.\n"
+                "- `filter_phases` оставляет упорядоченную половину пары "
+                "порядок/беспорядок, поэтому матрица называется `GP_MAT` "
+                "для алюминия и `BCC_B2` для стали. Это не ошибка расчёта; "
+                "смысл названий смотрите в справочнике фаз."
             )
 
         with st.expander("Как вводить состав"):
@@ -10497,9 +10674,9 @@ with reference_tab:
         with st.expander("Управление фазами и метастабильный расчёт"):
             st.markdown(
                 "В блоке **«Управление фазами / метастабильный расчёт»** "
-                "можно оставить все совместимые фазы или вручную снять галочки. "
-                "Если исключить устойчивую фазу, получится метастабильное "
-                "равновесие среди оставшихся фаз."
+                "можно оставить все совместимые фазы или вручную снять "
+                "галочки. Если исключить устойчивую фазу, получится "
+                "метастабильное равновесие среди оставшихся фаз."
             )
 
         with st.expander("Как построить тройную диаграмму", expanded=True):
@@ -10514,29 +10691,33 @@ with reference_tab:
             )
             st.caption(
                 "Готовые примеры: Ni–Al–Cr при 1000 °C; "
-                "Al–Cu–Mg при 500 °C."
+                "Al–Cu–Mg при 500 °C. Алюминиевая база самая дорогая по "
+                "времени: в ней активно около 60 фаз против 15 у никелевой."
             )
 
         with st.expander("Как построить карту доли фазы", expanded=True):
             st.markdown(
                 "1. Откройте **Диаграммы → Карта доли фазы**.  \n"
-                "2. Выберите три элемента и единицы состава.  \n"
-                "3. Задайте температуру и начните с шага 5 %.  \n"
+                "2. Выберите три элемента и единицы состава. Карта всегда "
+                "строится ровно по трём элементам: два по осям, третий — "
+                "остаток до 100 %.  \n"
+                "3. Задайте температуру и начните с крупного шага.  \n"
                 "4. Выберите фазу, которую нужно показать цветом.  \n"
                 "5. Нажмите **Построить карту доли фазы**.  \n"
-                "6. Для уточнения интересующей области уменьшите шаг "
-                "до 2–2,5 %."
+                "6. Для уточнения интересующей области уменьшите шаг."
             )
             st.caption(
                 "Цвет показывает мольную долю выбранной фазы. "
                 "Пунктир показывает заданную границу её появления. "
-                "Карта интерполируется между рассчитанными узлами."
+                "Карта интерполируется между рассчитанными узлами: "
+                "неопределённость положения границы — около половины шага."
             )
 
         with st.expander("Как рассчитать затвердевание", expanded=True):
             st.markdown(
                 "1. Откройте вкладку **Затвердевание**.  \n"
-                "2. Выберите сравнение равновесного и Scheil–Gulliver методов.  \n"
+                "2. Выберите сравнение равновесного и Scheil–Gulliver "
+                "методов либо один из них.  \n"
                 "3. Оставьте автоматический поиск начального расплава.  \n"
                 "4. Не отключайте фазу `LIQUID`.  \n"
                 "5. Для быстрого теста используйте Al–4 ат.% Cu, "
@@ -10547,7 +10728,9 @@ with reference_tab:
             st.caption(
                 "Scheil–Gulliver не является расчётом времени: "
                 "он моделирует микросегрегацию при отсутствии "
-                "обратной диффузии в твёрдом."
+                "обратной диффузии в твёрдом. Интервал кристаллизации "
+                "Ni–15Al узкий, поэтому для него шаг по температуре "
+                "берите 5–10 °C."
             )
 
         with st.expander("Как пользоваться разделом «Энергии»", expanded=False):
@@ -10556,10 +10739,18 @@ with reference_tab:
                 "температур. Нулевая относительная энергия означает минимум "
                 "среди выбранных однофазных состояний.  \n"
                 "- **Движущая сила:** выберите целевую фазу и фазы исходного "
-                "равновесия. Положительное значение означает термодинамический "
-                "стимул её образования.  \n"
+                "равновесия. Положительное значение означает "
+                "термодинамический стимул её образования.  \n"
                 "- **T₀:** выберите две фазы и изменяемый элемент. T₀ — это "
-                "равенство их энергий при одинаковом составе, а не обычный солвус."
+                "равенство энергий двух фаз при одинаковом составе, а не "
+                "обычный солвус."
+            )
+            st.caption(
+                "Окно поиска T₀ должно накрывать ожидаемый переход и быть "
+                "узким: на широком окне разность энергий немонотонна и "
+                "корень не находится. Пересекаются пары «твёрдое / расплав» "
+                "и «BCC / FCC»; для пар «матрица / выделение» (γ/γ′, "
+                "α/карбид) T₀ этим способом не строится."
             )
 
         with st.expander("Как рассчитать плотность и объёмные доли", expanded=True):
@@ -10567,15 +10758,35 @@ with reference_tab:
                 "1. Откройте **Свойства → Плотность**.  \n"
                 "2. Задайте состав и температуру.  \n"
                 "3. Нажмите **Рассчитать плотность и объёмные доли**.  \n"
-                "4. Проверьте покрытие физической базы и статус каждой фазы.  \n"
-                "5. Если все фазы покрыты, ThermoGar покажет плотность сплава "
-                "и полные объёмные доли."
+                "4. Проверьте покрытие физической базы и статус каждой "
+                "фазы.  \n"
+                "5. Если покрыты все равновесные фазы, ThermoGar показывает "
+                "плотность сплава; иначе выводится покрытие и список фаз "
+                "без данных."
             )
             st.caption(
                 "Прямая DP-модель взята из physical_data.pdb. Оценочная "
-                "модель означает, что упорядоченная фаза использует плотность "
-                "связанной разупорядоченной структуры. При отсутствии данных "
-                "число не выводится."
+                "модель означает, что упорядоченная фаза использует "
+                "плотность связанной разупорядоченной структуры. Пример "
+                "неполного покрытия: для Al–4Cu–1Mg в базе нет модели "
+                "плотности `THETA_AL2CU`, покрытие около 98,9 %, поэтому "
+                "общая плотность сплава не выводится, а плотности "
+                "отдельных фаз считаются и выгружаются."
+            )
+
+        with st.expander("Упругие свойства и вклады упрочнения", expanded=False):
+            st.markdown(
+                "1. **Свойства → Упругие свойства**: нажмите **Получить "
+                "фазовые доли**, заполните `E`, `ν` и происхождение "
+                "значений, затем нажмите **Рассчитать Voigt–Reuss–Hill**.  \n"
+                "2. **Свойства → Вклады упрочнения**: включайте только те "
+                "механизмы, для которых есть исходные данные, и выбирайте "
+                "правило объединения явно."
+            )
+            st.caption(
+                "ThermoGar не выводит E и ν из химического состава и не "
+                "прогнозирует предел текучести: показываются вклады при "
+                "введённых коэффициентах и микроструктуре."
             )
 
         with st.expander(
@@ -10589,8 +10800,8 @@ with reference_tab:
                 "посчитайте её целиком и выгрузите результат.  \n"
                 "3. **Проекты и история:** проект сохраняет настройки, "
                 "а история — факт расчёта и отпечаток базы.  \n"
-                "4. После загрузки проекта или истории расчёт нужно повторить "
-                "на текущей версии базы."
+                "4. После загрузки проекта или истории расчёт нужно "
+                "повторить на текущей версии базы."
             )
 
         with st.expander("Готовые примеры"):
@@ -10598,6 +10809,13 @@ with reference_tab:
                 [
                     ["Никелевые сплавы", "NI", "атомные %", "AL=15", "700 °C"],
                     ["Алюминиевые сплавы", "AL", "атомные %", "CU=4", "500 °C"],
+                    [
+                        "Стали и Fe-сплавы",
+                        "FE",
+                        "массовые %",
+                        "C=0.20, CR=11.5, NI=0.7",
+                        "700 °C",
+                    ],
                 ],
                 columns=["База", "Основа", "Единицы", "Добавки", "Температура"],
             )
@@ -10610,13 +10828,15 @@ with reference_tab:
 
         with st.expander("Как читать результат"):
             st.markdown(
-                "- **Мольная доля фазы** — количество фазы в равновесной системе.\n"
-                "- **Состав фазы** — состав именно этой фазы.\n"
+                "- **Мольная доля фазы** — количество фазы в равновесной "
+                "системе.\n"
+                "- **Состав фазы** — состав именно этой фазы, а не всего "
+                "сплава.\n"
                 "- `LIQUID` означает расплав.\n"
                 "- Связанные модели `GP_MAT`, `BCC_B2`, `FCC_A1` требуют "
-                "проверки примечания в справочнике.\n"
+                "проверки примечания в справочнике фаз.\n"
                 "- Равновесные разделы не сообщают время превращения; "
-                "время учитывается только в разделе «Диффузия»."
+                "время учитывается только в разделе «Кинетика»."
             )
 
         release_download_button(
