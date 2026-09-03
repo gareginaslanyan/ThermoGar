@@ -120,7 +120,10 @@ RESTORABLE_WIDGET_PREFIXES: tuple[str, ...] = (
     "tzero_c_",
     "tzero_t_",
 )
-MAX_WIDGET_STATE_KEYS = 200
+# Настройки заводятся отдельно для каждой базы, поэтому за сеанс, в котором
+# пользователь прошёл все три, их набирается около сотни. Предел нужен только
+# как граница размера файла проекта.
+MAX_WIDGET_STATE_KEYS = 500
 
 FE_DATABASE_KEY = "fe"
 FE_PROFILE_CANONICAL = "thermogar_patch"
@@ -199,20 +202,29 @@ def show_rejection(receipt: Any, prefix: str = "") -> None:
     st.error(f"{prefix} {text}".strip() if prefix else text)
 
 
-def flash(kind: str, message: str) -> None:
-    """Запомнить сообщение, которое переживёт немедленный ``st.rerun``."""
+def _flash_key(section: str) -> str:
+    return f"_thermogar_flash_{section}"
 
-    pending = st.session_state.get("_thermogar_flash")
+
+def flash(section: str, kind: str, message: str) -> None:
+    """Запомнить сообщение, которое переживёт немедленный ``st.rerun``.
+
+    Раздел указывается явно: Streamlit рисует все вкладки на каждом прогоне,
+    и общая очередь показала бы сообщение в чужой вкладке.
+    """
+
+    key = _flash_key(section)
+    pending = st.session_state.get(key)
     if not isinstance(pending, list):
         pending = []
     pending.append({"kind": kind, "message": message})
-    st.session_state["_thermogar_flash"] = pending
+    st.session_state[key] = pending
 
 
-def render_flash() -> None:
-    """Показать сообщения, отложенные предыдущим прогоном."""
+def render_flash(section: str) -> None:
+    """Показать сообщения раздела, отложенные предыдущим прогоном."""
 
-    pending = st.session_state.pop("_thermogar_flash", None)
+    pending = st.session_state.pop(_flash_key(section), None)
     if not isinstance(pending, list):
         return
     renderers = {
@@ -1078,7 +1090,7 @@ def render_alloy_library(
         "Сохранённая запись запоминает базу, основу, единицы и состав. "
         "Учебные примеры помечены отдельно и не являются промышленными марками."
     )
-    render_flash()
+    render_flash("alloys")
 
     current = pd.DataFrame(
         [
@@ -1127,9 +1139,10 @@ def render_alloy_library(
                 context,
                 {"name": saved["name"]},
             )
-            flash("success", f"Состав «{saved['name']}» сохранён.")
+            flash("alloys", "success", f"Состав «{saved['name']}» сохранён.")
             if history_warning:
                 flash(
+                    "alloys",
                     "warning",
                     "Состав сохранён, но запись в историю не добавлена: "
                     f"{history_warning}",
@@ -1211,6 +1224,7 @@ def render_alloy_library(
             ):
                 delete_user_alloy(paths, selected_id)
                 flash(
+                    "alloys",
                     "success",
                     "Запись удалена; предыдущая версия файла библиотеки "
                     "сохранена как alloys.json.bak.",
@@ -1296,7 +1310,7 @@ def render_alloy_library(
                 imported,
                 overwrite=allow_import_overwrite,
             )
-            flash("success", f"Импортировано записей: {imported_count}.")
+            flash("alloys", "success", f"Импортировано записей: {imported_count}.")
             st.rerun()
         except Exception as error:
             st.error(f"Библиотеку импортировать не удалось: {error}")
@@ -1617,7 +1631,7 @@ def render_projects_and_history(
         "Проект сохраняет материал и числовые настройки расчётных разделов. "
         "История хранит отпечаток базы и цепочку контрольных сумм."
     )
-    render_flash()
+    render_flash("projects")
 
     view_mode = st.radio(
         "Что открыть",
@@ -1663,9 +1677,10 @@ def render_projects_and_history(
                     context,
                     {"name": payload["name"], "path": str(path)},
                 )
-                flash("success", f"Проект сохранён: {path.name}")
+                flash("projects", "success", f"Проект сохранён: {path.name}")
                 if history_warning:
                     flash(
+                        "projects",
                         "warning",
                         "Проект сохранён, но запись в историю не добавлена: "
                         f"{history_warning}",
@@ -1811,6 +1826,7 @@ def render_projects_and_history(
                             ),
                         )
                         flash(
+                            "projects",
                             "success",
                             "Проект убран из списка; исходный файл сохранён "
                             "с окончанием .deleted.",
@@ -1872,7 +1888,7 @@ def render_projects_and_history(
                     payload,
                     overwrite=import_overwrite,
                 )
-                flash("success", f"Проект импортирован: {imported_path.name}")
+                flash("projects", "success", f"Проект импортирован: {imported_path.name}")
                 st.rerun()
             except Exception as error:
                 st.error(f"Проект импортировать не удалось: {error}")
@@ -2011,6 +2027,7 @@ def render_projects_and_history(
                         missing_ok=True,
                     )
                     flash(
+                        "projects",
                         "success",
                         "История очищена; резервная копия сохранена."
                         if archived
@@ -2053,21 +2070,36 @@ def batch_table_dataframe(value: Mapping[str, object]) -> pd.DataFrame:
 
 
 def dataframe_state_value(source: pd.DataFrame) -> dict[str, object]:
-    """Reduce a display frame to canonical scalar columns and rows."""
+    """Reduce a display frame to canonical scalar columns and rows.
 
-    clean = source.where(pd.notna(source), None)
+    Пропуски приводятся к ``None`` поштучно. ``DataFrame.where(..., None)``
+    для этого не годится: в столбце с плавающей точкой ``None`` хранить
+    нельзя, и пропуск возвращается как ``NaN``. Пропуски здесь обычные —
+    таблицы составов фаз объединяют строки с разными наборами элементов,
+    а несериализуемое значение отклоняется на границе выгрузки.
+    """
+
     rows: list[list[object]] = []
-    for values in clean.itertuples(index=False, name=None):
+    for values in source.itertuples(index=False, name=None):
         row: list[object] = []
         for value in values:
             if isinstance(value, np.generic):
                 value = value.item()
             if isinstance(value, (datetime, pd.Timestamp)):
                 value = value.isoformat()
+            elif value is not None and not isinstance(value, (str, bytes)):
+                try:
+                    missing = bool(pd.isna(value))
+                except (TypeError, ValueError):
+                    missing = False
+                if missing or (
+                    isinstance(value, float) and not math.isfinite(value)
+                ):
+                    value = None
             row.append(value)
         rows.append(row)
     return {
-        "columns": [str(column) for column in clean.columns],
+        "columns": [str(column) for column in source.columns],
         "rows": rows,
     }
 
