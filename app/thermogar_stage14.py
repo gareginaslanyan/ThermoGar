@@ -1,8 +1,8 @@
-"""ThermoGar trust, diagnostics and friendly-error implementation.
+"""Происхождение расчёта, диагностика и понятные сообщения об ошибках.
 
-Имя файла сохранено для совместимости с историческим Stage 14. Текущая
-release identity импортируется из ``thermogar_release_policy`` и не означает
-научную квалификацию материала.
+Имя файла сохранено ради совместимости импортов. Версия и статус выпуска
+берутся из ``thermogar_release_policy`` и не означают научную квалификацию
+материала.
 """
 
 from __future__ import annotations
@@ -25,7 +25,6 @@ import streamlit as st
 from pycalphad import Database, equilibrium, variables as v
 from pycalphad.core.utils import filter_phases, unpack_species
 from thermogar_release_policy import (
-    APP_STAGE,
     APP_VERSION,
     PRODUCTION_USE,
     RELEASE_DATABASE_KEYS,
@@ -1090,30 +1089,31 @@ def render_quick_examples(queue_context_load: Callable[..., None]) -> None:
             {"single_temperature_ni": 700.0},
         ),
         (
-            "Fe–1C: практический Fe–Fe₃C при 700 °C",
-            "Fe-база · основа FE · 1 мас.% C · графит исключён.",
-            {
-                "database_key": "fe",
-                "balance": "FE",
-                "units": "wt",
-                "composition": "C=1",
-                "pressure_pa": 101325.0,
-                "steel_mode": "metastable",
-            },
-            {"single_temperature_fe": 700.0},
-        ),
-        (
-            "Al–4Cu при 500 °C",
-            "Al-база · основа AL · 4 ат.% CU.",
+            "Al–4Cu–1Mg при 500 °C",
+            "Al-база · основа AL · 4 мас.% CU · 1 мас.% MG.",
             {
                 "database_key": "al",
                 "balance": "AL",
-                "units": "at",
-                "composition": "CU=4",
+                "units": "wt",
+                "composition": "CU=4, MG=1",
                 "pressure_pa": 101325.0,
                 "steel_mode": "stable",
             },
             {"single_temperature_al": 500.0},
+        ),
+        (
+            "Нержавеющая сталь Fe–0,2C–11,5Cr–0,7Ni при 700 °C",
+            "Fe-база · основа FE · мас.% · практический Fe–Fe₃C · "
+            "C15_LAVES исключена.",
+            {
+                "database_key": "fe",
+                "balance": "FE",
+                "units": "wt",
+                "composition": "C=0.2, CR=11.5, NI=0.7",
+                "pressure_pa": 101325.0,
+                "steel_mode": "metastable",
+            },
+            {"single_temperature_fe": 700.0},
         ),
     ]
     examples = [
@@ -1127,7 +1127,7 @@ def render_quick_examples(queue_context_load: Callable[..., None]) -> None:
             st.caption(description)
             if st.button(
                 f"Загрузить пример {label.split(':', 1)[0]}",
-                key=f"stage10_example_{context['database_key']}",
+                key=f"quick_example_{context['database_key']}",
             ):
                 queue_context_load(
                     context,
@@ -1276,7 +1276,6 @@ def provenance_table(
     path = Path(database_path)
     rows = [
         ("ThermoGar", APP_VERSION),
-        ("Линия / gate", APP_STAGE),
         ("Класс выпуска", RELEASE_CLASS),
         ("Статус программы", SOFTWARE_RELEASE_STATUS),
         ("Статус материала", SCIENTIFIC_MATERIAL_STATUS),
