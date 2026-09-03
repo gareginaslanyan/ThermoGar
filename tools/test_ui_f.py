@@ -183,6 +183,13 @@ def start(
 
 
 @pytest.fixture(autouse=True)
+def _private_state_root(tmp_path, monkeypatch) -> None:
+    """Приватный профиль на тест: не писать в общий %LOCALAPPDATA%\\ThermoGar."""
+
+    monkeypatch.setenv("THERMOGAR_STATE_ROOT", str(tmp_path / "state"))
+
+
+@pytest.fixture(autouse=True)
 def _restore_streamlit_seams() -> Iterator[None]:
     download_button = st.download_button
     data_editor = st.data_editor
