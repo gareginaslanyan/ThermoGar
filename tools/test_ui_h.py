@@ -138,7 +138,8 @@ def patched_app_source() -> Path:
     for broken, fixed in UPSTREAM_PATCHES:
         patched = patched.replace(broken, fixed)
     if patched == source:
-        return original
+        yield original
+        return
     PATCHED_APP.write_text(patched, encoding="utf-8")
     try:
         yield PATCHED_APP
