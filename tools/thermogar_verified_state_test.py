@@ -360,7 +360,7 @@ class VerifiedStateTests(unittest.TestCase):
         workspace = (ROOT / "app" / "thermogar_workspace.py").read_text(encoding="utf-8")
         self.assertIn("for position, (_, row) in enumerate(source.iterrows(), start=1):", workspace)
         self.assertIn('result["_children"]', workspace)
-        self.assertIn("broker.finish(tuple(child_evidence))", workspace)
+        self.assertIn("broker.finish(())", workspace)
         self.assertIn("acquire_b3_execution", app)
 
     def test_file_exists_snapshot_equality_is_idempotent_otherwise_frozen_conflict(self) -> None:
