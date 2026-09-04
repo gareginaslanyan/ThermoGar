@@ -167,6 +167,26 @@ class DatabaseCacheTests(unittest.TestCase):
             self.assertEqual(self.load(parse), _Parsed("parsed"))
             self.assertEqual(parse.calls, 1)
 
+    def test_010_miss_returns_the_same_form_as_a_hit(self):
+        """Промах и попадание отдают объект одного вида — после ``pickle``.
+
+        Раньше промах возвращал только что разобранную базу, а попадание —
+        восстановленную; у них разный порядок обхода множеств внутри
+        ``Database``, и равновесие расходилось в восьмом знаке. То есть числа
+        зависели от того, лежит ли уже файл кэша на диске.
+        """
+
+        produced: list[object] = []
+
+        def parse() -> _Parsed:
+            value = _Parsed("parsed")
+            produced.append(value)
+            return value
+
+        result = self.load(parse)
+        self.assertEqual(result, produced[0])
+        self.assertIsNot(result, produced[0])
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

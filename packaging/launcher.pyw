@@ -868,8 +868,15 @@ def _environment_block(values: dict[str, str]) -> ctypes.Array[ctypes.c_wchar]:
 def _create_child(install_root: str, env: dict[str, str]) -> PROCESS_INFORMATION:
     python = os.path.join(install_root, "runtime", "python.exe")
     app = os.path.join("app", "ThermoGar_app.py")
+    # Изоляция собирается по частям вместо "-I". "-I" включает и "-E", а с
+    # ним интерпретатор игнорирует PYTHONHASHSEED: у каждого запуска и у
+    # каждого воркера пула равновесий оказывалась своя хеш-затравка, от
+    # которой зависит порядок обхода множеств строк внутри pycalphad, а
+    # значит и последние биты результата. Остаются "-P" (рабочий каталог не
+    # попадает в sys.path) и "-s" (без пользовательского site-packages), а
+    # роль "-E" выполняет чистка PYTHON*-переменных в _run перед запуском.
     args = [
-        python, "-I", "-B", "-X", "utf8", "-m", "streamlit", "run", app,
+        python, "-P", "-s", "-B", "-X", "utf8", "-m", "streamlit", "run", app,
         "--server.address=127.0.0.1", "--server.port=0", "--server.headless=true",
         "--server.fileWatcherType=none", "--server.runOnSave=false",
         "--browser.gatherUsageStats=false", "--server.scriptHealthCheckEnabled=true",
@@ -1472,12 +1479,19 @@ def _run() -> int:
         if not _has_only_owned_listener(_tcp_listeners(), "127.0.0.1", control_port, supervisor_pid):
             raise LauncherError(7, "control TCP ownership")
         job = _create_job()
-        env = dict(os.environ)
+        # Родительские PYTHON*-переменные отбрасываются целиком: без "-E" они
+        # снова действуют, а доверять им нельзя. Дочерний процесс получает
+        # только те, что заданы здесь.
+        env = {
+            name: value
+            for name, value in os.environ.items()
+            if not name.upper().startswith("PYTHON")
+        }
         env.update({
             "THERMOGAR_STATE_ROOT": paths["state"],
             "TMP": paths["tmp"], "TEMP": paths["tmp"],
             "MPLCONFIGDIR": paths["mpl"], "PYTHONDONTWRITEBYTECODE": "1",
-            "PYTHONUTF8": "1",
+            "PYTHONUTF8": "1", "PYTHONHASHSEED": "0",
         })
         info = _create_child(install_root, env)
         child_identity = _process_identity_from_handle(

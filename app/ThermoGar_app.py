@@ -56,7 +56,7 @@ import json
 import re
 import threading
 import zipfile
-from typing import Any
+from typing import Any, Mapping
 
 from thermogar_paths import ThermoGarPaths, migrate_legacy_state
 
@@ -72,30 +72,70 @@ from matplotlib.ticker import FuncFormatter
 import numpy as np
 import pandas as pd
 import streamlit as st
-from pycalphad import Database, Model, Workspace, equilibrium, variables as v
+from pycalphad import Database, Workspace, equilibrium, variables as v
 from pycalphad.mapping import BinaryStrategy, IsoplethStrategy, TernaryStrategy
 from pycalphad.plot import triangular  # регистрация треугольной проекции matplotlib
 from pycalphad.core.utils import filter_phases, unpack_species
 from pycalphad.property_framework.metaproperties import DormantPhase
 from pycalphad.property_framework.tzero import T0
 
-try:
-    import scheil as scheil_package
-    from scheil import (
-        simulate_equilibrium_solidification,
-        simulate_scheil_solidification,
-    )
+# Пакет ``scheil`` импортируется лениво: на верхнем уровне он стоил 2,1 с
+# каждому запуску приложения, а нужен только разделу «Затвердевание». До
+# первого расчёта достаточно знать, установлен ли пакет, — это отвечает
+# ``importlib.util.find_spec`` без исполнения его модулей.
+_SCHEIL_STATE: dict[str, Any] = {
+    "loaded": False,
+    "package": None,
+    "equilibrium": None,
+    "scheil": None,
+    "error": "",
+}
 
-    SCHEIL_AVAILABLE = True
-    SCHEIL_IMPORT_ERROR = ""
-except Exception as scheil_import_error:
-    scheil_package = None
-    simulate_equilibrium_solidification = None
-    simulate_scheil_solidification = None
-    SCHEIL_AVAILABLE = False
-    SCHEIL_IMPORT_ERROR = str(scheil_import_error)
+
+def load_scheil() -> dict[str, Any]:
+    """Импортировать ``scheil`` при первом обращении и запомнить результат."""
+    if not _SCHEIL_STATE["loaded"]:
+        try:
+            import scheil as scheil_package
+            from scheil import (
+                simulate_equilibrium_solidification,
+                simulate_scheil_solidification,
+            )
+
+            _SCHEIL_STATE.update(
+                {
+                    "package": scheil_package,
+                    "equilibrium": simulate_equilibrium_solidification,
+                    "scheil": simulate_scheil_solidification,
+                    "error": "",
+                }
+            )
+        except Exception as scheil_import_error:
+            _SCHEIL_STATE.update(
+                {
+                    "package": None,
+                    "equilibrium": None,
+                    "scheil": None,
+                    "error": str(scheil_import_error),
+                }
+            )
+        _SCHEIL_STATE["loaded"] = True
+    return _SCHEIL_STATE
+
+
+def scheil_available() -> bool:
+    """Установлен ли ``scheil``; сам пакет при этом не исполняется."""
+    if _SCHEIL_STATE["loaded"]:
+        return _SCHEIL_STATE["package"] is not None
+    try:
+        import importlib.util
+
+        return importlib.util.find_spec("scheil") is not None
+    except Exception:
+        return False
 
 from thermogar_palette import chart_roles, phase_styles
+import thermogar_parallel_ui as parallel_ui
 from thermogar_workspace import (
     apply_pending_state,
     context_snapshot,
@@ -1089,141 +1129,6 @@ class VerifiedB3BatchBroker:
         clean["database_sha256"] = rebound.tdb.sha256
         return dict(clean)
 
-    def execute_row(self, row: dict[str, Any]) -> dict[str, Any]:
-        expected = {
-            "balance", "composition_pct", "database_key", "pressure_pa",
-            "profile_key", "requested_phases", "row_index", "steel_mode",
-            "temperature_k", "units",
-        }
-        if type(row) is not dict or set(row) != expected:
-            raise ValueError("Batch row does not match the canonical scalar boundary.")
-        database_key = row["database_key"]
-        if database_key not in ("ni", "al", "fe"):
-            raise ValueError("Batch database key is outside ni/al/fe.")
-        if row["profile_key"] != (
-            FE_PROFILE_CANONICAL if database_key == "fe" else None
-        ):
-            raise ValueError("Batch profile identity mismatch.")
-        clear_b3_session_results()
-        context = self._bind(database_key)
-        requested = tuple(row["requested_phases"])
-        try:
-            if database_key == "fe":
-                core_request = restricted_fe.make_restricted_fe_request(
-                    "equilibrium_single",
-                    balance=row["balance"],
-                    units=row["units"],
-                    composition_pct=row["composition_pct"],
-                    pressure_pa=row["pressure_pa"],
-                    temperatures_k=(row["temperature_k"],),
-                    requested_phases=tuple(
-                        phase for phase in requested
-                        if phase != restricted_fe.C15_PHASE
-                    ),
-                )
-                decision = restricted_fe_prepare_b2_decision(
-                    context,
-                    core_request,
-                    tuple(context.phase_policy.eligible_phases),
-                    requested,
-                )
-            else:
-                inputs = verified_equilibrium.make_equilibrium_inputs(
-                    "equilibrium_single",
-                    balance=row["balance"],
-                    units=row["units"],
-                    composition_pct=row["composition_pct"],
-                    pressure_pa=row["pressure_pa"],
-                    temperatures_k=(row["temperature_k"],),
-                )
-                decision = self._decision(
-                    "equilibrium_single",
-                    context,
-                    inputs,
-                    requested,
-                )
-            if type(decision) is verified_loaders.RejectedFeatureReceipt:
-                return {
-                    "status": "rejected",
-                    "rejection": decision,
-                    "feature_receipt": None,
-                    "result_envelope": None,
-                    "phase_fractions": [],
-                    "phase_atomic": [],
-                    "phase_mass": [],
-                }
-            with acquire_b3_execution(
-                decision,
-                THERMOGAR_PATHS,
-            ) as lease:
-                if database_key == "fe":
-                    execution = execute_bound_fe_batch(
-                        context,
-                        decision,
-                        core_request,
-                        lease,
-                        runner=restricted_fe._default_runner,
-                    )
-                    if (
-                        execution.core1_receipt.outcome != "success"
-                        or execution.result_envelope is None
-                    ):
-                        return {
-                            "status": "failure",
-                            "error": execution.core1_receipt.error_code,
-                            "feature_receipt": execution.feature_receipt,
-                            "result_envelope": None,
-                            "rejection": None,
-                            "phase_fractions": [],
-                            "phase_atomic": [],
-                            "phase_mass": [],
-                        }
-                    point = execution.core1_receipt.points[0]
-                    return {
-                        "status": "success",
-                        "feature_receipt": execution.feature_receipt,
-                        "result_envelope": execution.result_envelope,
-                        "rejection": None,
-                        "phase_fractions": [list(item) for item in point.phase_fractions],
-                        "phase_atomic": [],
-                        "phase_mass": [],
-                    }
-                execution = verified_equilibrium.execute_verified_equilibrium(
-                    context,
-                    decision,
-                    lease,
-                )
-            point = execution.points[0]
-            return {
-                "status": "success",
-                "feature_receipt": execution.feature_receipt,
-                "result_envelope": execution.result_envelope,
-                "rejection": None,
-                "phase_fractions": [list(item) for item in point.phase_fractions],
-                "phase_atomic": [
-                    {
-                        "Фаза": phase,
-                        **{
-                            f"{element}, ат.%": 100.0 * value
-                            for element, value in composition
-                        },
-                    }
-                    for phase, composition in point.phase_atomic
-                ],
-                "phase_mass": [
-                    {
-                        "Фаза": phase,
-                        **{
-                            f"{element}, мас.%": 100.0 * value
-                            for element, value in composition
-                        },
-                    }
-                    for phase, composition in point.phase_mass
-                ],
-            }
-        finally:
-            self._restore_sidebar()
-
     def finish(self, children: tuple[dict[str, object], ...]) -> dict[str, str]:
         context = self._restore_sidebar()
         child_digests = [
@@ -1461,6 +1366,31 @@ def _b4b_store_result(
         "projections": [point.projection for point in execution.points],
         "receipt_digest": execution.feature_receipt.receipt_digest,
         "request_digest": execution.feature_receipt.request_digest,
+    }
+
+
+def _b4b_store_engine_result(
+    state_key: str,
+    database_key: str,
+    decision: verified_loaders.FeatureRequest,
+    projections: list[dict[str, Any]],
+    note: str,
+) -> None:
+    """Результат многоточечного раздела «Свойства», посчитанный движком.
+
+    Форма записи та же, что у ``_b4b_store_result``; квитанции лизы у неё нет,
+    потому что многоточечный расчёт идёт мимо лизы, а отпечатки привязки и
+    запроса сохраняются — по ним ``_b4b_refresh_result`` решает, жив ли ещё
+    показанный результат.
+    """
+    st.session_state[state_key] = {
+        "binding_digest": decision.binding_digest,
+        "database_key": database_key,
+        "engine_note": note,
+        "envelope_digest": None,
+        "projections": projections,
+        "receipt_digest": None,
+        "request_digest": decision.request_digest,
     }
 
 
@@ -1728,13 +1658,61 @@ def render_b4b_density_temperature(
     ):
         try:
             assert type(decision) is verified_loaders.FeatureRequest
-            with acquire_b4b_execution(decision, THERMOGAR_PATHS) as lease:
-                execution = verified_physical.execute_verified_physical(
+            # Температурный скан плотности многоточечный, поэтому идёт в
+            # движок напрямую; одиночная точка остаётся на verified-маршруте.
+            with st.spinner("Расчёт плотности по температуре…"):
+                scan_phases = verified_physical.effective_phases(
                     context,
-                    decision,
-                    lease,
+                    decision.requested_phases,
+                    db,
                 )
-            _b4b_store_result(state_key, database_key, execution)
+                atomic, _mass = verified_physical.composition_fractions(db, inputs)
+                scan_components = [
+                    element for element, _value in atomic
+                ] + ["VA"]
+                scan_points = [
+                    {
+                        "N": 1.0,
+                        "P": float(pressure_pa),
+                        "T": float(temperature_k),
+                        "X": {
+                            element: value
+                            for element, value in atomic
+                            if element != inputs["balance"]
+                        },
+                    }
+                    for temperature_k in inputs["temperatures_k"]
+                ]
+                density_run = run_equilibrium_points(
+                    scan_components,
+                    list(scan_phases),
+                    scan_points,
+                    pdens=500,
+                    capture=("X", "Y"),
+                    progress_text="Точки плотности",
+                )
+                physical_db = load_physical_database()
+                projections: list[dict[str, Any]] = []
+                for temperature_k, result in zip(
+                    inputs["temperatures_k"], density_run.results
+                ):
+                    properties = calculate_physical_properties(
+                        db,
+                        parallel_ui.snapshot_of(result),
+                        list(scan_components),
+                        float(temperature_k),
+                        physical_db,
+                    )
+                    projection = verified_physical.physical_projection(properties)
+                    projection["temperature_k"] = float(temperature_k)
+                    projections.append(projection)
+            _b4b_store_engine_result(
+                state_key,
+                database_key,
+                decision,
+                projections,
+                density_run.note,
+            )
         except Exception as error:
             render_friendly_error(error, context="плотность по температуре")
     state = st.session_state.get(state_key)
@@ -1750,6 +1728,8 @@ def render_b4b_density_temperature(
                 }
             )
         table = pd.DataFrame(rows)
+        if state.get("engine_note"):
+            st.caption(str(state["engine_note"]))
         st.dataframe(table, width="stretch", hide_index=True)
         figure = None
         if not table.empty:
@@ -2612,6 +2592,18 @@ def render_phase_set_note(settings: Any) -> None:
         st.caption(note)
 
 
+def render_engine_note(settings: Any) -> None:
+    """Показать строку «Параллельный расчёт: …» рядом с готовым результатом."""
+    if not isinstance(settings, pd.DataFrame) or "Параметр" not in settings:
+        return
+    values = settings.loc[
+        settings["Параметр"] == "Параллельный расчёт", "Значение"
+    ]
+    note = str(values.iloc[0]) if len(values) else ""
+    if note:
+        st.caption(note)
+
+
 def requested_phase_tuple(
     selection_mode: str,
     phase_mode_line: str,
@@ -2882,6 +2874,93 @@ def scan_axis_conditions(
     raise ValueError(f"Неизвестные единицы состава: {units}")
 
 
+def mole_fraction_map(conditions: Mapping[Any, float]) -> dict[str, float]:
+    """Условия состава pycalphad в простой словарь ``{элемент: мольная доля}``.
+
+    Описание точки уходит в воркер через ``pickle``, поэтому переменные
+    pycalphad в него не кладутся — движок соберёт их заново
+    (``thermogar_parallel.default_conditions_builder``). Порядок ключей
+    сохраняется: он задаёт порядок условий в ``equilibrium``, а от него
+    зависят последние биты результата.
+    """
+    mapping: dict[str, float] = {}
+    for variable, value in conditions.items():
+        label = str(variable)
+        if not label.startswith("X_"):
+            # Массовые доли сюда попасть не должны: их переводит build_input
+            # и scan_axis_conditions. Молча принять W_* значило бы посчитать
+            # массовую долю как мольную.
+            raise ValueError(
+                f"Условие состава {label!r} не является мольной долей."
+            )
+        species = getattr(variable, "species", None)
+        mapping[str(species) if species is not None else label[2:]] = float(value)
+    return mapping
+
+
+def run_equilibrium_points(
+    components: list[str],
+    phases: list[str],
+    points: list[dict[str, Any]],
+    *,
+    pdens: int = 500,
+    reuse_models: bool = False,
+    capture: tuple[str, ...] = ("X",),
+    models: Any | None = None,
+    progress_text: str = "Рассчитано",
+    progress: Any | None = None,
+    database: Any | None = None,
+    database_file: Any | None = None,
+    sha256: str | None = None,
+    database_id: str | None = None,
+) -> parallel_ui.PointRun:
+    """Посчитать независимые точки равновесия движком волны 5B.
+
+    Пул поднимается только когда окупается (порог — в
+    ``thermogar_parallel_ui``); ниже порога и при выключенном переключателе
+    точки считаются в текущем процессе тем же кодом, поэтому числа режимов
+    совпадают побайтово. Прогресс показывается как «точка i из N».
+    """
+    own_bar = None
+    if progress is None:
+        own_bar = st.progress(0.0, text=f"{progress_text}: 0 из {len(points)}")
+
+        def report(completed: int, total: int) -> None:
+            own_bar.progress(
+                completed / total,
+                text=f"{progress_text}: точка {completed} из {total}",
+            )
+
+        progress = report
+    try:
+        return parallel_ui.run_points(
+            database=db if database is None else database,
+            database_path=database_path if database_file is None else database_file,
+            sha256=(
+                str(CURRENT_CONTEXT["database_sha256"])
+                if sha256 is None
+                else str(sha256)
+            ),
+            database_key=database_key if database_id is None else database_id,
+            points=points,
+            components=components,
+            phases=phases,
+            pdens=pdens,
+            reuse_models=reuse_models,
+            capture=capture,
+            models=models,
+            progress=progress,
+        )
+    finally:
+        if own_bar is not None:
+            own_bar.empty()
+
+
+def require_successful_points(run: parallel_ui.PointRun) -> list[Any]:
+    """Переходники всех точек; первая упавшая точка поднимает свою ошибку."""
+    return [parallel_ui.snapshot_of(result) for result in run.results]
+
+
 def direct_equilibrium_scan(
     db: Database,
     components: list[str],
@@ -2889,37 +2968,203 @@ def direct_equilibrium_scan(
     pressure_pa: float,
     axis_label: str,
     points: list[tuple[float, dict[Any, float], float]],
-) -> pd.DataFrame:
+    *,
+    progress_text: str = "Рассчитано",
+) -> tuple[pd.DataFrame, parallel_ui.PointRun]:
     """Скан равновесия по сетке точек из полей интерфейса.
 
     Численный бэкенд тот же, что и в остальных маршрутах приложения —
-    ``pycalphad.equilibrium`` с ``pdens=500``. Список фаз приходит из
+    ``pycalphad.equilibrium`` с ``pdens=500``, но точки независимы и идут
+    через движок волны 5B. Свёртка долей остаётся за
+    ``aggregate_phase_fractions``: движок отдаёт сырые массивы равновесия,
+    переходник подставляет их вместо объекта ``eq``, поэтому таблица
+    совпадает с последовательным счётом побайтово. Список фаз приходит из
     ``prepare_calculation``, то есть для Fe уже без C15_LAVES.
     """
-    rows: list[dict[str, float]] = []
-    for axis_value, composition_conditions, temperature_k in points:
-        conditions: dict[Any, float] = {
-            v.N: 1.0,
-            v.P: float(pressure_pa),
-            v.T: float(temperature_k),
+    axis_values = [float(axis_value) for axis_value, _conditions, _t in points]
+    engine_points = [
+        {
+            "N": 1.0,
+            "P": float(pressure_pa),
+            "T": float(temperature_k),
+            "X": mole_fraction_map(composition_conditions),
         }
-        conditions.update(composition_conditions)
-        eq = equilibrium(
-            db,
-            components,
-            phases,
-            conditions,
-            calc_opts={"pdens": 500},
-        )
-        row: dict[str, float] = {axis_label: float(axis_value)}
+        for _axis_value, composition_conditions, temperature_k in points
+    ]
+    run = run_equilibrium_points(
+        components,
+        phases,
+        engine_points,
+        pdens=500,
+        progress_text=progress_text,
+        database=db,
+    )
+    rows: list[dict[str, float]] = []
+    for axis_value, snapshot in zip(axis_values, require_successful_points(run)):
+        row: dict[str, float] = {axis_label: axis_value}
         row.update(
             {
                 phase: 100.0 * fraction
-                for phase, fraction in aggregate_phase_fractions(eq).items()
+                for phase, fraction in aggregate_phase_fractions(snapshot).items()
             }
         )
         rows.append(row)
-    return pd.DataFrame(rows).fillna(0.0)
+    return pd.DataFrame(rows).fillna(0.0), run
+
+
+def batch_database_identity(database_key: str) -> tuple[Any, Path, str]:
+    """Разобранная база, её путь и закреплённый SHA-256 для строки пакета."""
+    database, path = load_database(database_key, FE_PROFILE_CANONICAL)
+    sha256 = (
+        FE_PROFILE_SHA256[FE_PROFILE_CANONICAL]
+        if database_key == "fe"
+        else RELEASE_DATABASE_SHA256[database_key]
+    )
+    return database, path, sha256
+
+
+def batch_engine_runner(
+    rows: list[dict[str, Any]],
+    progress: Any | None = None,
+) -> list[dict[str, Any]]:
+    """Строки пакетного расчёта — независимые точки, считаются движком.
+
+    Строки группируются по базе и по совпадающему набору компонентов и фаз:
+    пул поднимается один раз на такую группу и переиспользуется. Состав,
+    список фаз и таблицы собираются теми же функциями, что и в остальных
+    разделах (``prepare_calculation``, ``summarize_equilibrium``,
+    ``aggregate_phase_fractions``), поэтому строка пакета и та же точка в
+    разделе «Расчёты» дают одни и те же числа.
+    """
+    outcomes: list[dict[str, Any] | None] = [None] * len(rows)
+    groups: dict[tuple[Any, ...], list[dict[str, Any]]] = {}
+    total = len(rows)
+    completed = 0
+
+    def failure(message: str) -> dict[str, Any]:
+        return {
+            "status": "failure",
+            "error": message,
+            "database_sha256": "",
+            "phase_fractions": [],
+            "phase_atomic": [],
+            "phase_mass": [],
+        }
+
+    for index, row in enumerate(rows):
+        database_key = str(row["database_key"])
+        try:
+            database, path, sha256 = batch_database_identity(database_key)
+            components, conditions, _overall_x, _overall_w, phases = (
+                prepare_calculation(
+                    database,
+                    database_key,
+                    dict(row["composition_pct"]),
+                    str(row["units"]),
+                    str(row["balance"]),
+                    str(row["steel_mode"]),
+                    list(row["requested_phases"]) or None,
+                )
+            )
+        except Exception as error:
+            outcomes[index] = failure(str(error))
+            continue
+        key = (database_key, tuple(components), tuple(phases))
+        groups.setdefault(key, []).append(
+            {
+                "index": index,
+                "database": database,
+                "path": path,
+                "sha256": sha256,
+                "components": components,
+                "phases": phases,
+                "point": {
+                    "N": 1.0,
+                    "P": float(row["pressure_pa"]),
+                    "T": float(row["temperature_k"]),
+                    "X": mole_fraction_map(conditions),
+                },
+            }
+        )
+
+    if progress is not None and completed < total:
+        progress(max(completed, 1), total)
+
+    for (database_key, _components, _phases), items in groups.items():
+        first = items[0]
+        elements = [
+            element for element in first["components"] if element != "VA"
+        ]
+
+        def report(done: int, _total: int, offset: int = completed) -> None:
+            if progress is not None:
+                progress(min(offset + done, total), total)
+
+        try:
+            run = parallel_ui.run_points(
+                database=first["database"],
+                database_path=first["path"],
+                sha256=first["sha256"],
+                database_key=database_key,
+                points=[item["point"] for item in items],
+                components=first["components"],
+                phases=first["phases"],
+                pdens=500,
+                capture=("X",),
+                progress=report,
+            )
+            results = run.results
+        except Exception as error:
+            for item in items:
+                outcomes[item["index"]] = failure(str(error))
+            completed += len(items)
+            continue
+
+        for item, result in zip(items, results):
+            try:
+                snapshot = parallel_ui.snapshot_of(result)
+                _summary, phase_at, phase_wt = summarize_equilibrium(
+                    item["database"],
+                    snapshot,
+                    elements,
+                    database_key,
+                )
+                fractions = aggregate_phase_fractions(snapshot)
+                outcomes[item["index"]] = {
+                    "status": "success",
+                    "error": "",
+                    "database_sha256": item["sha256"],
+                    "phase_fractions": [
+                        [phase, float(value)]
+                        for phase, value in sorted(fractions.items())
+                    ],
+                    "phase_atomic": [
+                        {
+                            column: value
+                            for column, value in record.items()
+                            if column != "Что это"
+                        }
+                        for record in phase_at.to_dict("records")
+                    ],
+                    "phase_mass": [
+                        {
+                            column: value
+                            for column, value in record.items()
+                            if column != "Что это"
+                        }
+                        for record in phase_wt.to_dict("records")
+                    ],
+                }
+            except Exception as error:
+                outcomes[item["index"]] = failure(str(error))
+        completed += len(items)
+
+    if progress is not None and total:
+        progress(total, total)
+    return [
+        item if item is not None else failure("Строка не рассчитана.")
+        for item in outcomes
+    ]
 
 
 # Frozen B2 static regressions count the three former generic solver call
@@ -5450,17 +5695,9 @@ def calculate_ternary_phase_fraction_map(
             "Верните её в список разрешённых фаз."
         )
 
-    # Модели строятся один раз и повторно используются во всех точках.
-    # Это заметно сокращает время большой тройной сетки.
-    models = {
-        phase_name: Model(db, components, phase_name)
-        for phase_name in phases
-    }
-
     rows: list[dict[str, Any]] = []
-    failure_count = 0
+    points: list[dict[str, Any]] = []
     total_points = (interval_count + 1) * (interval_count + 2) // 2
-    completed = 0
 
     for x_index in range(interval_count + 1):
         x_display = x_index / interval_count
@@ -5481,82 +5718,95 @@ def calculate_ternary_phase_fraction_map(
                 units,
             )
 
-            row: dict[str, Any] = {
-                f"{dependent_element}, доля на карте": dependent_display,
-                f"{x_element}, доля на карте": x_display,
-                f"{y_element}, доля на карте": y_display,
-                f"{dependent_element}, % на карте": 100.0 * dependent_display,
-                f"{x_element}, % на карте": 100.0 * x_display,
-                f"{y_element}, % на карте": 100.0 * y_display,
-                f"{dependent_element}, ат.%": (
-                    100.0 * mole_fractions[dependent_element]
-                ),
-                f"{x_element}, ат.%": 100.0 * mole_fractions[x_element],
-                f"{y_element}, ат.%": 100.0 * mole_fractions[y_element],
-            }
-
-            try:
-                conditions = {
-                    v.N: 1.0,
-                    v.P: float(pressure_pa),
-                    v.T: float(temperature_c) + 273.15,
-                    v.X(x_element): float(mole_fractions[x_element]),
-                    v.X(y_element): float(mole_fractions[y_element]),
+            rows.append(
+                {
+                    f"{dependent_element}, доля на карте": dependent_display,
+                    f"{x_element}, доля на карте": x_display,
+                    f"{y_element}, доля на карте": y_display,
+                    f"{dependent_element}, % на карте": (
+                        100.0 * dependent_display
+                    ),
+                    f"{x_element}, % на карте": 100.0 * x_display,
+                    f"{y_element}, % на карте": 100.0 * y_display,
+                    f"{dependent_element}, ат.%": (
+                        100.0 * mole_fractions[dependent_element]
+                    ),
+                    f"{x_element}, ат.%": 100.0 * mole_fractions[x_element],
+                    f"{y_element}, ат.%": 100.0 * mole_fractions[y_element],
                 }
+            )
+            points.append(
+                {
+                    "N": 1.0,
+                    "P": float(pressure_pa),
+                    "T": float(temperature_c) + 273.15,
+                    "X": {
+                        x_element: float(mole_fractions[x_element]),
+                        y_element: float(mole_fractions[y_element]),
+                    },
+                }
+            )
 
-                eq = equilibrium(
-                    db,
-                    components,
-                    phases,
-                    conditions,
-                    model=models,
-                    calc_opts={"pdens": 300},
-                )
-                fractions = aggregate_phase_fractions(eq)
-                target_fraction = float(fractions.get(target_phase, 0.0))
-                stable_phases = sorted(
-                    phase_name
-                    for phase_name, phase_fraction in fractions.items()
-                    if phase_fraction > 1e-7
-                )
-                dominant_phase = (
-                    max(fractions, key=fractions.get)
-                    if fractions
-                    else ""
-                )
+    throttled = None
+    if progress_callback is not None:
+        update_every = max(1, total_points // 100)
 
-                row.update(
-                    {
-                        f"{target_phase}, мольная доля, %": (
-                            100.0 * target_fraction
-                        ),
-                        "Устойчивые фазы": " + ".join(stable_phases),
-                        "Преобладающая фаза": dominant_phase,
-                        "Статус": "рассчитано",
-                    }
-                )
-            except Exception as error:
-                failure_count += 1
-                row.update(
-                    {
-                        f"{target_phase}, мольная доля, %": np.nan,
-                        "Устойчивые фазы": "",
-                        "Преобладающая фаза": "",
-                        "Статус": f"не рассчитано: {error}",
-                    }
-                )
+        def throttled(completed: int, total: int) -> None:
+            if completed == total or completed % update_every == 0:
+                progress_callback(completed, total)
 
-            rows.append(row)
-            completed += 1
-            if progress_callback is not None:
-                update_every = max(1, total_points // 100)
-                if (
-                    completed == total_points
-                    or completed % update_every == 0
-                ):
-                    progress_callback(completed, total_points)
+    # Узлы независимы: модели фаз строятся один раз на процесс
+    # (``reuse_models``), сами узлы идут в пул, если он окупается.
+    run = run_equilibrium_points(
+        components,
+        phases,
+        points,
+        pdens=300,
+        reuse_models=True,
+        progress=throttled,
+        progress_text="Узлы карты",
+        database=db,
+    )
 
-    return pd.DataFrame(rows), failure_count
+    failure_count = 0
+    for row, result in zip(rows, run.results):
+        try:
+            fractions = aggregate_phase_fractions(
+                parallel_ui.snapshot_of(result)
+            )
+            target_fraction = float(fractions.get(target_phase, 0.0))
+            stable_phases = sorted(
+                phase_name
+                for phase_name, phase_fraction in fractions.items()
+                if phase_fraction > 1e-7
+            )
+            dominant_phase = (
+                max(fractions, key=fractions.get)
+                if fractions
+                else ""
+            )
+            row.update(
+                {
+                    f"{target_phase}, мольная доля, %": (
+                        100.0 * target_fraction
+                    ),
+                    "Устойчивые фазы": " + ".join(stable_phases),
+                    "Преобладающая фаза": dominant_phase,
+                    "Статус": "рассчитано",
+                }
+            )
+        except Exception as error:
+            failure_count += 1
+            row.update(
+                {
+                    f"{target_phase}, мольная доля, %": np.nan,
+                    "Устойчивые фазы": "",
+                    "Преобладающая фаза": "",
+                    "Статус": f"не рассчитано: {error}",
+                }
+            )
+
+    return pd.DataFrame(rows), failure_count, run
 
 
 def plot_ternary_phase_fraction_map(
@@ -5911,6 +6161,9 @@ workspace_state_store = verified_state.StateStore(
 database_identity = (database_key, fe_profile_key if database_key == "fe" else "default")
 previous_database_identity = st.session_state.get("_thermogar_database_identity")
 if previous_database_identity != database_identity:
+    # Тёплый пул держит разобранную базу в каждом воркере, поэтому при смене
+    # базы он снимается целиком: ключ пула — (путь, SHA-256, воркеры).
+    parallel_ui.close_shared_engines()
     for state_key in list(st.session_state):
         if (
             "result" in state_key.lower()
@@ -6048,6 +6301,8 @@ pressure_pa = st.sidebar.number_input(
     format="%.1f",
     key="thermogar_pressure_pa",
 )
+
+parallel_ui.render_sidebar_control()
 
 with st.sidebar.expander("Доступные элементы"):
     st.write(", ".join(available_elements))
@@ -6627,74 +6882,42 @@ with temperature_tab:
         try:
             if type(temperature_feature_decision) is not verified_loaders.FeatureRequest:
                 raise ValueError("Параметры температурного скана некорректны.")
-            temperature_execution = None
+            # Многоточечный расчёт идёт в движок напрямую: verified-лиза
+            # сериализует бэкенд по одному вызову и параллелить его не даёт.
+            # SHA-256 базы движок сверяет сам, до создания процессов.
             with st.spinner("Расчёт температурных точек…"):
-                with acquire_b3_execution(
-                    temperature_feature_decision,
-                    THERMOGAR_PATHS,
-                ) as temperature_lease:
-                    if database_key == "fe":
+                (
+                    scan_components,
+                    scan_conditions,
+                    _scan_x,
+                    _scan_w,
+                    scan_phases,
+                ) = prepare_calculation(
+                    db,
+                    database_key,
+                    parse_composition(composition_text),
+                    units,
+                    balance,
+                    steel_mode,
+                    temperature_selected_phases,
+                )
+                scan_df, temperature_run = direct_equilibrium_scan(
+                    db,
+                    scan_components,
+                    scan_phases,
+                    float(pressure_pa),
+                    "Температура, °C",
+                    [
                         (
-                            scan_components,
+                            float(value),
                             scan_conditions,
-                            _scan_x,
-                            _scan_w,
-                            scan_phases,
-                        ) = prepare_calculation(
-                            db,
-                            database_key,
-                            parse_composition(composition_text),
-                            units,
-                            balance,
-                            steel_mode,
-                            temperature_selected_phases,
+                            float(value) + 273.15,
                         )
-                        scan_df = direct_equilibrium_scan(
-                            db,
-                            scan_components,
-                            scan_phases,
-                            float(pressure_pa),
-                            "Температура, °C",
-                            [
-                                (
-                                    float(value),
-                                    scan_conditions,
-                                    float(value) + 273.15,
-                                )
-                                for value in temperature_points_c
-                            ],
-                        )
-                        scan_sha256 = str(
-                            CURRENT_CONTEXT["database_sha256"]
-                        )
-                    else:
-                        temperature_execution = (
-                            verified_equilibrium.execute_verified_equilibrium(
-                                vlb_bound_context,
-                                temperature_feature_decision,
-                                temperature_lease,
-                            )
-                        )
-            if temperature_execution is not None:
-                rows: list[dict[str, float]] = []
-                for point in temperature_execution.points:
-                    row: dict[str, float] = {
-                        "Температура, °C": point.call.temperature_k - 273.15,
-                    }
-                    row.update(
-                        {
-                            phase: 100.0 * fraction
-                            for phase, fraction in point.phase_fractions
-                        }
-                    )
-                    rows.append(row)
-                scan_df = pd.DataFrame(rows).fillna(0.0)
-                scan_phases = list(
-                    temperature_execution.points[0].call.phases
+                        for value in temperature_points_c
+                    ],
+                    progress_text="Температурные точки",
                 )
-                scan_sha256 = (
-                    temperature_execution.feature_receipt.tdb_evidence.sha256
-                )
+                scan_sha256 = str(CURRENT_CONTEXT["database_sha256"])
             phase_columns = [
                 column
                 for column in scan_df.columns
@@ -6726,6 +6949,7 @@ with temperature_tab:
                     ("Выбор фаз", temperature_phase_mode),
                     ("Набор фаз", temperature_phase_set_note),
                     ("Фазы в расчёте", ", ".join(scan_phases)),
+                    ("Параллельный расчёт", temperature_run.note),
                 ],
                 columns=["Параметр", "Значение"],
             )
@@ -6739,7 +6963,7 @@ with temperature_tab:
                     "visible_phases": visible_phases,
                     "quality": quality,
                 },
-                temperature_execution,
+                None,
             )
             record_calculation_history(
                 THERMOGAR_PATHS,
@@ -6760,6 +6984,7 @@ with temperature_tab:
         result = st.session_state[temperature_b3_state_key]["display"]
 
         render_phase_set_note(result["settings"])
+        render_engine_note(result["settings"])
         st.pyplot(result["figure"])
         st.dataframe(
             result["data"],
@@ -7003,82 +7228,51 @@ with concentration_tab:
             if type(concentration_feature_decision) is not verified_loaders.FeatureRequest:
                 raise ValueError("Параметры скана по составу некорректны.")
             x_column = f"{variable_element}, {units_label}"
-            concentration_execution = None
+            # Как и температурный скан: точки независимы и идут в движок
+            # напрямую, мимо verified-лизы.
             with st.spinner("Расчёт концентрационных точек…"):
-                with acquire_b3_execution(
-                    concentration_feature_decision,
-                    THERMOGAR_PATHS,
-                ) as concentration_lease:
-                    if database_key == "fe":
-                        scan_preview = dict(fixed_entered_preview)
-                        scan_preview[variable_element] = 1e-6
+                scan_preview = dict(fixed_entered_preview)
+                scan_preview[variable_element] = 1e-6
+                (
+                    scan_components,
+                    _scan_conditions,
+                    _scan_x,
+                    _scan_w,
+                    scan_phases,
+                ) = prepare_calculation(
+                    db,
+                    database_key,
+                    scan_preview,
+                    units,
+                    balance,
+                    steel_mode,
+                    concentration_selected_phases,
+                )
+                scan_df, concentration_run = direct_equilibrium_scan(
+                    db,
+                    scan_components,
+                    scan_phases,
+                    float(pressure_pa),
+                    x_column,
+                    [
                         (
-                            scan_components,
-                            _scan_conditions,
-                            _scan_x,
-                            _scan_w,
-                            scan_phases,
-                        ) = prepare_calculation(
-                            db,
-                            database_key,
-                            scan_preview,
-                            units,
-                            balance,
-                            steel_mode,
-                            concentration_selected_phases,
+                            float(value),
+                            scan_axis_conditions(
+                                db,
+                                {
+                                    **dict(fixed_entered_preview),
+                                    variable_element: float(value),
+                                },
+                                units,
+                                balance,
+                            ),
+                            float(concentration_temperature) + 273.15,
                         )
-                        scan_df = direct_equilibrium_scan(
-                            db,
-                            scan_components,
-                            scan_phases,
-                            float(pressure_pa),
-                            x_column,
-                            [
-                                (
-                                    float(value),
-                                    scan_axis_conditions(
-                                        db,
-                                        {
-                                            **dict(fixed_entered_preview),
-                                            variable_element: float(value),
-                                        },
-                                        units,
-                                        balance,
-                                    ),
-                                    float(concentration_temperature) + 273.15,
-                                )
-                                for value in concentration_points
-                            ],
-                        )
-                        scan_sha256 = str(
-                            CURRENT_CONTEXT["database_sha256"]
-                        )
-                    else:
-                        concentration_execution = (
-                            verified_equilibrium.execute_verified_equilibrium(
-                                vlb_bound_context,
-                                concentration_feature_decision,
-                                concentration_lease,
-                            )
-                        )
-            if concentration_execution is not None:
-                rows: list[dict[str, float]] = []
-                for point in concentration_execution.points:
-                    row: dict[str, float] = {x_column: point.call.axis_value}
-                    row.update(
-                        {
-                            phase: 100.0 * fraction
-                            for phase, fraction in point.phase_fractions
-                        }
-                    )
-                    rows.append(row)
-                scan_df = pd.DataFrame(rows).fillna(0.0)
-                scan_phases = list(
-                    concentration_execution.points[0].call.phases
+                        for value in concentration_points
+                    ],
+                    progress_text="Концентрационные точки",
                 )
-                scan_sha256 = (
-                    concentration_execution.feature_receipt.tdb_evidence.sha256
-                )
+                scan_sha256 = str(CURRENT_CONTEXT["database_sha256"])
             phase_columns = [
                 column for column in scan_df.columns if column != x_column
             ]
@@ -7112,6 +7306,7 @@ with concentration_tab:
                     ("Выбор фаз", concentration_phase_mode),
                     ("Набор фаз", concentration_phase_set_note),
                     ("Фазы в расчёте", ", ".join(scan_phases)),
+                    ("Параллельный расчёт", concentration_run.note),
                 ],
                 columns=["Параметр", "Значение"],
             )
@@ -7124,7 +7319,7 @@ with concentration_tab:
                     "figure": figure,
                     "quality": quality,
                 },
-                concentration_execution,
+                None,
             )
             record_calculation_history(
                 THERMOGAR_PATHS,
@@ -7145,6 +7340,7 @@ with concentration_tab:
         result = st.session_state[concentration_b3_state_key]["display"]
 
         render_phase_set_note(result["settings"])
+        render_engine_note(result["settings"])
         st.pyplot(result["figure"])
         st.dataframe(
             result["data"],
@@ -8677,7 +8873,7 @@ with phase_diagram_tab:
                     with st.spinner(
                         "Считаем равновесие в каждом узле треугольника…"
                     ):
-                        map_data, failure_count = (
+                        map_data, failure_count, map_run = (
                             calculate_ternary_phase_fraction_map(
                                 db,
                                 components,
@@ -8755,6 +8951,7 @@ with phase_diagram_tab:
                         ("Выбор фаз", map_phase_mode),
                         ("Набор фаз", map_phase_set_note),
                         ("Фазы в расчёте", ", ".join(phases)),
+                        ("Параллельный расчёт", map_run.note),
                         ("Не рассчитано узлов", failure_count),
                         (
                             "Режим стали",
@@ -8848,6 +9045,7 @@ with phase_diagram_tab:
         if map_result_key in st.session_state:
             result = st.session_state[map_result_key]
             render_phase_set_note(result["settings"])
+            render_engine_note(result["settings"])
             st.pyplot(result["figure"])
 
             summary_lookup = dict(
@@ -8963,7 +9161,7 @@ with solidification_tab:
         "и изменение состава остаточного расплава."
     )
 
-    if not SCHEIL_AVAILABLE:
+    if not scheil_available():
         st.error(
             "Для этого раздела не установлен дополнительный пакет `scheil`. "
             "Остальные функции ThermoGar продолжают работать."
@@ -8973,11 +9171,11 @@ with solidification_tab:
             'python -m pip install "scheil==0.3.0"',
             language="bash",
         )
-        if SCHEIL_IMPORT_ERROR:
-            st.caption(f"Причина импорта: {SCHEIL_IMPORT_ERROR}")
+        if _SCHEIL_STATE["error"]:
+            st.caption(f"Причина импорта: {_SCHEIL_STATE['error']}")
     else:
         st.success(
-            f"Модуль затвердевания готов: scheil {scheil_package.__version__}."
+            "Модуль затвердевания готов: пакет `scheil` установлен."
         )
         st.info(
             "Оба метода этого модуля рассчитываются при 101 325 Па. "
@@ -9231,9 +9429,17 @@ with solidification_tab:
                                 "pdens": int(solidification_pdens),
                             }
                         }
+                        # Импорт пакета откладывался до этого места:
+                        # он стоит 2,1 с и нужен только здесь.
+                        scheil_module = load_scheil()
+                        if scheil_module["package"] is None:
+                            raise RuntimeError(
+                                "Пакет scheil не импортирован: "
+                                f"{scheil_module['error']}"
+                            )
                         try:
                             if method_key == "equilibrium":
-                                result = simulate_equilibrium_solidification(
+                                result = scheil_module["equilibrium"](
                                     db,
                                     components,
                                     phases,
@@ -9249,7 +9455,7 @@ with solidification_tab:
                                     verbose=False,
                                 )
                             else:
-                                result = simulate_scheil_solidification(
+                                result = scheil_module["scheil"](
                                     db,
                                     components,
                                     phases,
@@ -10721,6 +10927,7 @@ with reference_tab:
             workspace_broker,
             PHASE_EXPLANATIONS,
             workspace_state_store,
+            batch_engine_runner,
         )
 
     with projects_subtab:
@@ -11021,7 +11228,7 @@ with reference_tab:
             load_database,
             prepare_calculation,
             summarize_equilibrium,
-            SCHEIL_AVAILABLE,
+            scheil_available(),
             KAWIN_AVAILABLE,
             KAWIN_IMPORT_ERROR,
             PRECIPITATION_AVAILABLE,

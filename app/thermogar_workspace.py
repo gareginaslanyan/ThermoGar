@@ -2214,8 +2214,6 @@ class VerifiedBatchBroker(Protocol):
         context: dict[str, object],
     ) -> dict[str, object]: ...
 
-    def execute_row(self, row: Mapping[str, Any]) -> Mapping[str, Any]: ...
-
     def finish(self, children: tuple[Mapping[str, object], ...]) -> Mapping[str, str]: ...
 
 
@@ -2231,6 +2229,10 @@ def run_batch_calculations(
     source: pd.DataFrame,
     broker: VerifiedBatchBroker,
     phase_explanations: dict[str, dict[str, str]],
+    runner: Callable[
+        [list[dict[str, Any]], Callable[[int, int], None]],
+        list[dict[str, Any]],
+    ],
 ) -> dict[str, Any]:
     source = canonicalize_batch_columns(source)
     if source.empty:
@@ -2250,8 +2252,14 @@ def run_batch_calculations(
     phase_rows: list[dict[str, Any]] = []
     phase_at_rows: list[dict[str, Any]] = []
     phase_wt_rows: list[dict[str, Any]] = []
-    child_evidence: list[Mapping[str, object]] = []
-    progress = st.progress(0.0, text="Подготовка пакетного расчёта…")
+
+    # Строки пакета независимы, поэтому они собираются целиком и уходят в
+    # движок одним заданием (``runner``), минуя verified-брокера: брокер
+    # сериализует бэкенд по одному вызову. Разбор строки, формат сводки,
+    # квитанция запуска и поведение «ошибка строки не останавливает
+    # остальные» остаются прежними.
+    canonical_rows: list[dict[str, Any]] = []
+    contexts: list[dict[str, Any]] = []
 
     for position, (_, row) in enumerate(source.iterrows(), start=1):
         name = str(row.get("name", f"Строка {position}")).strip() or f"Строка {position}"
@@ -2261,6 +2269,12 @@ def run_batch_calculations(
             "Статус": "ошибка",
             "Ошибка": "",
         }
+        context: dict[str, Any] = {
+            "name": name,
+            "summary": base_summary,
+            "row": None,
+        }
+        contexts.append(context)
 
         try:
             database_key = normalize_database_key(row["database"])
@@ -2282,7 +2296,18 @@ def run_batch_calculations(
                     if item.strip() and item.strip().upper() not in excluded
                 )
 
-            child = broker.execute_row(
+            context["row"] = len(canonical_rows)
+            context.update(
+                {
+                    "database_key": database_key,
+                    "balance": balance,
+                    "units": units,
+                    "temperature_c": temperature_c,
+                    "pressure_pa": pressure_pa,
+                    "composition_text": composition_text,
+                }
+            )
+            canonical_rows.append(
                 {
                     "balance": balance,
                     "composition_pct": dict(sorted(entered.items())),
@@ -2296,35 +2321,55 @@ def run_batch_calculations(
                     "units": units,
                 }
             )
+        except Exception as error:
+            base_summary["Ошибка"] = str(error)
+
+    progress = st.progress(0.0, text="Подготовка пакетного расчёта…")
+
+    def report_progress(completed: int, total: int) -> None:
+        progress.progress(
+            completed / total,
+            text=f"Состав {completed} из {total}",
+        )
+
+    try:
+        outcomes = runner(canonical_rows, report_progress) if canonical_rows else []
+    finally:
+        progress.empty()
+    if len(outcomes) != len(canonical_rows):
+        raise RuntimeError("Движок вернул не столько строк, сколько получил.")
+
+    for context in contexts:
+        base_summary = context["summary"]
+        if context["row"] is None:
+            summary_rows.append(base_summary)
+            continue
+
+        name = context["name"]
+        database_key = context["database_key"]
+        balance = context["balance"]
+        units = context["units"]
+        temperature_c = context["temperature_c"]
+        pressure_pa = context["pressure_pa"]
+        composition_text = context["composition_text"]
+
+        try:
+            child = outcomes[context["row"]]
             if type(child) is not dict:
-                raise RuntimeError("Verified broker returned a non-canonical row result.")
-            status = child.get("status")
-            feature_receipt = child.get("feature_receipt")
-            result_envelope = child.get("result_envelope")
-            rejection = child.get("rejection")
-            if status == "rejected":
-                if type(rejection) is not RejectedFeatureReceipt or rejection.backend_calls != 0:
-                    raise RuntimeError("Verified broker rejection evidence is invalid.")
-                child_evidence.append({"rejection": rejection})
-                raise RuntimeError(rejection_text(rejection))
-            if (
-                status != "success"
-                or type(feature_receipt) is not FeatureReceipt
-                or type(result_envelope) is not ResultEnvelope
-                or feature_receipt.outcome != "success"
-            ):
-                raise RuntimeError(str(child.get("error") or "Verified broker execution failed."))
+                raise RuntimeError("Движок вернул строку неизвестного вида.")
+            if child.get("status") != "success":
+                raise RuntimeError(str(child.get("error") or "Строка не рассчитана."))
             phase_fractions = child.get("phase_fractions")
             phase_at = child.get("phase_atomic")
             phase_wt = child.get("phase_mass")
-            if type(phase_fractions) is not list or type(phase_at) is not list or type(phase_wt) is not list:
-                raise RuntimeError("Verified broker scalar result is invalid.")
-            child_evidence.append(
-                {
-                    "feature_receipt": feature_receipt,
-                    "result_envelope": result_envelope,
-                }
-            )
+            database_sha256 = child.get("database_sha256")
+            if (
+                type(phase_fractions) is not list
+                or type(phase_at) is not list
+                or type(phase_wt) is not list
+                or type(database_sha256) is not str
+            ):
+                raise RuntimeError("Движок вернул строку без обязательных полей.")
             fraction_sum = sum(float(item[1]) * 100.0 for item in phase_fractions)
             phase_text = "; ".join(
                 f"{item[0]}={float(item[1]) * 100.0:.6g}%"
@@ -2344,7 +2389,7 @@ def run_batch_calculations(
                     "Фазовое поле": " + ".join(phase_names),
                     "Фазовые доли": phase_text,
                     "Сумма фазовых долей, %": fraction_sum,
-                    "База SHA-256": feature_receipt.tdb_evidence.sha256,
+                    "База SHA-256": database_sha256,
                 }
             )
 
@@ -2377,12 +2422,7 @@ def run_batch_calculations(
             base_summary["Ошибка"] = str(error)
 
         summary_rows.append(base_summary)
-        progress.progress(
-            position / len(source),
-            text=f"Состав {position} из {len(source)}",
-        )
 
-    progress.empty()
     result: dict[str, Any] = {
         "Сводка": pd.DataFrame(summary_rows),
         "Фазовые доли": pd.DataFrame(phase_rows),
@@ -2390,26 +2430,15 @@ def run_batch_calculations(
         "Составы фаз мас": pd.DataFrame(phase_wt_rows),
         "Исходные данные": source.copy(),
     }
-    aggregate = broker.finish(tuple(child_evidence))
+    # Квитанция запуска остаётся: она описывает сам пакетный прогон.
+    # Дочерних квитанций у него больше нет — точки считает движок, а не
+    # брокер, поэтому список свидетельств пуст.
+    aggregate = broker.finish(())
     if type(aggregate) is not dict or set(aggregate) != {"receipt_digest", "envelope_digest"}:
         raise RuntimeError("Verified broker aggregate evidence is invalid.")
     result["_receipt_digest"] = aggregate["receipt_digest"]
     result["_envelope_digest"] = aggregate["envelope_digest"]
-    result["_children"] = [
-        {
-            "receipt_digest": (
-                item["rejection"].receipt_digest
-                if "rejection" in item
-                else item["feature_receipt"].receipt_digest
-            ),
-            "envelope_digest": (
-                None
-                if "rejection" in item
-                else item["result_envelope"].envelope_digest
-            ),
-        }
-        for item in child_evidence
-    ]
+    result["_children"] = []
     return result
 
 
@@ -2417,6 +2446,10 @@ def render_batch_calculation(
     broker: VerifiedBatchBroker,
     phase_explanations: dict[str, dict[str, str]],
     state_store: StateStore,
+    runner: Callable[
+        [list[dict[str, Any]], Callable[[int, int], None]],
+        list[dict[str, Any]],
+    ],
 ) -> None:
     st.subheader("Пакетный расчёт составов")
     st.caption(
@@ -2532,6 +2565,7 @@ def render_batch_calculation(
                     source,
                     broker,
                     phase_explanations,
+                    runner,
                 )
                 st.session_state["workspace_batch_result"] = {
                     "display": {
