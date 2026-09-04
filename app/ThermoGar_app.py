@@ -146,6 +146,7 @@ from thermogar_secure_io import (
     lexical_absolute,
     parse_verified_utf8_snapshot,
 )
+import thermogar_db_cache as db_cache
 import thermogar_restricted_fe_core as restricted_fe
 import thermogar_verified_equilibrium as verified_equilibrium
 import thermogar_verified_loaders as verified_loaders
@@ -602,11 +603,20 @@ def _parse_database_snapshot(
     snapshot_sha256: str,
     snapshot_bytes: bytes,
 ) -> Database:
-    return parse_verified_utf8_snapshot(
-        snapshot_bytes,
+    # Разбор TDB стоит секунды; ``thermogar_db_cache`` хранит его результат в
+    # ``%LOCALAPPDATA%\ThermoGar\cache\`` по ключу из SHA-256 базы, версии
+    # pycalphad и версии формата кэша. Проверка снимка остаётся здесь и
+    # выполняется ровно так же: кэш только избавляет от повторного разбора.
+    return db_cache.load_or_parse(
         expected_sha256=expected_sha256,
         snapshot_sha256=snapshot_sha256,
-        parser=lambda source: Database.from_file(source, fmt="tdb"),
+        snapshot_bytes=snapshot_bytes,
+        parse=lambda: parse_verified_utf8_snapshot(
+            snapshot_bytes,
+            expected_sha256=expected_sha256,
+            snapshot_sha256=snapshot_sha256,
+            parser=lambda source: Database.from_file(source, fmt="tdb"),
+        ),
     )
 
 
