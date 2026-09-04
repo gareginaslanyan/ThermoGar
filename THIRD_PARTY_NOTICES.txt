@@ -5,7 +5,7 @@ ThermoGar ships a CPython 3.11.9 runtime together with the third-party
 packages listed below. Each package remains under its own licence; the
 licence text is reproduced where the package supplies one.
 
-Generated: 2026-09-03
+Generated: 2026-09-04
 
 ------------------------------------------------------------------------
 altair 6.2.2
