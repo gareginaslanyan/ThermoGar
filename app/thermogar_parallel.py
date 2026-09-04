@@ -32,6 +32,7 @@ import hashlib
 import json
 import multiprocessing
 import os
+import sys
 import time
 import weakref
 from dataclasses import dataclass, field
@@ -49,6 +50,11 @@ PHASE_FRACTION_FLOOR = 1e-10
 # запуска к запуску; с последовательным режимом они совпадают побайтово,
 # если родительский процесс запущен с тем же PYTHONHASHSEED.
 DEFAULT_HASH_SEED = "0"
+# Воркер держит разобранную базу и модели фаз: замеры волны 5B дали
+# 0.35–1.4 ГБ на процесс, поэтому число воркеров считается от свободной
+# памяти, а не от числа ядер (на 15.7 ГБ `cpu_count()-1 = 11` уводит Al в своп).
+MEMORY_PER_WORKER_GB = 1.5
+MAX_AUTO_WORKERS = 6
 
 _SHA_CHUNK_BYTES = 1 << 20
 
@@ -62,7 +68,15 @@ class DatabaseIdentityError(ParallelEngineError):
 
 
 class WorkerLostError(ParallelEngineError):
-    """Воркер умер вместе с заданием: чаще всего это нехватка памяти."""
+    """Воркер умер вместе с заданием: чаще всего это нехватка памяти.
+
+    ``partial`` — точки, которые пул успел вернуть до отказа. Вызывающий
+    досчитывает остальные последовательно, вместо того чтобы терять расчёт.
+    """
+
+    def __init__(self, message: str, partial: Iterable["PointResult"] = ()) -> None:
+        super().__init__(message)
+        self.partial: list["PointResult"] = list(partial)
 
 
 # ---------------------------------------------------------------------------
@@ -90,6 +104,103 @@ def resolve_worker_count(workers: int | None = None) -> int:
     if value < 1:
         raise ValueError("Число воркеров не может быть меньше 1.")
     return value
+
+
+def available_memory_gb() -> float:
+    """Свободная физическая память, ГБ. ``psutil``, иначе ``GlobalMemoryStatusEx``."""
+    try:
+        import psutil
+
+        return float(psutil.virtual_memory().available) / float(1 << 30)
+    except Exception:
+        pass
+    try:
+        import ctypes
+
+        class _MemoryStatusEx(ctypes.Structure):
+            _fields_ = [
+                ("dwLength", ctypes.c_ulong),
+                ("dwMemoryLoad", ctypes.c_ulong),
+                ("ullTotalPhys", ctypes.c_ulonglong),
+                ("ullAvailPhys", ctypes.c_ulonglong),
+                ("ullTotalPageFile", ctypes.c_ulonglong),
+                ("ullAvailPageFile", ctypes.c_ulonglong),
+                ("ullTotalVirtual", ctypes.c_ulonglong),
+                ("ullAvailVirtual", ctypes.c_ulonglong),
+                ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+            ]
+
+        status = _MemoryStatusEx()
+        status.dwLength = ctypes.sizeof(_MemoryStatusEx)
+        if ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(status)):
+            return float(status.ullAvailPhys) / float(1 << 30)
+    except Exception:
+        pass
+    return 0.0
+
+
+def auto_worker_count() -> int:
+    """``min(cpu_count-1, свободная память // 1.5 ГБ, 6)``, но не меньше 1."""
+    by_cpu = (os.cpu_count() or 1) - 1
+    by_memory = int(available_memory_gb() // MEMORY_PER_WORKER_GB)
+    return max(1, min(by_cpu, by_memory, MAX_AUTO_WORKERS))
+
+
+_SPAWN_FLAGS_PATCHED = False
+
+
+def _keep_worker_environment() -> None:
+    """Снять с командной строки воркера изоляцию от переменных окружения.
+
+    ``multiprocessing`` переносит в воркер флаги родительского интерпретатора
+    (``multiprocessing.util._args_from_interpreter_flags``). Embeddable-рантайм
+    установленной копии включает изоляцию сам, наличием ``python311._pth``:
+    у родителя ``sys.flags.isolated`` равен 1, и воркер получает ``-I``.
+    Родителю затравку успевает задать окружение — изоляция включается уже
+    после чтения конфигурации, — а воркер под ``-I`` переменную
+    ``PYTHONHASHSEED`` игнорирует и запускается со случайной затравкой.
+    Замерено на ``runtime-clean-3119``: у родителя ``hash_randomization=0``,
+    у воркера ``1``. С разной затравкой pycalphad обходит множества строк в
+    разном порядке, и числа расходятся в последних битах.
+
+    Поэтому ``-I`` в командной строке воркера заменяется на ``-P -s`` — те же
+    два ограничения (рабочий каталог не попадает в ``sys.path``,
+    пользовательский site-packages не подключается) без запрета на переменные
+    окружения; ``-E``, если он там оказался, убирается. Путь поиска модулей
+    воркеру всё равно передаёт сам ``multiprocessing.spawn``, а не окружение.
+    Замена ставится один раз на процесс и только когда движку заказана
+    фиксированная затравка.
+    """
+    global _SPAWN_FLAGS_PATCHED
+    if _SPAWN_FLAGS_PATCHED:
+        return
+    import multiprocessing.util as multiprocessing_util
+
+    original = multiprocessing_util._args_from_interpreter_flags
+
+    def worker_interpreter_flags() -> list[str]:
+        arguments: list[str] = []
+        for item in original():
+            if item == "-I":
+                arguments.extend(("-P", "-s"))
+            elif item == "-E":
+                continue
+            else:
+                arguments.append(item)
+        return arguments
+
+    multiprocessing_util._args_from_interpreter_flags = worker_interpreter_flags
+    _SPAWN_FLAGS_PATCHED = True
+
+
+def hash_seed_is_effective() -> bool:
+    """Дойдёт ли ``PYTHONHASHSEED`` до воркера (см. ``_keep_worker_environment``)."""
+    return not bool(sys.flags.ignore_environment) or _SPAWN_FLAGS_PATCHED
+
+
+def parent_hash_seed_is_fixed() -> bool:
+    """Запущен ли родительский процесс с закреплённой хеш-затравкой."""
+    return not bool(sys.flags.hash_randomization)
 
 
 def _verify_database(database_path: str | os.PathLike[str], sha256: str) -> Path:
@@ -128,6 +239,7 @@ class PointResult:
     error_type: str | None = None
     seconds: float = 0.0
     pid: int = 0
+    arrays: dict[str, Any] | None = None
 
     def canonical(self) -> dict[str, Any]:
         """Каноническая форма для побитового сравнения режимов.
@@ -177,6 +289,13 @@ class _Job:
     pdens: int
     conditions_builder: Callable[[Mapping[str, Any], Any], Mapping[Any, float]]
     reuse_models: bool
+    # Какие массивы результата вернуть наружу помимо свёрнутых долей:
+    # ``"X"`` — имена фаз, NP и составы вершин, ``"Y"`` — доли узлов подрешёток.
+    # Из них родитель собирает объект-переходник для функций приложения
+    # (``summarize_equilibrium``, ``aggregate_phase_fractions``,
+    # ``calculate_physical_properties``), поэтому числа этих функций совпадают
+    # с последовательным счётом побайтово.
+    capture: tuple[str, ...] = ()
 
 
 # ---------------------------------------------------------------------------
@@ -289,6 +408,47 @@ def _aggregate(
     return aggregated, compositions
 
 
+def _capture_arrays(
+    equilibrium_result: Any,
+    components: Sequence[str],
+    capture: Sequence[str],
+) -> dict[str, Any]:
+    """Сырые массивы равновесия простыми типами: их переносит ``pickle``."""
+    import numpy as np
+
+    elements = [element for element in components if element != "VA"]
+    arrays: dict[str, Any] = {
+        "phase": [
+            str(name)
+            for name in np.asarray(equilibrium_result.Phase.values, dtype=str).ravel()
+        ],
+        "np": [
+            float(value)
+            for value in np.asarray(equilibrium_result.NP.values, dtype=float).ravel()
+        ],
+        "x": {
+            element: [
+                float(value)
+                for value in np.asarray(
+                    equilibrium_result.X.sel(component=element).values, dtype=float
+                ).ravel()
+            ]
+            for element in elements
+        },
+    }
+    if "Y" in capture:
+        values = np.asarray(equilibrium_result.Y.values, dtype=float)
+        arrays["y"] = (
+            None
+            if values.ndim == 0
+            else [
+                [float(item) for item in row]
+                for row in values.reshape((-1, values.shape[-1]))
+            ]
+        )
+    return arrays
+
+
 def _solve_point(
     database: Any,
     job: _Job,
@@ -321,6 +481,11 @@ def _solve_point(
             conditions=_plain_conditions(conditions),
             seconds=time.perf_counter() - started,
             pid=os.getpid(),
+            arrays=(
+                _capture_arrays(equilibrium_result, job.components, job.capture)
+                if job.capture
+                else None
+            ),
         )
     except Exception as error:  # одна упавшая точка не валит остальные
         return PointResult(
@@ -342,14 +507,53 @@ _WORKER_SHA256: str = ""
 _WORKER_MODELS: dict[tuple[Any, ...], Any] = {}
 
 
+def load_database(database_path: str | os.PathLike[str], sha256: str) -> Any:
+    """База в том же виде, в каком её держит приложение.
+
+    Приложение берёт разобранную базу из ``thermogar_db_cache``, а та
+    возвращает объект, прошедший через ``pickle``. У такого объекта другой
+    порядок обхода составляющих подрешёток, чем у только что разобранного,
+    и равновесие расходится в последних 8 знаках. Поэтому и родитель, и
+    воркер обязаны брать базу одним и тем же путём — иначе «побайтово
+    совпадает» перестаёт выполняться, хотя оба режима считают правильно.
+
+    Кэш ещё и экономит воркеру 3–7 с разбора TDB на подъёме пула. Если
+    модуль кэша недоступен, объект приводится к той же форме вручную.
+    """
+    path = Path(database_path)
+    expected = str(sha256).strip().lower()
+    from pycalphad import Database
+
+    try:
+        import thermogar_db_cache as db_cache
+    except Exception:
+        db_cache = None
+
+    if db_cache is None:
+        database = Database(str(path))
+        try:
+            import pickle
+
+            return pickle.loads(
+                pickle.dumps(database, protocol=pickle.HIGHEST_PROTOCOL)
+            )
+        except Exception:
+            return database
+
+    return db_cache.load_or_parse(
+        expected_sha256=expected,
+        snapshot_sha256=expected,
+        snapshot_bytes=path.read_bytes(),
+        parse=lambda: Database(str(path)),
+    )
+
+
 def _worker_init(database_path: str, sha256: str) -> None:
     """``initializer`` пула: сверить SHA-256 и разобрать базу ровно один раз."""
     global _WORKER_DATABASE, _WORKER_SHA256, _WORKER_MODELS
 
     path = _verify_database(database_path, sha256)
-    from pycalphad import Database
-
-    _WORKER_DATABASE = Database(str(path))
+    _WORKER_DATABASE = load_database(path, sha256)
     _WORKER_SHA256 = str(sha256).strip().lower()
     _WORKER_MODELS = {}
 
@@ -466,6 +670,8 @@ class ParallelEquilibrium:
             # Затравка ставится на всё время жизни пула: spawn читает окружение
             # родителя при старте воркера, в том числе когда пул поднимает
             # очередной процесс по мере поступления заданий.
+            if self._hash_seed is not None:
+                _keep_worker_environment()
             self._apply_hash_seed()
             try:
                 # ProcessPoolExecutor, а не multiprocessing.Pool: у Pool смерть
@@ -516,9 +722,9 @@ class ParallelEquilibrium:
         """База для последовательного режима: разбирается один раз на движок."""
         if self._local_database is None:
             _verify_database(self._database_path, self._sha256)
-            from pycalphad import Database
-
-            self._local_database = Database(str(self._database_path))
+            self._local_database = load_database(
+                self._database_path, self._sha256
+            )
         return self._local_database
 
     def _local_models_for(self, job: _Job) -> Any | None:
@@ -565,6 +771,7 @@ class ParallelEquilibrium:
         pdens: int = DEFAULT_PDENS,
         progress_callback: Callable[[int, int, PointResult], None] | None = None,
         reuse_models: bool = False,
+        capture: Sequence[str] = (),
     ) -> list[PointResult]:
         """Посчитать точки и вернуть результаты в исходном порядке.
 
@@ -593,6 +800,7 @@ class ParallelEquilibrium:
             pdens=int(pdens),
             conditions_builder=conditions_builder or default_conditions_builder,
             reuse_models=bool(reuse_models),
+            capture=tuple(str(item) for item in capture),
         )
         if not job.components:
             raise ValueError("Пустой список компонентов.")
@@ -636,13 +844,72 @@ class ParallelEquilibrium:
                 self._drop_broken_pool()
                 raise WorkerLostError(
                     "Воркер завершился, не вернув результат "
-                    f"(вероятно, не хватило памяти на {self._workers} процессов): {error}"
+                    f"(вероятно, не хватило памяти на {self._workers} процессов): {error}",
+                    [item for item in results if item is not None],
                 ) from error
 
         missing = [index for index, item in enumerate(results) if item is None]
         if missing:
             raise ParallelEngineError(f"Пул не вернул точки: {missing}.")
         return [item for item in results if item is not None]
+
+
+def solve_points_in_process(
+    database: Any,
+    points: Iterable[Mapping[str, Any]],
+    components: Sequence[str],
+    phases: Sequence[str],
+    conditions_builder: Callable[[Mapping[str, Any], Any], Mapping[Any, float]] | None = None,
+    pdens: int = DEFAULT_PDENS,
+    progress_callback: Callable[[int, int, PointResult], None] | None = None,
+    reuse_models: bool = False,
+    capture: Sequence[str] = (),
+    models: Any | None = None,
+    indices: Sequence[int] | None = None,
+) -> list[PointResult]:
+    """Точки на уже разобранной базе, в текущем процессе, без пула.
+
+    Тот же ``_solve_point``, что и в воркере, поэтому числа совпадают с
+    параллельным режимом побайтово. Нужен там, где база уже разобрана
+    (приложение) и платить за её повторный разбор нельзя: короткие расчёты
+    ниже порога пула и досчёт точек после отказа пула.
+
+    ``indices`` задаёт номера точек в исходном списке — при досчёте после
+    отказа пула результаты должны сохранить свои места.
+    """
+    job = _Job(
+        components=tuple(str(item) for item in components),
+        phases=tuple(str(item) for item in phases),
+        pdens=int(pdens),
+        conditions_builder=conditions_builder or default_conditions_builder,
+        reuse_models=bool(reuse_models),
+        capture=tuple(str(item) for item in capture),
+    )
+    if not job.components:
+        raise ValueError("Пустой список компонентов.")
+    if not job.phases:
+        raise ValueError("Пустой список фаз.")
+
+    prepared = [dict(point) for point in points]
+    numbers = list(indices) if indices is not None else list(range(len(prepared)))
+    if len(numbers) != len(prepared):
+        raise ValueError("Число индексов не совпадает с числом точек.")
+    if models is None and job.reuse_models:
+        from pycalphad import Model
+
+        models = {
+            phase: Model(database, list(job.components), phase)
+            for phase in job.phases
+        }
+
+    total = len(prepared)
+    results: list[PointResult] = []
+    for position, (index, point) in enumerate(zip(numbers, prepared), start=1):
+        result = _solve_point(database, job, int(index), point, models)
+        results.append(result)
+        if progress_callback is not None:
+            progress_callback(position, total, result)
+    return results
 
 
 # ---------------------------------------------------------------------------

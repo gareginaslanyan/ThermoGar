@@ -250,50 +250,60 @@ class FakeProgress:
 
 
 class FakeBatchBroker:
-    def __init__(self) -> None:
-        self.rows: list[dict[str, object]] = []
-        self.active = 0
-        self.max_active = 0
-        self.finished: tuple[dict[str, object], ...] | None = None
+    """Брокер пакетного расчёта после волны 6: только квитанция запуска.
 
-    def execute_row(self, row: dict[str, object]) -> dict[str, object]:
-        self.active += 1
-        self.max_active = max(self.max_active, self.active)
-        try:
-            self.rows.append(dict(row))
-            if "C15_LAVES" in row["requested_phases"]:
-                context = _bind(str(row["database_key"]))
-                rejection = vl.prepare_feature_request(
-                    "equilibrium_single",
-                    context,
-                    _inputs("equilibrium_single"),
-                    ("C15_LAVES",),
-                    candidate_phases=PHASES,
-                    clock=lambda: FIXED_TIME,
-                )
-                if type(rejection) is not vl.RejectedFeatureReceipt:
-                    raise AssertionError(rejection)
-                return {
-                    "status": "rejected", "rejection": rejection,
-                    "feature_receipt": None, "result_envelope": None,
-                    "phase_fractions": [], "phase_atomic": [], "phase_mass": [],
-                }
-            receipt, envelope = _evidence_for(str(row["database_key"]))
-            return {
-                "status": "success",
-                "rejection": None,
-                "feature_receipt": receipt,
-                "result_envelope": envelope,
-                "phase_fractions": [["LIQUID", 1.0]],
-                "phase_atomic": [],
-                "phase_mass": [],
-            }
-        finally:
-            self.active -= 1
+    Строки считает движок равновесий, а не брокер, поэтому ``execute_row``
+    у брокера больше нет и дочерних свидетельств он не получает.
+    """
+
+    def __init__(self) -> None:
+        self.finished: tuple[dict[str, object], ...] | None = None
 
     def finish(self, children: tuple[dict[str, object], ...]) -> dict[str, str]:
         self.finished = children
         return {"receipt_digest": "a" * 64, "envelope_digest": "b" * 64}
+
+
+class FakeBatchRunner:
+    """Движок пакетного расчёта: принимает все строки одним заданием."""
+
+    DATABASE_SHA256 = "c" * 64
+
+    def __init__(self) -> None:
+        self.rows: list[dict[str, object]] = []
+        self.calls = 0
+        self.progress: list[tuple[int, int]] = []
+
+    def __call__(self, rows, progress):
+        self.calls += 1
+        self.rows = [dict(row) for row in rows]
+        outcomes: list[dict[str, object]] = []
+        for row in rows:
+            if "C15_LAVES" in row["requested_phases"]:
+                outcomes.append(
+                    {
+                        "status": "failure",
+                        "error": f"{vl.ReasonCode.C15_PHASE_REJECTED.value}: C15_LAVES",
+                        "database_sha256": "",
+                        "phase_fractions": [],
+                        "phase_atomic": [],
+                        "phase_mass": [],
+                    }
+                )
+            else:
+                outcomes.append(
+                    {
+                        "status": "success",
+                        "error": "",
+                        "database_sha256": self.DATABASE_SHA256,
+                        "phase_fractions": [["LIQUID", 1.0]],
+                        "phase_atomic": [],
+                        "phase_mass": [],
+                    }
+                )
+            self.progress.append((len(outcomes), len(rows)))
+            progress(len(outcomes), len(rows))
+        return outcomes
 
 
 class VerifiedEquilibriumTests(unittest.TestCase):
@@ -493,7 +503,7 @@ class VerifiedEquilibriumTests(unittest.TestCase):
         self.assertEqual(receipt.reason_code, vl.ReasonCode.CAPABILITY_UNAVAILABLE.value)
         self.assertEqual(receipt.backend_calls, 0)
 
-    def test_13_mixed_batch_is_fifo_ni_al_fe_with_canonical_fe_profile(self) -> None:
+    def test_13_mixed_batch_keeps_row_order_and_canonical_fe_profile(self) -> None:
         source = workspace.pd.DataFrame(
             [
                 {"name": "Ni", "database": "ni", "balance": "NI", "units": "wt", "temperature_C": 700.0, "composition": "CR=5"},
@@ -502,15 +512,23 @@ class VerifiedEquilibriumTests(unittest.TestCase):
             ]
         )
         broker = FakeBatchBroker()
+        runner = FakeBatchRunner()
         with mock.patch.object(workspace.st, "progress", return_value=FakeProgress()):
-            result = workspace.run_batch_calculations(source, broker, {})
-        self.assertEqual([row["database_key"] for row in broker.rows], ["ni", "al", "fe"])
-        self.assertEqual([row["profile_key"] for row in broker.rows], [None, None, "thermogar_patch"])
-        self.assertEqual(broker.rows[2]["composition_pct"]["CR"], 0.0)
-        self.assertEqual(broker.max_active, 1)
-        self.assertEqual(len(broker.finished), 3)
+            result = workspace.run_batch_calculations(source, broker, {}, runner)
+        # Строки уходят в движок одним заданием, в порядке файла.
+        self.assertEqual(runner.calls, 1)
+        self.assertEqual([row["database_key"] for row in runner.rows], ["ni", "al", "fe"])
+        self.assertEqual([row["profile_key"] for row in runner.rows], [None, None, "thermogar_patch"])
+        self.assertEqual(runner.rows[2]["composition_pct"]["CR"], 0.0)
+        self.assertEqual(runner.progress[-1], (3, 3))
+        # Дочерних квитанций у пакета больше нет: точки считает движок.
+        self.assertEqual(broker.finished, ())
         self.assertEqual(result["_receipt_digest"], "a" * 64)
+        self.assertEqual(result["_children"], [])
         self.assertTrue((result["Сводка"]["Статус"] == "готово").all())
+        self.assertEqual(
+            set(result["Сводка"]["База SHA-256"]), {FakeBatchRunner.DATABASE_SHA256}
+        )
 
     def test_14_batch_preserves_c15_token_and_rejects_with_zero_backend(self) -> None:
         source = workspace.pd.DataFrame(
@@ -523,13 +541,16 @@ class VerifiedEquilibriumTests(unittest.TestCase):
             ]
         )
         broker = FakeBatchBroker()
+        runner = FakeBatchRunner()
         with mock.patch.object(workspace.st, "progress", return_value=FakeProgress()):
-            result = workspace.run_batch_calculations(source, broker, {})
-        self.assertEqual(broker.rows[0]["requested_phases"], ["LIQUID", "C15_LAVES"])
-        rejection = broker.finished[0]["rejection"]
-        self.assertEqual(rejection.reason_code, vl.ReasonCode.C15_PHASE_REJECTED.value)
-        self.assertEqual(rejection.backend_calls, 0)
+            result = workspace.run_batch_calculations(source, broker, {}, runner)
+        # Токен доходит до расчётного слоя как есть, а строка отказывает.
+        self.assertEqual(runner.rows[0]["requested_phases"], ["LIQUID", "C15_LAVES"])
         self.assertEqual(result["Сводка"].iloc[0]["Статус"], "ошибка")
+        self.assertIn(
+            vl.ReasonCode.C15_PHASE_REJECTED.value,
+            str(result["Сводка"].iloc[0]["Ошибка"]),
+        )
 
     def test_15_batch_database_keys_are_exact_without_steel_alias(self) -> None:
         self.assertEqual(workspace.normalize_database_key("fe"), "fe")

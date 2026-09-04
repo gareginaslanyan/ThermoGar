@@ -280,6 +280,45 @@ def _default_backend(
     return _physical_projection(result)
 
 
+def composition_fractions(
+    database: object,
+    inputs: Mapping[str, Any],
+) -> tuple[tuple[tuple[str, float], ...], tuple[tuple[str, float], ...]]:
+    """Атомные и массовые доли состава — те же, что у verified-маршрута.
+
+    Многоточечный расчёт плотности идёт мимо лизы (лиза сериализует бэкенд
+    по одному вызову), но состав и набор фаз обязан брать теми же функциями,
+    иначе точка и скан разойдутся.
+    """
+    return _fractions(database, inputs)
+
+
+def effective_phases(
+    context: verified_loaders.BoundDatabaseContext,
+    requested_phases: Sequence[str],
+    database: object,
+) -> tuple[str, ...]:
+    """Список фаз политики привязки для уже разобранной базы."""
+    phases = getattr(database, "phases", None)
+    if not isinstance(phases, Mapping):
+        _fail(verified_loaders.ReasonCode.RESULT_INVALID, "Parsed database lacks a phase catalog.")
+    candidates = tuple(
+        sorted(
+            phase
+            for phase in phases
+            if type(phase) is str
+            and phase
+            and phase not in context.phase_policy.explicit_rejections
+        )
+    )
+    return context.phase_policy.effective(tuple(requested_phases), candidates=candidates)
+
+
+def physical_projection(result: physical.PhysicalCalculationResult) -> dict[str, Any]:
+    """Плоская проекция результата расчёта плотности."""
+    return _physical_projection(result)
+
+
 def _canonical_projection(value: object) -> dict[str, Any]:
     if type(value) is not dict or not value:
         _fail(verified_loaders.ReasonCode.RESULT_INVALID, "Physical result must be a non-empty plain object.")
@@ -560,6 +599,9 @@ __all__ = (
     "PhysicalCall",
     "PhysicalPoint",
     "VerifiedPhysicalResult",
+    "composition_fractions",
+    "effective_phases",
     "execute_verified_physical",
     "make_physical_inputs",
+    "physical_projection",
 )
