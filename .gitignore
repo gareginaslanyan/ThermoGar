@@ -8,3 +8,4 @@ user_data/
 .streamlit/secrets.toml
 *.log
 .DS_Store
+results/validation/
