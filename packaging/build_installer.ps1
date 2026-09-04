@@ -98,6 +98,13 @@ if (-not $stage -or -not $stage.FileCount) { throw 'STAGE_FAILED' }
 
 # --- 3. Compile with makensis ------------------------------------------------
 Write-Host 'step 3/5: makensis'
+# "Programs and Features" wants the installed size in KB. The installer used to
+# derive it with ${GetSize} over the unpacked tree, which walks ~15 000 files and
+# added about two minutes to every install. The staging step above already
+# measured exactly the same tree, so pass the number in instead. Uninstall.exe
+# (a few hundred KB, not known before this compile) is not counted.
+$estimatedSizeKb = [uint32][math]::Ceiling($stage.TotalBytes / 1KB)
+if ($estimatedSizeKb -lt 1) { $estimatedSizeKb = 1 }
 if (-not (Test-Path -LiteralPath $OutputDir)) { New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null }
 $outputName = "ThermoGar-$Version-win64.exe"
 $outputPath = Join-Path $OutputDir $outputName
@@ -113,6 +120,7 @@ $nsisArguments = @(
     "/DPRODUCT_DESCRIPTION=$($product.description)",
     "/DPRODUCT_ICON=$iconPath",
     "/DPAYLOAD_DIR=$stageRoot",
+    "/DESTIMATED_SIZE_KB=$estimatedSizeKb",
     "/DOUTPUT_FILE=$outputPath",
     $nsiScript
 )
@@ -143,6 +151,7 @@ $summary = [ordered]@{
     installer          = $outputName
     installer_bytes    = $exeItem.Length
     installer_sha256   = $exeHash
+    estimated_size_kb  = [uint32]$estimatedSizeKb
 }
 $summaryPath = Join-Path $OutputDir ("ThermoGar-$Version-win64.build.json")
 [IO.File]::WriteAllText($summaryPath, ($summary | ConvertTo-Json -Depth 4), [Text.UTF8Encoding]::new($false))

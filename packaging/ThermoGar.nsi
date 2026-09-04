@@ -17,7 +17,6 @@ CRCCheck force
 
 !include "LogicLib.nsh"
 !include "x64.nsh"
-!include "FileFunc.nsh"
 
 !ifndef PRODUCT_DISPLAY_NAME
   !error "PRODUCT_DISPLAY_NAME is required"
@@ -42,6 +41,12 @@ CRCCheck force
 !endif
 !ifndef OUTPUT_FILE
   !error "OUTPUT_FILE is required"
+!endif
+; Installed size in KB for "Programs and Features". build_installer.ps1 gets it
+; from the staged payload it just hashed; ${GetSize} over the same 15 000 files
+; at install time cost about two minutes and told us nothing new.
+!ifndef ESTIMATED_SIZE_KB
+  !error "ESTIMATED_SIZE_KB is required"
 !endif
 
 !define PRODUCT_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThermoGar"
@@ -127,7 +132,6 @@ Section "ThermoGar" SEC_MAIN
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
-  ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
   WriteRegStr   HKLM "${PRODUCT_KEY}" "DisplayName"     "${PRODUCT_DISPLAY_NAME}"
   WriteRegStr   HKLM "${PRODUCT_KEY}" "DisplayVersion"  "${PRODUCT_DISPLAY_VERSION}"
   WriteRegStr   HKLM "${PRODUCT_KEY}" "Publisher"       "${PRODUCT_PUBLISHER}"
@@ -137,7 +141,7 @@ Section "ThermoGar" SEC_MAIN
   WriteRegStr   HKLM "${PRODUCT_KEY}" "QuietUninstallString" '"$INSTDIR\Uninstall.exe" /S'
   WriteRegDWORD HKLM "${PRODUCT_KEY}" "NoModify" 1
   WriteRegDWORD HKLM "${PRODUCT_KEY}" "NoRepair" 1
-  WriteRegDWORD HKLM "${PRODUCT_KEY}" "EstimatedSize" $0
+  WriteRegDWORD HKLM "${PRODUCT_KEY}" "EstimatedSize" ${ESTIMATED_SIZE_KB}
 SectionEnd
 
 Function un.onInit
