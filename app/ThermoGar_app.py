@@ -156,6 +156,10 @@ from thermogar_verified_artifact import read_verified_utf8_text
 from thermogar_release_policy import (
     APP_LINEAGE,
     FE_EXCLUDED_PHASES,
+    PHASE_MODE_ALL,
+    PHASE_MODE_FAST,
+    PHASE_MODE_HELP,
+    PHASE_MODE_LABELS,
     PHYSICAL_DATABASE_RELATIVE_PATH,
     PHYSICAL_DATABASE_SHA256,
     PRODUCTION_USE,
@@ -168,7 +172,11 @@ from thermogar_release_policy import (
     RUNTIME_POLICY_GENERATION,
     SCIENTIFIC_MATERIAL_STATUS,
     SOFTWARE_RELEASE_STATUS,
+    PhasePresetError,
     effective_release_phases,
+    load_phase_presets,
+    phase_mode_note,
+    preset_phases,
 )
 from thermogar_release_ui import (
     release_calculation_button,
@@ -2342,13 +2350,31 @@ def excluded_phase_message(rejected: list[str]) -> str:
     )
 
 
+def available_phase_presets() -> dict[str, tuple[str, ...]]:
+    """Быстрые наборы фаз из ``configs/phase_presets.json``.
+
+    Если файла нет или он не соответствует схеме, наборы недоступны и
+    приложение работает как раньше — на всех совместимых фазах базы.
+    """
+    try:
+        return dict(load_phase_presets(PROJECT_ROOT))
+    except PhasePresetError:
+        return {}
+
+
 def compatible_phases_for_components(
     db: Database,
     database_key: str,
     components: list[str],
     steel_mode: str,
+    phase_mode: str = PHASE_MODE_ALL,
 ) -> list[str]:
-    """Вернуть совместимые с компонентами фазы с учётом режима стали."""
+    """Вернуть совместимые с компонентами фазы с учётом режима стали.
+
+    ``phase_mode`` выбирает между всеми совместимыми фазами базы
+    (``PHASE_MODE_ALL``) и быстрым набором обычных для практики фаз
+    (``PHASE_MODE_FAST``). Быстрый набор применяется до правила C15.
+    """
     phases = filter_phases(
         db,
         unpack_species(db, components),
@@ -2358,9 +2384,15 @@ def compatible_phases_for_components(
         database_key,
         steel_mode,
     )
+    if phase_mode == PHASE_MODE_FAST:
+        phases = preset_phases(
+            available_phase_presets(),
+            database_key,
+            phases,
+        )
     # Единственная точка исключения C15_LAVES для Fe: через неё проходят все
     # автоматические списки фаз (равновесие, сканы, диаграммы, карта доли,
-    # затвердевание, энергии, T₀).
+    # затвердевание, энергии, T₀). Правило действует в обоих режимах набора.
     phases = effective_release_phases(database_key, phases)
     return sorted(dict.fromkeys(phases))
 
@@ -2393,8 +2425,15 @@ def phase_selection_editor(
     database_key: str,
     candidate_phases: list[str],
     key_prefix: str,
-) -> tuple[list[str], str]:
-    """Показать управление фазами и вернуть выбранные фазы."""
+    default_phase_mode: str = PHASE_MODE_ALL,
+) -> tuple[list[str], str, str]:
+    """Показать управление фазами и вернуть выбранные фазы.
+
+    Возвращает ``(фазы, способ выбора, строка «Набор фаз: …»)``. Переключатель
+    набора («быстрый набор» / «все фазы базы») сужает список кандидатов до
+    ручного выбора, поэтому ручной выбор работает поверх любого набора.
+    Выбор запоминается на сессию и на базу ключом виджета.
+    """
     rejected_candidates = rejected_release_phases(
         database_key,
         candidate_phases,
@@ -2409,6 +2448,45 @@ def phase_selection_editor(
         "Управление фазами / метастабильный расчёт",
         expanded=False,
     ):
+        all_phases = list(candidate_phases)
+        fast_phases = effective_release_phases(
+            database_key,
+            preset_phases(
+                available_phase_presets(),
+                database_key,
+                all_phases,
+            ),
+        )
+        phase_mode = PHASE_MODE_ALL
+        if len(fast_phases) < len(all_phases):
+            phase_set_counts = {
+                PHASE_MODE_FAST: len(fast_phases),
+                PHASE_MODE_ALL: len(all_phases),
+            }
+            # Значения переключателя — "fast"/"all", а не подписи: подписи
+            # содержат число фаз и меняются вместе с составом, а состояние
+            # виджета должно пережить смену состава.
+            phase_mode = st.radio(
+                "Набор фаз",
+                [PHASE_MODE_FAST, PHASE_MODE_ALL],
+                index=0 if default_phase_mode == PHASE_MODE_FAST else 1,
+                format_func=lambda value: (
+                    f"{PHASE_MODE_LABELS[value]} "
+                    f"({phase_set_counts[value]} фаз)"
+                ),
+                horizontal=True,
+                key=f"{key_prefix}_phase_set_{database_key}",
+            )
+            st.caption(PHASE_MODE_HELP)
+        candidate_phases = (
+            fast_phases if phase_mode == PHASE_MODE_FAST else all_phases
+        )
+        phase_set_note = phase_mode_note(
+            phase_mode,
+            len(fast_phases),
+            len(all_phases),
+        )
+
         mode = st.radio(
             "Какие фазы учитывать",
             [
@@ -2424,7 +2502,7 @@ def phase_selection_editor(
                 f"В расчёте будет учтено фаз: {len(candidate_phases)}. "
                 "Это обычное равновесие для выбранной базы и состава."
             )
-            return list(candidate_phases), "Автоматически"
+            return list(candidate_phases), "Автоматически", phase_set_note
 
         st.warning(
             "Если отключить устойчивую фазу, получится метастабильное "
@@ -2506,7 +2584,39 @@ def phase_selection_editor(
         if not selected:
             st.error("Нужно оставить хотя бы одну фазу.")
 
-        return selected, "Вручную"
+        return selected, "Вручную", phase_set_note
+
+
+def render_phase_set_note(settings: Any) -> None:
+    """Показать строку «Набор фаз: …» рядом с уже посчитанным результатом.
+
+    Строка читается из таблицы параметров результата, а не из текущего
+    состояния переключателя: пользователь должен видеть набор, на котором
+    результат действительно посчитан.
+    """
+    if not isinstance(settings, pd.DataFrame) or "Параметр" not in settings:
+        return
+    values = settings.loc[settings["Параметр"] == "Набор фаз", "Значение"]
+    note = str(values.iloc[0]) if len(values) else ""
+    if note:
+        st.caption(note)
+
+
+def requested_phase_tuple(
+    selection_mode: str,
+    phase_mode_line: str,
+    selected_phases: list[str] | None,
+) -> tuple[str, ...]:
+    """Фазы, которые попадают в квитанцию запроса.
+
+    Пустой кортеж означает «все совместимые фазы базы». Быстрый набор и
+    ручной выбор — это подмножество, и оно должно быть видно в квитанции,
+    иначе квитанция описывает не тот расчёт, который был выполнен.
+    """
+    fast_used = phase_mode_line.startswith("Набор фаз: быстрый")
+    if selection_mode == "Вручную" or fast_used:
+        return tuple(sorted(selected_phases or ()))
+    return ()
 
 
 def phase_candidates_for_standard_composition(
@@ -6083,13 +6193,16 @@ with single_tab:
             tuple(single_candidate_phases),
         )
         single_candidate_phases = list(single_component_candidates)
-        single_selected_phases, single_phase_mode = (
-            phase_selection_editor(
-                db,
-                database_key,
-                single_candidate_phases,
-                "single",
-            )
+        (
+            single_selected_phases,
+            single_phase_mode,
+            single_phase_set_note,
+        ) = phase_selection_editor(
+            db,
+            database_key,
+            single_candidate_phases,
+            "single",
+            PHASE_MODE_ALL,
         )
     except Exception as preview_error:
         st.warning(
@@ -6099,15 +6212,16 @@ with single_tab:
         single_component_candidates = ()
         single_selected_phases = None
         single_phase_mode = "Автоматически"
+        single_phase_set_note = ""
 
     single_b3_state_key = "_thermogar_vlb_b3_result_equilibrium_single"
     single_b3_request_key = "_thermogar_vlb_b3_request_equilibrium_single"
     single_feature_decision = None
     try:
-        single_requested_phases = (
-            ()
-            if single_phase_mode == "Автоматически"
-            else tuple(sorted(single_selected_phases or ()))
+        single_requested_phases = requested_phase_tuple(
+            single_phase_mode,
+            single_phase_set_note,
+            single_selected_phases,
         )
         single_inputs = verified_equilibrium.make_equilibrium_inputs(
             "equilibrium_single",
@@ -6259,6 +6373,7 @@ with single_tab:
                     ("Единицы ввода", units_label),
                     ("Добавки", composition_text),
                     ("Выбор фаз", single_phase_mode),
+                    ("Набор фаз", single_phase_set_note),
                     ("Фазы в расчёте", ", ".join(single_phases_used)),
                 ],
                 columns=["Параметр", "Значение"],
@@ -6293,6 +6408,7 @@ with single_tab:
     if single_b3_state_key in st.session_state:
         result = st.session_state[single_b3_state_key]["display"]
 
+        render_phase_set_note(result["settings"])
         st.markdown("#### Фазовые доли")
         st.dataframe(
             result["summary"],
@@ -6404,11 +6520,13 @@ with temperature_tab:
         (
             temperature_selected_phases,
             temperature_phase_mode,
+            temperature_phase_set_note,
         ) = phase_selection_editor(
             db,
             database_key,
             temperature_candidate_phases,
             "temperature",
+            PHASE_MODE_FAST,
         )
     except Exception as preview_error:
         st.warning(
@@ -6418,6 +6536,7 @@ with temperature_tab:
         temperature_component_candidates = ()
         temperature_selected_phases = None
         temperature_phase_mode = "Автоматически"
+        temperature_phase_set_note = ""
 
     temperature_b3_state_key = (
         "_thermogar_vlb_b3_result_equilibrium_temperature_scan"
@@ -6442,10 +6561,10 @@ with temperature_tab:
             raise ValueError(
                 "Слишком много точек. Увеличьте шаг или уменьшите диапазон."
             )
-        temperature_requested_phases = (
-            ()
-            if temperature_phase_mode == "Автоматически"
-            else tuple(sorted(temperature_selected_phases or ()))
+        temperature_requested_phases = requested_phase_tuple(
+            temperature_phase_mode,
+            temperature_phase_set_note,
+            temperature_selected_phases,
         )
         temperature_inputs = verified_equilibrium.make_equilibrium_inputs(
             "equilibrium_temperature_scan",
@@ -6595,6 +6714,7 @@ with temperature_tab:
                     ("Единицы ввода", units_label),
                     ("Добавки", composition_text),
                     ("Выбор фаз", temperature_phase_mode),
+                    ("Набор фаз", temperature_phase_set_note),
                     ("Фазы в расчёте", ", ".join(scan_phases)),
                 ],
                 columns=["Параметр", "Значение"],
@@ -6629,6 +6749,7 @@ with temperature_tab:
     if temperature_b3_state_key in st.session_state:
         result = st.session_state[temperature_b3_state_key]["display"]
 
+        render_phase_set_note(result["settings"])
         st.pyplot(result["figure"])
         st.dataframe(
             result["data"],
@@ -6773,11 +6894,13 @@ with concentration_tab:
         (
             concentration_selected_phases,
             concentration_phase_mode,
+            concentration_phase_set_note,
         ) = phase_selection_editor(
             db,
             database_key,
             concentration_candidate_phases,
             "concentration",
+            PHASE_MODE_FAST,
         )
     except Exception as preview_error:
         st.warning(
@@ -6788,6 +6911,7 @@ with concentration_tab:
         fixed_entered_preview = {}
         concentration_selected_phases = None
         concentration_phase_mode = "Автоматически"
+        concentration_phase_set_note = ""
 
     concentration_b3_state_key = (
         "_thermogar_vlb_b3_result_equilibrium_composition_scan"
@@ -6812,10 +6936,10 @@ with concentration_tab:
             raise ValueError(
                 "Слишком много точек. Увеличьте шаг или уменьшите диапазон."
             )
-        concentration_requested_phases = (
-            ()
-            if concentration_phase_mode == "Автоматически"
-            else tuple(sorted(concentration_selected_phases or ()))
+        concentration_requested_phases = requested_phase_tuple(
+            concentration_phase_mode,
+            concentration_phase_set_note,
+            concentration_selected_phases,
         )
         concentration_inputs = verified_equilibrium.make_equilibrium_inputs(
             "equilibrium_composition_scan",
@@ -6976,6 +7100,7 @@ with concentration_tab:
                     ("Основа", balance),
                     ("Единицы ввода", units_label),
                     ("Выбор фаз", concentration_phase_mode),
+                    ("Набор фаз", concentration_phase_set_note),
                     ("Фазы в расчёте", ", ".join(scan_phases)),
                 ],
                 columns=["Параметр", "Значение"],
@@ -7009,6 +7134,7 @@ with concentration_tab:
     if concentration_b3_state_key in st.session_state:
         result = st.session_state[concentration_b3_state_key]["display"]
 
+        render_phase_set_note(result["settings"])
         st.pyplot(result["figure"])
         st.dataframe(
             result["data"],
@@ -7191,11 +7317,16 @@ with phase_diagram_tab:
                 right_element,
                 steel_mode,
             )
-            binary_selected_phases, binary_phase_mode = phase_selection_editor(
+            (
+                binary_selected_phases,
+                binary_phase_mode,
+                binary_phase_set_note,
+            ) = phase_selection_editor(
                 db,
                 database_key,
                 binary_candidate_phases,
                 "binary_diagram",
+                PHASE_MODE_FAST,
             )
         except Exception as preview_error:
             st.warning(
@@ -7204,6 +7335,7 @@ with phase_diagram_tab:
             )
             binary_selected_phases = None
             binary_phase_mode = "Автоматически"
+            binary_phase_set_note = ""
 
         if len(binary_selected_phases or []) > 7:
             st.info(
@@ -7342,6 +7474,7 @@ with phase_diagram_tab:
                         ("Шаг температуры, °C", diagram_t_step),
                         ("Давление, Па", pressure_pa),
                         ("Выбор фаз", binary_phase_mode),
+                        ("Набор фаз", binary_phase_set_note),
                         ("Фазы в расчёте", ", ".join(phases)),
                         (
                             "Режим стали",
@@ -7383,6 +7516,7 @@ with phase_diagram_tab:
         binary_result_key = f"binary_result_{database_key}"
         if binary_result_key in st.session_state:
             result = st.session_state[binary_result_key]
+            render_phase_set_note(result["settings"])
             st.pyplot(result["figure"])
 
             with st.expander("Таблица рассчитанных границ", expanded=False):
@@ -7586,11 +7720,13 @@ with phase_diagram_tab:
             (
                 isopleth_selected_phases,
                 isopleth_phase_mode,
+                isopleth_phase_set_note,
             ) = phase_selection_editor(
                 db,
                 database_key,
                 isopleth_candidates,
                 f"isopleth_{balance}_{variable_element}",
+                PHASE_MODE_FAST,
             )
         except Exception as preview_error:
             st.warning(
@@ -7600,6 +7736,7 @@ with phase_diagram_tab:
             fixed_preview = {}
             isopleth_selected_phases = None
             isopleth_phase_mode = "Автоматически"
+            isopleth_phase_set_note = ""
 
         if len(isopleth_selected_phases or []) > 7:
             st.info(
@@ -7806,6 +7943,7 @@ with phase_diagram_tab:
                         ("Шаг температуры, °C", isopleth_t_step),
                         ("Давление, Па", pressure_pa),
                         ("Выбор фаз", isopleth_phase_mode),
+                        ("Набор фаз", isopleth_phase_set_note),
                         ("Фазы в расчёте", ", ".join(phases)),
                         (
                             "Режим стали",
@@ -7856,6 +7994,7 @@ with phase_diagram_tab:
             result = st.session_state[
                 isopleth_result_key
             ]
+            render_phase_set_note(result["settings"])
             st.pyplot(result["figure"])
 
             with st.expander(
@@ -8022,11 +8161,13 @@ with phase_diagram_tab:
             (
                 ternary_selected_phases,
                 ternary_phase_mode,
+                ternary_phase_set_note,
             ) = phase_selection_editor(
                 db,
                 database_key,
                 ternary_candidate_phases,
                 "ternary_diagram",
+                PHASE_MODE_FAST,
             )
         except Exception as preview_error:
             st.warning(
@@ -8035,6 +8176,7 @@ with phase_diagram_tab:
             )
             ternary_selected_phases = None
             ternary_phase_mode = "Автоматически"
+            ternary_phase_set_note = ""
 
         if len(ternary_selected_phases or []) > 10:
             st.info(
@@ -8160,6 +8302,7 @@ with phase_diagram_tab:
                         ("Шаг поиска, ат.%", ternary_step),
                         ("Давление, Па", pressure_pa),
                         ("Выбор фаз", ternary_phase_mode),
+                        ("Набор фаз", ternary_phase_set_note),
                         ("Фазы в расчёте", ", ".join(phases)),
                         (
                             "Дополнительная проверка центра",
@@ -8210,6 +8353,7 @@ with phase_diagram_tab:
         ternary_result_key = f"ternary_result_{database_key}"
         if ternary_result_key in st.session_state:
             result = st.session_state[ternary_result_key]
+            render_phase_set_note(result["settings"])
             st.pyplot(result["figure"])
 
             if result["boundaries"].empty:
@@ -8402,11 +8546,16 @@ with phase_diagram_tab:
                 map_dependent_element,
                 steel_mode,
             )
-            map_selected_phases, map_phase_mode = phase_selection_editor(
+            (
+                map_selected_phases,
+                map_phase_mode,
+                map_phase_set_note,
+            ) = phase_selection_editor(
                 db,
                 database_key,
                 map_candidate_phases,
                 "ternary_phase_map",
+                PHASE_MODE_FAST,
             )
         except Exception as preview_error:
             st.warning(
@@ -8416,6 +8565,7 @@ with phase_diagram_tab:
             map_candidate_phases = []
             map_selected_phases = None
             map_phase_mode = "Автоматически"
+            map_phase_set_note = ""
 
         map_target_options = (
             map_selected_phases
@@ -8593,6 +8743,7 @@ with phase_diagram_tab:
                         ("Шкала цвета", map_color_scale_mode),
                         ("Давление, Па", pressure_pa),
                         ("Выбор фаз", map_phase_mode),
+                        ("Набор фаз", map_phase_set_note),
                         ("Фазы в расчёте", ", ".join(phases)),
                         ("Не рассчитано узлов", failure_count),
                         (
@@ -8686,6 +8837,7 @@ with phase_diagram_tab:
         map_result_key = f"ternary_map_result_{database_key}"
         if map_result_key in st.session_state:
             result = st.session_state[map_result_key]
+            render_phase_set_note(result["settings"])
             st.pyplot(result["figure"])
 
             summary_lookup = dict(
@@ -8967,15 +9119,20 @@ with solidification_tab:
             solidification_candidate_phases = []
             st.error(f"Исправьте состав: {preview_error}")
 
-        selected_solidification_phases, solidification_phase_mode = (
+        (
+            selected_solidification_phases,
+            solidification_phase_mode,
+            solidification_phase_set_note,
+        ) = (
             phase_selection_editor(
                 db,
                 database_key,
                 solidification_candidate_phases,
                 "solidification",
+                PHASE_MODE_FAST,
             )
             if solidification_candidate_phases
-            else ([], "Автоматически")
+            else ([], "Автоматически", "")
         )
 
         if selected_solidification_phases and "LIQUID" not in selected_solidification_phases:
@@ -9187,6 +9344,7 @@ with solidification_tab:
                         ("Порог появления фазы, %", solidification_appearance_percent),
                         ("Scheil: критерий остатка, %", solidification_scheil_stop_percent),
                         ("Режим фаз", solidification_phase_mode),
+                        ("Набор фаз", solidification_phase_set_note),
                         ("Выбранные фазы", ", ".join(phases)),
                         ("Плотность поиска", solidification_pdens),
                         ("Адаптивное уточнение", "да" if solidification_adaptive else "нет"),
@@ -9245,6 +9403,7 @@ with solidification_tab:
             == database_key
         ):
             state = st.session_state["solidification_result"]
+            render_phase_set_note(state["settings"])
             results = state["results"]
             comparison_figure = plot_solidification_liquid_comparison(results)
             phase_figures = {
