@@ -19,11 +19,13 @@
        %LOCALAPPDATA%\ThermoGar\workspace\projects before the upgrade and
        checked byte for byte after it and after the uninstall
 
-  Install and uninstall are elevated via Start-Process -Verb RunAs, so a full
-  run raises five UAC prompts: install and uninstall for steps 1-7, then
-  install, upgrade-install and uninstall for step 8. Everything else runs
-  unelevated. Per-step PASS/FAIL goes to stdout and to
-  dist\smoke-<timestamp>.json; the exit code is 0 only when every step passed.
+  The five install/uninstall operations are elevated, everything else is not.
+  They all go through one helper process that this script starts for itself with
+  Start-Process -Verb RunAs, so a full run raises a single UAC prompt instead of
+  five. If the helper cannot be started or does not come up, the run falls back
+  to elevating each operation on its own and asks five times as before.
+  Per-step PASS/FAIL goes to stdout and to dist\smoke-<timestamp>.json; the exit
+  code is 0 only when every step passed.
 
 .EXAMPLE
   .\packaging\smoke_installed.ps1
@@ -41,7 +43,11 @@ param(
     # a failure that is really just a timeout.
     [int]$HealthTimeoutSeconds = 300,
     # Leave the product installed after the run (skips step 7).
-    [switch]$SkipUninstall
+    [switch]$SkipUninstall,
+    # Internal: this script re-invokes itself elevated in this mode to serve as
+    # the install/uninstall helper. Not meant to be passed by hand.
+    [switch]$ElevatedAgent,
+    [string]$AgentDir
 )
 
 Set-StrictMode -Version Latest
@@ -61,6 +67,77 @@ if (-not $InstallerPath) {
 $InstallerPath = [IO.Path]::GetFullPath($InstallerPath)
 if (-not (Test-Path -LiteralPath $InstallerPath -PathType Leaf)) { throw "INSTALLER_NOT_FOUND: $InstallerPath" }
 
+# --- One UAC prompt per run --------------------------------------------------
+# Five elevated operations used to mean five prompts. Instead the unelevated
+# script starts one copy of itself with -Verb RunAs (-ElevatedAgent) and posts
+# work to it through a queue directory.
+#
+# The helper never takes a program to run from the queue. Both commands it can
+# execute are pinned on its own command line when it starts - the installer this
+# run was invoked with, and $InstallRoot\Uninstall.exe - and a queue file only
+# names which of the two to run. So a file dropped into the queue directory by
+# anything else running as this user still cannot make the elevated process
+# launch a program of its choosing.
+function Write-AgentJson {
+    param([string]$Path, $Value)
+    # Written aside and renamed: the reader must never see half a file.
+    $temporary = "$Path.partial"
+    [IO.File]::WriteAllText($temporary, ($Value | ConvertTo-Json -Depth 4 -Compress), [Text.UTF8Encoding]::new($false))
+    Move-Item -LiteralPath $temporary -Destination $Path -Force
+}
+
+function Invoke-ElevatedAgentLoop {
+    param([string]$Dir, [string]$Installer, [string]$Root, [int]$IdleTimeoutSeconds = 1800)
+    if (-not (Test-Path -LiteralPath $Dir)) { New-Item -ItemType Directory -Path $Dir -Force | Out-Null }
+    Write-AgentJson -Path (Join-Path $Dir 'ready.json') -Value ([ordered]@{
+        pid = $PID; installer = $Installer; install_root = $Root
+    })
+    $idleDeadline = (Get-Date).AddSeconds($IdleTimeoutSeconds)
+    while ((Get-Date) -lt $idleDeadline) {
+        if (Test-Path -LiteralPath (Join-Path $Dir 'stop')) { break }
+        $request = @(Get-ChildItem -LiteralPath $Dir -Filter 'cmd-*.json' -File -ErrorAction SilentlyContinue |
+            Sort-Object Name) | Select-Object -First 1
+        if (-not $request) { Start-Sleep -Milliseconds 200; continue }
+        $sequence = $request.BaseName -replace '^cmd-', ''
+        $operation = ''
+        try { $operation = [string]((Get-Content -LiteralPath $request.FullName -Raw | ConvertFrom-Json).op) }
+        catch { $operation = '' }
+        Remove-Item -LiteralPath $request.FullName -Force -ErrorAction SilentlyContinue
+        $exitCode = -1
+        $failure = ''
+        try {
+            switch ($operation) {
+                'install' {
+                    $exitCode = (Start-Process -FilePath $Installer -ArgumentList '/S' -PassThru -Wait).ExitCode
+                }
+                'uninstall' {
+                    $uninstaller = Join-Path $Root 'Uninstall.exe'
+                    if (-not (Test-Path -LiteralPath $uninstaller -PathType Leaf)) {
+                        throw "UNINSTALLER_MISSING: $uninstaller"
+                    }
+                    $exitCode = (Start-Process -FilePath $uninstaller -ArgumentList '/S' -PassThru -Wait).ExitCode
+                }
+                default { throw "UNKNOWN_OPERATION: '$operation'" }
+            }
+        }
+        catch { $failure = $_.Exception.Message }
+        Write-AgentJson -Path (Join-Path $Dir "res-$sequence.json") -Value ([ordered]@{
+            op = $operation; exit = $exitCode; error = $failure
+        })
+        $idleDeadline = (Get-Date).AddSeconds($IdleTimeoutSeconds)
+    }
+}
+
+if ($ElevatedAgent) {
+    if (-not $AgentDir) { throw 'AGENT_DIR_REQUIRED' }
+    Invoke-ElevatedAgentLoop -Dir $AgentDir -Installer $InstallerPath -Root $InstallRoot
+    exit 0
+}
+
+$script:AgentDir = $null
+$script:AgentProcess = $null
+$script:AgentSequence = 0
+
 $UninstallKey = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\ThermoGar'
 $ShortcutPath = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\ThermoGar\ThermoGar.lnk'
 $LocalAppState = Join-Path $env:LOCALAPPDATA 'ThermoGar'
@@ -69,19 +146,111 @@ $WorkDir = Join-Path ([IO.Path]::GetTempPath()) ("thermogar-smoke-" + [Guid]::Ne
 $Results = New-Object System.Collections.Generic.List[object]
 $script:Failed = $false
 
+# Reset by Add-Result, so each step reports its own wall clock. Step 1 is how
+# long a silent install takes on this machine.
+$script:StepClock = Get-Date
+
 function Add-Result {
     param([int]$Step, [string]$Name, [bool]$Pass, [string]$Detail = '')
     $status = if ($Pass) { 'PASS' } else { 'FAIL' }
     if (-not $Pass) { $script:Failed = $true }
-    $Results.Add([ordered]@{ step = $Step; name = $Name; status = $status; detail = $Detail })
+    $seconds = [math]::Round(((Get-Date) - $script:StepClock).TotalSeconds, 1)
+    $script:StepClock = Get-Date
+    $Results.Add([ordered]@{ step = $Step; name = $Name; status = $status; seconds = $seconds; detail = $Detail })
     $colour = if ($Pass) { 'Green' } else { 'Red' }
-    Write-Host ("[{0}] step {1}: {2}" -f $status, $Step, $Name) -ForegroundColor $colour
+    Write-Host ("[{0}] step {1}: {2} ({3}s)" -f $status, $Step, $Name, $seconds) -ForegroundColor $colour
     if ($Detail) { Write-Host "        $Detail" }
 }
 
+function Invoke-AgentOperation {
+    param([string]$Operation, [int]$TimeoutSeconds = 900)
+    $script:AgentSequence++
+    $sequence = '{0:d3}' -f $script:AgentSequence
+    $resultPath = Join-Path $script:AgentDir "res-$sequence.json"
+    Write-AgentJson -Path (Join-Path $script:AgentDir "cmd-$sequence.json") -Value ([ordered]@{ op = $Operation })
+    $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    while ((Get-Date) -lt $deadline) {
+        if (Test-Path -LiteralPath $resultPath) {
+            $result = Get-Content -LiteralPath $resultPath -Raw | ConvertFrom-Json
+            Remove-Item -LiteralPath $resultPath -Force -ErrorAction SilentlyContinue
+            if ($result.error) { throw "ELEVATED_${Operation}_FAILED: $($result.error)" }
+            return [int]$result.exit
+        }
+        if ($script:AgentProcess -and $script:AgentProcess.HasExited) {
+            throw "ELEVATED_HELPER_EXITED: $($script:AgentProcess.ExitCode)"
+        }
+        Start-Sleep -Milliseconds 200
+    }
+    throw "ELEVATED_${Operation}_TIMEOUT: no answer after ${TimeoutSeconds}s"
+}
+
+function Start-ElevatedAgent {
+    # One UAC prompt. Returns $false if the helper never came up, and the caller
+    # then keeps the old behaviour of elevating every operation separately.
+    $dir = Join-Path ([IO.Path]::GetTempPath()) ("thermogar-elevated-" + [Guid]::NewGuid().ToString('N').Substring(0, 12))
+    New-Item -ItemType Directory -Path $dir -Force | Out-Null
+    $shell = [Diagnostics.Process]::GetCurrentProcess().Path
+    # Start-Process joins -ArgumentList with spaces and quotes nothing, so every
+    # path has to carry its own quotes: "C:\Program Files\ThermoGar" would
+    # otherwise arrive as two arguments. A trailing backslash inside the quotes
+    # would escape the closing one, and these are all directories, so it goes.
+    $quote = { param([string]$value) '"' + $value.TrimEnd('') + '"' }
+    $arguments = @(
+        '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass',
+        '-File', (& $quote $PSCommandPath),
+        '-ElevatedAgent', '-AgentDir', (& $quote $dir),
+        '-InstallerPath', (& $quote $InstallerPath),
+        '-InstallRoot', (& $quote $InstallRoot)
+    )
+    try {
+        $script:AgentProcess = Start-Process -FilePath $shell -ArgumentList $arguments -Verb RunAs `
+            -WindowStyle Hidden -PassThru -ErrorAction Stop
+    }
+    catch {
+        Write-Host "  elevated helper not started ($($_.Exception.Message)); one UAC prompt per operation." -ForegroundColor Yellow
+        $script:AgentProcess = $null
+        Remove-Item -LiteralPath $dir -Recurse -Force -ErrorAction SilentlyContinue
+        return $false
+    }
+    $ready = Wait-ForCondition -Condition {
+        Test-Path -LiteralPath (Join-Path $dir 'ready.json')
+    } -TimeoutSeconds 120 -IntervalSeconds 0.5
+    if (-not $ready) {
+        Write-Host '  elevated helper did not report ready; one UAC prompt per operation.' -ForegroundColor Yellow
+        try { if (-not $script:AgentProcess.HasExited) { $script:AgentProcess.Kill() } } catch { }
+        $script:AgentProcess = $null
+        Remove-Item -LiteralPath $dir -Recurse -Force -ErrorAction SilentlyContinue
+        return $false
+    }
+    $script:AgentDir = $dir
+    return $true
+}
+
+function Stop-ElevatedAgent {
+    if ($script:AgentDir) {
+        try { [IO.File]::WriteAllText((Join-Path $script:AgentDir 'stop'), '') } catch { }
+    }
+    if ($script:AgentProcess) {
+        try { $script:AgentProcess.WaitForExit(30000) | Out-Null } catch { }
+        try { if (-not $script:AgentProcess.HasExited) { $script:AgentProcess.Kill() } } catch { }
+        $script:AgentProcess = $null
+    }
+    if ($script:AgentDir) {
+        Remove-Item -LiteralPath $script:AgentDir -Recurse -Force -ErrorAction SilentlyContinue
+        $script:AgentDir = $null
+    }
+}
+
 function Invoke-Elevated {
-    param([string]$FilePath, [string[]]$Arguments, [int]$TimeoutSeconds = 600)
+    param([string]$FilePath, [string[]]$Arguments, [int]$TimeoutSeconds = 900)
     # NSIS /S detaches quickly, so wait on the process AND then on the payload.
+    # With the helper up this costs no prompt; without it, one prompt per call.
+    if ($script:AgentDir) {
+        $operation = ''
+        if ($FilePath -eq $InstallerPath) { $operation = 'install' }
+        elseif ($FilePath -eq (Join-Path $InstallRoot 'Uninstall.exe')) { $operation = 'uninstall' }
+        if ($operation) { return (Invoke-AgentOperation -Operation $operation -TimeoutSeconds $TimeoutSeconds) }
+    }
     $process = Start-Process -FilePath $FilePath -ArgumentList $Arguments -Verb RunAs -PassThru -Wait -ErrorAction Stop
     return $process.ExitCode
 }
@@ -163,12 +332,17 @@ Write-Host "  installer : $InstallerPath"
 Write-Host "  installdir: $InstallRoot"
 Write-Host "  workdir   : $WorkDir"
 Write-Host ''
-Write-Host 'Elevation: install and uninstall are launched with -Verb RunAs.'
-Write-Host 'If a UAC dialog appears, accept it; the run cannot continue otherwise.'
+Write-Host 'Elevation: the five install/uninstall operations run inside one elevated'
+Write-Host 'helper, so expect a single UAC dialog now. Accept it; the run cannot'
+Write-Host 'continue otherwise. If the helper does not start, each operation asks'
+Write-Host 'for its own confirmation instead.'
+$agentUp = Start-ElevatedAgent
+Write-Host ("  elevated helper: {0}" -f $(if ($agentUp) { "up, 1 UAC prompt for this run" } else { "unavailable, 5 UAC prompts for this run" }))
 Write-Host ''
 
 $localAppStatePreexisting = Test-Path -LiteralPath $LocalAppState
 New-Item -ItemType Directory -Path $WorkDir -Force | Out-Null
+$script:StepClock = Get-Date
 
 $healthJson = $null
 $uiPort = 0
@@ -441,6 +615,7 @@ try {
     }
 }
 finally {
+    Stop-ElevatedAgent
     Remove-Item -LiteralPath $WorkDir -Recurse -Force -ErrorAction SilentlyContinue
 
     if (-not (Test-Path -LiteralPath $DistDir)) { New-Item -ItemType Directory -Path $DistDir -Force | Out-Null }
@@ -451,6 +626,8 @@ finally {
         started_utc   = $timestamp
         installer     = $InstallerPath
         install_root  = $InstallRoot
+        elevated_helper = $agentUp
+        uac_prompts   = if ($agentUp) { 1 } else { 5 }
         overall       = if ($script:Failed) { 'FAIL' } else { 'PASS' }
         ui_port       = $uiPort
         control_port  = $controlPort
