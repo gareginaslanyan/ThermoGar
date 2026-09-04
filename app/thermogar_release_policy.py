@@ -9,7 +9,10 @@ Experimental qualification of the scientific results has not been performed.
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+import json
+from collections.abc import Iterable, Mapping, Sequence
+from functools import lru_cache
+from pathlib import Path
 from types import MappingProxyType
 from typing import Final
 
@@ -101,6 +104,127 @@ def effective_release_phases(
         if not (database_key == "fe" and phase in FE_EXCLUDED_PHASES)
     ]
     return result
+
+
+PHASE_MODE_FAST: Final = "fast"
+PHASE_MODE_ALL: Final = "all"
+PHASE_PRESETS_RELATIVE_PATH: Final = "configs/phase_presets.json"
+PHASE_MODE_LABELS: Final = MappingProxyType(
+    {
+        PHASE_MODE_FAST: "Быстрый набор",
+        PHASE_MODE_ALL: "Все фазы базы",
+    }
+)
+PHASE_MODE_HELP: Final = (
+    "Быстрый набор — обычные для практики фазы; если сомневаетесь, "
+    'проверьте результат в режиме "все фазы".'
+)
+
+
+class PhasePresetError(RuntimeError):
+    """Файл быстрых наборов фаз отсутствует или не соответствует схеме."""
+
+
+def _read_phase_presets(path: Path) -> dict[str, tuple[str, ...]]:
+    """Прочитать и проверить ``configs/phase_presets.json``."""
+
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except OSError as error:
+        raise PhasePresetError(
+            f"Не удалось прочитать быстрые наборы фаз: {path}"
+        ) from error
+
+    try:
+        payload = json.loads(raw)
+    except ValueError as error:
+        raise PhasePresetError(
+            f"Быстрые наборы фаз не разбираются как JSON: {path}"
+        ) from error
+
+    if not isinstance(payload, Mapping):
+        raise PhasePresetError(
+            "Быстрые наборы фаз должны быть объектом "
+            '{"ni": [...], "al": [...], "fe": [...]}.'
+        )
+
+    presets: dict[str, tuple[str, ...]] = {}
+    for database_key in RELEASE_DATABASE_KEYS:
+        names = payload.get(database_key)
+        if not isinstance(names, Sequence) or isinstance(names, (str, bytes)):
+            raise PhasePresetError(
+                f"Для базы {database_key} нужен список имён фаз."
+            )
+        if not names:
+            raise PhasePresetError(
+                f"Быстрый набор фаз базы {database_key} пуст."
+            )
+        cleaned: list[str] = []
+        for name in names:
+            if not isinstance(name, str) or not name.strip():
+                raise PhasePresetError(
+                    f"Имя фазы в наборе базы {database_key} должно быть "
+                    "непустой строкой."
+                )
+            cleaned.append(name.strip().upper())
+        presets[database_key] = tuple(dict.fromkeys(cleaned))
+
+    unknown = sorted(set(payload) - set(RELEASE_DATABASE_KEYS))
+    if unknown:
+        raise PhasePresetError(
+            "Неизвестные базы в быстрых наборах фаз: " + ", ".join(unknown)
+        )
+    return presets
+
+
+@lru_cache(maxsize=8)
+def _cached_phase_presets(resolved_path: str) -> MappingProxyType:
+    return MappingProxyType(_read_phase_presets(Path(resolved_path)))
+
+
+def load_phase_presets(project_root: str | Path) -> MappingProxyType:
+    """Быстрые наборы фаз по базам из ``configs/phase_presets.json``.
+
+    Имена фаз даны ровно так, как они записаны в TDB. Набор — это фильтр
+    поверх ``filter_phases``: фаза попадает в расчёт, только если она есть
+    и в наборе, и в списке совместимых с составом фаз.
+    """
+
+    path = Path(project_root) / PHASE_PRESETS_RELATIVE_PATH
+    return _cached_phase_presets(str(path.resolve()))
+
+
+def preset_phases(
+    presets: Mapping[str, Sequence[str]],
+    database_key: str,
+    phases: Iterable[str],
+) -> list[str]:
+    """Пересечение совместимых фаз с быстрым набором базы.
+
+    Порядок исходного списка сохраняется. Если набора для базы нет или
+    пересечение пусто, возвращается исходный список: быстрый набор не
+    имеет права оставить расчёт вовсе без фаз.
+    """
+
+    ordered = list(dict.fromkeys(phases))
+    preset = presets.get(database_key)
+    if not preset:
+        return ordered
+    allowed = {str(name).upper() for name in preset}
+    reduced = [phase for phase in ordered if str(phase).upper() in allowed]
+    return reduced or ordered
+
+
+def phase_mode_note(
+    phase_mode: str,
+    fast_count: int,
+    all_count: int,
+) -> str:
+    """Строка «Набор фаз: …» для результата и выгрузки."""
+
+    if phase_mode == PHASE_MODE_FAST:
+        return f"Набор фаз: быстрый ({int(fast_count)} из {int(all_count)})"
+    return f"Набор фаз: все фазы базы ({int(all_count)})"
 
 
 PHYSICAL_DATABASE_RELATIVE_PATH: Final = (
