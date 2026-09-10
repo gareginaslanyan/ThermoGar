@@ -85,29 +85,84 @@ def test_duplicated_defaults_exist_before_repair(key: str) -> None:
 
 
 @pytest.mark.parametrize("key", sorted(DATABASES))
-def test_repair_removes_only_duplicated_defaults(key: str) -> None:
-    """Убираются только дубли; умолчание-единственный-источник остаётся."""
+def test_default_rows_are_materialised_not_just_deleted(key: str) -> None:
+    """Умолчание разворачивается в явные строки, а не просто выбрасывается.
+
+    Строка ``MQ(<фаза>&<элемент>,*)`` в TDB значит «значение для любого
+    составляющего, у которого нет своей строки». Просто удалить её нельзя: в
+    ``mc_ni`` она была единственным источником подвижности молибдена в хроме, и
+    без неё сумма Редлиха — Кистера теряла вклад, а коэффициент диффузии при
+    составе сплава улетал на четыре порядка вверх. Поэтому умолчание
+    материализуется для «непокрытых» составляющих, и лишь затем убирается.
+    """
 
     database = _fresh(key)
-    before_duplicated = set(repair.duplicated_default_keys(database))
     before_defaults = len(repair.degenerate_default_records(database))
+    assert before_defaults > 0
 
-    report = repair.repair_mobility_defaults(database)
+    report = repair.repair_mobility_defaults(database, database_label=key)
 
     assert not repair.duplicated_default_keys(database), (
         "После правки остались умолчания, дублирующие явную строку"
     )
-    # Удалены ровно те ключи, что дублировались. Строк может быть больше, чем
-    # ключей: у одного ключа бывает несколько записей-умолчаний.
-    assert set(report.removed_keys) == before_duplicated
-    assert report.removed >= len(before_duplicated)
-    # Умолчания без явной пары обязаны уцелеть: без них элемент остался бы
-    # вовсе без кинетики.
-    assert len(repair.degenerate_default_records(database)) == (
-        before_defaults - report.removed
+    assert report.removed > 0
+    assert report.materialised > report.removed, (
+        "Умолчания удалены, но не развёрнуты в явные строки"
     )
-    assert report.kept_as_only_source == len(report.kept_keys)
-    assert report.kept_keys, "Ни одно умолчание не сохранено как единственный источник"
+    # Каждое снятое умолчание оставило после себя хотя бы одну явную строку.
+    remaining = len(repair.degenerate_default_records(database))
+    assert remaining == before_defaults - report.removed
+
+
+@pytest.mark.parametrize("key", sorted(DATABASES))
+def test_every_constituent_has_a_mobility_row_after_repair(key: str) -> None:
+    """После правки у каждого составляющего есть своя строка подвижности.
+
+    Прямая проверка того, что материализация ничего не потеряла: для фазы
+    FCC_A1 и каждого диффундирующего элемента, у которого было умолчание,
+    в таблице обязаны найтись строки для всех составляющих первой подрешётки.
+    """
+
+    database = _fresh(key)
+    before = {
+        (
+            str(record.get("phase_name")),
+            str(record.get("parameter_type")),
+            str(getattr(record.get("diffusing_species"), "name", "")).upper(),
+        )
+        for record in repair.degenerate_default_records(database)
+    }
+    repair.repair_mobility_defaults(database, database_label=key)
+
+    table = database._parameters.table(  # noqa: SLF001
+        database._parameters.default_table_name  # noqa: SLF001
+    )
+    rows = table.all()
+    for phase_name, parameter_type, species in sorted(before):
+        phase = database.phases.get(phase_name)
+        if phase is None:
+            continue
+        covered: set[str] = set()
+        for record in rows:
+            if str(record.get("phase_name")) != phase_name:
+                continue
+            if str(record.get("parameter_type")) != parameter_type:
+                continue
+            name = str(getattr(record.get("diffusing_species"), "name", "")).upper()
+            if name != species:
+                continue
+            array = record.get("constituent_array")
+            try:
+                if len(array[0]) == 1:
+                    covered.add(str(array[0][0]))
+            except Exception:
+                continue
+        constituents = {str(item) for item in phase.constituents[0]}
+        missing = constituents - covered
+        assert not missing, (
+            f"{phase_name}/{parameter_type}/{species}: без строки остались "
+            + ", ".join(sorted(missing))
+        )
 
 
 @pytest.mark.parametrize("key", sorted(DATABASES))
@@ -496,3 +551,143 @@ def test_equilibrium_runs_on_carbon_bearing_nickel_alloy() -> None:
     assert total == pytest.approx(1.0, abs=1.0e-5), (
         f"Сумма долей фаз {total}, равновесие не решено"
     )
+
+
+# --------------------------------------------------------------------------- #
+# A3: приёмочные требования постановки волны 10
+# --------------------------------------------------------------------------- #
+
+
+def test_diffusivity_order_of_magnitude_at_1200c() -> None:
+    """D(Mo) в FCC-Ni при 1200 °C лежит в 1e-15…1e-13 м²/с.
+
+    Проверка разумности порядка, а не точного значения: литературный ориентир
+    для молибдена в никеле при 1200 °C — около 1e-14 м²/с. До дедупликации
+    здесь было 5e-28.
+    """
+
+    pytest.importorskip("kawin")
+    from kawin.thermo import GeneralThermodynamics
+
+    database = _fresh("ni")
+    repair.repair_mobility_defaults(database)
+    thermodynamics = GeneralThermodynamics(database, ["NI", "CR", "MO"], ["FCC_A1"])
+    value = float(
+        np.asarray(
+            thermodynamics.getTracerDiffusivity([1.0e-6, 1.0e-6], 1473.15,
+                                                phase="FCC_A1"),
+            dtype=float,
+        ).ravel()[2]
+    )
+    assert 1.0e-15 <= value <= 1.0e-13, (
+        f"D(Mo) при 1200 °C = {value:.3e} м²/с вне разумного диапазона"
+    )
+
+
+def test_run_diffusion_changes_composition() -> None:
+    """Штатный ``run_diffusion`` действительно выравнивает пару.
+
+    Прежние тесты раздела проверяли только баланс массы и форму профиля, и
+    поэтому дефект пропустили: профиль стоял на месте, а баланс сходился.
+    Здесь утверждение по существу — перепад по молибдену падает не менее чем
+    на 40 % за время порядка L²/D.
+    """
+
+    pytest.importorskip("kawin")
+    from thermogar_diffusion import run_diffusion
+    from thermogar_release_policy import RELEASE_DATABASE_LABELS
+
+    path = ROOT / DATABASES["ni"]
+    if not path.is_file():
+        pytest.skip(f"Нет базы: {path}")
+
+    length_um = 2.0
+    temperature_c = 1200.0
+    # Время оценивается по первой моде: τ = L²/π²D. Коэффициент берётся из той
+    # же базы, поэтому тест не зависит от справочных чисел.
+    from kawin.thermo import GeneralThermodynamics
+
+    database = _fresh("ni")
+    repair.repair_mobility_defaults(database)
+    thermodynamics = GeneralThermodynamics(database, ["NI", "CR", "MO"], ["FCC_A1"])
+    diffusivity = float(
+        np.asarray(
+            thermodynamics.getTracerDiffusivity([0.28, 0.09], temperature_c + 273.15,
+                                                phase="FCC_A1"),
+            dtype=float,
+        ).ravel()[2]
+    )
+    time_h = (length_um * 1.0e-6) ** 2 / (math.pi**2 * diffusivity) / 3600.0
+
+    result = run_diffusion(
+        db=object(),
+        database_key="ni",
+        database_path=path,
+        database_label=RELEASE_DATABASE_LABELS.get("ni", "mc_ni"),
+        balance="NI",
+        units="wt",
+        left_text="CR=22.42, MO=11.26",
+        right_text="CR=26.21, MO=18.26",
+        temperature_c=temperature_c,
+        time_h=max(time_h, 1.0e-6),
+        length_um=length_um,
+        interface_percent=50.0,
+        nodes=30,
+        phases=["FCC_A1"],
+        model_kind="single",
+        input_provenance="Приёмочный тест волны 10, пункт A3; research-only",
+        input_confirmation=True,
+    )
+    index = list(result.elements).index("MO")
+    initial = np.asarray(result.initial_wt, dtype=float)[:, index]
+    final = np.asarray(result.final_wt, dtype=float)[:, index]
+    span_0 = float(initial.max() - initial.min())
+    span_t = float(final.max() - final.min())
+    assert span_0 > 0.0
+    drop = 1.0 - span_t / span_0
+    assert drop >= 0.4, (
+        f"Перепад по Mo упал лишь на {100 * drop:.1f} % "
+        "(на дефектной базе он не менялся вовсе)"
+    )
+
+
+def test_dedup_report_counts_and_log_line() -> None:
+    """Отчёт дедупликации содержит числа и строку для лога и паспорта базы."""
+
+    database = _fresh("ni")
+    report = repair.repair_mobility_defaults(database, database_label="mc_ni")
+    assert report.removed > 0
+    assert report.kept_as_only_source > 0
+    line = report.log_line()
+    assert "дедупликация подвижностей" in line
+    assert "mc_ni" in line
+    assert str(report.removed) in line
+
+
+def test_dedup_keeps_parameters_with_different_expressions() -> None:
+    """Различающиеся выражения не считаются дублем и не отбрасываются."""
+
+    database = _fresh("ni")
+    report = repair.repair_mobility_defaults(database, database_label="mc_ni")
+    assert report.kept_as_different_expression > 0, (
+        "Ни одного места с различающимися выражениями не найдено: "
+        "проверьте, работает ли символьное сравнение"
+    )
+    assert not set(report.suspicious_keys) & set(report.removed_keys)
+
+
+def test_excluded_phase_metadata_has_reason() -> None:
+    """Метаданные расчёта содержат непустой список исключённых фаз с причиной."""
+
+    database = _fresh("ni")
+    components = ["NI", "CR", "MO", "C", "AL", "TI", "VA"]
+    from pycalphad.core.utils import filter_phases, unpack_species
+
+    phases = sorted(filter_phases(database, unpack_species(database, components)))
+    _kept, removed = repair.drop_broken_order_disorder(database, components, phases)
+    assert removed, "Список исключённых фаз пуст"
+    for name, item in removed.items():
+        assert item.reason, f"У фазы {name} нет причины исключения"
+        assert item.disordered_phase
+    note = repair.excluded_phases_note(removed)
+    assert "исключены" in note and "BCC_B2" in note

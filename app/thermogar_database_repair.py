@@ -33,6 +33,7 @@ class MobilityRepairReport:
     """Что именно убрано из таблицы параметров."""
 
     removed: int = 0
+    materialised: int = 0
     kept_as_only_source: int = 0
     kept_as_different_expression: int = 0
     removed_keys: tuple[tuple[str, str, str, int], ...] = field(default=())
@@ -51,7 +52,8 @@ class MobilityRepairReport:
         label = self.database_label or "база"
         line = (
             f"дедупликация подвижностей: {label} — "
-            f"отброшено {self.removed} параметров"
+            f"отброшено {self.removed} параметров-умолчаний, "
+            f"развёрнуто в явные {self.materialised}"
         )
         if self.kept_as_different_expression:
             line += (
@@ -186,42 +188,124 @@ def repair_mobility_defaults(
             explicit.setdefault(key, []).append(record)
 
     doomed: list[int] = []
+    added: list[dict[str, Any]] = []
     removed_keys: list[tuple[str, str, str, int]] = []
     kept_keys: list[tuple[str, str, str, int]] = []
     suspicious_keys: list[tuple[str, str, str, int]] = []
     for key, records in sorted(degenerate.items()):
-        counterparts = explicit.get(key)
-        if not counterparts:
+        phase_name, _parameter_type, _species, _order = key
+        phase = database.phases.get(phase_name)
+        if phase is None:
             kept_keys.append(key)
             continue
-        identical = [
-            record
-            for record in records
-            if any(
-                _expressions_are_identical(
-                    record.get("parameter"), other.get("parameter")
-                )
-                for other in counterparts
-            )
-        ]
-        if not identical:
-            suspicious_keys.append(key)
+        counterparts = explicit.get(key, [])
+
+        # Умолчание относится к тем составляющим первой подрешётки, у которых
+        # своей строки нет. Материализуем его именно для них и убираем саму
+        # вырожденную строку: тогда сумма Редлиха — Кистера снова считается по
+        # полному набору составляющих с суммой весов, равной единице, и ни
+        # двойного счёта, ни потери вклада не остаётся.
+        covered = {
+            _first_sublattice_name(record.get("constituent_array"))
+            for record in counterparts
+        }
+        covered.discard("")
+        targets = sorted(
+            {str(species) for species in phase.constituents[0]} - covered - {WILDCARD}
+        )
+        if not targets and not counterparts:
+            # Некого замещать и не с чем конфликтовать — оставляем как есть.
+            kept_keys.append(key)
             continue
-        doomed.extend(int(record.doc_id) for record in identical)
-        removed_keys.append(key)
+
+        template = counterparts[0] if counterparts else None
+        for record in records:
+            for target in targets:
+                new_record = dict(record)
+                new_record["constituent_array"] = _explicit_constituent_array(
+                    record.get("constituent_array"),
+                    template.get("constituent_array") if template else None,
+                    target,
+                    len(phase.constituents),
+                )
+                added.append(new_record)
+            doomed.append(int(record.doc_id))
+
+        if counterparts and any(
+            _expressions_are_identical(
+                record.get("parameter"), other.get("parameter")
+            )
+            for record in records
+            for other in counterparts
+        ):
+            removed_keys.append(key)
+        elif counterparts:
+            # Выражения различаются — это не дубль. Строка всё равно
+            # перераспределяется по «непокрытым» составляющим, потому что
+            # именно так её понимает Thermo-Calc, но место отмечается как
+            # подозрительное и уходит в лог.
+            suspicious_keys.append(key)
+        else:
+            kept_keys.append(key)
 
     if doomed:
         table.remove(doc_ids=doomed)
+    if added:
+        table.insert_multiple(added)
 
     setattr(database, _REPAIR_FLAG, True)
     return MobilityRepairReport(
         removed=len(doomed),
+        materialised=len(added),
         kept_as_only_source=len(kept_keys),
         kept_as_different_expression=len(suspicious_keys),
         removed_keys=tuple(removed_keys),
         kept_keys=tuple(kept_keys),
         suspicious_keys=tuple(suspicious_keys),
         database_label=database_label,
+    )
+
+
+def _first_sublattice_name(constituent_array: Any) -> str:
+    """Имя единственного составляющего первой подрешётки или пустая строка."""
+
+    try:
+        first = constituent_array[0]
+        if len(first) != 1:
+            return ""
+        return str(first[0])
+    except Exception:
+        return ""
+
+
+def _explicit_constituent_array(
+    degenerate_array: Any,
+    template_array: Any,
+    target: str,
+    sublattice_count: int,
+) -> Any:
+    """Массив составляющих для материализованного умолчания.
+
+    Форма берётся у существующей явной строки того же ключа, если она есть:
+    так материализованная строка неотличима от написанной в базе руками. Если
+    явных строк нет, массив собирается из целевого составляющего и звёздочек
+    по числу подрешёток фазы.
+    """
+
+    species_type = type(degenerate_array[0][0])
+    try:
+        target_species = species_type(target)
+    except Exception:
+        target_species = target
+
+    if template_array is not None:
+        rebuilt = [tuple(sublattice) for sublattice in template_array]
+        rebuilt[0] = (target_species,)
+        return tuple(rebuilt)
+
+    wildcard_species = degenerate_array[0][0]
+    return tuple(
+        [(target_species,)] + [(wildcard_species,)] * max(0, sublattice_count - 1)
     )
 
 
@@ -416,7 +500,7 @@ def drop_broken_order_disorder(
 
 # Версия логики дедупликации. Входит в ключ кэша разобранных баз: без этого
 # пользователь со старым кэшем получил бы прежнее поведение.
-MOBILITY_DEDUP_VERSION = 2
+MOBILITY_DEDUP_VERSION = 3
 
 _LAST_REPORTS: dict[str, MobilityRepairReport] = {}
 
