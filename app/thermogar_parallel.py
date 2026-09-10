@@ -532,6 +532,12 @@ def load_database(database_path: str | os.PathLike[str], sha256: str) -> Any:
     if db_cache is None:
         database = Database(str(path))
         try:
+            import thermogar_database_repair as repair
+
+            repair.repair_database(database)
+        except Exception:
+            pass
+        try:
             import pickle
 
             return pickle.loads(
@@ -545,6 +551,7 @@ def load_database(database_path: str | os.PathLike[str], sha256: str) -> Any:
         snapshot_sha256=expected,
         snapshot_bytes=path.read_bytes(),
         parse=lambda: Database(str(path)),
+        database_label=path.name,
     )
 
 

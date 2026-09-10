@@ -172,6 +172,23 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _repair_loaded_database(database: Any) -> None:
+    """Правки, которые нельзя внести в байты TDB.
+
+    Байты релизной базы привязаны к SHA-256 и неприкосновенны, поэтому
+    умолчания подвижности снимаются над уже разобранным объектом; подробности —
+    в ``thermogar_database_repair``. Вызов идемпотентен и не должен мешать
+    расчёту, поэтому отказ модуля правок проглатывается.
+    """
+
+    try:
+        import thermogar_database_repair as repair
+
+        repair.repair_database(database)
+    except Exception:
+        pass
+
+
 def _bind_release_database(
     database_key: str,
     database_path: str | Path,
@@ -220,6 +237,7 @@ def _bind_release_database(
         )
 
     database = Database(str(candidate_path))
+    _repair_loaded_database(database)
     if _sha256(candidate_path) != expected_sha256:
         raise RuntimeError(
             "Diffusion отклонён: файл базы изменился во время загрузки."

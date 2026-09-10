@@ -35,7 +35,10 @@ import tempfile
 
 # Растёт, когда меняется смысл содержимого записи. Старые файлы при этом просто
 # перестают находиться и остаются мусором до очистки каталога.
-CACHE_FORMAT_VERSION = 1
+# 2: с версии 2 разобранная база проходит через
+# ``thermogar_database_repair.repair_database`` (умолчания подвижности), поэтому
+# записи версии 1 непригодны и должны быть пересозданы.
+CACHE_FORMAT_VERSION = 2
 
 CACHE_DIRECTORY_NAME = "cache"
 _SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
@@ -73,10 +76,31 @@ def cache_root() -> Path | None:
         return None
 
 
-def entry_name(expected_sha256: str) -> str:
-    """Имя записи: SHA-256 базы, версия pycalphad, версия формата кэша."""
+def _dedup_version() -> str:
+    """Версия логики дедупликации подвижностей.
 
-    return f"tdb-{expected_sha256}-pycalphad-{_pycalphad_version()}-v{CACHE_FORMAT_VERSION}.pickle"
+    Разобранная база хранится в кэше уже починенной, поэтому смена логики
+    правки обязана менять ключ: иначе пользователь со старым кэшем получит
+    прежнее, неверное поведение и никак об этом не узнает.
+    """
+
+    try:
+        import thermogar_database_repair as repair
+
+        return str(int(repair.MOBILITY_DEDUP_VERSION))
+    except Exception:
+        return "0"
+
+
+def entry_name(expected_sha256: str) -> str:
+    """Имя записи: SHA базы, версия pycalphad, версия формата и версия правок."""
+
+    return (
+        f"tdb-{expected_sha256}"
+        f"-pycalphad-{_pycalphad_version()}"
+        f"-dedup{_dedup_version()}"
+        f"-v{CACHE_FORMAT_VERSION}.pickle"
+    )
 
 
 def _entry_path(expected_sha256: str) -> Path | None:
@@ -155,6 +179,7 @@ def load_or_parse(
     snapshot_sha256: str,
     snapshot_bytes: bytes,
     parse: Callable[[], Any],
+    database_label: str = "",
 ) -> Any:
     """Вернуть разобранную базу из кэша или разобрать её и запомнить.
 
@@ -173,16 +198,39 @@ def load_or_parse(
     ):
         # Байты не те, за которые себя выдают: кэш к ним не прикасается,
         # разбор пойдёт прежним путём и сам сообщит об ошибке.
-        return canonical(parse())
+        return _repaired(canonical(parse()), database_label)
 
     path = _entry_path(expected_sha256)
     if path is None:
-        return canonical(parse())
+        return _repaired(canonical(parse()), database_label)
 
     cached = _read_entry(path)
     if cached is not None:
-        return cached
+        # Записи, сделанные до появления правок, помечены прежней версией
+        # формата и сюда не попадают; вызов всё равно идемпотентен.
+        return _repaired(cached, database_label)
 
-    database = parse()
+    database = _repaired(parse(), database_label)
     _write_entry(path, database)
     return canonical(database)
+
+
+def _repaired(database: Any, database_label: str = "") -> Any:
+    """Правки, которые нельзя внести в байты TDB (см. ``thermogar_database_repair``).
+
+    Кэш — единственная воронка разбора для приложения и для пула процессов,
+    поэтому правка ставится здесь: так и родитель, и воркер получают
+    одинаковый объект. Вызов идемпотентен, на уже починенной базе он ничего
+    не делает.
+    """
+
+    try:
+        import thermogar_database_repair as repair
+    except Exception:
+        return database
+    try:
+        repair.repair_database(database, database_label=database_label)
+    except Exception:
+        # Починка не должна мешать расчёту: без неё числа хуже, но считаются.
+        return database
+    return database

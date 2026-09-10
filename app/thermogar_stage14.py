@@ -867,11 +867,30 @@ def environment_table(project_root: str | Path) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=["Компонент", "Значение"])
 
 
+def _repair_loaded_database(database: Any) -> None:
+    """Правки, которые нельзя внести в байты TDB.
+
+    Байты релизной базы привязаны к SHA-256 и неприкосновенны, поэтому
+    умолчания подвижности снимаются над уже разобранным объектом; подробности —
+    в ``thermogar_database_repair``. Вызов идемпотентен и не должен мешать
+    расчёту, поэтому отказ модуля правок проглатывается.
+    """
+
+    try:
+        import thermogar_database_repair as repair
+
+        repair.repair_database(database)
+    except Exception:
+        pass
+
+
 @st.cache_resource(show_spinner=False)
 def _cached_database(path_text: str, file_size: int, modified_ns: int) -> Database:
     """Загрузить базу один раз; размер и mtime входят в ключ кэша."""
     del file_size, modified_ns
-    return Database(path_text)
+    database = Database(path_text)
+    _repair_loaded_database(database)
+    return database
 
 
 def database_file_table(

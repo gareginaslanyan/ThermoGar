@@ -974,6 +974,23 @@ def _normalize_dataset(
     }
 
 
+def _repair_loaded_database(database: Any) -> None:
+    """Правки, которые нельзя внести в байты TDB.
+
+    Байты релизной базы привязаны к SHA-256 и неприкосновенны, поэтому
+    умолчания подвижности снимаются над уже разобранным объектом; подробности —
+    в ``thermogar_database_repair``. Вызов идемпотентен и не должен мешать
+    расчёту, поэтому отказ модуля правок проглатывается.
+    """
+
+    try:
+        import thermogar_database_repair as repair
+
+        repair.repair_database(database)
+    except Exception:
+        pass
+
+
 def _execute_request(value: object) -> dict[str, Any]:
     (
         _request,
@@ -994,6 +1011,7 @@ def _execute_request(value: object) -> dict[str, Any]:
     ) = _load_scientific_api()
     try:
         database = Database(io.StringIO(runtime_bytes.decode("utf-8-sig")))
+        _repair_loaded_database(database)
     except Exception as error:
         raise WorkerFailure("FE_EQ_WORKER_DATABASE_LOAD_FAILED") from error
     try:
