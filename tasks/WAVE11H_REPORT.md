@@ -229,6 +229,7 @@ git worktree add C:\Users\gareg\Desktop\ThermoGar-w11h -b wave11-cleanup main
 `git log --oneline -8` ветки `wave11-cleanup`:
 
 ```
+020cb61 docs(11H): отчёт волны 11H, остановка на перезагрузку после 11H-3
 84d0f4c docs(11H-3): постоянные правила проекта сведены в tasks/RULES.md
 695329c docs(11H-2): отсылка от паспорта mc_fe к заметке о числе фаз
 58511c8 Merge wave 11G: backlog numbering, phase-count note, reference fingerprint diagnostics
@@ -236,7 +237,6 @@ git worktree add C:\Users\gareg\Desktop\ThermoGar-w11h -b wave11-cleanup main
 5d47030 docs(wave11g): отчёт волны 11G
 17e9a78 docs(wave11g): реестр по итогу волны — состояния, решения мастера по 11F
 242751b feat(scripts): воспроизводимый снимок панели диагностики в установленной конфигурации
-1c04255 feat(diagnostic): отпечаток эталонной стальной базы вместо самой базы в поставке
 ```
 
 `git status --short` — вывод пустой, дерево чистое, всё закоммичено:
@@ -244,4 +244,6 @@ git worktree add C:\Users\gareg\Desktop\ThermoGar-w11h -b wave11-cleanup main
 ```
 ```
 
-(Снято до коммита самого отчёта; после его коммита вывод останется пустым.)
+Снято после коммита отчёта `020cb61`. Настоящий коммит правит только
+этот раздел, чтобы вывод показывал состояние вместе с отчётом; сам он в
+приведённый список не попадает, его хэш — в `git log` ветки.
