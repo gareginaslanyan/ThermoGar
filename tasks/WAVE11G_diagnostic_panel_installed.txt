@@ -1,0 +1,16 @@
+Выбранный профиль | mc_fe 2.062, профиль thermogar_patch (патч TG-FE-2062-C15-001, C15_LAVES исключена)
+Рабочая база (thermogar_patch) | C:\Users\gareg\AppData\Local\Temp\claude\C--Users-gareg\df345555-7c6e-4c59-a3ff-738ec6606c3d\scratchpad\snapshot\ThermoGar-installed-configuration\databases\converted\fe\mc_fe_v2062_with_mobility.thermogar.tdb
+SHA-256 рабочей базы | 236EC4D9B0540DE04E4E6305FAA208672F31FBDF45B2AE84E92F80BD98053612
+Патч | TG-FE-2062-C15-001
+Статус патча | pending_upstream_confirmation
+Действие | disable_exact_thermodynamic_parameter
+Совпавших активных команд | 1
+Активных G-параметров C15_LAVES в рабочей базе | 18
+Активна команда -9e6 в рабочей базе | нет
+Исходная база без патча (в расчётах не используется) | C:\Users\gareg\AppData\Local\Temp\claude\C--Users-gareg\df345555-7c6e-4c59-a3ff-738ec6606c3d\scratchpad\snapshot\ThermoGar-installed-configuration\databases\diagnostic\fe\mc_fe_v2062_unpatched_with_mobility.thermogar.tdb
+Источник сверки с эталоном | эталонная база не поставляется, сверка по отпечатку mc_fe_v2062_unpatched_with_mobility.thermogar.fingerprint.json
+SHA-256 непатченной базы | F9375C3A7A8649BACE698E2177F2CC964BCE3F8A19F08AE05D88840ABD77B112 (из отпечатка)
+Активных G-параметров C15_LAVES в непатченной базе | 19 (из отпечатка)
+Активна команда -9e6 в непатченной базе | да (из отпечатка)
+LAVES_PHASE не изменена | да (из отпечатка)
+Проверка в нативном MatCalc | не проводилась
