@@ -417,3 +417,40 @@ charge» и те же ODbL/DbCL, то есть источником «non-commer
 * **Тесты из `tools\` не запускались** — каталог принадлежит потоку 11D, и часть тестов грузит
   базы. Изменённые модули проверены `python -m py_compile`, обе панели — на живом приложении.
 * **Расчётов «с исключением и без» нет** — они вынесены в отложенные пункты роадмапа (11E-2.4).
+
+---
+
+## Состояние деревьев на конец работы
+
+`git status --short` в `C:\Users\gareg\Desktop\ThermoGar` (ветка `main`), дословно:
+
+```
+?? REPORT_APP-576.md
+?? ZADACHA_APP-576_TERMOGAR_SOLIDUS_VJ159.md
+?? tasks/REGISTER.md
+?? tasks/WAVE11C_REPORT.local.bak
+?? tasks/WAVE11D_TECH_OPUS.md
+?? tasks/WAVE11E_INTEGRATION_OPUS.md
+?? tasks/WAVE11E_REPORT.md
+?? uliki_576/
+```
+
+Отслеживаемых изменений нет. Разбор каждой неотслеживаемой строки — в разделе 11E-1;
+`tasks\WAVE11E_REPORT.md` — копия этого отчёта, положенная по правилу 6.
+
+`git status --short` в `C:\Users\gareg\Desktop\ThermoGar-w11e` (ветка `wave11-integration`)
+не выводит ничего: дерево чистое, всё закоммичено.
+
+`git branch -v`, дословно:
+
+```
+* main               0a9b33b [ahead 20] Merge wave 11C: database passports, ODbL compliance audit, expansion candidates
++ wave10-fixes       72d1f4d feat(tech): расчёты технологичности ХН62М и отчёт волны 10
++ wave11-databases   0b6e0f7 docs(wave11c): паспорта баз, аудит соблюдения ODbL, кандидаты на расширение
++ wave11-docs        38fca6a docs(wave11b): вывод про 1100 °C без «однофазности», поправка к отчёту волны 10
++ wave11-integration 127737e docs(wave11e): отчёт волны 11E
++ wave11-tech        f124d35 test(density): 11D-1 — наклон ро(T) проверен против самой базы
++ wave9-hn62m        44c29a2 feat(study): расчётное исследование ХН62М(Sc)-ВИ на базе mc_ni
+```
+
+Ветка `wave11-integration` ждёт проверки мастера и не мержилась.
