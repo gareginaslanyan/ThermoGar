@@ -11,6 +11,7 @@ Ni–Cr–Mo, монотонность по температуре.
 
 from __future__ import annotations
 
+import copy
 import re
 import sys
 from pathlib import Path
@@ -50,17 +51,28 @@ CONTROL_COMPONENTS = (
     "NI", "CR", "MO", "C", "SI", "MN", "S", "NB", "AL", "TI", "FE", "VA",
 )
 
-_CACHE: dict[str, Any] = {}
+# Разобранная и починенная база. Наружу не отдаётся никогда: тесты получают
+# изолированную копию, см. _database. Разбор одного TDB стоит около 4,5 с, и
+# повторять его на каждый тест незачем — незачем и делить один объект.
+_MASTER: dict[str, Any] = {}
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def physical_db() -> PhysicalDensityDatabase:
+    """Своя физическая база на каждый тест.
+
+    Область видимости — тест, а не модуль: у ``PhysicalDensityDatabase`` есть
+    изменяемые ``functions`` и кэш значений, и делить их между тестами значит
+    заводить ту же зависимость от порядка, из-за которой чинился `BL-19`.
+    Разбор PDB стоит меньше миллисекунды, так что делить нечего ради чего.
+    """
+
     if not PDB_PATH.is_file():
         pytest.skip(f"Нет PDB: {PDB_PATH}")
     return PhysicalDensityDatabase(PDB_PATH)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def physical_db_plain() -> PhysicalDensityDatabase:
     """База без единой нашей поправки, что бы ни стояло в окружении."""
 
@@ -100,14 +112,39 @@ def _mean_linear_expansion(
 
 
 def _database(path: Path) -> Any:
+    """Изолированная копия разобранной базы — своя на каждый вызов.
+
+    `BL-19`: до волны 11N здесь отдавался один и тот же объект ``Database``
+    всем тестам сразу. Тест, который проходит или падает в зависимости от
+    порядка выполнения, однажды соврёт в обе стороны, поэтому общего
+    изменяемого состояния тут быть не должно вовсе — независимо от того,
+    кто именно его правит.
+
+    Копия делается руками, а не одним ``deepcopy``: ``Database.__deepcopy__``
+    самого pycalphad копирует только ``_parameters``, а ``phases``,
+    ``symbols`` и ``species`` оставляет **общими** с оригиналом. То есть
+    правка модельных подсказок фазы в «копии» дошла бы до всех. Копирование
+    стоит около 2 мс против 4,5 с на повторный разбор TDB.
+    """
+
     key = str(path)
-    if key not in _CACHE:
+    if key not in _MASTER:
         if not path.is_file():
             pytest.skip(f"Нет базы: {path}")
         database = Database(str(path))
         repair.repair_database(database, database_label=path.name)
-        _CACHE[key] = database
-    return _CACHE[key]
+        _MASTER[key] = database
+    return _isolated_copy(_MASTER[key])
+
+
+def _isolated_copy(database: Any) -> Any:
+    """Копия базы, ничего изменяемого не делящая с оригиналом."""
+
+    copied = copy.deepcopy(database)
+    copied.phases = copy.deepcopy(database.phases)
+    copied.symbols = copy.deepcopy(database.symbols)
+    copied.species = copy.deepcopy(database.species)
+    return copied
 
 
 def _solve(
@@ -927,3 +964,47 @@ def test_nickel_and_molybdenum_are_the_same_in_the_plain_database(
     assert with_overrides == pytest.approx(plain, rel=1.0e-12), (
         f"{element}: {with_overrides * 1e6:.3f} против {plain * 1e6:.3f}e-6/K"
     )
+# --------------------------------------------------------------------------- #
+# 11N-4. Тесты не делят изменяемое состояние (BL-19)
+# --------------------------------------------------------------------------- #
+
+
+def test_each_test_gets_its_own_database() -> None:
+    """`_database` отдаёт изолированную копию, а не общий объект.
+
+    Проверяется именно то, чего не даёт ``copy.deepcopy`` самого pycalphad:
+    ``phases``, ``symbols`` и ``species`` у копии свои. Без этого правка в
+    одном тесте доходила бы до всех следующих, и порядок выполнения менял бы
+    результат — это и есть `BL-19`.
+    """
+
+    first = _database(NI_TDB)
+    second = _database(NI_TDB)
+    assert first is not second
+    for attribute in ("phases", "symbols", "species", "_parameters"):
+        assert getattr(first, attribute) is not getattr(second, attribute), (
+            f"{attribute} общий у двух копий базы"
+        )
+    assert first.phases["FCC_A1"] is not second.phases["FCC_A1"]
+
+    # Правка в одной копии не видна в следующей.
+    first.phases.pop("FCC_A1")
+    first.symbols["ТОЛЬКО_ДЛЯ_ТЕСТА"] = 1.0
+    third = _database(NI_TDB)
+    assert "FCC_A1" in third.phases
+    assert "ТОЛЬКО_ДЛЯ_ТЕСТА" not in third.symbols
+    assert set(third.phases) == set(second.phases)
+
+
+def test_physical_database_fixtures_are_per_test(
+    physical_db: PhysicalDensityDatabase,
+) -> None:
+    """Физическая база тоже своя на каждый тест.
+
+    Тест портит свой экземпляр намеренно. Если бы фикстура была модульной,
+    следующий тест получил бы испорченную базу — и падал бы или проходил в
+    зависимости от порядка.
+    """
+
+    physical_db.functions.clear()
+    assert not physical_db.functions
