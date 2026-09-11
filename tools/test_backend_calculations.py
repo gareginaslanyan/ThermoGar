@@ -855,19 +855,13 @@ def test_t0_temperature(db: Database, case: Case) -> None:
 
 
 @pytest.mark.timeout(DEFAULT_TIMEOUT)
-def test_alloy_density(request: pytest.FixtureRequest, db: Database, case: Case, phases: list[str]) -> None:
+def test_alloy_density(db: Database, case: Case, phases: list[str]) -> None:
     """Density of the equilibrium phase assembly from physical_data_v103.pdb."""
 
-    if case.key == "al":
-        request.node.add_marker(
-            pytest.mark.xfail(
-                strict=True,
-                reason=(
-                    "PDB v1.03 не покрывает THETA_AL2CU: плотность сплава не "
-                    "выдаётся, покрытие < 100 %"
-                ),
-            )
-        )
+    # Ячейка алюминия несла `xfail(strict=True)` по непокрытому в PDB v1.03
+    # THETA_AL2CU (`BL-16`). Волна 11A завела оценку по правилу смеси для фаз
+    # без модели, покрытие стало полным, и тест начал проходить — а строгая
+    # метка обращала это в падение (XPASS(strict)). Метка снята в волне 11P.
 
     from thermogar_physical import PhysicalDensityDatabase, calculate_physical_properties
 
@@ -1031,6 +1025,25 @@ def test_diffusion_direct_kawin(db: Database, case: Case) -> None:
         assert np.isfinite(profile).all()
 
 
+# Клетка железа (BCC_A2 / M23C6) вынесена в `slow`, но не удалена и не
+# пропущена: она остаётся в наборе и запускается по `-m slow`. Волна 11L
+# измерила, что на никеле тест идёт 18 с, на алюминии 11 с, а на железе
+# переваливает за 600 с и снимается `pytest-timeout`. На Windows тот работает
+# методом `thread` и по срабатыванию снимает весь процесс pytest, а не один
+# тест, поэтому одна эта ячейка срывала всю регрессию. Стоимость — в методе
+# движущей силы по умолчанию у kawin: `getDrivingForce` -> tangent ->
+# `getLocalEq` считает равновесие pycalphad на каждую оценку скорости
+# зарождения, и Fe-C-Cr с M23C6 — самый дорогой угол. Это не зависание и не
+# нехватка памяти, а счёт (`BL-19`).
+@pytest.mark.parametrize(
+    "db_key",
+    (
+        "ni",
+        "al",
+        pytest.param("fe", marks=pytest.mark.slow),
+    ),
+    indirect=True,
+)
 @pytest.mark.timeout(SLOW_TIMEOUT)
 def test_kwn_module(case: Case) -> None:
     """Level (b): short KWN run through ``thermogar_precipitation``."""
@@ -1081,6 +1094,25 @@ def test_kwn_module(case: Case) -> None:
         assert bool((result.quality["Статус"] == "пройдена").all())
 
 
+# Клетка железа (BCC_A2 / M23C6) вынесена в `slow`, но не удалена и не
+# пропущена: она остаётся в наборе и запускается по `-m slow`. Волна 11L
+# измерила, что на никеле тест идёт 18 с, на алюминии 11 с, а на железе
+# переваливает за 600 с и снимается `pytest-timeout`. На Windows тот работает
+# методом `thread` и по срабатыванию снимает весь процесс pytest, а не один
+# тест, поэтому одна эта ячейка срывала всю регрессию. Стоимость — в методе
+# движущей силы по умолчанию у kawin: `getDrivingForce` -> tangent ->
+# `getLocalEq` считает равновесие pycalphad на каждую оценку скорости
+# зарождения, и Fe-C-Cr с M23C6 — самый дорогой угол. Это не зависание и не
+# нехватка памяти, а счёт (`BL-19`).
+@pytest.mark.parametrize(
+    "db_key",
+    (
+        "ni",
+        "al",
+        pytest.param("fe", marks=pytest.mark.slow),
+    ),
+    indirect=True,
+)
 @pytest.mark.timeout(SLOW_TIMEOUT)
 def test_kwn_direct_kawin(case: Case) -> None:
     """Level (a): the same KWN model straight through kawin, no ThermoGar code."""
