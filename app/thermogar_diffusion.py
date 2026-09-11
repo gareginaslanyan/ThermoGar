@@ -49,7 +49,6 @@ try:
     from kawin.solver import explicitEulerIterator
     from kawin.thermo import GeneralThermodynamics
     from kawin.thermo.Mobility import interstitials as KAWIN_INTERSTITIALS
-    from kawin.thermo.Mobility import x_to_u_frac
 
     KAWIN_AVAILABLE = True
     KAWIN_IMPORT_ERROR = ""
@@ -64,8 +63,9 @@ except Exception as import_error:  # pragma: no cover - зависит от ок
     StepProfile1D = None
     explicitEulerIterator = None
     GeneralThermodynamics = None
+    # Список kawin, повторённый для случая, когда пакет не загрузился:
+    # баланс считается и без него.
     KAWIN_INTERSTITIALS = ("C", "N", "O", "H", "B")
-    x_to_u_frac = None
     KAWIN_AVAILABLE = False
     KAWIN_IMPORT_ERROR = str(import_error)
 
@@ -582,8 +582,8 @@ def _u_fractions(elements: list[str], profile_at: np.ndarray) -> np.ndarray:
     """u-доли профиля: ``u_k = x_k / сумма замещающих``.
 
     Повторяет ``kawin.thermo.Mobility.x_to_u_frac``; своя реализация нужна,
-    чтобы баланс считался и без установленного kawin (тогда ветка импорта
-    оставляет ``x_to_u_frac`` пустым).
+    чтобы баланс считался и без установленного kawin — тогда ветка импорта
+    подставляет свой список внедрённых элементов.
     """
 
     profile = np.atleast_2d(np.asarray(profile_at, dtype=float))
