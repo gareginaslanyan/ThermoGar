@@ -11,6 +11,7 @@ Ni–Cr–Mo, монотонность по температуре.
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -26,7 +27,12 @@ from pycalphad import Database, equilibrium, variables as v
 from pycalphad.core.utils import filter_phases, unpack_species
 
 import thermogar_database_repair as repair
-from thermogar_physical import PhysicalDensityDatabase, calculate_physical_properties
+from thermogar_physical import (
+    PhysicalDensityDatabase,
+    calculate_physical_properties,
+    default_overrides_path,
+    load_physical_overrides,
+)
 
 PDB_PATH = ROOT / "databases/physical/original/physical_data_v103.pdb"
 NI_TDB = ROOT / "databases/converted/mc_ni_v2036_with_mobility.garcalc.tdb"
@@ -51,6 +57,45 @@ def physical_db() -> PhysicalDensityDatabase:
     if not PDB_PATH.is_file():
         pytest.skip(f"Нет PDB: {PDB_PATH}")
     return PhysicalDensityDatabase(PDB_PATH)
+
+
+@pytest.fixture(scope="module")
+def physical_db_plain() -> PhysicalDensityDatabase:
+    """База без единой нашей поправки, что бы ни стояло в окружении."""
+
+    if not PDB_PATH.is_file():
+        pytest.skip(f"Нет PDB: {PDB_PATH}")
+    return PhysicalDensityDatabase(PDB_PATH, overrides=None)
+
+
+def _mean_linear_expansion(
+    physical_database: PhysicalDensityDatabase,
+) -> float:
+    """Средний линейный коэффициент расширения матрицы, 25…1100 °C, 1/K.
+
+    Плотность обратна кубу линейного размера, поэтому
+    ᾱ = ((ρ₂₅/ρ₁₁₀₀)^(1/3) − 1) / ΔT.
+    """
+
+    database = _database(NI_TDB)
+    components = list(CONTROL_COMPONENTS)
+    elements = [name for name in components if name != "VA"]
+    densities: list[float] = []
+    for temperature_c in (25.0, 1100.0):
+        temperature_k = temperature_c + 273.15
+        result = calculate_physical_properties(
+            database,
+            _solve(database, components, ["FCC_A1"], CONTROL_X, temperature_k),
+            elements,
+            temperature_k,
+            physical_database,
+        )
+        assert result.alloy_density_kg_m3 is not None, (
+            f"При {temperature_c} °C плотность матрицы не посчитана"
+        )
+        densities.append(float(result.alloy_density_kg_m3))
+    cold, hot = densities
+    return ((cold / hot) ** (1.0 / 3.0) - 1.0) / (1100.0 - 25.0)
 
 
 def _database(path: Path) -> Any:
@@ -329,3 +374,211 @@ def test_mixture_rule_is_volume_additive(
     assert value < linear, (
         "Смешение всё ещё линейно по мольной доле: правило смеси не исправлено"
     )
+
+
+# --------------------------------------------------------------------------- #
+# 11K-2. Тепловое расширение матрицы и поправка по хрому
+# --------------------------------------------------------------------------- #
+
+# Физическое окно для аустенитных никелевых жаропрочных сплавов, 25…1100 °C.
+EXPANSION_WINDOW = (12.0e-6, 20.0e-6)
+
+
+def _chromium_override():
+    """Запись о поправке по хрому из файла-дополнения, или None."""
+
+    path = default_overrides_path()
+    if not path.is_file():
+        return None
+    overrides = load_physical_overrides(path)
+    for entry in overrides.entries:
+        if entry.identifier == "cr-thermal-expansion":
+            return entry
+    return None
+
+
+def test_plain_database_expansion_is_out_of_physical_window(
+    physical_db_plain: PhysicalDensityDatabase,
+) -> None:
+    """Сторож теста: без поправки коэффициент расширения вне окна 12…20.
+
+    Без этой проверки основной тест ничего не сторожит — нельзя отличить
+    «поправка работает» от «окно такое широкое, что проходит всё».
+    Число на чистой базе — около 21,2·10⁻⁶/K, причина в хроме: база даёт ему
+    среднее расширение 32,7·10⁻⁶/K на 25…1100 °C.
+    """
+
+    assert not physical_db_plain.applied_overrides, (
+        "Фикстура обязана давать базу без поправок"
+    )
+    coefficient = _mean_linear_expansion(physical_db_plain)
+    low, high = EXPANSION_WINDOW
+    assert not (low <= coefficient <= high), (
+        f"Чистая база вдруг попала в окно: {coefficient * 1e6:.2f}e-6/K. "
+        "Значит, либо базу подменили, либо окно теста бессмысленно."
+    )
+    assert coefficient > high, (
+        f"Ожидалось завышение, получено {coefficient * 1e6:.2f}e-6/K"
+    )
+
+
+def test_matrix_expansion_within_physical_window(
+    physical_db: PhysicalDensityDatabase,
+) -> None:
+    """С поправкой по хрому матрица укладывается в 12…20·10⁻⁶/K.
+
+    Проверяется отношение ρ(25 °C)/ρ(1100 °C), то есть ровно тот наклон ρ(T),
+    который волна 11D-1 признала завышенным.
+    """
+
+    entry = _chromium_override()
+    if entry is None:
+        pytest.skip("Нет файла-дополнения с поправкой по хрому.")
+    if not entry.is_filled:
+        pytest.skip(
+            "Поправка по хрому не заполнена: нет прослеживаемого "
+            "первоисточника на тепловое расширение хрома. Список нужных "
+            "статей с DOI — tasks/SOURCES_WANTED.md, позиция S-1. "
+            f"Состояние записи: {entry.status}."
+        )
+    assert physical_db.applied_overrides, (
+        "Поправка заполнена, но не применилась: проверьте enabled в файле "
+        "дополнения и переменную THERMOGAR_PHYSICAL_OVERRIDES."
+    )
+    coefficient = _mean_linear_expansion(physical_db)
+    low, high = EXPANSION_WINDOW
+    assert low <= coefficient <= high, (
+        f"Средний коэффициент расширения матрицы {coefficient * 1e6:.2f}e-6/K "
+        f"вне окна {low * 1e6:.0f}…{high * 1e6:.0f}e-6/K"
+    )
+
+
+def test_reference_density_survives_the_override(
+    physical_db: PhysicalDensityDatabase,
+    physical_db_plain: PhysicalDensityDatabase,
+) -> None:
+    """Опорная точка 25 °C верна и сейчас, поправка не имеет права её сдвинуть.
+
+    Правится наклон ρ(T), а не значение при комнатной температуре.
+    """
+
+    database = _database(NI_TDB)
+    components = list(CONTROL_COMPONENTS)
+    elements = [name for name in components if name != "VA"]
+    values: list[float] = []
+    for physical_database in (physical_db_plain, physical_db):
+        result = calculate_physical_properties(
+            database,
+            _solve(database, components, ["FCC_A1"], CONTROL_X, 298.15),
+            elements,
+            298.15,
+            physical_database,
+        )
+        assert result.alloy_density_kg_m3 is not None
+        values.append(float(result.alloy_density_kg_m3))
+    plain, corrected = values
+    assert plain == pytest.approx(8481.0, abs=15.0), (
+        f"Опорная плотность 25 °C уехала сама по себе: {plain:.1f} кг/м³"
+    )
+    assert corrected == pytest.approx(plain, rel=1.0e-4), (
+        f"Поправка сдвинула опорную точку 25 °C: {plain:.1f} -> {corrected:.1f}"
+    )
+
+
+def test_override_is_announced_in_the_result(
+    physical_db: PhysicalDensityDatabase,
+) -> None:
+    """Применённая поправка названа в результате расчёта, а не молчит.
+
+    Подменять данные источника без ведома пользователя нельзя, поэтому текст
+    обязан попасть в ``warnings`` — именно их рисует интерфейс.
+    """
+
+    if not physical_db.applied_overrides:
+        pytest.skip("Ни одна поправка не применена — объявлять нечего.")
+    database = _database(NI_TDB)
+    components = list(CONTROL_COMPONENTS)
+    elements = [name for name in components if name != "VA"]
+    result = calculate_physical_properties(
+        database,
+        _solve(database, components, ["FCC_A1"], CONTROL_X, 298.15),
+        elements,
+        298.15,
+        physical_db,
+    )
+    for entry in physical_db.applied_overrides:
+        assert entry.user_message in result.warnings, (
+            f"Поправка {entry.identifier} применена, но в результате о ней "
+            "не сказано"
+        )
+
+
+def test_override_switch_off_returns_the_plain_database() -> None:
+    """Выключатель работает и не требует правки файлов.
+
+    Проверяются оба документированных способа: переменная окружения и явный
+    ``overrides=None``. Расчёта равновесия здесь нет — сравниваются сами
+    выражения базы.
+    """
+
+    if not PDB_PATH.is_file():
+        pytest.skip(f"Нет PDB: {PDB_PATH}")
+    plain = PhysicalDensityDatabase(PDB_PATH, overrides=None)
+    assert not plain.applied_overrides
+
+    import os
+
+    from thermogar_physical import (
+        PHYSICAL_OVERRIDES_ENV,
+        overrides_enabled_by_environment,
+    )
+
+    saved = os.environ.get(PHYSICAL_OVERRIDES_ENV)
+    try:
+        os.environ[PHYSICAL_OVERRIDES_ENV] = "off"
+        assert overrides_enabled_by_environment() is False
+        switched_off = PhysicalDensityDatabase(PDB_PATH)
+        assert not switched_off.applied_overrides
+        assert switched_off.overrides is None
+        assert (
+            switched_off.functions["DTCRBCC"].expression
+            == plain.functions["DTCRBCC"].expression
+        )
+    finally:
+        if saved is None:
+            os.environ.pop(PHYSICAL_OVERRIDES_ENV, None)
+        else:
+            os.environ[PHYSICAL_OVERRIDES_ENV] = saved
+
+
+def test_override_file_is_honest_about_itself() -> None:
+    """Файл-дополнение обязан называть себя нашей правкой, а не данными базы.
+
+    И обязан указывать, к какой именно базе он применим: иначе его можно
+    незаметно наложить на другую версию PDB.
+    """
+
+    path = default_overrides_path()
+    if not path.is_file():
+        pytest.skip("Файла-дополнения нет.")
+    overrides = load_physical_overrides(path)
+    assert "правка проекта" in overrides.notice.lower()
+    assert re.fullmatch(r"[0-9a-f]{64}", overrides.target_sha256), (
+        "Файл-дополнение не называет SHA-256 базы, к которой применим"
+    )
+    assert overrides.entries, "Пустой файл-дополнение"
+    for entry in overrides.entries:
+        assert entry.quantity, f"{entry.identifier}: не названа перекрываемая величина"
+        assert entry.reason, f"{entry.identifier}: не названа причина правки"
+        assert entry.date, f"{entry.identifier}: нет даты"
+        assert entry.original_expression, (
+            f"{entry.identifier}: не сохранено исходное выражение базы"
+        )
+        if entry.is_filled:
+            assert entry.user_message, (
+                f"{entry.identifier}: заполнена, но пользователю сказать нечего"
+            )
+        else:
+            # Незаполненная правка обязана быть выключена — иначе она молча
+            # подменит величину пустотой.
+            assert not overrides.enabled or entry.expression is None

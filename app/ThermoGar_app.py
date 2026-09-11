@@ -1730,6 +1730,13 @@ def render_b4b_density_temperature(
         table = pd.DataFrame(rows)
         if state.get("engine_note"):
             st.caption(str(state["engine_note"]))
+        # Поправки проекта поверх физической базы должны быть названы и здесь,
+        # а не только в расчёте при одной температуре: они одинаковы во всех
+        # точках, поэтому берутся из первой.
+        for warning_text in (
+            state["projections"][0]["warnings"] if state["projections"] else ()
+        ):
+            st.warning(warning_text)
         st.dataframe(table, width="stretch", hide_index=True)
         figure = None
         if not table.empty:
