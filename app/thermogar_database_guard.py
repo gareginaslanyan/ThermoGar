@@ -55,6 +55,15 @@ WORKING_THERMO_RELATIVE_PATH = Path(
 UPSTREAM_THERMO_RELATIVE_PATH = Path(
     "databases/diagnostic/fe/mc_fe_v2062_unpatched.thermogar.tdb"
 )
+# Эталонная база в поставку не входит: это второй полноразмерный TDB и сам по
+# себе производная по ODbL. Вместо неё рядом с рабочим паспортом лежит
+# отпечаток — те самые величины, которые панель читала из файла эталона.
+# Генератор: scripts/thermogar_fe_reference_fingerprint.py.
+UPSTREAM_FINGERPRINT_RELATIVE_PATH = Path(
+    "databases/converted/fe/"
+    "mc_fe_v2062_unpatched_with_mobility.thermogar.fingerprint.json"
+)
+UPSTREAM_FINGERPRINT_SCHEMA = "THERMOGAR-FE-REFERENCE-FINGERPRINT-1"
 
 
 @dataclass(frozen=True)
@@ -207,6 +216,7 @@ def profile_paths(project_root: str | Path) -> dict[str, Path]:
         "upstream_thermo_report": upstream_thermo.with_suffix(
             upstream_thermo.suffix + ".json"
         ),
+        "upstream_fingerprint": root / UPSTREAM_FINGERPRINT_RELATIVE_PATH,
     }
 
 
@@ -404,8 +414,43 @@ def assert_fe_solidification_safe(
 # "всё сошлось". Каталог databases/diagnostic/fe/ в установщик не попадает,
 # так что в установленной программе это был штатный режим работы панели.
 UPSTREAM_NOT_SHIPPED: Final = (
-    "сверка не выполнена: эталонная база не поставляется"
+    "сверка невозможна: нет ни эталонной базы, ни её отпечатка"
 )
+UPSTREAM_FROM_FINGERPRINT_SUFFIX: Final = " (из отпечатка)"
+MATCHED: Final = "да"
+NOT_MATCHED: Final = "нет"
+
+
+def load_upstream_fingerprint(
+    project_root: str | Path,
+) -> dict[str, Any] | None:
+    """Вернуть отпечаток эталонной базы, если он поставлен и пригоден.
+
+    Отпечаток содержит ровно те величины, которые панель иначе измеряла бы на
+    файле эталона. Непригодный отпечаток — чужая схема, битый JSON, отсутствие
+    обязательных полей — это не «сверка не сошлась», а отсутствие отпечатка:
+    возвращаем None, чтобы панель сказала «сверка невозможна», а не соврала.
+    """
+    path = Path(project_root) / UPSTREAM_FINGERPRINT_RELATIVE_PATH
+    if not path.is_file():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8-sig"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    if not isinstance(payload, dict):
+        return None
+    if payload.get("schema_version") != UPSTREAM_FINGERPRINT_SCHEMA:
+        return None
+    required = (
+        "reference_database_sha256",
+        "c15_laves_g_parameter_count",
+        "exact_suspect_command_present",
+        "laves_phase_g_parameter_list_sha256",
+    )
+    if any(payload.get(key) is None for key in required):
+        return None
+    return payload
 
 
 def passport_dataframe(
@@ -439,6 +484,64 @@ def passport_dataframe(
         else []
     )
 
+    # Три исхода сверки с эталоном различаются явно и не смешиваются:
+    # эталонная база на месте — меряем по файлу; базы нет, но есть отпечаток —
+    # берём его величины и помечаем их источник; нет ни того, ни другого —
+    # говорим, что сверка невозможна, и не показываем ни одного числа.
+    fingerprint = (
+        load_upstream_fingerprint(project_root)
+        if not upstream.is_file()
+        else None
+    )
+    upstream_laves_digest: str | None
+    if upstream.is_file():
+        upstream_source = "эталонная база на месте"
+        upstream_sha: object = file_sha256(upstream)
+        upstream_c15_count: object = len(upstream_c15)
+        upstream_suspect: object = (
+            MATCHED if find_exact_suspect_commands(upstream) else NOT_MATCHED
+        )
+        upstream_laves_digest = command_list_sha256(upstream_laves)
+    elif fingerprint is not None:
+        suffix = UPSTREAM_FROM_FINGERPRINT_SUFFIX
+        upstream_source = (
+            "эталонная база не поставляется, сверка по отпечатку "
+            f"{UPSTREAM_FINGERPRINT_RELATIVE_PATH.name}"
+        )
+        upstream_sha = (
+            str(fingerprint["reference_database_sha256"]).upper() + suffix
+        )
+        upstream_c15_count = (
+            f"{fingerprint['c15_laves_g_parameter_count']}{suffix}"
+        )
+        upstream_suspect = (
+            MATCHED
+            if fingerprint["exact_suspect_command_present"]
+            else NOT_MATCHED
+        ) + suffix
+        upstream_laves_digest = str(
+            fingerprint["laves_phase_g_parameter_list_sha256"]
+        ).upper()
+    else:
+        upstream_source = UPSTREAM_NOT_SHIPPED
+        upstream_sha = UPSTREAM_NOT_SHIPPED
+        upstream_c15_count = UPSTREAM_NOT_SHIPPED
+        upstream_suspect = UPSTREAM_NOT_SHIPPED
+        upstream_laves_digest = None
+
+    if upstream_laves_digest is None or not working.is_file():
+        laves_unchanged: object = UPSTREAM_NOT_SHIPPED
+    else:
+        laves_unchanged = (
+            MATCHED
+            if command_list_sha256(working_laves) == upstream_laves_digest
+            else NOT_MATCHED
+        )
+        if not upstream.is_file():
+            laves_unchanged = str(laves_unchanged) + (
+                UPSTREAM_FROM_FINGERPRINT_SUFFIX
+            )
+
     rows = [
         (
             "Выбранный профиль",
@@ -464,31 +567,14 @@ def passport_dataframe(
             "да" if working.is_file() and find_exact_suspect_commands(working) else "нет",
         ),
         ("Исходная база без патча (в расчётах не используется)", str(upstream)),
-        (
-            "SHA-256 непатченной базы",
-            file_sha256(upstream) if upstream.is_file() else UPSTREAM_NOT_SHIPPED,
-        ),
+        ("Источник сверки с эталоном", upstream_source),
+        ("SHA-256 непатченной базы", upstream_sha),
         (
             "Активных G-параметров C15_LAVES в непатченной базе",
-            len(upstream_c15) if upstream.is_file() else UPSTREAM_NOT_SHIPPED,
+            upstream_c15_count,
         ),
-        (
-            "Активна команда -9e6 в непатченной базе",
-            ("да" if find_exact_suspect_commands(upstream) else "нет")
-            if upstream.is_file()
-            else UPSTREAM_NOT_SHIPPED,
-        ),
-        (
-            "LAVES_PHASE не изменена",
-            (
-                "да"
-                if command_list_sha256(working_laves)
-                == command_list_sha256(upstream_laves)
-                else "нет"
-            )
-            if working.is_file() and upstream.is_file()
-            else UPSTREAM_NOT_SHIPPED,
-        ),
+        ("Активна команда -9e6 в непатченной базе", upstream_suspect),
+        ("LAVES_PHASE не изменена", laves_unchanged),
         ("Проверка в нативном MatCalc", "не проводилась"),
     ]
     return pd.DataFrame([(k, str(v)) for k, v in rows], columns=["Поле", "Значение"])

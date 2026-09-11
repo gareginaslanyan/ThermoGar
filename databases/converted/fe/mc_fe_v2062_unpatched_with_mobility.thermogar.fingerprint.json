@@ -1,0 +1,19 @@
+{
+  "schema_version": "THERMOGAR-FE-REFERENCE-FINGERPRINT-1",
+  "generated_by": "scripts/thermogar_fe_reference_fingerprint.py",
+  "profile_key": "upstream_original",
+  "patch_id": "TG-FE-2062-C15-001",
+  "reference_database_path": "databases/diagnostic/fe/mc_fe_v2062_unpatched_with_mobility.thermogar.tdb",
+  "reference_database_shipped": false,
+  "reference_database_sha256": "F9375C3A7A8649BACE698E2177F2CC964BCE3F8A19F08AE05D88840ABD77B112",
+  "reference_database_size_bytes": 568418,
+  "c15_laves_g_parameter_count": 19,
+  "c15_laves_g_parameter_list_sha256": "908029FD94804B52B43BD9522E6C6F18D6B0818518891E225DFDE8EF674B8997",
+  "c15_reciprocal_command_count": 1,
+  "exact_suspect_command_signature": "G(C15_LAVES,FE,NI:MN,SI;0)",
+  "exact_suspect_command_present": true,
+  "laves_phase_g_parameter_count": 125,
+  "laves_phase_g_parameter_list_sha256": "D2B092D8BC1EB000852DBD754DB4839AB594AB0CD8FE66F5CE8778CE084B169B",
+  "value_source": "app/thermogar_database_guard.py helpers: file_sha256, phase_parameter_commands, find_exact_suspect_commands, find_c15_reciprocal_commands, command_list_sha256",
+  "note": "Shipped in place of databases/diagnostic/fe/. It contains only digests and counts, no thermodynamic parameters."
+}
