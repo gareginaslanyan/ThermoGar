@@ -96,6 +96,11 @@ A2_REQUIRED_C = (25.0, 400.0, 700.0, 900.0, 1100.0, 1300.0)
 A2_SCAN_C = tuple(float(50 * index) for index in range(1, 27))  # 50…1300 с шагом 50
 A2_ESTIMATED_LIMIT_PCT = 1.0
 A2_PDENS = 100
+# Фазы, у которых собственной модели плотности в PDB нет; названы в постановке.
+# Их доля и решает, прикидка низкотемпературная плотность или расчёт.
+A2_WATCHED_PHASES: tuple[str, ...] = (
+    "NI2CR", "P_PHASE", "MNS_Q", "DELTA", "MU_PHASE",
+)
 
 # --- A3 -------------------------------------------------------------------- #
 
@@ -595,8 +600,15 @@ def a1_wave9_method(pdens: int = 100) -> dict[str, Any]:
 
 
 def a2_point(ctx: Context, physical_db: Any, mole: Mapping[str, float],
-             temperature_c: float) -> dict[str, Any]:
-    """Плотность сплава и доля оценочных фаз при одной температуре."""
+             temperature_c: float) -> tuple[dict[str, Any], list[dict[str, Any]],
+                                            list[dict[str, Any]]]:
+    """Плотность сплава при одной температуре и всё, что к ней прилагается.
+
+    Возвращает тройку: строку сводки, пофазную роспись покрытия и сами тексты
+    предупреждений расчёта. Предупреждения снимаются здесь, а не
+    пересказываются: поток B отложил этот вывод по памяти, и подпункт A2 идёт
+    ровно по тому же пути, поэтому дословный текст должен уехать в результаты.
+    """
 
     from thermogar_physical import calculate_physical_properties
 
@@ -611,6 +623,7 @@ def a2_point(ctx: Context, physical_db: Any, mole: Mapping[str, float],
     table = result.phase_table
     estimated_names: list[str] = []
     missing_names: list[str] = []
+    phase_rows: list[dict[str, Any]] = []
     if not table.empty:
         estimated_names = sorted(
             str(name) for name in
@@ -620,7 +633,39 @@ def a2_point(ctx: Context, physical_db: Any, mole: Mapping[str, float],
             str(name) for name in
             table.loc[table["Статус данных"] == "нет данных", "Фаза"]
         )
+        for record in table.to_dict("records"):
+            phase_rows.append({
+                "T, °C": float(temperature_c),
+                "фаза": str(record.get("Фаза", "")),
+                "статус данных": str(record.get("Статус данных", "")),
+                "мольная доля, %": record.get("Мольная доля, %"),
+                "массовая доля, %": record.get("Массовая доля, %"),
+                "плотность фазы, кг/м³": record.get("Плотность фазы, кг/м³"),
+                "модель плотности": str(record.get("Модель плотности", "")),
+                "примечание": str(record.get("Примечание", "")),
+                "диагностика": str(record.get("Диагностика", "")),
+            })
     phases_present = sorted(str(name) for name in table["Фаза"]) if not table.empty else []
+
+    warning_rows = [
+        {"T, °C": float(temperature_c), "источник": "предупреждение расчёта",
+         "текст": str(text)}
+        for text in (result.warnings or [])
+    ]
+    warning_rows.append({
+        "T, °C": float(temperature_c), "источник": "качество результата",
+        "текст": str(result.quality_label),
+    })
+    if not result.missing_table.empty:
+        for record in result.missing_table.to_dict("records"):
+            warning_rows.append({
+                "T, °C": float(temperature_c),
+                "источник": f"фаза без модели: {record.get('Фаза', '')}",
+                "текст": (
+                    f"мольная доля {record.get('Мольная доля, %')} %; "
+                    f"{record.get('Причина', '')} {record.get('Диагностика', '')}"
+                ).strip(),
+            })
 
     density = result.alloy_density_kg_m3
     row = {
@@ -634,6 +679,7 @@ def a2_point(ctx: Context, physical_db: Any, mole: Mapping[str, float],
         "фазы без данных": ", ".join(missing_names) or "нет",
         "равновесные фазы": " + ".join(phases_present),
         "качество": str(result.quality_label),
+        "предупреждений": len(result.warnings or []),
         "время, с": round(seconds, 1),
     }
     del equilibrium_result, result
@@ -641,7 +687,7 @@ def a2_point(ctx: Context, physical_db: Any, mole: Mapping[str, float],
     log(f"A2 {temperature_c:.0f} °C: "
         f"{row['плотность, г/см³']} г/см³, оценочных {row['оценочных фаз, % молей']} %, "
         f"{row['оценочные фазы']}")
-    return row
+    return row, phase_rows, warning_rows
 
 
 def a2_density(force: bool = False) -> dict[str, Any]:
@@ -655,23 +701,86 @@ def a2_density(force: bool = False) -> dict[str, Any]:
 
     temperatures = sorted(set(A2_REQUIRED_C) | set(A2_SCAN_C))
     partial = OUT / "a2_density.csv"
-    done: dict[float, dict[str, Any]] = {}
-    if partial.is_file() and not force:
-        # Точки, посчитанные до обрыва, не пересчитываются.
-        previous = pd.read_csv(partial, **CSV_READ)
-        for record in previous.to_dict("records"):
-            done[round(float(record["T, °C"]), 3)] = record
-        log(f"A2: из прошлого прогона взято {len(done)} точек")
+    phases_path = OUT / "a2_phase_coverage.csv"
+    warnings_path = OUT / "a2_density_warnings.csv"
+
+    def resume(path: Path) -> dict[float, list[dict[str, Any]]]:
+        """Строки прошлого прогона, разложенные по температуре."""
+        if not path.is_file() or force:
+            return {}
+        grouped: dict[float, list[dict[str, Any]]] = {}
+        for record in pd.read_csv(path, **CSV_READ).to_dict("records"):
+            grouped.setdefault(round(float(record["T, °C"]), 3), []).append(record)
+        return grouped
+
+    # Все три таблицы подхватываются вместе: иначе после обрыва сводка была бы
+    # полной, а роспись и предупреждения — только за досчитанные точки.
+    done_rows = resume(partial)
+    done_phases = resume(phases_path)
+    done_warnings = resume(warnings_path)
 
     rows: list[dict[str, Any]] = []
+    phase_rows: list[dict[str, Any]] = []
+    warning_rows: list[dict[str, Any]] = []
     for temperature in temperatures:
         key = round(float(temperature), 3)
-        rows.append(done[key] if key in done else a2_point(ctx, physical_db, mole, temperature))
+        if key in done_rows and key in done_phases and key in done_warnings:
+            rows.append(done_rows[key][0])
+            phase_rows.extend(done_phases[key])
+            warning_rows.extend(done_warnings[key])
+        else:
+            row, phases, warnings = a2_point(ctx, physical_db, mole, temperature)
+            rows.append(row)
+            phase_rows.extend(phases)
+            warning_rows.extend(warnings)
         # Запись после каждой точки: расчёт длинный, обрыв не должен его терять.
         pd.DataFrame(rows).to_csv(partial, **CSV_WRITE)
+        pd.DataFrame(phase_rows).to_csv(phases_path, **CSV_WRITE)
+        pd.DataFrame(warning_rows).to_csv(warnings_path, **CSV_WRITE)
 
-    table = pd.DataFrame(rows)
-    return {"таблица": table.to_dict("records")}
+    return {
+        "таблица": rows,
+        "роспись фаз": phase_rows,
+        "предупреждения": warning_rows,
+    }
+
+
+def a2_watched_phase_report(phase_rows: pd.DataFrame) -> list[dict[str, Any]]:
+    """Роспись по фазам, у которых модели плотности в PDB нет.
+
+    Список назван в постановке: NI2CR, P_PHASE, MNS_Q, DELTA, MU_PHASE. Для
+    каждой — в каком интервале температур она вообще встречается, с каким
+    статусом и какую долю молей набирает в худшей точке. Именно эти фазы и
+    делают низкотемпературную плотность прикидкой.
+    """
+
+    report: list[dict[str, Any]] = []
+    for phase in A2_WATCHED_PHASES:
+        block = phase_rows[phase_rows["фаза"] == phase]
+        if block.empty:
+            report.append({
+                "фаза": phase,
+                "встречается": False,
+                "примечание": "в равновесии на этой сетке температур не появилась",
+            })
+            continue
+        share = block["мольная доля, %"].astype(float)
+        worst = block.loc[share.idxmax()]
+        statuses = sorted({str(value) for value in block["статус данных"]})
+        report.append({
+            "фаза": phase,
+            "встречается": True,
+            "температуры, °C": [
+                float(block["T, °C"].min()), float(block["T, °C"].max())
+            ],
+            "точек сетки": int(len(block)),
+            "статусы": statuses,
+            "наибольшая мольная доля, %": round(float(share.max()), 3),
+            "при T, °C": float(worst["T, °C"]),
+            "модель плотности": str(worst["модель плотности"]) or "нет",
+            "примечание": str(worst["примечание"]),
+        })
+    return report
 
 
 def a2_reliable_from(table: pd.DataFrame) -> float | None:
@@ -734,12 +843,34 @@ def step_a2(force: bool = False) -> None:
 
     payload = run_child(["--a2", "1"] + (["--force"] if force else []))
     table = pd.DataFrame(payload["таблица"])
+    phase_rows = pd.DataFrame(payload["роспись фаз"])
+    warning_rows = pd.DataFrame(payload["предупреждения"])
     write_csv(table, "a2_density.csv")
+    write_csv(phase_rows, "a2_phase_coverage.csv")
+    write_csv(warning_rows, "a2_density_warnings.csv")
     plot_a2(table, OUT / "a2_density.png")
 
     required = table[table["T, °C"].isin(A2_REQUIRED_C)].sort_values("T, °C")
     write_csv(required, "a2_density_required.csv")
     boundary = a2_reliable_from(table)
+    watched = a2_watched_phase_report(phase_rows)
+
+    # Дословные тексты — отдельным файлом: сводка в JSON читается глазами, а
+    # предупреждения должны быть цитируемы как есть.
+    lines: list[str] = [
+        "Предупреждения расчёта плотности ХН62М(Sc)-ВИ",
+        f"База плотностей: {PDB_REL}",
+        f"Порог достоверности: доля оценочных молей ниже "
+        f"{A2_ESTIMATED_LIMIT_PCT:g} %",
+        "",
+    ]
+    for temperature, block in warning_rows.groupby("T, °C"):
+        lines.append(f"--- {float(temperature):.0f} °C ---")
+        for record in block.to_dict("records"):
+            lines.append(f"  [{record['источник']}] {record['текст']}")
+        lines.append("")
+    (OUT / "a2_density_warnings.txt").write_text("\n".join(lines), "utf-8")
+    log(f"записано {(OUT / 'a2_density_warnings.txt').relative_to(ROOT)}")
 
     at_25 = required[required["T, °C"] == 25.0]
     summary: dict[str, Any] = {
@@ -755,6 +886,9 @@ def step_a2(force: bool = False) -> None:
         "при 25 °C оценочные фазы": (
             None if at_25.empty else str(at_25.iloc[0]["оценочные фазы"])
         ),
+        "фазы без модели в PDB": watched,
+        "предупреждений всего": int(len(warning_rows)),
+        "файл предупреждений": "a2_density_warnings.txt",
         "предупреждение": (
             "Низкотемпературная плотность — прикидка: основная часть молей "
             "приходится на фазы без собственной модели в PDB, они посчитаны по "
