@@ -1,0 +1,73 @@
+11L-3. Замеры по тестам, выпадающим из регрессии. Волна 11L.
+
+Журналы гасятся .gitignore (*.log), поэтому числа переписаны сюда.
+
+=== Группа 1. kwn ===
+
+Каждый тест прогонялся в своём процессе pytest: на Windows pytest-timeout
+работает методом `thread` и по срабатыванию снимает весь процесс pytest, а не
+один тест, поэтому в общей сессии числа снять нельзя.
+
+tools/test_backend_calculations.py, @pytest.mark.timeout(SLOW_TIMEOUT=600):
+
+  test_kwn_module[ni]  :  18 c : 1 passed in 16.75s
+  test_kwn_module[al]  :  11 c : 1 passed in  9.65s
+  test_kwn_module[fe]  : 604 c : Timeout, процесс снят
+
+  Маркер @pytest.mark.timeout перебивает --timeout из командной строки:
+  запуск с --timeout=1200 всё равно сорвался на 604 с.
+
+tools/test_ui_g.py, таймаут-маркеров нет, в прогоне стоял --timeout=900:
+
+  test_kwn_precipitation[ni]                                  :  39 c : passed
+  test_kwn_precipitation[al]                                  :  27 c : passed
+  test_fe_kwn_provenance_status_is_neutral                    : 905 c : Timeout
+  test_kwn_matrix_offers_the_disordered_half[al-FCC_A1,fe-BCC_A2] : 10 c : 2 passed
+  test_kwn_reports_a_too_long_composition_without_a_traceback :   8 c : passed
+  test_kwn_size_grid_is_validated                             :  19 c : passed
+
+Прямой замер fe-ячейки, без pytest (BCC_A2 / M23C6, 700 °C, 1 с модельного
+времени, 30 классов PSD), с дампом стека каждые 300 с:
+
+  время счёта    : более 2100 с (7 дампов), расчёт не завершился,
+                   процесс снят по нехватке памяти в системе, не по своей
+  процессор      : 100 % одного ядра всё время
+  рабочий набор  : 262 МиБ, не рос
+  прирост подкачки: нулевой
+
+То есть ячейка не зависает и не упирается в память — она считается.
+
+Стек во всех семи дампах один и тот же:
+
+  pycalphad/core/solver.py:168 in solve
+  kawin/thermo/LocalEquilibrium.py:86 in local_equilibrium
+  kawin/thermo/Thermodynamics.py:470 in getLocalEq
+  kawin/thermo/Thermodynamics.py:868 in _getDrivingForceTangent
+  kawin/thermo/Thermodynamics.py:656 in getDrivingForce
+  kawin/precipitation/NucleationRate.py:23 in volumetricDrivingForce
+  kawin/precipitation/KWNBase.py:420 in _calcNucleationRate
+  kawin/precipitation/KWNBase.py:333 in _calculateDependentTerms
+  kawin/precipitation/KWNBase.py:366 in postProcess
+  kawin/solver/Solver.py:196 in solve
+
+Причина стоимости: у kawin метод движущей силы по умолчанию — `tangent`
+(kawin/thermo/Thermodynamics.py:69, `drivingForceMethod = 'tangent'`), и он
+считает локальное равновесие pycalphad на каждую оценку скорости зарождения.
+Fe–C–Cr с M23C6 — дорогой угол: у никеля и алюминия та же схема укладывается
+в десятки секунд.
+
+=== Группа 2. Параллельный движок ===
+
+Зависаний нет. Прогоны волны 11L, машина без параллельного лёгкого потока:
+
+  tools/test_parallel_engine.py                 : 15 passed in  69.12s
+  tools/test_parallel_integration.py            :  6 passed in  78.19s
+  оба файла одной сессией                       : 21 passed in 161.71s
+
+В том числе test_sequential_and_parallel_agree_bytewise — тот самый тест с
+вложенным пулом, который волна 11K наблюдала полчаса без движения.
+
+Волна 11K видела дочерний процесс `test_parallel_engine.py --identity` с
+0 с процессорного времени и 2 МБ рабочего набора. Это признак голодания по
+памяти, а не взаимной блокировки: параллельно шёл `pytest tools/` лёгкого
+потока, державший до 2,8 ГиБ. Сейчас тот же тест проходит.
