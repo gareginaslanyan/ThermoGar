@@ -10,3 +10,4 @@ user_data/
 .DS_Store
 results/validation/
 results/hn62m/
+results/hn62m_tech/

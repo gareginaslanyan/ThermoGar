@@ -3,6 +3,7 @@
     "LIQUID",
     "FCC_A1",
     "GAMMA_PRIME",
+    "NI2CR",
     "GAMMA_DP",
     "DELTA",
     "ETA",
@@ -13,6 +14,7 @@
     "SIGMA",
     "MU_PHASE",
     "P_PHASE",
+    "CHI_A12",
     "R_PHASE",
     "D_NIMO",
     "LAVES",
@@ -31,7 +33,8 @@
     "TIB2",
     "ALN",
     "ALN_EQU",
-    "MNS_Q"
+    "MNS_Q",
+    "TIS"
   ],
   "al": [
     "LIQUID",
