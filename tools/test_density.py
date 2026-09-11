@@ -27,6 +27,7 @@ from pycalphad import Database, equilibrium, variables as v
 from pycalphad.core.utils import filter_phases, unpack_species
 
 import thermogar_database_repair as repair
+import thermogar_verified_physical as verified_physical
 from thermogar_physical import (
     PhysicalDensityDatabase,
     calculate_physical_properties,
@@ -700,3 +701,114 @@ def test_override_file_is_honest_about_itself() -> None:
             # Незаполненная правка обязана быть выключена — иначе она молча
             # подменит величину пустотой.
             assert not overrides.enabled or entry.expression is None
+# --------------------------------------------------------------------------- #
+# 11N-2. Автоматический набор фаз не уносит расчёт плотности
+# --------------------------------------------------------------------------- #
+
+
+@pytest.mark.parametrize("tdb", [NI_TDB, AL_TDB, FE_TDB], ids=["ni", "al", "fe"])
+def test_automatic_phase_set_builds_after_the_detector(tdb: Path) -> None:
+    """Автоматический набор фаз строится в pycalphad, а не валит расчёт.
+
+    Раздел плотности на автоматическом наборе берёт все фазы базы (для
+    никелевой это 99 штук) и до волны 11N отдавал их движку, минуя детектор
+    волны 10. На никелевой базе с углеродом в составе ``Model`` пары
+    ``BCC_B2``/``BCC_A2`` не строится, и ``Workspace`` падал с ``ValueError``
+    ещё до расчёта равновесия — пользователь получал ``BACKEND_FAILED``.
+
+    Строится только ``Workspace``: именно там был отказ, а равновесие на сотне
+    фаз здесь считать незачем. Проверяются все три базы, потому что дефект —
+    свойство описания пары фаз, а не конкретной базы.
+    """
+
+    from pycalphad import Workspace
+
+    database = _database(tdb)
+    components = list(CONTROL_COMPONENTS)
+    # Ровно то, что даёт политика привязки на автоматическом наборе: все фазы
+    # базы за вычетом C15_LAVES, который снимается до расчёта.
+    phases = sorted(name for name in database.phases if name != "C15_LAVES")
+    kept, removed = verified_physical.buildable_phases(database, components, phases)
+    assert kept, "Детектор снял вообще всё — так быть не должно"
+
+    conditions: dict[Any, float] = {v.N: 1.0, v.P: 101325.0, v.T: 1373.15}
+    conditions.update({v.X(element): value for element, value in sorted(CONTROL_X.items())})
+    Workspace(
+        database=database,
+        components=components,
+        phases=list(kept),
+        conditions=conditions,
+    )
+
+    if tdb == NI_TDB:
+        assert "BCC_B2" in removed, (
+            "На никелевой базе с углеродом BCC_B2 обязана сниматься: "
+            "именно она и уносила расчёт"
+        )
+
+
+def test_excluded_phases_are_explained_in_the_result() -> None:
+    """Снятые фазы объясняются пользователю, а не исчезают молча.
+
+    Текст один на оба расчётных пути: ``ThermoGar_app.unbuildable_phase_note``
+    берёт его из ``thermogar_verified_physical``. Если тексты разойдутся,
+    пользователь получит разные объяснения одного и того же.
+    """
+
+    database = _database(NI_TDB)
+    components = list(CONTROL_COMPONENTS)
+    phases = sorted(name for name in database.phases if name != "C15_LAVES")
+    _kept, removed = verified_physical.buildable_phases(database, components, phases)
+
+    note = verified_physical.excluded_phases_note(removed)
+    assert "BCC_B2" in note, note
+    assert "BCC_A2" in note, "Не названа фаза, из-за которой сняли: " + note
+    assert "не отказ расчёта" in note, (
+        "Сообщение не говорит, что расчёт продолжается: " + note
+    )
+    assert verified_physical.excluded_phases_note({}) == ""
+
+
+def test_backend_failure_message_names_the_error() -> None:
+    """Отказ движка уходит пользователю текстом, а не одним именем класса.
+
+    Волна 11K получила «BACKEND_FAILED: ValueError» и код ошибки — по такой
+    строке нельзя ни понять, что случилось, ни разобрать обращение.
+    """
+
+    detail = verified_physical._backend_failure_detail(
+        ValueError(
+            "Order (BCC_B2) and disorder (BCC_A2) model must have no "
+            "interstitial sublattice or a single matching one"
+        )
+    )
+    assert detail.startswith("ValueError: ")
+    assert "BCC_B2" in detail
+
+    # Исключение без текста не должно давать пустую строку.
+    assert verified_physical._backend_failure_detail(RuntimeError()) == "RuntimeError"
+    # Длинный текст обрезается, но остаётся читаемым.
+    long_detail = verified_physical._backend_failure_detail(ValueError("x" * 5000))
+    assert len(long_detail) < 500 and long_detail.endswith("...")
+def test_missing_elements_are_named_instead_of_a_pycalphad_error() -> None:
+    """Состав с элементами, которых в базе нет, отвергается внятно.
+
+    Алюминиевая база не описывает Mo, C, S и Nb. Отдай ей контрольный
+    никелевый состав — и pycalphad уронит расчёт своим «Number of degrees of
+    freedom is not zero» через одиннадцать секунд: условия по составу он
+    примет, а лишние компоненты молча отбросит. Пользователю от такой строки
+    толку нет, поэтому элементы называются до вызова движка.
+    """
+
+    database = _database(AL_TDB)
+    absent = verified_physical._elements_absent_from(
+        database, list(CONTROL_COMPONENTS)
+    )
+    assert set(absent) == {"MO", "C", "S", "NB"}, absent
+    # Вакансия — не элемент состава и в список попадать не должна.
+    assert "VA" not in absent
+
+    database_ni = _database(NI_TDB)
+    assert verified_physical._elements_absent_from(
+        database_ni, list(CONTROL_COMPONENTS)
+    ) == ()

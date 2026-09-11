@@ -1661,15 +1661,22 @@ def render_b4b_density_temperature(
             # Температурный скан плотности многоточечный, поэтому идёт в
             # движок напрямую; одиночная точка остаётся на verified-маршруте.
             with st.spinner("Расчёт плотности по температуре…"):
-                scan_phases = verified_physical.effective_phases(
-                    context,
-                    decision.requested_phases,
-                    db,
-                )
                 atomic, _mass = verified_physical.composition_fractions(db, inputs)
                 scan_components = [
                     element for element, _value in atomic
                 ] + ["VA"]
+                # Скан идёт в движок напрямую, мимо verified-бэкенда, поэтому
+                # структурный детектор волны 10 применяется здесь же: иначе
+                # нестроящаяся пара «порядок/беспорядок» уносит весь скан.
+                scan_phases, scan_removed = verified_physical.buildable_phases(
+                    db,
+                    scan_components,
+                    verified_physical.effective_phases(
+                        context,
+                        decision.requested_phases,
+                        db,
+                    ),
+                )
                 scan_points = [
                     {
                         "N": 1.0,
@@ -1703,7 +1710,10 @@ def render_b4b_density_temperature(
                         float(temperature_k),
                         physical_db,
                     )
-                    projection = verified_physical.physical_projection(properties)
+                    projection = verified_physical.physical_projection(
+                        properties,
+                        excluded_phases=scan_removed,
+                    )
                     projection["temperature_k"] = float(temperature_k)
                     projections.append(projection)
             _b4b_store_engine_result(
@@ -2448,20 +2458,14 @@ def drop_unbuildable_order_disorder(
 
 
 def unbuildable_phase_note(removed: dict[str, Any]) -> str:
-    """Сообщение пользователю о снятых парах «порядок/беспорядок»."""
+    """Сообщение пользователю о снятых парах «порядок/беспорядок».
 
-    if not removed:
-        return ""
-    parts = [
-        f"{name} (связана с {item.disordered_phase}: {item.reason})"
-        for name, item in sorted(removed.items())
-    ]
-    return (
-        "Из расчёта исключены фазы, модель которых не строится на выбранном "
-        "наборе элементов: " + "; ".join(parts) + ". "
-        "Это ограничение описания базы, а не отказ расчёта: остальные фазы "
-        "считаются как обычно."
-    )
+    Текст живёт в ``thermogar_verified_physical``, потому что тот же самый
+    нужен разделу плотности, который до основного расчёта не доходит. Две
+    копии одной формулировки разъехались бы на первой же правке.
+    """
+
+    return verified_physical.excluded_phases_note(removed)
 
 
 def phase_model_note(

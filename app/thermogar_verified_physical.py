@@ -227,7 +227,15 @@ def _rows(frame: object) -> list[dict[str, object]]:
     ]
 
 
-def _physical_projection(result: physical.PhysicalCalculationResult) -> dict[str, Any]:
+def _physical_projection(
+    result: physical.PhysicalCalculationResult,
+    *,
+    excluded_phases: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    warnings = [str(value) for value in result.warnings]
+    note = excluded_phases_note(excluded_phases or {})
+    if note and note not in warnings:
+        warnings.append(note)
     return {
         "alloy_density_g_cm3": _plain_cell(result.alloy_density_g_cm3),
         "alloy_density_kg_m3": _plain_cell(result.alloy_density_kg_m3),
@@ -240,8 +248,78 @@ def _physical_projection(result: physical.PhysicalCalculationResult) -> dict[str
         "physical_database_sha256": result.physical_database_sha256,
         "physical_database_version": result.physical_database_version,
         "quality_label": result.quality_label,
-        "warnings": [str(value) for value in result.warnings],
+        "warnings": warnings,
     }
+
+
+def buildable_phases(
+    database: object,
+    components: Sequence[str],
+    phases: Sequence[str],
+) -> tuple[tuple[str, ...], dict[str, Any]]:
+    """Снять фазы, чья модель не строится на выбранном наборе элементов.
+
+    Раздел плотности собирает набор фаз сам и до волны 11N шёл в pycalphad
+    мимо структурного детектора волны 10. На автоматическом наборе никелевой
+    базы это давало ``ValueError`` из ``Model`` для пары ``BCC_B2``/``BCC_A2``
+    ещё на построении ``Workspace`` — то есть весь расчёт уносила одна фаза.
+    Механизм здесь тот же, что и в основном расчётном пути, второго не
+    заводится: ``thermogar_database_repair.drop_broken_order_disorder``.
+
+    Возвращает пару «оставшиеся фазы, снятые фазы с причиной».
+    """
+
+    import thermogar_database_repair as repair
+
+    kept, removed = repair.drop_broken_order_disorder(
+        database,
+        list(components),
+        list(phases),
+    )
+    return tuple(kept), dict(removed)
+
+
+def excluded_phases_note(removed: Mapping[str, Any]) -> str:
+    """Строка пользователю о снятых фазах.
+
+    Единственный текст на оба расчётных пути: ``ThermoGar_app`` берёт его
+    отсюда же, поэтому пользователь читает одно и то же сообщение и в
+    основном расчёте, и в разделе плотности. Текст объясняет не только что
+    снято, но и что это ограничение описания базы, а не отказ расчёта, —
+    иначе исключённая фаза читается как поломка.
+    """
+
+    if not removed:
+        return ""
+    parts = [
+        f"{name} (связана с {item.disordered_phase}: {item.reason})"
+        for name, item in sorted(removed.items())
+    ]
+    return (
+        "Из расчёта исключены фазы, модель которых не строится на выбранном "
+        "наборе элементов: " + "; ".join(parts) + ". "
+        "Это ограничение описания базы, а не отказ расчёта: остальные фазы "
+        "считаются как обычно."
+    )
+
+
+def _elements_absent_from(
+    database: object,
+    components: Sequence[str],
+) -> tuple[str, ...]:
+    """Элементы запроса, которых в базе нет. ``VA`` не в счёт."""
+
+    known = {
+        str(element).upper()
+        for element in getattr(database, "elements", ()) or ()
+    }
+    if not known:
+        return ()
+    return tuple(
+        name
+        for name in dict.fromkeys(str(item).upper() for item in components)
+        if name not in known and name != "VA"
+    )
 
 
 def _default_backend(
@@ -263,10 +341,28 @@ def _default_backend(
             if element != call.balance
         }
     )
+    missing = _elements_absent_from(database, call.components)
+    if missing:
+        # Без этой проверки pycalphad уронил бы расчёт своим «Number of degrees
+        # of freedom is not zero»: условия по составу он принял бы, а
+        # компоненты молча отбросил. Пользователю надо назвать элементы.
+        _fail(
+            verified_loaders.ReasonCode.INPUT_INVALID,
+            "Выбранная база не описывает элементы: " + ", ".join(missing)
+            + ". Посчитать плотность на этом составе нельзя — возьмите базу, "
+            "в которой эти элементы есть, или уберите их из состава.",
+        )
+    phases, removed = buildable_phases(database, call.components, call.phases)
+    if not phases:
+        _fail(
+            verified_loaders.ReasonCode.INPUT_INVALID,
+            "На выбранном наборе элементов не осталось допустимых фаз: "
+            + excluded_phases_note(removed),
+        )
     equilibrium_result = equilibrium(
         database,
         list(call.components),
-        list(call.phases),
+        list(phases),
         conditions,
         calc_opts={"pdens": 500},
     )
@@ -277,7 +373,7 @@ def _default_backend(
         call.temperature_k,
         physical_database,
     )
-    return _physical_projection(result)
+    return _physical_projection(result, excluded_phases=removed)
 
 
 def composition_fractions(
@@ -298,7 +394,13 @@ def effective_phases(
     requested_phases: Sequence[str],
     database: object,
 ) -> tuple[str, ...]:
-    """Список фаз политики привязки для уже разобранной базы."""
+    """Список фаз политики привязки для уже разобранной базы.
+
+    Возвращает набор *политики*, без структурного детектора: он даёт
+    ``effective_phases`` чека и обязан совпадать с тем, что проверяет
+    ``_phase_identity``. Нестроящиеся фазы снимаются ниже по течению —
+    ``buildable_phases`` перед самым вызовом движка.
+    """
     phases = getattr(database, "phases", None)
     if not isinstance(phases, Mapping):
         _fail(verified_loaders.ReasonCode.RESULT_INVALID, "Parsed database lacks a phase catalog.")
@@ -311,12 +413,19 @@ def effective_phases(
             and phase not in context.phase_policy.explicit_rejections
         )
     )
-    return context.phase_policy.effective(tuple(requested_phases), candidates=candidates)
+    return context.phase_policy.effective(
+        tuple(requested_phases),
+        candidates=candidates,
+    )
 
 
-def physical_projection(result: physical.PhysicalCalculationResult) -> dict[str, Any]:
+def physical_projection(
+    result: physical.PhysicalCalculationResult,
+    *,
+    excluded_phases: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
     """Плоская проекция результата расчёта плотности."""
-    return _physical_projection(result)
+    return _physical_projection(result, excluded_phases=excluded_phases)
 
 
 def _canonical_projection(value: object) -> dict[str, Any]:
@@ -407,6 +516,17 @@ def _phase_identity(
     if not matches:
         _fail(verified_loaders.ReasonCode.PHASE_POLICY_MISMATCH, "Live phase policy does not match the request.")
     return request.effective_phases
+
+
+def _backend_failure_detail(error: BaseException) -> str:
+    """Внятная строка вместо одного имени класса исключения."""
+
+    text = " ".join(str(error).split())
+    if not text:
+        return type(error).__name__
+    if len(text) > 400:
+        text = text[:397] + "..."
+    return f"{type(error).__name__}: {text}"
 
 
 def _utc(clock: Callable[[], object]) -> str:
@@ -532,7 +652,13 @@ def execute_verified_physical(
             except verified_loaders.VerifiedLoaderError:
                 raise
             except Exception as error:
-                _fail(verified_loaders.ReasonCode.BACKEND_FAILED, type(error).__name__)
+                # Пользователю уходит текст исключения, а не только его класс:
+                # «BACKEND_FAILED: ValueError» ничего не говорит ни ему, ни
+                # разбору. Текст движка хотя бы называет фазу или условие.
+                _fail(
+                    verified_loaders.ReasonCode.BACKEND_FAILED,
+                    _backend_failure_detail(error),
+                )
             projection = _validate_density_projection(raw)
             projection["temperature_k"] = float(temperature)
             points.append(
@@ -599,8 +725,10 @@ __all__ = (
     "PhysicalCall",
     "PhysicalPoint",
     "VerifiedPhysicalResult",
+    "buildable_phases",
     "composition_fractions",
     "effective_phases",
+    "excluded_phases_note",
     "execute_verified_physical",
     "make_physical_inputs",
     "physical_projection",
