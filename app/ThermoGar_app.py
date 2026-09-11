@@ -53,6 +53,7 @@ from io import BytesIO
 from pathlib import Path
 import hashlib
 import json
+import math
 import re
 import threading
 import zipfile
@@ -4099,6 +4100,7 @@ def equilibrium_liquidus_c(
     high_c: float,
     pdens: int,
     tolerance_c: float = LIQUIDUS_TOLERANCE_C,
+    progress: Any = None,
 ) -> float:
     """Равновесный ликвидус половинным делением по настоящим равновесиям.
 
@@ -4113,15 +4115,45 @@ def equilibrium_liquidus_c(
     Верхний край вилки поднимается, пока при нём ещё есть твёрдое: стартовая
     температура расчёта проверена лишь на «практически однофазный расплав»
     (доля LIQUID от 0,9999), то есть ликвидус может лежать чуть выше неё.
+
+    ``progress`` вызывается после каждого равновесия с номером шага, их
+    ожидаемым числом, температурой и долей твёрдого. Поиск стоит десятка с
+    лишним равновесий и идёт около минуты, поэтому интерфейс не должен молчать
+    всё это время.
     """
+    expected = 2 + max(
+        1,
+        int(
+            math.ceil(
+                math.log2(
+                    max(float(high_c) - float(low_c), float(tolerance_c))
+                    / float(tolerance_c)
+                )
+            )
+        ),
+    )
+    step = 0
+    seen: dict[float, float] = {}
+
+    def measure(temperature_c: float) -> float:
+        # Верхний край вилки щупают дважды — цикл её раскрытия и проверка краёв
+        # внутри половинного деления. Запоминание убирает лишнее равновесие.
+        nonlocal step
+        key = round(float(temperature_c), 6)
+        if key in seen:
+            return seen[key]
+        step += 1
+        solid = equilibrium_solid_fraction_at(
+            db, components, phases, composition_conditions, key, pdens
+        )
+        seen[key] = solid
+        if progress is not None:
+            progress(step, expected, key, solid)
+        return solid
+
     ceiling = float(high_c) + LIQUIDUS_BRACKET_MARGIN_C
     upper = float(high_c)
-    while (
-        equilibrium_solid_fraction_at(
-            db, components, phases, composition_conditions, upper, pdens
-        )
-        > SOLID_PRESENCE_FLOOR
-    ):
+    while measure(upper) > SOLID_PRESENCE_FLOOR:
         upper += LIQUIDUS_BRACKET_STEP_C
         if upper > ceiling:
             raise ValueError(
@@ -4129,27 +4161,52 @@ def equilibrium_liquidus_c(
                 f"{ceiling:.1f} °C."
             )
 
-    def fully_liquid(temperature_c: float) -> bool:
-        return bool(
-            equilibrium_solid_fraction_at(
-                db,
-                components,
-                phases,
-                composition_conditions,
-                float(temperature_c),
-                pdens,
+    # Нижний край раскрывается так же, как верхний. Он приходит из узла
+    # траектории, и узел мог быть получен адаптивным шагом, то есть при нём
+    # твёрдого может не оказаться. Тогда вилка не охватывает переход, и без
+    # раскрытия вниз расчёт отказал бы там, где ответ есть.
+    floor = float(low_c) - LIQUIDUS_BRACKET_MARGIN_C
+    lower = float(low_c)
+    while measure(lower) <= SOLID_PRESENCE_FLOOR:
+        lower -= LIQUIDUS_BRACKET_STEP_C
+        if lower < floor:
+            raise ValueError(
+                "Ликвидус не найден: расплав остаётся полностью жидким вплоть "
+                f"до {floor:.1f} °C."
             )
-            <= SOLID_PRESENCE_FLOOR
-        )
+
+    def fully_liquid(temperature_c: float) -> bool:
+        return bool(measure(float(temperature_c)) <= SOLID_PRESENCE_FLOOR)
 
     return float(
         bisect_transition_temperature(
             fully_liquid,
-            float(low_c),
+            lower,
             upper,
             float(tolerance_c),
         ).value
     )
+
+
+def liquidus_bracket_c(result: Any, fallback_low_c: float, fallback_high_c: float) -> tuple[float, float]:
+    """Вилка для поиска ликвидуса, взятая из уже посчитанной траектории.
+
+    Траектория уже прошла через ликвидус: есть последний узел без твёрдого и
+    первый узел с твёрдым, и ликвидус лежит между ними. Это сужает вилку со
+    всего интервала затвердевания (у контрольного состава — 172 K) до одного
+    шага траектории, то есть экономит около половины равновесий.
+
+    Узкая вилка безопасна: ``bisect_transition_temperature`` проверяет оба её
+    края настоящими равновесиями и откажется работать, если переход внутрь не
+    попал, а верхний край до того поднимается сам. Поэтому при любой неувязке
+    ответ будет прежним, только дороже, — но не неверным.
+    """
+    fractions = np.asarray(result.fraction_solid, dtype=float)
+    temperatures = np.asarray(result.temperatures, dtype=float) - 273.15
+    for index in range(1, len(fractions)):
+        if float(fractions[index]) > 0.0:
+            return float(temperatures[index]), float(temperatures[index - 1])
+    return float(fallback_low_c), float(fallback_high_c)
 
 
 def solidification_end_index(result: Any) -> int:
@@ -9605,6 +9662,61 @@ with solidification_tab:
                             "Ни один выбранный метод не завершился успешно."
                         )
 
+                    # Ликвидус считается один раз на состав, а не на метод: это
+                    # свойство состава, и у равновесного пути с путём Шейля оно
+                    # общее — оба стартуют из одного расплава. Считается здесь,
+                    # внутри статуса: поиск стоит десятка с лишним равновесий,
+                    # и снаружи он был бы минутой тишины.
+                    status.update(
+                        label="Ищем ликвидус половинным делением…",
+                        state="running",
+                    )
+                    try:
+                        lowest_end_c = min(
+                            float(
+                                np.asarray(result.temperatures, dtype=float)[
+                                    solidification_end_index(result)
+                                ]
+                            )
+                            - 273.15
+                            for result in results.values()
+                        )
+                        # Вилка берётся у одной траектории, а не у обеих: два
+                        # набора узлов дали бы края от разных расчётов, и
+                        # порядок краёв пришлось бы доказывать отдельно.
+                        bracket_source = results.get(
+                            "equilibrium", next(iter(results.values()))
+                        )
+                        bracket_low_c, bracket_high_c = liquidus_bracket_c(
+                            bracket_source,
+                            lowest_end_c,
+                            actual_start_k - 273.15,
+                        )
+                        computed_liquidus_c: float | None = equilibrium_liquidus_c(
+                            db,
+                            components,
+                            phases,
+                            composition_conditions,
+                            bracket_low_c,
+                            bracket_high_c,
+                            int(solidification_pdens),
+                            progress=lambda step, total, temperature_c, solid: (
+                                status.write(
+                                    f"Ликвидус, равновесие {step} из "
+                                    f"примерно {total}: {temperature_c:.2f} °C, "
+                                    f"твёрдого {100.0 * solid:.4f} %."
+                                )
+                            ),
+                        )
+                        status.write(
+                            f"Ликвидус: {computed_liquidus_c:.2f} °C "
+                            f"(точность {LIQUIDUS_TOLERANCE_C:g} °C)."
+                        )
+                    except Exception as liquidus_error:
+                        computed_liquidus_c = None
+                        errors["Ликвидус"] = str(liquidus_error)
+                        status.write(f"Ликвидус не найден: {liquidus_error}")
+
                     status.update(
                         label="Расчёт затвердевания завершён",
                         state="complete",
@@ -9646,32 +9758,6 @@ with solidification_tab:
                     )
                     for key, result in results.items()
                 }
-                # Ликвидус считается один раз на состав, а не на метод: это
-                # свойство состава, и у равновесного пути с путём Шейля оно
-                # общее — оба стартуют из одного расплава.
-                try:
-                    lowest_end_c = min(
-                        float(
-                            np.asarray(result.temperatures, dtype=float)[
-                                solidification_end_index(result)
-                            ]
-                        )
-                        - 273.15
-                        for result in results.values()
-                    )
-                    computed_liquidus_c: float | None = equilibrium_liquidus_c(
-                        db,
-                        components,
-                        phases,
-                        composition_conditions,
-                        lowest_end_c,
-                        actual_start_k - 273.15,
-                        int(solidification_pdens),
-                    )
-                except Exception as liquidus_error:
-                    computed_liquidus_c = None
-                    errors["Ликвидус"] = str(liquidus_error)
-
                 summary_table = pd.DataFrame(
                     [
                         solidification_summary_row(
