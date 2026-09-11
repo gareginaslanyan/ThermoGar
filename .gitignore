@@ -9,3 +9,4 @@ user_data/
 *.log
 .DS_Store
 results/validation/
+results/hn62m/
