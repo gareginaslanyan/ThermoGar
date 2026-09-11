@@ -56,7 +56,14 @@ $PayloadSets = @(
     @{ Source = '.streamlit';          Dest = '.streamlit';          Include = 'config.toml'; Recurse = $false; Required = $true }
 )
 
+# The mc_fe reference base is not shipped: it is a second full-size TDB and an
+# ODbL derivative in its own right. Its fingerprint is shipped instead, so the
+# diagnostic panel can still finish the cross-check. It is required: a payload
+# without it silently degrades the panel to "cross-check impossible".
+$FeReferenceFingerprint = 'databases\converted\fe\mc_fe_v2062_unpatched_with_mobility.thermogar.fingerprint.json'
+
 $SingleFiles = @(
+    @{ Source = $FeReferenceFingerprint;    Dest = $FeReferenceFingerprint;      Required = $true  }
     @{ Source = 'packaging\launcher.pyw';   Dest = 'launcher.pyw';               Required = $true  }
     @{ Source = 'packaging\stop.pyw';       Dest = 'stop.pyw';                   Required = $true  }
     @{ Source = 'packaging\healthcheck.py'; Dest = 'healthcheck.py';             Required = $true  }
@@ -159,7 +166,8 @@ if (-not (Test-Path -LiteralPath (Join-Path $runtimeDest 'pythonw.exe'))) { thro
 $RequiredInStage = @(
     'launcher.pyw', 'stop.pyw', 'healthcheck.py',
     'runtime\python.exe', 'runtime\pythonw.exe',
-    'app\ThermoGar_app.py'
+    'app\ThermoGar_app.py',
+    $FeReferenceFingerprint
 )
 foreach ($required in $RequiredInStage) {
     if (-not (Test-Path -LiteralPath (Join-Path $StageRoot $required))) {
