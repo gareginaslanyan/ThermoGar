@@ -43,14 +43,17 @@ function Write-Step { param([string]$Message) if (-not $Quiet) { Write-Host "  $
 
 # --- Payload allowlist -------------------------------------------------------
 # Each entry: Source (repo-relative), Dest (stage-relative), Include (filter),
-# Recurse.
+# Recurse, Required. Required = $true means the set must yield at least one
+# file: a directory that exists but stages nothing is a build defect, not a
+# silent omission.
 $PayloadSets = @(
-    @{ Source = 'app';                 Dest = 'app';                 Include = '*.py';        Recurse = $false }
-    @{ Source = 'app';                 Dest = 'app';                 Include = 'style.css';   Recurse = $false }
-    @{ Source = 'configs';             Dest = 'configs';             Include = '*';           Recurse = $true  }
-    @{ Source = 'databases\converted'; Dest = 'databases\converted'; Include = '*';           Recurse = $true  }
-    @{ Source = 'databases\physical';  Dest = 'databases\physical';  Include = '*';           Recurse = $true  }
-    @{ Source = '.streamlit';          Dest = '.streamlit';          Include = 'config.toml'; Recurse = $false }
+    @{ Source = 'app';                 Dest = 'app';                 Include = '*.py';        Recurse = $false; Required = $true }
+    @{ Source = 'app';                 Dest = 'app';                 Include = 'style.css';   Recurse = $false; Required = $true }
+    @{ Source = 'configs';             Dest = 'configs';             Include = '*';           Recurse = $true;  Required = $true }
+    @{ Source = 'databases\converted'; Dest = 'databases\converted'; Include = '*';           Recurse = $true;  Required = $true }
+    @{ Source = 'databases\physical';  Dest = 'databases\physical';  Include = '*';           Recurse = $true;  Required = $true }
+    @{ Source = 'licenses';            Dest = 'licenses';            Include = '*';           Recurse = $true;  Required = $true }
+    @{ Source = '.streamlit';          Dest = '.streamlit';          Include = 'config.toml'; Recurse = $false; Required = $true }
 )
 
 $SingleFiles = @(
@@ -61,7 +64,8 @@ $SingleFiles = @(
     @{ Source = 'README.md';                Dest = 'README.md';                  Required = $false }
     @{ Source = 'USER_GUIDE_THERMOGAR.md';  Dest = 'USER_GUIDE_THERMOGAR.md';    Required = $false }
     @{ Source = 'QUICK_START_THERMOGAR.md'; Dest = 'QUICK_START_THERMOGAR.md';   Required = $false }
-    @{ Source = 'THIRD_PARTY_NOTICES.txt';  Dest = 'THIRD_PARTY_NOTICES.txt';    Required = $false }
+    @{ Source = 'THIRD_PARTY_NOTICES.txt';  Dest = 'THIRD_PARTY_NOTICES.txt';    Required = $true  }
+    @{ Source = 'SOURCES.txt';              Dest = 'SOURCES.txt';                Required = $true  }
     @{ Source = 'PHYSICAL_DATA_README.md';  Dest = 'PHYSICAL_DATA_README.md';    Required = $false }
     @{ Source = 'USER_DATA_README.txt';     Dest = 'USER_DATA_README.txt';       Required = $false }
 )
@@ -108,6 +112,9 @@ foreach ($set in $PayloadSets) {
     $sourceDir = Join-Path $RepoRoot $set.Source
     if (-not (Test-Path -LiteralPath $sourceDir)) { throw "PAYLOAD_SOURCE_MISSING: $($set.Source)" }
     $items = @(Get-ChildItem -LiteralPath $sourceDir -File -Filter $set.Include -Recurse:$set.Recurse -Force)
+    if ($set.Required -and $items.Count -eq 0) {
+        throw "PAYLOAD_SET_EMPTY: $($set.Source) ($($set.Include))"
+    }
     foreach ($item in $items) {
         $relativeInSet = $item.FullName.Substring($sourceDir.Length).TrimStart('\')
         $relativeInStage = Join-Path $set.Dest $relativeInSet

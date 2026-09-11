@@ -2724,6 +2724,55 @@ def database_key_from_settings(settings: Any) -> str:
     return ""
 
 
+DATABASE_ATTRIBUTION: dict[str, str] = {
+    "ni": "mc_ni 2.036 · E. Povoden-Karadeniz, TU Wien · ODbL-1.0 / DbCL-1.0",
+    "al": "mc_al 2.037 · E. Povoden-Karadeniz, TU Wien · ODbL-1.0 / DbCL-1.0",
+    "fe": (
+        "mc_fe 2.062 · E. Povoden-Karadeniz, A. Jacob, TU Wien · "
+        "ODbL-1.0 / DbCL-1.0"
+    ),
+}
+
+LICENSE_FILES: tuple[tuple[str, str], ...] = (
+    ("ODbL-1.0 — права на базу как на набор данных", "licenses/ODbL-1.0.txt"),
+    ("DbCL-1.0 — права на содержимое базы", "licenses/DbCL-1.0.txt"),
+)
+
+
+def render_database_attribution(database_key: str) -> None:
+    """Автор и лицензия выбранной базы — в самой панели выбора базы.
+
+    ODbL требует, чтобы копия лицензии сопровождала базу, а программа
+    работает офлайн: тексты лежат в поставке, ссылка на сайт их не заменяет.
+    """
+    line = DATABASE_ATTRIBUTION.get(database_key, "")
+    if not line:
+        return
+    st.sidebar.caption(line)
+    with st.sidebar.expander("Лицензии базы данных", expanded=False):
+        st.caption(
+            "Полные тексты лежат в поставке рядом с программой — сеть для "
+            "их чтения не нужна."
+        )
+        for title, relative_path in LICENSE_FILES:
+            path = PROJECT_ROOT / relative_path
+            st.markdown(f"**{title}**")
+            st.code(str(path), language=None)
+            try:
+                text = path.read_text(encoding="utf-8")
+            except OSError:
+                st.warning(
+                    f"Файл лицензии не найден: {relative_path}. "
+                    "Поставка неполна — сообщите разработчику."
+                )
+                continue
+            if st.checkbox(
+                "Показать текст",
+                key=f"_thermogar_license_{relative_path}",
+            ):
+                st.text(text)
+
+
 def render_release_exclusion_note(settings: Any) -> None:
     """Показать исключение по релизной политике рядом с результатом.
 
@@ -6231,6 +6280,8 @@ database_key = st.sidebar.selectbox(
     format_func=lambda key: DATABASE_DEFINITIONS[key]["label"],
     key="thermogar_database_key",
 )
+
+render_database_attribution(database_key)
 
 definition = dict(DATABASE_DEFINITIONS[database_key])
 
