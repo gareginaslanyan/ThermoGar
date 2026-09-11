@@ -2384,7 +2384,77 @@ def compatible_phases_for_components(
     # автоматические списки фаз (равновесие, сканы, диаграммы, карта доли,
     # затвердевание, энергии, T₀). Правило действует в обоих режимах набора.
     phases = effective_release_phases(database_key, phases)
+    # Здесь же снимаются пары «порядок/беспорядок», чью модель pycalphad на
+    # этом наборе элементов построить не может: иначе ValueError из Model
+    # уносит весь расчёт, а не одну фазу. Что и почему снято — в
+    # unbuildable_phase_note ниже.
+    phases, unbuildable = drop_unbuildable_order_disorder(db, components, phases)
+    _remember_unbuildable_phases(unbuildable)
     return sorted(dict.fromkeys(phases))
+
+
+UNBUILDABLE_PHASES_STATE_KEY = "_unbuildable_order_disorder_note"
+
+
+def _remember_unbuildable_phases(removed: dict[str, Any]) -> None:
+    """Запомнить снятые фазы, чтобы блок управления фазами о них сказал.
+
+    Список фаз строится и вне отрисовки виджетов, поэтому запись в
+    ``session_state`` защищена: без сессии Streamlit она просто не выполняется.
+    """
+
+    try:
+        st.session_state[UNBUILDABLE_PHASES_STATE_KEY] = unbuildable_phase_note(removed)
+    except Exception:
+        pass
+
+
+def unbuildable_order_disorder(
+    db: Database,
+    components: list[str],
+) -> dict[str, Any]:
+    """Фазы, снятые из-за несовместимой пары «порядок/беспорядок»."""
+
+    try:
+        from thermogar_database_repair import broken_order_disorder_phases
+    except Exception:
+        return {}
+    try:
+        return broken_order_disorder_phases(db, components)
+    except Exception:
+        return {}
+
+
+def drop_unbuildable_order_disorder(
+    db: Database,
+    components: list[str],
+    phases: list[str],
+) -> tuple[list[str], dict[str, Any]]:
+    """Убрать нестроящиеся упорядоченные фазы, вернув их с причиной."""
+
+    broken = unbuildable_order_disorder(db, components)
+    if not broken:
+        return list(phases), {}
+    kept = [name for name in phases if name not in broken]
+    removed = {name: broken[name] for name in phases if name in broken}
+    return kept, removed
+
+
+def unbuildable_phase_note(removed: dict[str, Any]) -> str:
+    """Сообщение пользователю о снятых парах «порядок/беспорядок»."""
+
+    if not removed:
+        return ""
+    parts = [
+        f"{name} (связана с {item.disordered_phase}: {item.reason})"
+        for name, item in sorted(removed.items())
+    ]
+    return (
+        "Из расчёта исключены фазы, модель которых не строится на выбранном "
+        "наборе элементов: " + "; ".join(parts) + ". "
+        "Это ограничение описания базы, а не отказ расчёта: остальные фазы "
+        "считаются как обычно."
+    )
 
 
 def phase_model_note(
@@ -2430,6 +2500,9 @@ def phase_selection_editor(
     )
     if rejected_candidates:
         st.error(excluded_phase_message(rejected_candidates))
+    unbuildable_note = st.session_state.get(UNBUILDABLE_PHASES_STATE_KEY, "")
+    if unbuildable_note:
+        st.info(unbuildable_note)
     candidate_phases = effective_release_phases(
         database_key,
         candidate_phases,
@@ -2468,6 +2541,23 @@ def phase_selection_editor(
                 key=f"{key_prefix}_phase_set_{database_key}",
             )
             st.caption(PHASE_MODE_HELP)
+            if phase_mode == PHASE_MODE_FAST:
+                dropped = sorted(set(all_phases) - set(fast_phases))
+                if dropped:
+                    # Молчаливая потеря фазы недопустима: в волне 9 быстрый
+                    # набор терял NI2CR с мольной долей 0,80 при 400 °C, и
+                    # пользователь об этом никак не узнавал. Полный расчёт ради
+                    # проверки здесь не делается — он стоит столько же, сколько
+                    # сам быстрый режим, — но список выпавших фаз показывается
+                    # всегда.
+                    st.warning(
+                        "В быстром наборе не рассматриваются "
+                        f"{len(dropped)} совместимых с составом фаз: "
+                        + ", ".join(dropped)
+                        + ". Если какая-то из них устойчива на вашем составе, "
+                        "быстрый режим её не покажет — сверьтесь в режиме "
+                        "«все фазы базы»."
+                    )
         candidate_phases = (
             fast_phases if phase_mode == PHASE_MODE_FAST else all_phases
         )
