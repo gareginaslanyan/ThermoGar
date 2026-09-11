@@ -20,13 +20,15 @@ Inherited phases are clearly marked as estimates.
 from __future__ import annotations
 
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 from itertools import product
 from pathlib import Path
 import ast
 import hashlib
+import json
 import math
+import os
 import re
 from typing import Any, Iterable, Mapping
 
@@ -36,6 +38,17 @@ import pandas as pd
 
 PHYSICAL_DATABASE_VERSION = "1.03"
 REFERENCE_TEMPERATURE_K = 298.15
+
+# Перекрывающий слой к физической базе. Байты ``.pdb`` не меняются никогда
+# (правило проекта), поэтому наши правки живут отдельным файлом рядом с базой и
+# накладываются при разборе. Применённая правка обязана быть видна пользователю:
+# молча подменять данные источника нельзя.
+PHYSICAL_OVERRIDES_RELATIVE_PATH = (
+    "databases/physical/overrides/physical_data_v103.overrides.json"
+)
+PHYSICAL_OVERRIDES_FORMAT = "thermogar-physical-override"
+PHYSICAL_OVERRIDES_ENV = "THERMOGAR_PHYSICAL_OVERRIDES"
+_OVERRIDES_OFF_WORDS = {"0", "off", "no", "false", "нет", "выкл"}
 
 # A small, explicit alias table. Dynamic order/disorder mappings from the
 # thermodynamic database are checked before these aliases.
@@ -240,10 +253,142 @@ class _SafeExpression:
         return float(visit(self.root))
 
 
+@dataclass(frozen=True)
+class DensityOverride:
+    """Одна наша правка поверх физической базы.
+
+    ``expression`` и ``source`` могут быть пустыми: по правилу «Источники» из
+    ``tasks/RULES.md`` число без прослеживаемого первоисточника в проект не
+    попадает. Незаполненная правка описывает, что и почему подменяется, но
+    ничего не подменяет — она видна как отложенная и ждёт статьи.
+    """
+
+    identifier: str
+    kind: str
+    name: str
+    quantity: str
+    expression: str | None
+    original_expression: str
+    reason: str
+    source: str | None
+    date: str
+    wave: str
+    user_message: str
+    status: str
+
+    @property
+    def is_filled(self) -> bool:
+        return bool(self.expression) and bool(self.source)
+
+
+@dataclass(frozen=True)
+class PhysicalOverrideSet:
+    """Разобранный файл-дополнение к physical_data.pdb."""
+
+    source_path: Path | None
+    sha256: str
+    enabled: bool
+    notice: str
+    target_sha256: str
+    entries: tuple[DensityOverride, ...]
+
+    @property
+    def filled(self) -> tuple[DensityOverride, ...]:
+        return tuple(entry for entry in self.entries if entry.is_filled)
+
+    @property
+    def pending(self) -> tuple[DensityOverride, ...]:
+        return tuple(entry for entry in self.entries if not entry.is_filled)
+
+
+def default_overrides_path() -> Path:
+    """Штатное место файла перекрытий: рядом с базой, внутри дерева проекта."""
+
+    return Path(__file__).resolve().parent.parent / PHYSICAL_OVERRIDES_RELATIVE_PATH
+
+
+def overrides_enabled_by_environment(
+    environment: Mapping[str, str] | None = None,
+) -> bool:
+    """``THERMOGAR_PHYSICAL_OVERRIDES=off`` отключает все наши правки."""
+
+    source = os.environ if environment is None else environment
+    value = str(source.get(PHYSICAL_OVERRIDES_ENV, "")).strip().lower()
+    return value not in _OVERRIDES_OFF_WORDS if value else True
+
+
+def _override_text(entry: Mapping[str, Any], key: str) -> str:
+    value = entry.get(key)
+    return "" if value is None else str(value)
+
+
+def load_physical_overrides(path: str | Path) -> PhysicalOverrideSet:
+    """Разобрать файл-дополнение. Формат наш, не MatCalc."""
+
+    path = Path(path)
+    data = path.read_bytes()
+    document = json.loads(data.decode("utf-8"))
+    if document.get("format") != PHYSICAL_OVERRIDES_FORMAT:
+        raise ValueError(
+            "Не файл перекрытий физической базы: " + str(path)
+        )
+    if int(document.get("format_version", 0)) != 1:
+        raise ValueError(
+            "Неизвестная версия формата перекрытий: "
+            f"{document.get('format_version')!r}"
+        )
+    entries: list[DensityOverride] = []
+    for item in document.get("overrides", ()):
+        expression = item.get("expression")
+        source = item.get("source")
+        entries.append(
+            DensityOverride(
+                identifier=_override_text(item, "id"),
+                kind=_override_text(item, "kind"),
+                name=_override_text(item, "name"),
+                quantity=_override_text(item, "quantity"),
+                expression=None if expression is None else str(expression),
+                original_expression=_override_text(item, "original_expression"),
+                reason=_override_text(item, "reason"),
+                source=None if source is None else json.dumps(
+                    source, ensure_ascii=False, sort_keys=True
+                ) if not isinstance(source, str) else source,
+                date=_override_text(item, "date"),
+                wave=_override_text(item, "wave"),
+                user_message=_override_text(item, "user_message"),
+                status=_override_text(item, "status") or "filled",
+            )
+        )
+    return PhysicalOverrideSet(
+        source_path=path,
+        sha256=hashlib.sha256(data).hexdigest(),
+        enabled=bool(document.get("enabled", False)),
+        notice=_override_text(document, "notice"),
+        target_sha256=str(document.get("applies_to", {}).get("sha256", "")),
+        entries=tuple(entries),
+    )
+
+
+class _AutoOverrides:
+    """Метка «взять штатный файл перекрытий, если он есть и не выключен»."""
+
+    __slots__ = ()
+
+    def __repr__(self) -> str:  # pragma: no cover - диагностика
+        return "AUTO_OVERRIDES"
+
+
+AUTO_OVERRIDES = _AutoOverrides()
+
+
 class PhysicalDensityDatabase:
     """Parsed MatCalc physical_data.pdb density model."""
 
-    def __init__(self, source_path: str | Path):
+    def __init__(
+        self,
+        source_path: str | Path,
+        overrides: Any = AUTO_OVERRIDES,
+    ):
         self.source_path = Path(source_path)
         if not self.source_path.exists():
             raise FileNotFoundError(
@@ -251,11 +396,16 @@ class PhysicalDensityDatabase:
             )
         self.sha256 = _file_sha256(self.source_path)
         self._initialize(
-            self.source_path.read_text(encoding="utf-8", errors="replace")
+            self.source_path.read_text(encoding="utf-8", errors="replace"),
+            overrides,
         )
 
     @classmethod
-    def from_verified_bytes(cls, data: bytes) -> "PhysicalDensityDatabase":
+    def from_verified_bytes(
+        cls,
+        data: bytes,
+        overrides: Any = AUTO_OVERRIDES,
+    ) -> "PhysicalDensityDatabase":
         """Parse one already-verified PDB snapshot without path authority."""
 
         if type(data) is not bytes:
@@ -264,16 +414,100 @@ class PhysicalDensityDatabase:
         database = cls.__new__(cls)
         database.source_path = None
         database.sha256 = hashlib.sha256(data).hexdigest()
-        database._initialize(text)
+        database._initialize(text, overrides)
         return database
 
-    def _initialize(self, text: str) -> None:
+    def _initialize(
+        self,
+        text: str,
+        overrides: Any = AUTO_OVERRIDES,
+    ) -> None:
         self.functions: dict[str, FunctionDefinition] = {}
         self.parameters: list[DensityParameter] = []
         self.parameters_by_phase: dict[str, list[DensityParameter]] = defaultdict(list)
         self._expression_cache: dict[str, _SafeExpression] = {}
         self._function_value_cache: dict[tuple[str, float], float] = {}
         self._parse(text)
+        self._apply_overrides(overrides)
+
+    def _resolve_overrides(self, overrides: Any) -> PhysicalOverrideSet | None:
+        if overrides is None:
+            return None
+        if isinstance(overrides, PhysicalOverrideSet):
+            return overrides
+        if isinstance(overrides, (str, Path)):
+            return load_physical_overrides(overrides)
+        if isinstance(overrides, _AutoOverrides):
+            if not overrides_enabled_by_environment():
+                return None
+            path = default_overrides_path()
+            return load_physical_overrides(path) if path.is_file() else None
+        raise TypeError(
+            "Непонятный аргумент overrides: " + type(overrides).__name__
+        )
+
+    def _apply_overrides(self, overrides: Any) -> None:
+        """Наложить наши правки поверх разобранной базы.
+
+        Незаполненные правки (нет выражения или нет источника) не применяются
+        никогда: они ждут первоисточника и видны в ``pending_overrides``.
+        Выключенный файл не применяется целиком.
+        """
+
+        self.overrides: PhysicalOverrideSet | None = self._resolve_overrides(overrides)
+        self.applied_overrides: tuple[DensityOverride, ...] = ()
+        self.pending_overrides: tuple[DensityOverride, ...] = ()
+        if self.overrides is None:
+            return
+
+        self.pending_overrides = self.overrides.pending
+        if not self.overrides.enabled:
+            return
+        if (
+            self.overrides.target_sha256
+            and self.overrides.target_sha256 != self.sha256
+        ):
+            raise ValueError(
+                "Файл перекрытий рассчитан на другую физическую базу: "
+                f"ожидался SHA-256 {self.overrides.target_sha256}, "
+                f"загружена база {self.sha256}."
+            )
+
+        applied: list[DensityOverride] = []
+        for entry in self.overrides.filled:
+            if entry.kind != "function":
+                raise ValueError(
+                    f"Перекрытие {entry.identifier}: неизвестный вид "
+                    f"{entry.kind!r}; поддержан только 'function'."
+                )
+            key = entry.name.upper()
+            definition = self.functions.get(key)
+            if definition is None:
+                raise ValueError(
+                    f"Перекрытие {entry.identifier} ссылается на функцию "
+                    f"{entry.name}, которой нет в физической базе."
+                )
+            self.functions[key] = replace(
+                definition,
+                expression=_normalize_expression(str(entry.expression)),
+            )
+            applied.append(entry)
+
+        self.applied_overrides = tuple(applied)
+        self._function_value_cache.clear()
+
+    @property
+    def override_notes(self) -> list[str]:
+        """Тексты для пользователя обо всех применённых правках."""
+
+        return [
+            entry.user_message
+            or (
+                f"Величина {entry.name} заменена поправкой проекта ThermoGar "
+                "поверх данных физической базы."
+            )
+            for entry in self.applied_overrides
+        ]
 
     @property
     def phases(self) -> set[str]:
@@ -1044,6 +1278,10 @@ def calculate_physical_properties(
         quality_label = "неполная: не все равновесные фазы обеспечены плотностью"
 
     warnings: list[str] = []
+    # Наши правки поверх физической базы обязаны быть названы прямо в
+    # результате расчёта: молча подменять данные источника нельзя. Поэтому
+    # сообщение идёт первым, до всех прочих предупреждений.
+    warnings.extend(getattr(physical_db, "override_notes", ()) or ())
     if estimated_phase_amount > 1e-8:
         estimated_names = sorted(
             name
