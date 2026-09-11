@@ -812,3 +812,118 @@ def test_missing_elements_are_named_instead_of_a_pycalphad_error() -> None:
     assert verified_physical._elements_absent_from(
         database_ni, list(CONTROL_COMPONENTS)
     ) == ()
+# --------------------------------------------------------------------------- #
+# 11N-3. Никель и молибден верны — сторож против «починки» верного
+# --------------------------------------------------------------------------- #
+
+# Оценка среднего линейного коэффициента расширения по таблице 1 статьи REF 14
+# самой базы: Lu, Selleby, Sundman, Calphad 29 (2005) 68-89,
+# doi:10.1016/j.calphad.2005.05.001. Интервал 25…1100 °C. Значения разобраны
+# мастером по той же таблице, по которой в волне 11M восстановлен хром.
+LU2005_MEAN_EXPANSION = {
+    "NI": 17.14e-6,
+    "MO": 5.30e-6,
+}
+# Окно сторожа. Двадцать процентов — заведомо шире, чем расхождение метода
+# (никель 1,5 %, молибден 12 %), и заведомо уже, чем дефект переноса, каким он
+# оказался у хрома: там отношение к оценке 3,2.
+LU2005_TOLERANCE = 0.20
+
+
+def _pure_element_expansion(
+    physical_database: PhysicalDensityDatabase,
+    phase: str,
+    element: str,
+) -> float:
+    """Средний линейный коэффициент расширения чистого элемента, 25…1100 °C.
+
+    Формула та же, что у матрицы и у хрома: ᾱ = ((ρ₂₅/ρ₁₁₀₀)^(1/3) − 1) / ΔT.
+    """
+
+    densities: list[float] = []
+    for temperature_c in (25.0, 1100.0):
+        value, coverage, warnings = physical_database.density_from_site_fractions(
+            phase, [{element: 1.0}, {"VA": 1.0}], temperature_c + 273.15
+        )
+        assert value is not None, (
+            f"{element} при {temperature_c} °C: плотность не посчитана {warnings}"
+        )
+        assert coverage > 0.999
+        densities.append(float(value))
+    cold, hot = densities
+    return ((cold / hot) ** (1.0 / 3.0) - 1.0) / (1100.0 - 25.0)
+
+
+@pytest.mark.parametrize(
+    "phase, element",
+    [("FCC_A1", "NI"), ("BCC_A2", "MO")],
+)
+def test_nickel_and_molybdenum_expansion_match_the_source(
+    physical_db: PhysicalDensityDatabase,
+    phase: str,
+    element: str,
+) -> None:
+    """Никель и молибден воспроизводят оценку Lu 2005 — трогать их не надо.
+
+    Тест сторожит в обе стороны. Он поймает будущую поломку переноса, как у
+    хрома, и он же поймает попытку «поправить» то, что верно: никель
+    расходится с оценкой на 1,5 %, молибден на 12 %, и никакая поправка тут
+    не нужна.
+
+    Про молибденовые 12 %. Расхождение направлено вверх и невелико; оно того
+    же порядка, что разброс самих измерений расширения тугоплавких металлов
+    до 1100 °C. У хрома отношение к оценке 3,2 — это другой класс величины,
+    и потому чинили только его.
+    """
+
+    estimate = LU2005_MEAN_EXPANSION[element]
+    coefficient = _pure_element_expansion(physical_db, phase, element)
+    ratio = coefficient / estimate
+    assert abs(ratio - 1.0) <= LU2005_TOLERANCE, (
+        f"{element}: база даёт {coefficient * 1e6:.2f}e-6/K против оценки "
+        f"Lu 2005 {estimate * 1e6:.2f}e-6/K, отношение {ratio:.2f}. "
+        "Либо сломан перенос, либо кто-то наложил на элемент поправку."
+    )
+
+
+@pytest.mark.parametrize("element", ["NI", "MO"])
+def test_nickel_and_molybdenum_are_not_overridden(element: str) -> None:
+    """Ни одна поправка проекта не касается никеля и молибдена.
+
+    Проверка отдельная от окна: окно в 20 % пропустило бы небольшую поправку,
+    а её быть не должно вовсе — волна 11N-3 постановила, что оба элемента
+    база описывает верно.
+    """
+
+    path = default_overrides_path()
+    if not path.is_file():
+        pytest.skip("Файла-дополнения нет.")
+    overrides = load_physical_overrides(path)
+    for entry in overrides.entries:
+        assert element not in entry.identifier.upper().split("-"), (
+            f"Появилась поправка на {element}: {entry.identifier}. "
+            "Никель и молибден проверены по Lu 2005 и верны."
+        )
+
+
+@pytest.mark.parametrize(
+    "phase, element",
+    [("FCC_A1", "NI"), ("BCC_A2", "MO")],
+)
+def test_nickel_and_molybdenum_are_the_same_in_the_plain_database(
+    physical_db: PhysicalDensityDatabase,
+    physical_db_plain: PhysicalDensityDatabase,
+    phase: str,
+    element: str,
+) -> None:
+    """Наклон ρ(T) у никеля и молибдена одинаков с поправками и без них.
+
+    Прямое доказательство, что перекрывающий слой их не трогает: у хрома те
+    же два прогона расходятся втрое.
+    """
+
+    with_overrides = _pure_element_expansion(physical_db, phase, element)
+    plain = _pure_element_expansion(physical_db_plain, phase, element)
+    assert with_overrides == pytest.approx(plain, rel=1.0e-12), (
+        f"{element}: {with_overrides * 1e6:.3f} против {plain * 1e6:.3f}e-6/K"
+    )
