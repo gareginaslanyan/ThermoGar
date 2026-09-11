@@ -408,4 +408,37 @@ FAILED tools/test_density.py::test_pure_chromium_expansion_matches_measurement
    ХН62М на `mc_al` физически невозможен: базы без Mo, C, S и Nb. Проверка
    «все три базы» из задания на алюминии поэтому проверяет только то, что
    отказ внятен, а не то, что расчёт идёт.
+---
 
+## Состояние ветки
+
+`git log --oneline -8` на ветке `wave11-fixes2`:
+
+```
+ceccb87 fix(11N-4): убрано общее изменяемое состояние в test_density.py (BL-19)
+705ad64 docs(11N-3): BL-10 закрыт — никель и молибден проверены, дефекта нет
+cb3b492 fix(11N-2): плотность на автоматическом наборе фаз больше не падает
+e5bba50 Merge wave 11M: chromium density restored from source, manganese conclusion withdrawn, wave 11 numbers in the study
+b78c181 docs(11M): постскриптум с фактическим состоянием ветки
+b021ac3 docs(11M): отчёт волны 11M
+356021a fix(11M-4): BL-18 починен в тесте, реестр обновлён по волнам 11J-11M
+c523741 docs(11M-3): вывод по марганцу снят, числа волны 11 подставлены в исследование
+```
+
+`git status --short` — пусто, дерево чистое:
+
+```
+```
+
+Собственных коммитов волны три: `cb3b492`, `705ad64`, `ceccb87`. Сверху на них
+лёг ещё один — этот раздел отчёта, который до самого `git log` написать было
+нельзя. Ветка исполнителем не мержится, по правилам проекта её вливает
+следующая волна первым пунктом.
+
+Тронутые файлы: `app/thermogar_verified_physical.py`,
+`app/ThermoGar_app.py`, `tools/test_density.py`, `docs/DATABASES.md`,
+`tasks/REGISTER.md`, `tasks/WAVE11N_REPORT.md`. Файлы потока 11L
+(`app/thermogar_diffusion.py`, `app/thermogar_database_repair.py`,
+`tools/study_hn62m_wave11.py`, `tools/test_ui_g.py`,
+`tools/test_backend_calculations.py`, `results/`) не тронуты ни одним
+коммитом — `thermogar_database_repair.py` только читается и импортируется.
