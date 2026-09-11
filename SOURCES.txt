@@ -1,18 +1,116 @@
-GarCalc reference pair for studying MatCalc -> pycalphad adaptation
+SOURCES OF THE DATABASES SHIPPED WITH THERMOGAR
+===============================================
 
-1) mc_ni_v2.034.original.tdb
-Source:
-https://github.com/by-student-2017/OpenCALPHAD-v6-examples/blob/main/TDB_files/MatCalc6/Thermodynamic_databases_original/mc_ni_v2.034.tdb
-SHA-256:
-6ffaf67146f37f9871281356291b5b4c2174b6677a59630c4a17d59fc0befbfd
+Checked: 2026-09-11 (wave 11C).
 
-2) mc_ni_v2.034.pycalphad.tdb
-Source:
-https://groups.google.com/g/pycalphad/c/_WanDJwZGWA
-Attachment published in the pycalphad discussion; UTF-8 version posted by Brandon Bocklund on 2021-04-15.
-SHA-256:
-9e1b354efcd1c6f9974a7635c0540e545d6375461aaf08c13d9e5a0615145ab6
+All thermodynamic, mobility and physical databases in this repository come from
+the MatCalc open databases page:
 
-License notices are retained inside the database files. The database headers state ODbL/DbCL licensing.
+    https://www.matcalc.at/index.php/databases/open-databases
 
-Important: The pycalphad discussion explicitly warns that the adapted databases had only spot checks and were not fully validated against MatCalc energetics or physical accuracy. Use this pair to derive syntax transformations, then validate calculations independently.
+Upstream author and copyright holder: Erwin Povoden-Karadeniz
+(erwin.povoden-karadeniz@tuwien.ac.at), Institute of Materials Science and
+Technology, TU Wien; the steel database is co-authored with Aurelie Jacob.
+
+Licence, as stated verbatim in the header of every one of these files:
+
+    This database <name> is made available under the
+    Open Database License: http://opendatacommons.org/licenses/odbl/1.0/.
+    Any rights in individual contents of the database are licensed under the
+    Database Contents License: http://opendatacommons.org/licenses/dbcl/1.0/.
+
+ODbL-1.0 and DbCL-1.0 are free licences. Redistribution is allowed, commercial
+use is allowed. ODbL is copyleft: a derived database must be distributed under
+ODbL as well, with the notices kept intact and the source attributed.
+
+
+1) Thermodynamic databases (originals, unmodified byte-for-byte)
+---------------------------------------------------------------
+
+databases/original/ni/mc_ni_v2036.tdb
+    MatCalc Ni database mc_ni_v2.036, updated 2024-08-20.
+    SHA-256: 84BA813156E1F7D8BDE495D74420319AFEC03572B981F6B56103807F305313AB
+
+databases/original/al/mc_al_v2037.tdb
+    MatCalc Al database mc_al_v2.037, created 2023-10-03, last edits 2025-07.
+    SHA-256: 87EC595F2CAAE189227ED11D5598C899B436B866CCFEFEA91304CA57188817C4
+
+databases/original/fe/mc_fe_v2062.tdb
+    MatCalc steel database mc_fe_v2.062, created 2024-11-08.
+    SHA-256: AA02077EAC3F602DD7479CBEAFB09B450E282716752B3AE2B1FC3A57D9C64865
+
+
+2) Diffusion mobility databases (originals, unmodified byte-for-byte)
+---------------------------------------------------------------------
+
+databases/original/ni/mc_ni_v2012.ddb
+    MatCalc Ni mobility database mc_ni_v2.012.
+    SHA-256: 744D67B93843C579C3323A215F4CCB7E265FF3282C3D4C10C1CEF0A6E5CABE4D
+
+databases/original/al/mc_al_v2008.ddb
+    MatCalc Al mobility database mc_al_v2.008, 2023-09-13.
+    SHA-256: BF192D8C39992D2CABD1E7E36D124C5CDD0FF919B996D876505680D5E6341FB0
+
+databases/original/fe/mc_fe_v2016.ddb
+    MatCalc steel mobility database mc_fe_v2.016, updated 2024-04-05.
+    Its header still carries the name of the previous release, mc_fe_v2.014.
+    SHA-256: 92C3F6B9652A8C1D163BDF7C92CD694D6E9932B1E15022A98535176CBACAB7AD
+
+
+3) Physical property database (original, unmodified byte-for-byte)
+------------------------------------------------------------------
+
+databases/physical/original/physical_data_v103.pdb
+    MatCalc physical data v1.03, 2009-06-19. Density parameter DP only.
+    SHA-256: 4CF81C992B57263C50B370EA47EB0D5BB4F622CF23C18479BAB54267762F20BD
+    Scope and limits: PHYSICAL_DATA_README.md
+
+
+4) Derived databases actually shipped in the installer
+-------------------------------------------------------
+
+The files under databases/converted/ are derived databases in the sense of
+ODbL-1.0: the thermodynamic TDB was converted to pycalphad syntax and the
+compatible mobility parameters of the matching DDB were merged into it. They
+are distributed under ODbL-1.0 / DbCL-1.0, like their sources. Every upstream
+header, including the copyright and licence notices of both the TDB and the
+DDB, is reproduced verbatim inside each derived file.
+
+databases/converted/mc_ni_v2036_with_mobility.garcalc.tdb
+    from mc_ni_v2036.tdb + mc_ni_v2012.ddb
+    SHA-256: 1882D841A337063E0585D261C690AE7E565838234E231E21B8541A5CB0DBA391
+
+databases/converted/al/mc_al_v2037_with_mobility.thermogar.tdb
+    from mc_al_v2037.tdb + mc_al_v2008.ddb
+    SHA-256: F9BDF21D434FBE78B5EF3F7F2DE69763FA40B81335CDC58889907D41C80CD717
+
+databases/converted/fe/mc_fe_v2062_with_mobility.thermogar.tdb
+    from mc_fe_v2062.tdb + mc_fe_v2016.ddb, plus compatibility patch
+    TG-FE-2062-C15-001, which disables one single G parameter of C15_LAVES and
+    keeps the original command verbatim as a comment. No value is substituted.
+    SHA-256: 236EC4D9B0540DE04E4E6305FAA208672F31FBDF45B2AE84E92F80BD98053612
+
+A per-file conversion record (what was changed, what was disabled and why) sits
+next to each file as a .tdb.json passport. Full description: docs/DATABASES.md.
+
+
+5) Historical note: the pycalphad reference pair
+-------------------------------------------------
+
+The conversion rules were originally derived from a pair of mc_ni v2.034 files,
+which are no longer part of this repository and are no longer shipped:
+
+    mc_ni_v2.034 original TDB
+    https://github.com/by-student-2017/OpenCALPHAD-v6-examples/blob/main/TDB_files/MatCalc6/Thermodynamic_databases_original/mc_ni_v2.034.tdb
+    SHA-256: 6ffaf67146f37f9871281356291b5b4c2174b6677a59630c4a17d59fc0befbfd
+
+    mc_ni_v2.034 pycalphad-adapted TDB
+    https://groups.google.com/g/pycalphad/c/_WanDJwZGWA
+    Attachment published in the pycalphad discussion; UTF-8 version posted by
+    Brandon Bocklund on 2021-04-15.
+    SHA-256: 9e1b354efcd1c6f9974a7635c0540e545d6375461aaf08c13d9e5a0615145ab6
+
+That discussion warns explicitly that the adapted database had only spot checks
+and was not fully validated against MatCalc energetics or physical accuracy.
+The pair was used to derive syntax transformations only; every calculation in
+ThermoGar is validated independently.
