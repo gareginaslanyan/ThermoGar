@@ -14,7 +14,7 @@ from pathlib import Path
 import hashlib
 import json
 import re
-from typing import Any
+from typing import Any, Final
 
 import numpy as np
 import pandas as pd
@@ -398,6 +398,16 @@ def assert_fe_solidification_safe(
     raise KnownFeDatabaseIssue(message, check)
 
 
+# Поля сверки с эталоном не имеют права показывать значение, когда сверка не
+# выполнялась: "0 активных G-параметров" и "команда -9e6: нет" — ровно то, что
+# показала бы успешная сверка, поэтому отсутствие эталонной базы читалось как
+# "всё сошлось". Каталог databases/diagnostic/fe/ в установщик не попадает,
+# так что в установленной программе это был штатный режим работы панели.
+UPSTREAM_NOT_SHIPPED: Final = (
+    "сверка не выполнена: эталонная база не поставляется"
+)
+
+
 def passport_dataframe(
     project_root: str | Path,
     selected_profile: str,
@@ -456,22 +466,28 @@ def passport_dataframe(
         ("Исходная база без патча (в расчётах не используется)", str(upstream)),
         (
             "SHA-256 непатченной базы",
-            file_sha256(upstream) if upstream.is_file() else "не найдена",
+            file_sha256(upstream) if upstream.is_file() else UPSTREAM_NOT_SHIPPED,
         ),
         (
             "Активных G-параметров C15_LAVES в непатченной базе",
-            len(upstream_c15),
+            len(upstream_c15) if upstream.is_file() else UPSTREAM_NOT_SHIPPED,
         ),
         (
             "Активна команда -9e6 в непатченной базе",
-            "да" if upstream.is_file() and find_exact_suspect_commands(upstream) else "нет",
+            ("да" if find_exact_suspect_commands(upstream) else "нет")
+            if upstream.is_file()
+            else UPSTREAM_NOT_SHIPPED,
         ),
         (
             "LAVES_PHASE не изменена",
-            "да"
-            if command_list_sha256(working_laves)
-            == command_list_sha256(upstream_laves)
-            else "нет / не проверено",
+            (
+                "да"
+                if command_list_sha256(working_laves)
+                == command_list_sha256(upstream_laves)
+                else "нет"
+            )
+            if working.is_file() and upstream.is_file()
+            else UPSTREAM_NOT_SHIPPED,
         ),
         ("Проверка в нативном MatCalc", "не проводилась"),
     ]

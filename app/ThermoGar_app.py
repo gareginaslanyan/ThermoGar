@@ -2682,6 +2682,60 @@ def render_phase_set_note(settings: Any) -> None:
         st.caption(note)
 
 
+def release_exclusion_note(database_key: str) -> str:
+    """Текст об исключении фаз релизной политикой для результата расчёта.
+
+    Исключение делает не патч базы, а решение о составе поставки
+    (``FE_EXCLUDED_PHASES`` в ``thermogar_release_policy``). Пользователю
+    нужны три вещи: какая фаза снята, почему и для каких сплавов это может
+    оказаться важно, — иначе результат по дуплексной стали выглядит полным,
+    хотя фазы, введённой автором базы именно под такие марки, в нём нет.
+    """
+    if database_key != "fe" or not FE_EXCLUDED_PHASES:
+        return ""
+    names = ", ".join(sorted(FE_EXCLUDED_PHASES))
+    head = (
+        f"Из расчёта исключена фаза {names}"
+        if len(FE_EXCLUDED_PHASES) == 1
+        else f"Из расчёта исключены фазы {names}"
+    )
+    return (
+        f"{head} (решение о составе поставки, FE_EXCLUDED_PHASES). "
+        "Автор базы вводил фазы Лавеса под дуплексные нержавеющие и "
+        "корпусные стали — для таких марок результат может быть неполным."
+    )
+
+
+def database_key_from_settings(settings: Any) -> str:
+    """Ключ базы по строке «База» таблицы параметров результата.
+
+    Ключ берётся из самого результата, а не из текущего состояния
+    интерфейса: пользователь мог переключить базу после расчёта.
+    """
+    if not isinstance(settings, pd.DataFrame) or "Параметр" not in settings:
+        return ""
+    values = settings.loc[settings["Параметр"] == "База", "Значение"]
+    if not len(values):
+        return ""
+    label = str(values.iloc[0]).strip()
+    for key, known in RELEASE_DATABASE_LABELS.items():
+        if label == known:
+            return key
+    return ""
+
+
+def render_release_exclusion_note(settings: Any) -> None:
+    """Показать исключение по релизной политике рядом с результатом.
+
+    Волна 10 завела показ фаз, снятых по техническим причинам; здесь то же
+    делается для фаз, снятых решением о поставке. Сообщение идёт в результат,
+    а не только в подпись сайдбара, и не зависит от режима набора фаз.
+    """
+    note = release_exclusion_note(database_key_from_settings(settings))
+    if note:
+        st.warning(note)
+
+
 def render_engine_note(settings: Any) -> None:
     """Показать строку «Параллельный расчёт: …» рядом с готовым результатом."""
     if not isinstance(settings, pd.DataFrame) or "Параметр" not in settings:
@@ -6764,6 +6818,7 @@ with single_tab:
         result = st.session_state[single_b3_state_key]["display"]
 
         render_phase_set_note(result["settings"])
+        render_release_exclusion_note(result["settings"])
         st.markdown("#### Фазовые доли")
         st.dataframe(
             result["summary"],
@@ -7074,6 +7129,7 @@ with temperature_tab:
         result = st.session_state[temperature_b3_state_key]["display"]
 
         render_phase_set_note(result["settings"])
+        render_release_exclusion_note(result["settings"])
         render_engine_note(result["settings"])
         st.pyplot(result["figure"])
         st.dataframe(
@@ -7430,6 +7486,7 @@ with concentration_tab:
         result = st.session_state[concentration_b3_state_key]["display"]
 
         render_phase_set_note(result["settings"])
+        render_release_exclusion_note(result["settings"])
         render_engine_note(result["settings"])
         st.pyplot(result["figure"])
         st.dataframe(
@@ -7813,6 +7870,7 @@ with phase_diagram_tab:
         if binary_result_key in st.session_state:
             result = st.session_state[binary_result_key]
             render_phase_set_note(result["settings"])
+            render_release_exclusion_note(result["settings"])
             st.pyplot(result["figure"])
 
             with st.expander("Таблица рассчитанных границ", expanded=False):
@@ -8291,6 +8349,7 @@ with phase_diagram_tab:
                 isopleth_result_key
             ]
             render_phase_set_note(result["settings"])
+            render_release_exclusion_note(result["settings"])
             st.pyplot(result["figure"])
 
             with st.expander(
@@ -8650,6 +8709,7 @@ with phase_diagram_tab:
         if ternary_result_key in st.session_state:
             result = st.session_state[ternary_result_key]
             render_phase_set_note(result["settings"])
+            render_release_exclusion_note(result["settings"])
             st.pyplot(result["figure"])
 
             if result["boundaries"].empty:
@@ -9135,6 +9195,7 @@ with phase_diagram_tab:
         if map_result_key in st.session_state:
             result = st.session_state[map_result_key]
             render_phase_set_note(result["settings"])
+            render_release_exclusion_note(result["settings"])
             render_engine_note(result["settings"])
             st.pyplot(result["figure"])
 
@@ -9710,6 +9771,7 @@ with solidification_tab:
         ):
             state = st.session_state["solidification_result"]
             render_phase_set_note(state["settings"])
+            render_release_exclusion_note(state["settings"])
             results = state["results"]
             comparison_figure = plot_solidification_liquid_comparison(results)
             phase_figures = {
