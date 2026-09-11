@@ -36,6 +36,7 @@ import math
 import os
 import subprocess
 import sys
+import threading
 import time
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
@@ -206,6 +207,27 @@ A4_EXCLUSION_TRIALS: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("без SIGMA", ("SIGMA",)),
     ("без SIGMA и TI4C2S2", ("SIGMA", "TI4C2S2")),
 )
+
+# --- 11J-2 ----------------------------------------------------------------- #
+
+# Гипотеза мастера: отказ сходимости в хвосте вызван не пределом метода, а
+# редкой выборкой в той области состава, куда уехала остаточная жидкость
+# (Cr 0,32 и Mo 0,14 мольной доли против исходных 0,26 и 0,13). Проверяется
+# повторением головного прогона на более плотной выборке.
+J2_PDENS: tuple[int, ...] = (300, 500)
+# Прогон при pdens 100 занял 1314 с. Рост стоимости с плотностью близок к
+# линейному, поэтому pdens 500 ожидается около пяти часов. Если он переберёт
+# этот предел, подпункт ограничивается плотностью 300 — так прямо сказано в
+# постановке.
+J2_BUDGET_SECONDS = 6.0 * 3600.0
+# Сколько свободной физической памяти должно быть на старте прогона. Правило
+# проекта — при признаках свопа уменьшать сетку, а не ждать. Прогон при
+# pdens 500 дважды снимался системой, когда свободной физической оставалось
+# около трёх гигабайт; пик его собственного рабочего набора при этом был всего
+# 1,97 ГиБ, то есть память съедал не он, но снимали именно его. Порог с
+# запасом: подкачка потолок и поднимает, но счёт по ней идёт в разы медленнее.
+J2_MIN_FREE_GIB = 6.0
+
 
 A5_STEP_K = 0.5
 A5_CASES: tuple[tuple[str, dict[str, float]], ...] = (
@@ -1634,9 +1656,17 @@ def step_d2(force: bool = False) -> None:
 
 
 def scheil_key(mole: Mapping[str, float], step_k: float,
-               excluded: Sequence[str]) -> str:
+               excluded: Sequence[str], pdens: int = A4_PDENS) -> str:
+    """Ключ кэша прогона Шейля.
+
+    Плотность выборки дописывается в имя только когда она не базовая: иначе
+    ключи волн A4 и 11D-3 сменились бы, и семьдесят минут уже посчитанного
+    пришлось бы считать заново.
+    """
+
     suffix = "_".join(sorted(excluded)) or "full"
-    return f"scheil11_{composition_id(mole)}_step{step_k:g}_{suffix}"
+    tail = "" if int(pdens) == A4_PDENS else f"_pdens{int(pdens)}"
+    return f"scheil11_{composition_id(mole)}_step{step_k:g}_{suffix}{tail}"
 
 
 def run_scheil(
@@ -1645,6 +1675,7 @@ def run_scheil(
     label: str,
     step_k: float = A4_STEP_K,
     excluded: Sequence[str] = (),
+    pdens: int = A4_PDENS,
 ) -> tuple[Any, dict[str, Any]]:
     """Расчёт Шейля с записью полного протокола солвера.
 
@@ -1661,7 +1692,7 @@ def run_scheil(
     from pycalphad import variables as v
 
     CACHE.mkdir(parents=True, exist_ok=True)
-    key = scheil_key(mole, step_k, excluded)
+    key = scheil_key(mole, step_k, excluded, pdens)
     path = CACHE / f"{key}.json"
     if path.is_file():
         payload = json.loads(path.read_text("utf-8"))
@@ -1669,6 +1700,11 @@ def run_scheil(
         return scheil.SolidificationResult.from_dict(payload["result"]), payload
 
     phases = [name for name in ctx.phases if name not in set(excluded)]
+    # Ликвидус и, значит, точка старта берутся при базовой плотности выборки
+    # при любом ``pdens`` прогона. A1 показал, что от плотности ликвидус не
+    # зависит (50…500 дают одно и то же с точностью 0,1 K), а одинаковый старт
+    # обязателен: иначе сетки температур у прогонов разъедутся и сравнивать
+    # точку останова станет не с чем.
     liquidus, _calls = a1_liquidus(ctx, mole, A4_PDENS, EquilibriumCache(A4_PDENS))
     start_k = liquidus + A4_START_OVER_LIQUIDUS_K + 273.15
     composition = {
@@ -1676,7 +1712,7 @@ def run_scheil(
     }
 
     log(f"{label}: ликвидус {liquidus:.2f} °C, старт "
-        f"{start_k - 273.15:.2f} °C, шаг {step_k} K, "
+        f"{start_k - 273.15:.2f} °C, шаг {step_k} K, pdens {pdens}, "
         f"исключено {list(excluded) or 'ничего'}")
     started = time.perf_counter()
     protocol = io.StringIO()
@@ -1685,7 +1721,7 @@ def run_scheil(
             ctx.db, list(COMPONENTS), phases, composition, start_k,
             step_temperature=step_k,
             liquid_phase_name="LIQUID",
-            eq_kwargs={"calc_opts": {"pdens": A4_PDENS}},
+            eq_kwargs={"calc_opts": {"pdens": int(pdens)}},
             stop=A4_STOP_LIQUID,
             verbose=True,
         )
@@ -1702,6 +1738,7 @@ def run_scheil(
         "ликвидус, °C": liquidus,
         "старт, °C": start_k - 273.15,
         "шаг, K": float(step_k),
+        "pdens": int(pdens),
         "исключённые фазы": list(excluded),
         "шагов": len(result.temperatures),
         "секунд": seconds,
@@ -1771,6 +1808,78 @@ def temperature_at_fraction(curve: pd.DataFrame, target: float) -> float | None:
     return None
 
 
+def window_coverage(
+    window: tuple[float, float],
+    covered: Sequence[float],
+    steps: Sequence[float],
+    max_solid: float,
+    min_solid: float,
+) -> dict[str, Any]:
+    """Покрыто ли окно доли твёрдого посчитанными точками.
+
+    11J-3. Прежний критерий требовал попадания точки ровно на границу окна с
+    точностью 1e-6. Доли твёрдого у точек расчёта дискретны и с круглыми
+    числами 0,85 и 0,95 никак не связаны, поэтому флаг не мог стать истинным
+    ни при каком расчёте и ничего не сообщал.
+
+    Осмысленный критерий: ближайшие к границам посчитанные точки лежат внутри
+    окна и отстоят от своей границы не дальше чем на шаг по доле твёрдого.
+    Проверяется он через соседей: если по обе стороны окна есть посчитанные
+    точки, то между границей и ближайшей внутренней точкой умещается меньше
+    одного шага, и окно покрыто настолько, насколько вообще позволяет шаг
+    расчёта. Мерить зазор медианным шагом по всему окну нельзя: шаг по доле
+    твёрдого вдоль затвердевания меняется в разы, и у нижней границы он
+    крупнее среднего.
+
+    Само значение Kou прежний флаг не портил: максимум берётся по тем точкам,
+    что есть, и от флага не зависит.
+    """
+
+    if not covered:
+        return {
+            "окно покрыто полностью": False,
+            "зазор у нижней границы": None,
+            "зазор у верхней границы": None,
+            "шаг у нижней границы": None,
+            "шаг у верхней границы": None,
+            "почему не покрыто": (
+                "посчитанных точек в окне нет: посчитанные доли твёрдого лежат "
+                f"от {min_solid:.4f} до {max_solid:.4f}"
+            ),
+        }
+
+    low_gap = float(min(covered)) - window[0]
+    high_gap = window[1] - float(max(covered))
+    low_step = abs(float(steps[0])) if len(steps) else None
+    high_step = abs(float(steps[-1])) if len(steps) else None
+
+    # Точность 1e-9 — на округление double, а не запас: обе проверки
+    # спрашивают о наличии соседа, а не о попадании в границу.
+    below = min_solid <= window[0] + 1.0e-9
+    above = max_solid >= window[1] - 1.0e-9
+
+    reason = None
+    if not above:
+        reason = (
+            f"расчёт остановился на доле твёрдого {max_solid:.4f}, не дойдя до "
+            f"верхней границы окна {window[1]:g}: зазор {high_gap:.4f}"
+        )
+    elif not below:
+        reason = (
+            f"первая посчитанная точка на доле твёрдого {min_solid:.4f} уже выше "
+            f"нижней границы окна {window[0]:g}"
+        )
+
+    return {
+        "окно покрыто полностью": bool(below and above),
+        "зазор у нижней границы": round(low_gap, 6),
+        "зазор у верхней границы": round(high_gap, 6),
+        "шаг у нижней границы": round(low_step, 6) if low_step else None,
+        "шаг у верхней границы": round(high_step, 6) if high_step else None,
+        "почему не покрыто": reason,
+    }
+
+
 def kou_on_window(
     curve: pd.DataFrame, window: tuple[float, float]
 ) -> dict[str, Any]:
@@ -1787,6 +1896,7 @@ def kou_on_window(
     root = np.sqrt(np.clip(solid, 0.0, 1.0))
 
     rows: list[dict[str, Any]] = []
+    steps: list[float] = []
     peak = 0.0
     for index in range(1, len(solid)):
         if not (window[0] <= solid[index] <= window[1]):
@@ -1800,62 +1910,143 @@ def kou_on_window(
             "T, °C": float(temperature[index]),
             "|dT/d(fs^0.5)|, K": value,
         })
+        steps.append(float(solid[index] - solid[index - 1]))
         peak = max(peak, value)
 
     table = pd.DataFrame(rows)
     covered = [row["доля твёрдого"] for row in rows]
+    coverage = window_coverage(
+        window, covered, steps,
+        float(solid.max()) if len(solid) else 0.0,
+        float(solid.min()) if len(solid) else 1.0,
+    )
     return {
         "заявленное окно": [window[0], window[1]],
         "фактическое окно": (
             [round(min(covered), 5), round(max(covered), 5)] if covered else None
         ),
-        "окно покрыто полностью": bool(
-            covered and min(covered) <= window[0] + 1.0e-6
-            and max(covered) >= window[1] - 1.0e-6
-        ),
+        **coverage,
         "точек в окне": len(rows),
         "максимум, K": round(peak, 1) if rows else None,
         "таблица": table,
     }
 
 
+def protocol_lines(payload: Mapping[str, Any]) -> list[str]:
+    """Строки протокола солвера: файл целиком, иначе сохранённый хвост."""
+
+    name = payload.get("протокол")
+    if name:
+        path = OUT / str(name)
+        if path.is_file():
+            return [line for line in path.read_text("utf-8").splitlines() if line.strip()]
+    return [line for line in payload.get("хвост протокола", []) if line.strip()]
+
+
+def found_phases(line: str) -> list[str] | None:
+    """Набор фаз из строки протокола ``... (Found <набор>) ...``.
+
+    Возвращает ``None``, когда строка не того вида. Пустой список — это
+    ``Found set()``: солвер не нашёл вообще ничего.
+    """
+
+    marker = "(Found "
+    start = line.find(marker)
+    if start < 0:
+        return None
+    start += len(marker)
+    depth = 1
+    end = start
+    while end < len(line) and depth:
+        if line[end] == "(":
+            depth += 1
+        elif line[end] == ")":
+            depth -= 1
+            if depth == 0:
+                break
+        end += 1
+    body = line[start:end].strip()
+    if body in ("set()", "frozenset()", "{}", ""):
+        return []
+    return sorted(
+        part.strip().strip("'\"")
+        for part in body.strip("{}").split(",")
+        if part.strip()
+    )
+
+
 def stop_reason(result: Any, payload: Mapping[str, Any]) -> dict[str, Any]:
-    """Причина останова расчёта Шейля, различённая явно.
+    """Причина останова расчёта Шейля, различённая по протоколу солвера.
 
-    Три случая разные по смыслу, и путать их нельзя:
+    11J-3. Прежняя редакция писала «отказ солвера на инвариантном равновесии»
+    на всякий обрыв. Это две разные вещи, и протокол их различает:
 
-    * доля жидкости упала ниже порога ``stop`` — расчёт дошёл до конца;
-    * солвер нашёл равновесие без жидкости и исчерпал предел дробления шага —
-      это признак инвариантной реакции, остаток жидкости не разрешён;
-    * доля твёрдого набралась до 1 сама — тоже нормальный конец.
+    * ``Found {'FCC_A1', …}`` — жидкости нет, но твёрдые фазы найдены. Это
+      инвариантное равновесие: остаток жидкости израсходован реакцией, и
+      расчёт упирается в физику;
+    * ``Found set()`` — не найдено ни одной фазы. Равновесие не сошлось
+      вообще, и это отказ численного метода, а не свойство сплава.
+
+    ``scheil`` в обоих случаях дробит шаг и, исчерпав предел дробления,
+    останавливается с ``converged=False``, поэтому по одному флагу их не
+    различить — только по протоколу.
     """
 
     cut = last_real_index(result)
     truncated = cut != len(result.fraction_solid) - 1
     residual = 1.0 - float(result.fraction_solid[cut])
-    tail = [line for line in payload.get("хвост протокола", []) if line.strip()]
+    lines = protocol_lines(payload)
+    tail = lines[-4:]
+
+    failures = [line for line in lines if "No liquid phase found" in line]
+    last_failure = failures[-1] if failures else None
+    phases = found_phases(last_failure) if last_failure else None
+    exhausted = bool(
+        lines and "Maximum step size reduction exceeded" in lines[-1]
+    )
+
+    mechanism = (
+        "исчерпан предел дробления шага (scheil: MAXIMUM_STEP_SIZE_REDUCTION)"
+        if exhausted else "цикл завершился без сообщения о пределе дробления"
+    )
 
     if bool(result.converged):
         reason = "доля жидкости ниже порога stop"
         detail = f"NL < {A4_STOP_LIQUID:g}"
-    elif truncated:
-        reason = "отказ солвера на инвариантном равновесии"
+    elif phases is None:
+        reason = "останов без строки об отсутствии жидкости в протоколе"
         detail = (
-            "равновесие без жидкости при исчерпанном пределе дробления шага "
-            "(scheil: MAXIMUM_STEP_SIZE_REDUCTION); остаток жидкости объявлен "
-            "твёрдым одним куском"
+            "протокол не содержит ни одной строки «No liquid phase found»; "
+            "причину по нему установить нельзя"
+        )
+    elif phases == []:
+        reason = "отказ сходимости: равновесие не найдено"
+        detail = (
+            "в последнем неудачном равновесии не найдено ни одной фазы "
+            "(Found set()) — это отказ численного метода, а не инвариантная "
+            f"реакция; {mechanism}; остаток жидкости объявлен твёрдым одним "
+            "куском"
         )
     else:
-        reason = "доля твёрдого достигла 1 по накоплению"
-        detail = "цикл завершился штатно"
+        reason = "инвариантное равновесие: найдены только твёрдые фазы"
+        detail = (
+            "в последнем неудачном равновесии жидкости нет, но твёрдые фазы "
+            f"найдены ({', '.join(phases)}) — остаток израсходован реакцией; "
+            f"{mechanism}"
+        )
 
     return {
         "причина останова": reason,
         "пояснение": detail,
         "флаг converged": bool(result.converged),
+        "фазы в последнем неудачном равновесии": (
+            "строки нет" if phases is None else (phases or "ни одной")
+        ),
+        "неудачных равновесий в протоколе": len(failures),
+        "механизм останова": mechanism,
         "остаток дописан искусственной точкой": bool(truncated),
         "неразрешённый остаток жидкости, доля": round(residual, 6),
-        "последние строки протокола": tail[-4:],
+        "последние строки протокола": tail,
     }
 
 
@@ -1888,6 +2079,7 @@ def instrumented_summary(
         "состав": payload["метка"],
         "исключённые фазы": payload["исключённые фазы"] or "нет",
         "шаг по температуре, K": payload["шаг, K"],
+        "pdens": int(payload.get("pdens", A4_PDENS)),
         "равновесный ликвидус, °C": round(liquidus, 2),
         "шагов": int(payload["шагов"]),
         "доля твёрдого на последней посчитанной точке": round(fs_last, 6),
@@ -1897,12 +2089,17 @@ def instrumented_summary(
         declared_name: declared["максимум, K"],
         "Kou на фактическом окне: точек": declared["точек в окне"],
         "Kou на фактическом окне: заявленное окно покрыто": declared["окно покрыто полностью"],
+        "Kou на фактическом окне: почему не покрыто": declared["почему не покрыто"],
         (
             f"Kou на фиксированном окне fs {A4_KOU_FIXED_WINDOW[0]:g}…"
             f"{A4_KOU_FIXED_WINDOW[1]:g}, K"
         ): fixed["максимум, K"],
         "Kou на фиксированном окне: точек": fixed["точек в окне"],
         "Kou на фиксированном окне: покрыто полностью": fixed["окно покрыто полностью"],
+        "Kou на фиксированном окне: почему не покрыто": fixed["почему не покрыто"],
+        "Kou на фиксированном окне: зазоры у границ": [
+            fixed["зазор у нижней границы"], fixed["зазор у верхней границы"],
+        ],
         "интервал по Шейлю до последней посчитанной точки, K": round(
             liquidus - t_last, 2
         ),
@@ -2185,6 +2382,215 @@ def step_d3(force: bool = False) -> None:
 
 
 # --------------------------------------------------------------------------- #
+# 11J-2. Плотность выборки против предела метода
+# --------------------------------------------------------------------------- #
+
+
+def j2_dense(force: bool = False) -> dict[str, Any]:
+    """Головной прогон при pdens 300 и 500. Считается в потомке.
+
+    Базовый прогон при pdens 100 берётся готовым из кэша: считать его заново
+    незачем, а сравнивать надо именно с ним.
+    """
+
+    del force
+    ctx = Context()
+    mole = wt_to_mole(ctx, full_wt())
+
+    rows: list[dict[str, Any]] = []
+    curves: dict[str, list[dict[str, Any]]] = {}
+    skipped: list[dict[str, Any]] = []
+
+    base_result, base_payload = run_scheil(
+        ctx, mole, "контрольный состав, pdens 100", A4_STEP_K, (), A4_PDENS
+    )
+    base_curve = scheil_curve(base_result)
+    base_summary = instrumented_summary(base_result, base_payload, base_curve)
+    base_summary["попытка"] = "pdens 100 (базовый, из кэша)"
+    rows.append(base_summary)
+    curves["pdens 100"] = base_curve.to_dict("records")
+    pd.DataFrame(rows).to_csv(OUT / "j2_pdens_runs.csv", **CSV_WRITE)
+    gc.collect()
+
+    import psutil
+
+    spent = 0.0
+    for pdens in J2_PDENS:
+        cached = (CACHE / f"{scheil_key(mole, A4_STEP_K, (), pdens)}.json").is_file()
+        free = psutil.virtual_memory().available / 1024.0 ** 3
+        if not cached and free < J2_MIN_FREE_GIB:
+            skipped.append({
+                "pdens": pdens,
+                "причина": (
+                    f"свободной физической памяти {free:.1f} ГиБ при требуемых "
+                    f"{J2_MIN_FREE_GIB:.1f} ГиБ; прогон не начинался"
+                ),
+            })
+            log(f"pdens {pdens} пропущен: свободно {free:.1f} ГиБ")
+            continue
+
+        if spent >= J2_BUDGET_SECONDS:
+            skipped.append({
+                "pdens": pdens,
+                "причина": (
+                    f"бюджет времени подпункта {J2_BUDGET_SECONDS / 3600.0:.0f} ч "
+                    f"исчерпан предыдущими прогонами ({spent / 3600.0:.1f} ч)"
+                ),
+            })
+            log(f"pdens {pdens} пропущен: бюджет времени исчерпан")
+            continue
+
+        result, payload = run_scheil(
+            ctx, mole, f"контрольный состав, pdens {pdens}", A4_STEP_K, (), pdens
+        )
+        curve = scheil_curve(result)
+        summary = instrumented_summary(result, payload, curve)
+        summary["попытка"] = f"pdens {pdens}"
+        rows.append(summary)
+        curves[f"pdens {pdens}"] = curve.to_dict("records")
+        # На диск сразу: следующий прогон может не закончиться.
+        pd.DataFrame(rows).to_csv(OUT / "j2_pdens_runs.csv", **CSV_WRITE)
+        spent += float(payload["секунд"])
+        gc.collect()
+
+    return {"таблица": rows, "кривые": curves, "пропущено": skipped}
+
+
+def plot_j2(curves: Mapping[str, pd.DataFrame], path: Path) -> None:
+    figure, axes = plt.subplots(1, 2, figsize=(12.5, 4.6))
+    for label, curve in curves.items():
+        real = curve[curve["точка посчитана"]]
+        axes[0].plot(real["доля твёрдого"], real["T, °C"], linewidth=1.6, label=label)
+        tail = real[real["доля твёрдого"] >= 0.90]
+        if not tail.empty:
+            axes[1].plot(tail["доля твёрдого"], tail["T, °C"],
+                         marker="o", markersize=3, linewidth=1.4, label=label)
+
+    axes[0].set_xlabel("доля твёрдого")
+    axes[0].set_ylabel("температура, °C")
+    axes[0].set_title("Затвердевание по Шейлю, только посчитанные точки")
+    axes[0].grid(alpha=0.3)
+    axes[0].legend(fontsize=8)
+
+    axes[1].set_xlabel("доля твёрдого")
+    axes[1].set_ylabel("температура, °C")
+    axes[1].set_title("Хвост: доля твёрдого от 0,90 до останова")
+    axes[1].grid(alpha=0.3)
+    axes[1].legend(fontsize=8)
+
+    figure.suptitle("11J-2. Головной прогон при разной плотности выборки, шаг 0,5 K")
+    figure.tight_layout()
+    figure.savefig(path, dpi=150)
+    plt.close(figure)
+    log(f"записано {path.relative_to(ROOT)}")
+
+
+def step_j2(force: bool = False) -> None:
+    progress = load_progress()
+    if progress.get("11J-2", {}).get("готов") and not force:
+        log("11J-2 пропущен, посчитан ранее (--force для пересчёта)")
+        return
+
+    payload = run_child(["--j2", "1"] + (["--force"] if force else []))
+    table = pd.DataFrame(payload["таблица"])
+    write_csv(table, "j2_pdens_runs.csv")
+    curves = {
+        label: pd.DataFrame(records) for label, records in payload["кривые"].items()
+    }
+    plot_j2(curves, OUT / "j2_pdens_runs.png")
+
+    base = table.iloc[0]
+    fs_column = "доля твёрдого на последней посчитанной точке"
+    t_column = "T последней посчитанной точки, °C"
+    interval_column = "интервал по Шейлю до последней посчитанной точки, K"
+
+    comparison = [
+        {
+            "прогон": row["попытка"],
+            "pdens": int(row.get("pdens", A4_PDENS)),
+            "доля твёрдого на останове": float(row[fs_column]),
+            "сдвиг доли против pdens 100": round(
+                float(row[fs_column]) - float(base[fs_column]), 6
+            ),
+            "T останова, °C": float(row[t_column]),
+            "сдвиг T против pdens 100, K": round(
+                float(row[t_column]) - float(base[t_column]), 3
+            ),
+            "интервал по Шейлю, K": float(row[interval_column]),
+            "причина останова": row["причина останова"],
+            "секунд": float(row["секунд"]),
+        }
+        for _, row in table.iterrows()
+    ]
+
+    # Сдвинулся ли останов. Порог 0,002 по доле твёрдого — это примерно шаг,
+    # которым доля растёт на последних точках; меньшее движение неотличимо от
+    # того же самого места.
+    moved = [
+        item for item in comparison[1:]
+        if item["сдвиг доли против pdens 100"] > 0.002
+    ]
+    base_residual = 1.0 - float(base[fs_column])
+    if moved:
+        best = max(moved, key=lambda item: item["доля твёрдого на останове"])
+        residual = 1.0 - float(best["доля твёрдого на останове"])
+        shrunk = 1.0 - residual / base_residual if base_residual else 0.0
+        # Мера — не сдвиг доли твёрдого сам по себе, а насколько сократился
+        # неразрешённый остаток жидкости: именно он и есть то, чего не хватает
+        # расчёту. Сокращение вдвое — это уже другая картина хвоста; сокращение
+        # на проценты — поправка, которая порядок предела не меняет.
+        if shrunk >= 0.5:
+            verdict = (
+                f"Останов уехал дальше существенно: при pdens {best['pdens']} "
+                f"неразрешённый остаток жидкости {100.0 * residual:.1f} % против "
+                f"{100.0 * base_residual:.1f} % при pdens 100, то есть меньше "
+                f"на {100.0 * shrunk:.0f} %. Предел был в плотности выборки, а "
+                f"не в методе; интервал по Шейлю не менее "
+                f"{best['интервал по Шейлю, K']:.1f} K."
+            )
+        else:
+            verdict = (
+                f"Останов сдвинулся, но немного: при pdens {best['pdens']} доля "
+                f"твёрдого на останове {best['доля твёрдого на останове']:.4f} "
+                f"против {float(base[fs_column]):.4f} при pdens 100, "
+                f"неразрешённый остаток сократился с {100.0 * base_residual:.1f} % "
+                f"до {100.0 * residual:.1f} %, то есть на {100.0 * shrunk:.0f} %. "
+                f"Плотность выборки в хвосте вносит поправку, но предел метода "
+                f"снимает не она: отказ сходимости остаётся тем же самым и "
+                f"наступает практически там же. Интервал по Шейлю не менее "
+                f"{best['интервал по Шейлю, K']:.1f} K — прежние 79,0 K были "
+                f"занижены и обрывом, и сеткой, но по-прежнему это оценка снизу."
+            )
+    else:
+        verdict = (
+            "Останов не сдвинулся: уплотнение выборки не меняет ни долю "
+            "твёрдого на останове, ни температуру останова. Предел настоящий, "
+            "гипотеза о недостаточной плотности выборки в хвосте отклонена."
+        )
+
+    summary = {
+        "подпункт": "11J-2. Можно ли пройти хвост Шейля дальше",
+        "шаг по температуре, K": A4_STEP_K,
+        "проверенные pdens": [A4_PDENS] + [
+            item["pdens"] for item in comparison[1:]
+        ],
+        "сравнение": comparison,
+        "пропущено": payload["пропущено"],
+        "вердикт": verdict,
+    }
+    write_json(summary, "j2_summary.json")
+
+    progress["11J-2"] = {
+        "готов": True,
+        "время": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "шаг, K": A4_STEP_K,
+        "pdens": [item["pdens"] for item in comparison],
+        "режим набора фаз": "все фазы",
+    }
+    save_progress(progress)
+
+
+# --------------------------------------------------------------------------- #
 # A5. Марганец
 # --------------------------------------------------------------------------- #
 
@@ -2215,6 +2621,50 @@ def a5_manganese(force: bool = False) -> dict[str, Any]:
     return {
         "таблица": rows,
         "кривые": {label: curve.to_dict("records") for label, curve in curves.items()},
+    }
+
+
+def a5_common_fraction(curves: Mapping[str, pd.DataFrame]) -> dict[str, Any]:
+    """Сравнение составов на доле твёрдого, до которой дошли оба прогона.
+
+    11J-1. Постановка требует сравнивать составы только при близкой доле
+    твёрдого на останове. Если доли разошлись, «температура последней точки»
+    сравнивает разные места кривой: прогон, ушедший дальше, кончается ниже уже
+    потому, что прошёл больше, а не потому, что сплав хуже. Поэтому здесь обе
+    кривые режутся по общей достигнутой доле, и сравниваются температуры при
+    одной и той же доле твёрдого — величина, у которой смысл один.
+    """
+
+    labels = list(curves)
+    solid: dict[str, Any] = {}
+    temperature: dict[str, Any] = {}
+    for label in labels:
+        real = curves[label][curves[label]["точка посчитана"] == True]  # noqa: E712
+        solid[label] = real["доля твёрдого"].to_numpy(dtype=float)
+        temperature[label] = real["T, °C"].to_numpy(dtype=float)
+
+    common = min(float(solid[label].max()) for label in labels)
+    marks = sorted({0.90, 0.95, round(common, 6)})
+    rows: list[dict[str, Any]] = []
+    for mark in marks:
+        row: dict[str, Any] = {"доля твёрдого": round(mark, 6)}
+        for label in labels:
+            row[f"T, °C — {label}"] = round(
+                float(np.interp(mark, solid[label], temperature[label])), 2
+            )
+        row["разность, K"] = round(
+            row[f"T, °C — {labels[0]}"] - row[f"T, °C — {labels[1]}"], 2
+        )
+        rows.append(row)
+
+    kou_common = {
+        label: kou_on_window(curves[label], (0.90, common))["максимум, K"]
+        for label in labels
+    }
+    return {
+        "общая достигнутая доля твёрдого": round(common, 6),
+        "температуры при одинаковой доле твёрдого": rows,
+        "Kou на общем окне fs 0,90…%.4f, K" % common: kou_common,
     }
 
 
@@ -2304,6 +2754,7 @@ def step_a5(force: bool = False) -> None:
             },
         },
         "доли твёрдого на останове сопоставимы": bool(comparable),
+        "сравнение на общей доле твёрдого": a5_common_fraction(curves),
         "волна 10, шаг 2 K": {
             "T конца при Mn 0,50 %": 1294.0,
             "T конца при Mn 0,20 %": 1276.6,
@@ -2318,6 +2769,133 @@ def step_a5(force: bool = False) -> None:
         "шаг, K": A5_STEP_K,
         "pdens": A4_PDENS,
         "режим набора фаз": "все фазы",
+    }
+    save_progress(progress)
+
+
+# --------------------------------------------------------------------------- #
+# 11J-4. Таблица замеров памяти
+# --------------------------------------------------------------------------- #
+
+
+# Что за прогон стоит за каждым файлом замера. Имя файла — это набор ключей
+# командной строки потомка, и само по себе оно не говорит ни о плотности
+# выборки, ни о том, чем прогон кончился.
+J4_LABELS: dict[str, dict[str, str]] = {
+    "a5_1": {
+        "пункт": "11J-1, марганец",
+        "что считалось": "Mn 0,20 % шагом 0,5 K (Mn 0,50 % взят из кэша)",
+        "pdens": "100",
+        "шаг, K": "0,5",
+    },
+    "a5_1_force": {
+        "пункт": "11J-1, пересборка",
+        "что считалось": "обе сводки пересобраны из кэша, равновесий не считалось",
+        "pdens": "100",
+        "шаг, K": "0,5",
+    },
+    "a4_1_force": {
+        "пункт": "11J-3, пересборка",
+        "что считалось": "три прогона A4 пересобраны из кэша, равновесий не считалось",
+        "pdens": "100",
+        "шаг, K": "0,5",
+    },
+    "j2_pdens500_snyat": {
+        "пункт": "11J-2, снятый прогон",
+        "что считалось": "pdens 500, прогон снят системой по нехватке памяти",
+        "pdens": "500",
+        "шаг, K": "0,5",
+    },
+    "j2_1": {
+        "пункт": "11J-2, пересборка",
+        "что считалось": (
+            "pdens 300 взят из кэша, pdens 500 пропущен по нехватке памяти; "
+            "равновесий не считалось"
+        ),
+        "pdens": "300",
+        "шаг, K": "0,5",
+    },
+    "j2_1_force": {
+        "пункт": "11J-2, пересборка",
+        "что считалось": "сводка пересобрана из кэша, равновесий не считалось",
+        "pdens": "300",
+        "шаг, K": "0,5",
+    },
+}
+
+# Собственный прогон при pdens 300 (28,2 мин) замера не имеет: он считался
+# раньше, чем замер научился сбрасывать снимок на диск по ходу, а родителя
+# сняли вместе со следующим прогоном. Повторять счёт ради одного числа не
+# стали — это те же 28 минут на машине, где памяти и так не хватает.
+J4_MISSING = (
+    "прогон 11J-2 при pdens 300, 28,2 мин: замер потерян вместе со снятым "
+    "родительским процессом"
+)
+
+
+def j4_row(path: Path) -> dict[str, Any]:
+    payload = json.loads(path.read_text("utf-8"))
+    stem = path.stem.replace("j4_memory_", "")
+    label = J4_LABELS.get(stem, {"пункт": stem, "что считалось": "—",
+                                 "pdens": "—", "шаг, K": "—"})
+    swapped = float(payload["прирост занятой подкачки в системе, ГиБ"])
+    return {
+        "пункт": label["пункт"],
+        "что считалось": label["что считалось"],
+        "pdens": label["pdens"],
+        "шаг, K": label["шаг, K"],
+        "пик рабочего набора, ГиБ": payload["пик рабочего набора дерева, ГиБ"],
+        "пик фиксации, ГиБ": payload["пик фиксации дерева, ГиБ"],
+        "минимум свободной физической, ГиБ": payload["минимум свободной физической, ГиБ"],
+        "ушло в подкачку": "да" if swapped > 0.05 else "нет",
+        "прирост подкачки, ГиБ": swapped,
+        "минут под наблюдением": round(float(payload["секунд под наблюдением"]) / 60.0, 1),
+        "замер завершён": payload.get("замер завершён", True),
+    }
+
+
+def step_j4(force: bool = False) -> None:
+    """Сводит замеры, сделанные на прогонах 11J-1 и 11J-2. Ничего не считает."""
+
+    del force
+    paths = sorted(OUT.glob("j4_memory_*.json"))
+    if not paths:
+        log("11J-4: замеров нет, сначала надо посчитать 11J-1 и 11J-2")
+        return
+
+    table = pd.DataFrame([j4_row(path) for path in paths])
+    write_csv(table, "j4_memory.csv")
+
+    import psutil
+
+    virtual = psutil.virtual_memory()
+    swap = psutil.swap_memory()
+    heavy = table[table["минут под наблюдением"] >= 1.0]
+    summary = {
+        "подпункт": "11J-4. Замер памяти",
+        "физической памяти всего, ГиБ": round(virtual.total / 1024.0 ** 3, 3),
+        "подкачки всего, ГиБ": round(swap.total / 1024.0 ** 3, 3),
+        "потолок машины, ГиБ": round(
+            (virtual.total + swap.total) / 1024.0 ** 3, 3
+        ),
+        "шаг опроса, с": MEMORY_POLL_SECONDS,
+        "таблица": table.to_dict("records"),
+        "наибольший пик рабочего набора, ГиБ": (
+            float(heavy["пик рабочего набора, ГиБ"].max()) if not heavy.empty else None
+        ),
+        "замеров нет для": J4_MISSING,
+        "наименьшая свободная физическая, ГиБ": (
+            float(heavy["минимум свободной физической, ГиБ"].min())
+            if not heavy.empty else None
+        ),
+    }
+    write_json(summary, "j4_summary.json")
+
+    progress = load_progress()
+    progress["11J-4"] = {
+        "готов": True,
+        "время": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "замеров сведено": len(table),
     }
     save_progress(progress)
 
@@ -2368,11 +2946,169 @@ def save_progress(progress: Mapping[str, Any]) -> None:
     )
 
 
+# --------------------------------------------------------------------------- #
+# 11J-4. Замер памяти
+# --------------------------------------------------------------------------- #
+
+# Опрос раз в две секунды. Прогон Шейля идёт десятки минут, поэтому такая
+# частота ничего не стоит, а пик рабочего набора растёт медленно: между двумя
+# соседними равновесиями он не успевает подскочить и опасть незамеченным.
+MEMORY_POLL_SECONDS = 2.0
+# Как часто снимок уезжает на диск. Файл маленький, запись раз в полминуты не
+# стоит ничего, зато замер переживает снятие процесса по нехватке памяти.
+MEMORY_FLUSH_SECONDS = 30.0
+
+
+def memory_probe(process: Any) -> dict[str, float] | None:
+    """Один замер: процесс-потомок со всем его потомством плюс система.
+
+    Сумма по дереву, а не по одному процессу: тяжёлый подпункт сам может
+    запускать процессы, и одиночное значение тогда занижено.
+
+    Два числа по процессу разные, и нужны оба. ``rss`` на Windows — рабочий
+    набор, то есть страницы, физически лежащие в памяти. ``pagefile`` —
+    зарезервированная фиксация (commit charge), она включает и то, что уехало
+    в подкачку. Их разность — прямой признак свопа.
+    """
+
+    import psutil
+
+    rss = 0
+    commit = 0
+    alive = 0
+    try:
+        family = [process] + process.children(recursive=True)
+    except psutil.Error:
+        return None
+    for member in family:
+        try:
+            info = member.memory_info()
+        except psutil.Error:
+            continue
+        alive += 1
+        rss += int(getattr(info, "rss", 0))
+        commit += int(getattr(info, "pagefile", getattr(info, "vms", 0)))
+    if alive == 0:
+        return None
+
+    virtual = psutil.virtual_memory()
+    swap = psutil.swap_memory()
+    return {
+        "процессов": float(alive),
+        "рабочий набор дерева, ГиБ": rss / 1024.0 ** 3,
+        "фиксация дерева, ГиБ": commit / 1024.0 ** 3,
+        "в подкачке у дерева, ГиБ": max(0.0, (commit - rss) / 1024.0 ** 3),
+        "свободной физической, ГиБ": virtual.available / 1024.0 ** 3,
+        "занято подкачки в системе, ГиБ": swap.used / 1024.0 ** 3,
+    }
+
+
+def memory_watch(process: Any, stop: Any, record: dict[str, Any],
+                 stem: str | None = None) -> None:
+    """Фоновый опрос до завершения потомка. В расчёт не вмешивается.
+
+    Снимок сбрасывается на диск раз в ``MEMORY_FLUSH_SECONDS``, а не только в
+    конце. Прогон при pdens 500 был снят операционной системой по нехватке
+    памяти вместе с родителем, и замер, который держался в памяти родителя,
+    пропал ровно там, где был нужнее всего. Записанный по ходу файл переживает
+    и такой обрыв.
+    """
+
+    import psutil
+
+    virtual = psutil.virtual_memory()
+    swap = psutil.swap_memory()
+    record.update({
+        "физической памяти всего, ГиБ": virtual.total / 1024.0 ** 3,
+        "подкачки всего, ГиБ": swap.total / 1024.0 ** 3,
+        "занято подкачки до старта, ГиБ": swap.used / 1024.0 ** 3,
+        "замеров": 0,
+        "пик рабочего набора дерева, ГиБ": 0.0,
+        "пик фиксации дерева, ГиБ": 0.0,
+        "наибольшая разность фиксации и набора, ГиБ": 0.0,
+        "минимум свободной физической, ГиБ": virtual.available / 1024.0 ** 3,
+        "максимум занятой подкачки в системе, ГиБ": swap.used / 1024.0 ** 3,
+    })
+
+    flushed = time.perf_counter()
+    while not stop.wait(MEMORY_POLL_SECONDS):
+        probe = memory_probe(process)
+        if probe is None:
+            continue
+        record["замеров"] += 1
+        record["пик рабочего набора дерева, ГиБ"] = max(
+            record["пик рабочего набора дерева, ГиБ"],
+            probe["рабочий набор дерева, ГиБ"],
+        )
+        record["пик фиксации дерева, ГиБ"] = max(
+            record["пик фиксации дерева, ГиБ"], probe["фиксация дерева, ГиБ"]
+        )
+        record["наибольшая разность фиксации и набора, ГиБ"] = max(
+            record["наибольшая разность фиксации и набора, ГиБ"],
+            probe["в подкачке у дерева, ГиБ"],
+        )
+        record["минимум свободной физической, ГиБ"] = min(
+            record["минимум свободной физической, ГиБ"],
+            probe["свободной физической, ГиБ"],
+        )
+        record["максимум занятой подкачки в системе, ГиБ"] = max(
+            record["максимум занятой подкачки в системе, ГиБ"],
+            probe["занято подкачки в системе, ГиБ"],
+        )
+        now = time.perf_counter()
+        if stem is not None and now - flushed >= MEMORY_FLUSH_SECONDS:
+            memory_report(stem, record, now - started_at(record), final=False)
+            flushed = now
+
+
+def started_at(record: Mapping[str, Any]) -> float:
+    return float(record.get("начало, perf_counter", time.perf_counter()))
+
+
+def memory_report(stem: str, record: Mapping[str, Any], seconds: float,
+                  final: bool = True) -> Path | None:
+    """Итог замера рядом с результатами подпункта.
+
+    ``final=False`` — промежуточный сброс по ходу счёта: файл тот же самый,
+    просто помечен незавершённым, чтобы обрыв не выдавали за конец прогона.
+    """
+
+    if not record.get("замеров"):
+        return None
+    payload: dict[str, Any] = {
+        key: (round(value, 3) if isinstance(value, float) else value)
+        for key, value in record.items()
+    }
+    payload.pop("начало, perf_counter", None)
+    payload["секунд под наблюдением"] = round(seconds, 1)
+    payload["шаг опроса, с"] = MEMORY_POLL_SECONDS
+    payload["замер завершён"] = bool(final)
+    payload["прирост занятой подкачки в системе, ГиБ"] = round(
+        float(record["максимум занятой подкачки в системе, ГиБ"])
+        - float(record["занято подкачки до старта, ГиБ"]), 3
+    )
+    path = OUT / f"j4_memory_{stem}.json"
+    OUT.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), "utf-8")
+    if not final:
+        return path
+    log(
+        f"память: пик набора {payload['пик рабочего набора дерева, ГиБ']:.2f} ГиБ, "
+        f"минимум свободной {payload['минимум свободной физической, ГиБ']:.2f} ГиБ, "
+        f"прирост подкачки {payload['прирост занятой подкачки в системе, ГиБ']:+.2f} ГиБ"
+    )
+    return path
+
+
 def run_child(arguments: Sequence[str]) -> dict[str, Any]:
     """Тяжёлый кусок — в отдельном процессе; результат приходит файлом.
 
     Возврат через файл, а не через stdout: лог подпункта должен идти на экран
     по мере счёта, а не копиться в трубе до конца работы потомка.
+
+    Пока потомок считает, родитель опрашивает его память (11J-4). Опрос идёт в
+    отдельном потоке родителя и к расчёту не прикасается, поэтому числа
+    подпункта от наблюдения не зависят.
     """
 
     stem = "_".join(argument.strip("-") for argument in arguments)
@@ -2383,10 +3119,35 @@ def run_child(arguments: Sequence[str]) -> dict[str, Any]:
     environment = dict(os.environ, PYTHONHASHSEED="0")
     command = [sys.executable, "-X", "utf8", str(Path(__file__).resolve()),
                *arguments, "--handoff", str(handoff)]
-    completed = subprocess.run(command, env=environment, cwd=str(ROOT))
-    if completed.returncode != 0 or not handoff.is_file():
+
+    started = time.perf_counter()
+    popen = subprocess.Popen(command, env=environment, cwd=str(ROOT))
+    record: dict[str, Any] = {
+        "подпункт": stem, "начало, perf_counter": started,
+    }
+    watcher = None
+    stop = threading.Event()
+    try:
+        import psutil
+    except ImportError:
+        log("psutil недоступен, память не замеряется")
+    else:
+        watcher = threading.Thread(
+            target=memory_watch,
+            args=(psutil.Process(popen.pid), stop, record, stem),
+            daemon=True,
+        )
+        watcher.start()
+
+    returncode = popen.wait()
+    stop.set()
+    if watcher is not None:
+        watcher.join(timeout=MEMORY_POLL_SECONDS * 2)
+        memory_report(stem, record, time.perf_counter() - started)
+
+    if returncode != 0 or not handoff.is_file():
         raise RuntimeError(
-            f"потомок {' '.join(arguments)} завершился с кодом {completed.returncode}"
+            f"потомок {' '.join(arguments)} завершился с кодом {returncode}"
         )
     return json.loads(handoff.read_text("utf-8"))
 
@@ -2506,7 +3267,8 @@ def step_a1(force: bool = False) -> None:
 
 
 STEPS = {"a1": step_a1, "a2": step_a2, "a3": step_a3,
-         "d2": step_d2, "a4": step_a4, "d3": step_d3, "a5": step_a5}
+         "d2": step_d2, "a4": step_a4, "d3": step_d3, "a5": step_a5,
+         "j2": step_j2, "j4": step_j4}
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -2520,6 +3282,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--d2", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--a4", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--a5", type=int, default=None, help=argparse.SUPPRESS)
+    parser.add_argument("--j2", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--handoff", default=None, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
 
@@ -2540,6 +3303,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         payload = a4_scheil(force=args.force)
     elif args.a5 is not None:
         payload = a5_manganese(force=args.force)
+    elif args.j2 is not None:
+        payload = j2_dense(force=args.force)
     else:
         payload = None
 
