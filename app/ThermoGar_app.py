@@ -187,6 +187,7 @@ from thermogar_secure_io import (
     parse_verified_utf8_snapshot,
 )
 import thermogar_db_cache as db_cache
+from thermogar_equilibrium_core import bisect_transition_temperature
 import thermogar_restricted_fe_core as restricted_fe
 import thermogar_verified_equilibrium as verified_equilibrium
 import thermogar_verified_loaders as verified_loaders
@@ -4045,6 +4046,112 @@ def interpolate_temperature_at_solid_fraction(
     return None
 
 
+# Доля молей, ниже которой считаем, что фазы нет. Признак «расплав ещё
+# полностью жидкий» — суммарная доля всех твёрдых фаз не выше этого порога.
+SOLID_PRESENCE_FLOOR = 1.0e-6
+# Точность половинного деления при поиске ликвидуса, °C.
+LIQUIDUS_TOLERANCE_C = 0.1
+# Шаг и запас, на которые поднимается верхний край вилки, если при стартовой
+# температуре твёрдое ещё присутствует.
+LIQUIDUS_BRACKET_STEP_C = 10.0
+LIQUIDUS_BRACKET_MARGIN_C = 120.0
+
+
+def equilibrium_solid_fraction_at(
+    db: Database,
+    components: list[str],
+    phases: list[str],
+    composition_conditions: dict[Any, float],
+    temperature_c: float,
+    pdens: int,
+) -> float:
+    """Суммарная мольная доля твёрдых фаз в равновесии при температуре."""
+    conditions = {
+        v.N: 1.0,
+        v.P: 101325.0,
+        v.T: float(temperature_c) + 273.15,
+    }
+    conditions.update(composition_conditions)
+    eq = equilibrium(
+        db,
+        components,
+        phases,
+        conditions,
+        calc_opts={"pdens": int(pdens)},
+    )
+    fractions = aggregate_phase_fractions(eq)
+    del eq
+    return float(
+        sum(
+            value
+            for name, value in fractions.items()
+            if name != "LIQUID" and np.isfinite(value)
+        )
+    )
+
+
+def equilibrium_liquidus_c(
+    db: Database,
+    components: list[str],
+    phases: list[str],
+    composition_conditions: dict[Any, float],
+    low_c: float,
+    high_c: float,
+    pdens: int,
+    tolerance_c: float = LIQUIDUS_TOLERANCE_C,
+) -> float:
+    """Равновесный ликвидус половинным делением по настоящим равновесиям.
+
+    Раньше это число получалось интерполяцией траектории затвердевания к
+    выбранному порогу доли твёрдого. Так делать нельзя по двум причинам сразу.
+    Порог — величина отображения, и ликвидус от неё зависеть не должен. А доля
+    твёрдого у своей же границы уходит от нуля почти вертикально, поэтому
+    линейная интерполяция через шаг траектории даёт температуру, которой
+    управляет шаг, а не фазовая граница; на контрольном составе ХН62М шаг 5 K
+    завышал ликвидус на 3,2 K и занижал солидус на 4,4 K.
+
+    Верхний край вилки поднимается, пока при нём ещё есть твёрдое: стартовая
+    температура расчёта проверена лишь на «практически однофазный расплав»
+    (доля LIQUID от 0,9999), то есть ликвидус может лежать чуть выше неё.
+    """
+    ceiling = float(high_c) + LIQUIDUS_BRACKET_MARGIN_C
+    upper = float(high_c)
+    while (
+        equilibrium_solid_fraction_at(
+            db, components, phases, composition_conditions, upper, pdens
+        )
+        > SOLID_PRESENCE_FLOOR
+    ):
+        upper += LIQUIDUS_BRACKET_STEP_C
+        if upper > ceiling:
+            raise ValueError(
+                "Ликвидус не найден: твёрдая фаза остаётся вплоть до "
+                f"{ceiling:.1f} °C."
+            )
+
+    def fully_liquid(temperature_c: float) -> bool:
+        return bool(
+            equilibrium_solid_fraction_at(
+                db,
+                components,
+                phases,
+                composition_conditions,
+                float(temperature_c),
+                pdens,
+            )
+            <= SOLID_PRESENCE_FLOOR
+        )
+
+    return float(
+        bisect_transition_temperature(
+            fully_liquid,
+            float(low_c),
+            upper,
+            float(tolerance_c),
+        ).value
+    )
+
+
 def solidification_end_index(result: Any) -> int:
     """Для Scheil вернуть точку критерия до служебного закрытия остатка."""
     fractions = np.asarray(result.fraction_solid, dtype=float)
@@ -4145,12 +4252,21 @@ def solidification_final_phase_table(
 def solidification_summary_row(
     result: Any,
     appearance_threshold_fraction: float,
+    liquidus_c: float | None,
 ) -> dict[str, Any]:
-    """Собрать основные температуры и статус одного метода."""
+    """Собрать основные температуры и статус одного метода.
+
+    ``liquidus_c`` приходит снаружи и считается половинным делением по
+    равновесиям (``equilibrium_liquidus_c``): ликвидус — свойство состава, а не
+    метода и не порога отображения, поэтому он один и тот же для обеих строк
+    сводки. ``appearance_threshold_fraction`` остался порогом появления фазы
+    для таблиц последовательности и графиков — температуру перехода им больше
+    не определяют.
+    """
     temperatures = np.asarray(result.temperatures, dtype=float)
     fraction_liquid = np.asarray(result.fraction_liquid, dtype=float)
     end_index = solidification_end_index(result)
-    liquidus_c = interpolate_temperature_at_solid_fraction(
+    threshold_c = interpolate_temperature_at_solid_fraction(
         result,
         appearance_threshold_fraction,
     )
@@ -4167,6 +4283,10 @@ def solidification_summary_row(
             str(result.method),
         ),
         "Расчётный ликвидус, °C": liquidus_c,
+        (
+            f"T при доле твёрдого {100.0 * appearance_threshold_fraction:g} %"
+            " по траектории, °C"
+        ): threshold_c,
         "Температура окончания, °C": end_temperature_c,
         "Что означает окончание": (
             "равновесный солидус"
@@ -9526,11 +9646,38 @@ with solidification_tab:
                     )
                     for key, result in results.items()
                 }
+                # Ликвидус считается один раз на состав, а не на метод: это
+                # свойство состава, и у равновесного пути с путём Шейля оно
+                # общее — оба стартуют из одного расплава.
+                try:
+                    lowest_end_c = min(
+                        float(
+                            np.asarray(result.temperatures, dtype=float)[
+                                solidification_end_index(result)
+                            ]
+                        )
+                        - 273.15
+                        for result in results.values()
+                    )
+                    computed_liquidus_c: float | None = equilibrium_liquidus_c(
+                        db,
+                        components,
+                        phases,
+                        composition_conditions,
+                        lowest_end_c,
+                        actual_start_k - 273.15,
+                        int(solidification_pdens),
+                    )
+                except Exception as liquidus_error:
+                    computed_liquidus_c = None
+                    errors["Ликвидус"] = str(liquidus_error)
+
                 summary_table = pd.DataFrame(
                     [
                         solidification_summary_row(
                             result,
                             appearance_fraction,
+                            computed_liquidus_c,
                         )
                         for result in results.values()
                     ]
@@ -9651,10 +9798,13 @@ with solidification_tab:
                     render_quality_panel(state["quality"])
                 st.pyplot(comparison_figure, use_container_width=False)
                 st.caption(
-                    "Ликвидус определяется по выбранному порогу появления "
-                    "твёрдой фазы. Для Scheil температура окончания — это "
-                    "точка достижения заданного остатка расплава, а не точный "
-                    "равновесный солидус."
+                    "Ликвидус ищется половинным делением по равновесиям с "
+                    f"точностью {LIQUIDUS_TOLERANCE_C:g} °C и не зависит ни от "
+                    "метода, ни от порога появления фазы: порог управляет "
+                    "только таблицами последовательности и графиками. Для "
+                    "Scheil температура окончания — это точка достижения "
+                    "заданного остатка расплава, а не точный равновесный "
+                    "солидус."
                 )
                 with st.expander("Как проверялась начальная температура"):
                     st.dataframe(
