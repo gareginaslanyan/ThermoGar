@@ -159,6 +159,30 @@ A3_WAVE9: dict[tuple[float, float], dict[str, float]] = {
                     "численно, с": 14.264948974815313, "остаток": 0.10438537476199783},
 }
 
+# --- 11D-2 ----------------------------------------------------------------- #
+
+# Полуволны ячейки, названные постановкой 11D-2. Ряд 1, 3, 5 мкм, на котором
+# считалась A3, отвечает только лазерной печати; у литой заготовки расстояние
+# между вторичными осями дендритов — десятки-сотни микрон, и время идёт как
+# квадрат размера, поэтому разница не косметическая.
+D2_CELLS_UM = (0.5, 1.0, 5.0, 25.0, 50.0, 100.0)
+# Какому состоянию отвечает размер. Подпись обязательна: «окно гомогенизации
+# 1175–1200 °C» без размера ячейки технолога введёт в заблуждение.
+D2_STRUCTURE: dict[float, str] = {
+    0.5: "лазерная печать, ячеистая структура",
+    1.0: "лазерная печать, ячеистая структура",
+    5.0: "мелкая дендритная структура, быстрая кристаллизация",
+    25.0: "литая заготовка, вторичные оси дендритов",
+    50.0: "литая заготовка, вторичные оси дендритов",
+    100.0: "литая заготовка, вторичные оси дендритов",
+}
+# Численно считаются все размеры. Так вышло не по недосмотру: явная схема
+# держит шаг dt ~ dx², а сетка узлов одна и та же, поэтому число шагов до
+# момента t ~ L²/D равно (L/dx)² = (узлов)² и от L не зависит — прогоны A3 на
+# 1, 3 и 5 мкм заняли 15,3, 18,5 и 16,3 с. Порог оставлен на случай, если
+# сетку придётся сгущать: тогда крупные размеры уйдут на аналитику.
+D2_NUMERIC_MAX_UM = 100.0
+
 # --- A4, A5 ---------------------------------------------------------------- #
 
 A4_PDENS = 100
@@ -993,6 +1017,10 @@ def a3_diffusivity_check(ctx: Context) -> tuple[pd.DataFrame, dict[str, float]]:
     вместо сложения. Таблица говорит, что получилось теперь: отношение
     ``kawin/база`` должно быть единицей, а ``√(kawin)/база`` — нет. Если
     наоборот, удвоение никуда не делось, и считать времена нельзя.
+
+    Обе величины участвуют в проверке, но в таблицу уходит только первая:
+    ``√(kawin)/база`` имела смысл, пока отношение было квадратом, а на
+    исправленной базе показывает мусор порядка 10⁷ (пункт 11D-2).
     """
 
     thermodynamics = a3_thermodynamics(ctx)
@@ -1016,7 +1044,6 @@ def a3_diffusivity_check(ctx: Context) -> tuple[pd.DataFrame, dict[str, float]]:
                 "D по строке MQ базы (разб. предел), м²/с": from_database,
                 "D от kawin (разб. предел), м²/с": dilute[element],
                 "отношение kawin / база": direct,
-                "√(kawin) / база": squared,
             })
     return pd.DataFrame(rows), {
         "макс. отклонение kawin/база от 1": max(direct_gaps),
@@ -1268,6 +1295,335 @@ def step_a3(force: bool = False) -> None:
         "температуры, °C": list(A3_T_C),
         "ячейки, мкм": list(A3_CELLS_UM),
         "узлов сетки": A3_NODES,
+    }
+    save_progress(progress)
+
+
+# --------------------------------------------------------------------------- #
+# 11D-2. Гомогенизация на реальных размерах ячейки
+# --------------------------------------------------------------------------- #
+
+
+def d2_readable_time(seconds: float, reference: float | None = None) -> str:
+    """Время в единицах, удобных для этого размера ячейки.
+
+    Постановка просит секунды для мелких ячеек и часы для крупных. Для самых
+    крупных и часы нечитаемы: 100 мкм при 1150 °C — это больше трёх суток.
+
+    Единицу выбирает ``reference``, а не само значение: иначе в одной строке
+    таблицы аналитика вышла бы в часах, а численный счёт, который на пятую
+    часть меньше, — в секундах, и строка перестала бы читаться.
+    """
+
+    if not math.isfinite(seconds):
+        return "не считалось"
+    scale = seconds if reference is None or not math.isfinite(reference) else reference
+    if scale < 600.0:
+        return f"{seconds:.0f} с"
+    if scale < 172800.0:
+        return f"{seconds / 3600.0:.2f} ч"
+    return f"{seconds / 86400.0:.2f} сут"
+
+
+def d2_numeric_time(thermodynamics: Any, profile: Mapping[str, float],
+                    temperature_c: float, length_um: float,
+                    start_s: float, search_rows: list[dict[str, Any]]) -> tuple[float, float]:
+    """Численное время до остатка 5 % подбором. Возвращает (время, остаток).
+
+    Подбор тот же, что в A3: прогон, затем пересчёт постоянной времени по
+    полученному остатку и повтор. Шесть попыток — потолок; если остаток на
+    месте, это полка решателя, и время остаётся ненайденным.
+    """
+
+    temperature_k = temperature_c + 273.15
+    time_s = start_s
+    residual = math.nan
+    numeric_s = math.nan
+    for attempt in range(6):
+        started = time.perf_counter()
+        residual = a3_solve_couple(
+            thermodynamics,
+            [profile["CR_min"], profile["MO_min"]],
+            [profile["CR_max"], profile["MO_max"]],
+            temperature_k, length_um, time_s,
+        )
+        wall = time.perf_counter() - started
+        search_rows.append({
+            "T, °C": temperature_c,
+            "ячейка, мкм": length_um,
+            "время, с": time_s,
+            "остаточная амплитуда Mo": residual,
+            "счёт, с": round(wall, 1),
+        })
+        pd.DataFrame(search_rows).to_csv(OUT / "d2_search_runs.csv", **CSV_WRITE)
+        log(f"11D-2 {temperature_c:.0f} °C, L={length_um} мкм, t={time_s:.4g} с: "
+            f"остаток {residual:.4f} ({wall:.0f} с счёта)")
+        if not math.isfinite(residual) or residual <= 0.0:
+            break
+        if abs(residual - A3_TARGET) <= 0.004:
+            numeric_s = time_s
+            break
+        fitted_tau = -time_s / math.log(residual / A3_FIRST_MODE)
+        target = fitted_tau * math.log(A3_FIRST_MODE / A3_TARGET)
+        if not math.isfinite(target) or target <= 0.0 or attempt == 5:
+            break
+        time_s = target
+    return numeric_s, residual
+
+
+def d2_homogenization(force: bool = False) -> dict[str, Any]:
+    """Времена гомогенизации на ряде размеров ячейки. Считается в потомке."""
+
+    del force
+    ctx = Context()
+    check, gaps = a3_diffusivity_check(ctx)
+    check.to_csv(OUT / "a3_diffusivity_check.csv", **CSV_WRITE)
+    log(f"11D-2 сверка D: |kawin/база − 1| ≤ "
+        f"{gaps['макс. отклонение kawin/база от 1']:.2e}")
+    if gaps["макс. отклонение kawin/база от 1"] >= 1.0e-3:
+        raise RuntimeError(
+            "kawin отдаёт не D базы: "
+            f"kawin/база отклоняется на {gaps['макс. отклонение kawin/база от 1']:.3e}"
+        )
+
+    segregation = a3_segregation()
+    profile = {
+        "CR_min": segregation["CR_min"], "CR_max": segregation["CR_max"],
+        "MO_min": segregation["MO_min"], "MO_max": segregation["MO_max"],
+    }
+    x_mean_cr = 0.5 * (profile["CR_min"] + profile["CR_max"])
+    x_mean_mo = 0.5 * (profile["MO_min"] + profile["MO_max"])
+
+    thermodynamics = a3_thermodynamics(ctx)
+    rows: list[dict[str, Any]] = []
+    search_rows: list[dict[str, Any]] = []
+
+    for temperature_c in A3_T_C:
+        temperature_k = temperature_c + 273.15
+        mean = a3_tracer(thermodynamics, x_mean_cr, x_mean_mo, temperature_k)["MO"]
+        ends = [
+            a3_tracer(thermodynamics, cr, mo, temperature_k)["MO"]
+            for cr, mo in ((profile["CR_min"], profile["MO_min"]),
+                           (profile["CR_max"], profile["MO_max"]))
+        ]
+        log(f"11D-2 {temperature_c:.0f} °C: D(Mo) при среднем составе "
+            f"{mean:.3e} м²/с, на концах профиля {min(ends):.3e} … {max(ends):.3e}")
+
+        for length_um in D2_CELLS_UM:
+            length_m = length_um * 1.0e-6
+            tau_s = length_m ** 2 / (math.pi ** 2 * mean)
+            analytic_s = tau_s * math.log(A3_FIRST_MODE / A3_TARGET)
+            slow_s = (length_m ** 2 / (math.pi ** 2 * min(ends))) * math.log(
+                A3_FIRST_MODE / A3_TARGET)
+            fast_s = (length_m ** 2 / (math.pi ** 2 * max(ends))) * math.log(
+                A3_FIRST_MODE / A3_TARGET)
+
+            if length_um <= D2_NUMERIC_MAX_UM:
+                numeric_s, residual = d2_numeric_time(
+                    thermodynamics, profile, temperature_c, length_um,
+                    analytic_s, search_rows,
+                )
+                numeric_note = "численный прогон kawin"
+            else:
+                numeric_s, residual = math.nan, math.nan
+                numeric_note = (
+                    "только аналитика: численный счёт на этом размере не "
+                    "выполнялся, аналитика масштабируется как L² точно"
+                )
+
+            rows.append({
+                "T, °C": temperature_c,
+                "ячейка (полуволна), мкм": length_um,
+                "состояние": D2_STRUCTURE[length_um],
+                "D(Mo) при среднем составе, м²/с": mean,
+                "τ = L²/π²D, с": tau_s,
+                "аналитически до 5 %, с": analytic_s,
+                "аналитически до 5 %, удобно": d2_readable_time(analytic_s),
+                "вилка по профилю, удобно": (
+                    f"{d2_readable_time(min(slow_s, fast_s), analytic_s)} … "
+                    f"{d2_readable_time(max(slow_s, fast_s), analytic_s)}"
+                ),
+                "численно до 5 %, с": numeric_s,
+                "численно до 5 %, удобно": d2_readable_time(numeric_s, analytic_s),
+                "численно / аналитически": (
+                    numeric_s / analytic_s if math.isfinite(numeric_s) else None
+                ),
+                "остаток на последнем прогоне": residual,
+                "чем посчитано": numeric_note,
+            })
+            pd.DataFrame(rows).to_csv(OUT / "d2_homogenization.csv", **CSV_WRITE)
+
+    return {
+        "сверка D": check.to_dict("records"),
+        "отклонения сверки": gaps,
+        "профиль": {
+            "x(CR) ось дендрита": profile["CR_min"],
+            "x(CR) междендритная": profile["CR_max"],
+            "x(MO) ось дендрита": profile["MO_min"],
+            "x(MO) междендритная": profile["MO_max"],
+        },
+        "таблица": rows,
+    }
+
+
+def plot_d2(table: pd.DataFrame, path: Path) -> None:
+    figure, axes = plt.subplots(1, 2, figsize=(12.5, 4.8))
+
+    for temperature_c, block in table.groupby("T, °C"):
+        block = block.sort_values("ячейка (полуволна), мкм")
+        axes[0].plot(
+            block["ячейка (полуволна), мкм"].astype(float),
+            block["аналитически до 5 %, с"].astype(float),
+            marker="o", label=f"{temperature_c:.0f} °C, аналитика",
+        )
+        numeric = block.dropna(subset=["численно до 5 %, с"])
+        if not numeric.empty:
+            axes[0].plot(
+                numeric["ячейка (полуволна), мкм"].astype(float),
+                numeric["численно до 5 %, с"].astype(float),
+                marker="s", linestyle="none", markersize=5,
+                label=f"{temperature_c:.0f} °C, численно",
+            )
+    axes[0].set_xscale("log")
+    axes[0].set_yscale("log")
+    axes[0].set_xlabel("масштаб ячейки (полуволна), мкм")
+    axes[0].set_ylabel("время до остатка 5 % по Mo, с")
+    axes[0].grid(alpha=0.3, which="both")
+    axes[0].legend(fontsize=7)
+    axes[0].set_title("Время гомогенизации против размера ячейки")
+
+    # Второй график — то же в часах и линейно по размеру: именно так вопрос
+    # выглядит у технолога, и именно здесь видно, что 100 мкм не про печку.
+    for temperature_c, block in table.groupby("T, °C"):
+        block = block.sort_values("ячейка (полуволна), мкм")
+        axes[1].plot(
+            block["ячейка (полуволна), мкм"].astype(float),
+            block["аналитически до 5 %, с"].astype(float) / 3600.0,
+            marker="o", label=f"{temperature_c:.0f} °C",
+        )
+    axes[1].axhline(8.0, color="grey", linestyle="--", linewidth=1.0)
+    axes[1].annotate("рабочая смена, 8 ч", (0.6, 8.5), fontsize=7)
+    axes[1].set_xlabel("масштаб ячейки (полуволна), мкм")
+    axes[1].set_ylabel("время до остатка 5 % по Mo, ч")
+    axes[1].set_yscale("log")
+    axes[1].grid(alpha=0.3, which="both")
+    axes[1].legend(fontsize=8)
+    axes[1].set_title("То же в часах")
+
+    figure.suptitle("11D-2. Гомогенизация по молибдену на реальных размерах ячейки")
+    figure.tight_layout()
+    figure.savefig(path, dpi=150)
+    plt.close(figure)
+    log(f"записано {path.relative_to(ROOT)}")
+
+
+def d2_drop_squared_column() -> bool:
+    """Убрать «√(kawin)/база» из готовой сводки A3.
+
+    Колонку сняли из таблицы сверки, и оставлять её в ``a3_summary.json``
+    нельзя: файл и CSV разошлись бы, а число там заведомо мусорное. Значения
+    остальных полей не трогаются — расчёт детерминированный, и пересчитывать
+    A3 ради удаления одного ключа не требуется.
+    """
+
+    path = OUT / "a3_summary.json"
+    if not path.is_file():
+        return False
+    payload = json.loads(path.read_text("utf-8"))
+    changed = False
+    for record in payload.get("сверка D", []):
+        if "√(kawin) / база" in record:
+            record.pop("√(kawin) / база")
+            changed = True
+    gaps = payload.get("отклонения сверки", {})
+    if "макс. отклонение √(kawin)/база от 1" in gaps:
+        gaps.pop("макс. отклонение √(kawin)/база от 1")
+        changed = True
+    if changed:
+        path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=False), "utf-8"
+        )
+        log("из a3_summary.json убрана колонка √(kawin)/база")
+    return changed
+
+
+def step_d2(force: bool = False) -> None:
+    progress = load_progress()
+    if progress.get("11D-2", {}).get("готов") and not force:
+        log("11D-2 пропущен, посчитан ранее (--force для пересчёта)")
+        return
+
+    payload = run_child(["--d2", "1"] + (["--force"] if force else []))
+    table = pd.DataFrame(payload["таблица"])
+    write_csv(table, "d2_homogenization.csv")
+    plot_d2(table, OUT / "d2_homogenization.png")
+    d2_drop_squared_column()
+
+    # Проверка масштабирования: аналитика идёт как L² по построению, а
+    # численный счёт — нет, поэтому отношение «численно/аналитически» обязано
+    # быть постоянным по размеру. Разъехалось — численный счёт где-то не сошёлся.
+    ratios = table["численно / аналитически"].dropna().astype(float)
+    scaling = {
+        "точек с численным счётом": int(len(ratios)),
+        "численно/аналитически, мин": round(float(ratios.min()), 4) if len(ratios) else None,
+        "численно/аналитически, макс": round(float(ratios.max()), 4) if len(ratios) else None,
+        "разброс отношения, %": (
+            round(100.0 * (float(ratios.max()) / float(ratios.min()) - 1.0), 2)
+            if len(ratios) else None
+        ),
+    }
+
+    by_state: list[dict[str, Any]] = []
+    for length_um in D2_CELLS_UM:
+        block = table[table["ячейка (полуволна), мкм"].astype(float) == length_um]
+        entry: dict[str, Any] = {
+            "ячейка (полуволна), мкм": length_um,
+            "состояние": D2_STRUCTURE[length_um],
+        }
+        for record in block.to_dict("records"):
+            entry[f"{record['T, °C']:.0f} °C, аналитика"] = (
+                record["аналитически до 5 %, удобно"]
+            )
+            entry[f"{record['T, °C']:.0f} °C, численно"] = (
+                record["численно до 5 %, удобно"]
+            )
+        by_state.append(entry)
+
+    summary = {
+        "подпункт": "11D-2. Гомогенизация на реальных размерах ячейки",
+        "температуры, °C": list(A3_T_C),
+        "ячейки (полуволна), мкм": list(D2_CELLS_UM),
+        "узлов сетки": A3_NODES,
+        "критерий": "остаточная неоднородность по молибдену 5 %",
+        "профиль сегрегации": payload["профиль"],
+        "вход профиля": A3_SEGREGATION_INPUT,
+        "сверка D": payload["сверка D"],
+        "отклонения сверки": payload["отклонения сверки"],
+        "численный предел, мкм": D2_NUMERIC_MAX_UM,
+        "почему счёт не дорожает с размером": (
+            "явная схема держит dt ~ dx², а число узлов одно и то же, поэтому "
+            "число шагов до момента t ~ L²/D равно квадрату числа узлов и от L "
+            "не зависит"
+        ),
+        "масштабирование": scaling,
+        "таблица по размерам": by_state,
+        "таблица": table.to_dict("records"),
+        "оговорка": (
+            "Аналитическая оценка τ = L²/π²D с амплитудой первой моды 4/π — "
+            "основная величина; численный прогон kawin справочный. Размер "
+            "ячейки указывать обязательно: время идёт как квадрат размера, и "
+            "между лазерной печатью и литой заготовкой разница в сотни раз."
+        ),
+    }
+    write_json(summary, "d2_summary.json")
+
+    progress["11D-2"] = {
+        "готов": True,
+        "время": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "температуры, °C": list(A3_T_C),
+        "ячейки, мкм": list(D2_CELLS_UM),
+        "узлов сетки": A3_NODES,
+        "численно до, мкм": D2_NUMERIC_MAX_UM,
     }
     save_progress(progress)
 
@@ -2050,7 +2406,7 @@ def step_a1(force: bool = False) -> None:
 
 
 STEPS = {"a1": step_a1, "a2": step_a2, "a3": step_a3,
-         "a4": step_a4, "a5": step_a5}
+         "d2": step_d2, "a4": step_a4, "a5": step_a5}
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -2061,6 +2417,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--a1-wave9", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--a2", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--a3", type=int, default=None, help=argparse.SUPPRESS)
+    parser.add_argument("--d2", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--a4", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--a5", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--handoff", default=None, help=argparse.SUPPRESS)
@@ -2077,6 +2434,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         payload = a2_density(force=args.force)
     elif args.a3 is not None:
         payload = a3_homogenization(force=args.force)
+    elif args.d2 is not None:
+        payload = d2_homogenization(force=args.force)
     elif args.a4 is not None:
         payload = a4_scheil(force=args.force)
     elif args.a5 is not None:
