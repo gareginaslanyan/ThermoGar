@@ -523,6 +523,91 @@ def test_density_single(database_key: str) -> None:
     assert "Параметры" in sheets
 
 
+def _phases_without_bcc_b2(database_key: str) -> list[str]:
+    """Автоматический набор фаз базы без нестроящейся BCC_B2."""
+
+    from pycalphad import Database
+    from pycalphad.core.utils import filter_phases, unpack_species
+    import thermogar_database_repair as repair
+
+    path = {
+        "ni": PROJECT_ROOT / "databases" / "converted"
+        / "mc_ni_v2036_with_mobility.garcalc.tdb",
+    }[database_key]
+    database = Database(str(path))
+    components = [
+        "NI", "CR", "MO", "C", "SI", "MN", "S", "NB", "AL", "TI", "FE", "VA",
+    ]
+    phases = sorted(filter_phases(database, unpack_species(database, components)))
+    kept, _removed = repair.drop_broken_order_disorder(database, components, phases)
+    return sorted(kept)
+
+
+def test_density_estimated_warning_is_shown_to_user() -> None:
+    """Пользователь видит предупреждение об оценочной плотности, а не только лог.
+
+    Подпункт A2 волны 11A: у контрольного состава ХН62М(Sc)-ВИ при 25 °C около
+    82 % молей приходится на фазы, которых в physical_data.pdb нет (NI2CR,
+    DELTA, MNS_Q), и плотность таких фаз оценена по правилу смеси. Число в
+    таком виде — прикидка, и об этом должно быть сказано в самом интерфейсе:
+    лога расчёта пользователь не видит.
+
+    Проверяется именно то, что показано на экране: тексты ``st.warning`` и
+    строка «Качество оценки» в таблице покрытия.
+    """
+
+    session = start(
+        "ni",
+        session={
+            "thermogar_composition_ni": (
+                "C=0.005, SI=0.10, MN=0.50, S=0.020, CR=23.5, MO=13.0, "
+                "NB=0.06, AL=0.25, TI=0.10, FE=0.50"
+            ),
+            "thermogar_units_ni": "массовые %",
+            "thermogar_balance_ni": "NI",
+            "physical_temperature_ni": 25.0,
+            # BCC_B2 снимается вручную: автоматический список вкладки плотности
+            # идёт через phase_policy.eligible_phases и снятие нестроящихся пар
+            # «порядок/беспорядок» не проходит, поэтому на составе с углеродом
+            # расчёт падает с ValueError из pycalphad Model. Дефект отмечен в
+            # отчёте волны 11A; здесь он обойдён тем же способом, что доступен
+            # пользователю, — галкой «Выбрать фазы вручную».
+            "physical_single_manual": True,
+            "physical_single_tokens": _phases_without_bcc_b2("ni"),
+        },
+    )
+    session.click("physical_single_calculate")
+    session.assert_clean()
+
+    projection = session.state(
+        "_thermogar_vlb_b4b_result_property_density_single"
+    )["projections"][0]
+    assert projection["alloy_density_kg_m3"] == pytest.approx(8480.6, abs=1.0)
+
+    # То, что реально напечатано на экране, а не то, что записано в лог.
+    shown = [element.value for element in session.at.warning]
+    estimated = [text for text in shown if "оценена по правилу смеси" in text]
+    assert estimated, (
+        "на экране нет предупреждения об оценочной плотности; показано: "
+        + " | ".join(shown)
+    )
+    message = estimated[0]
+    assert "погрешность до 10 %" in message, message
+    assert "82.28 %" in message, message
+    for phase in ("NI2CR", "DELTA", "MNS_Q"):
+        assert phase in message, f"{phase} не назван в предупреждении: {message}"
+
+    # Та же оговорка продублирована строкой «Качество оценки» в таблице
+    # покрытия: предупреждение можно проглядеть, таблица остаётся на виду.
+    assert "оценк" in projection["quality_label"].lower(), projection["quality_label"]
+    assert "82.28 %" in projection["quality_label"], projection["quality_label"]
+
+    # Покрытие по массе показывает 100 % и мерой достоверности не служит:
+    # правило смеси закрывает всё, чего в PDB нет. Проверка удерживает этот
+    # факт, чтобы его не приняли за признак надёжности числа.
+    assert projection["mass_coverage_pct"] == pytest.approx(100.0, abs=0.01)
+
+
 @pytest.mark.parametrize("database_key", DATABASES)
 def test_density_temperature_scan(database_key: str) -> None:
     profile = BASES[database_key]
