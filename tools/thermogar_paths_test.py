@@ -17,6 +17,46 @@ ROOT = Path(__file__).resolve().parent.parent
 APP = ROOT / "app"
 sys.path.insert(0, str(APP))
 
+OFFICIAL_VENV_RELATIVE = Path(".venv-windows") / "Scripts" / "python.exe"
+
+
+def _main_clone_root(root: Path) -> Path | None:
+    """Корень основного клона, если ``root`` — связанное рабочее дерево git.
+
+    У связанного рабочего дерева ``.git`` — не каталог, а файл со строкой
+    ``gitdir: <основной клон>/.git/worktrees/<имя>``. Отсюда корень основного
+    клона получается снятием трёх последних частей пути. Своего
+    ``.venv-windows`` у рабочего дерева нет и быть не должно: интерпретатор
+    один на клон, и это ровно тот порядок работы, который принят в проекте.
+    """
+
+    marker = root / ".git"
+    if not marker.is_file():
+        return None
+    try:
+        text = marker.read_text(encoding="utf-8").strip()
+    except OSError:
+        return None
+    if not text.startswith("gitdir:"):
+        return None
+    gitdir = Path(text.split(":", 1)[1].strip())
+    if not gitdir.is_absolute():
+        gitdir = (root / gitdir).resolve()
+    # <основной клон>/.git/worktrees/<имя>  ->  <основной клон>
+    if len(gitdir.parts) < 4 or gitdir.parent.name != "worktrees":
+        return None
+    return gitdir.parent.parent.parent
+
+
+def _accepted_interpreters() -> list[Path]:
+    """Штатные интерпретаторы: свой и, для рабочего дерева, основного клона."""
+
+    candidates = [ROOT / OFFICIAL_VENV_RELATIVE]
+    main_clone = _main_clone_root(ROOT)
+    if main_clone is not None:
+        candidates.append(main_clone / OFFICIAL_VENV_RELATIVE)
+    return candidates
+
 from thermogar_paths import ThermoGarPathError, ThermoGarPaths
 
 
@@ -220,12 +260,27 @@ class ThermoGarPathsTests(unittest.TestCase):
             self.assertEqual(list(paths.state_root.rglob("*.pyc")), [])
 
     def test_006_exact_official_venv_interpreter_identity(self):
+        """Прогон идёт штатным интерпретатором проекта.
+
+        Штатный интерпретатор один на клон. Из связанного рабочего дерева
+        (``git worktree``) своего ``.venv-windows`` нет и заводить его не
+        нужно — принимается ``.venv-windows`` основного клона. Раньше тест
+        требовал venv строго внутри своего дерева и падал из любого
+        worktree; решение мастера в волне 11M-4: неправ тест, а не порядок
+        работы. Пункт ``BL-18``.
+        """
+
         self.assertEqual(sys.version_info[:3], (3, 11, 9))
         self.assertEqual(platform.architecture()[0], "64bit")
-        expected = ROOT / ".venv-windows" / "Scripts" / "python.exe"
-        self.assertEqual(
-            os.path.normcase(os.path.abspath(sys.executable)),
-            os.path.normcase(os.path.abspath(expected)),
+        accepted = _accepted_interpreters()
+        actual = os.path.normcase(os.path.abspath(sys.executable))
+        normalized = [os.path.normcase(os.path.abspath(path)) for path in accepted]
+        self.assertIn(
+            actual,
+            normalized,
+            "Прогон идёт не штатным интерпретатором проекта. "
+            f"Запущено: {sys.executable}. Принимаются: "
+            + ", ".join(str(path) for path in accepted),
         )
         print("INTERPRETER_EXECUTABLE:", sys.executable)
         print("INTERPRETER_VERSION:", sys.version)

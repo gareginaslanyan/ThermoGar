@@ -453,6 +453,124 @@ def test_matrix_expansion_within_physical_window(
     )
 
 
+# Окно измерений теплового расширения чистого хрома, 25…700 °C.
+# Хиднерт 1941 (NBS RP1407, таблица 3) даёт 9,5·10⁻⁶/K до 700 °C, оценка
+# REF 14 — 8,8·10⁻⁶/K; окно взято с запасом на обе стороны.
+CHROMIUM_EXPANSION_WINDOW = (8.0e-6, 10.0e-6)
+
+# Холодная точка взята 25 °C, а не 20 °C как у Хиднерта: DP-параметр
+# BCC_A2 в physical_data_v103.pdb начинается с 298,15 K, ниже он не
+# определён. Сдвиг холодной точки на 5 K меняет средний коэффициент на
+# 0,04·10⁻⁶/K — на два порядка меньше ширины окна.
+CHROMIUM_COLD_C = 25.0
+CHROMIUM_HOT_C = 700.0
+
+
+def _pure_chromium_expansion(
+    physical_database: PhysicalDensityDatabase,
+) -> float:
+    """Средний линейный коэффициент расширения чистого хрома, 25…700 °C, 1/K.
+
+    Считается прямо по DP(BCC_A2,CR:VA), без равновесия: это ровно та
+    функция DTCRBCC, которую перекрывает поправка.
+    """
+
+    densities: list[float] = []
+    for temperature_c in (CHROMIUM_COLD_C, CHROMIUM_HOT_C):
+        value, coverage, warnings = physical_database.density_from_site_fractions(
+            "BCC_A2", [{"CR": 1.0}, {"VA": 1.0}], temperature_c + 273.15
+        )
+        assert value is not None, (
+            f"Плотность чистого хрома при {temperature_c} °C не посчитана: {warnings}"
+        )
+        assert coverage > 0.999
+        densities.append(float(value))
+    cold, hot = densities
+    return ((cold / hot) ** (1.0 / 3.0) - 1.0) / (CHROMIUM_HOT_C - CHROMIUM_COLD_C)
+
+
+def test_plain_chromium_expansion_is_far_above_measurement(
+    physical_db_plain: PhysicalDensityDatabase,
+) -> None:
+    """Сторож: без поправки хром расширяется втрое быстрее измеренного.
+
+    Активный полином DTCRBCC (REF 14 в переносе базы) даёт на 25…700 °C
+    около 25,8·10⁻⁶/K против 9,5·10⁻⁶/K у Хиднерта. Без этой проверки
+    основной тест не отличает «поправка работает» от «окно широкое».
+    """
+
+    assert not physical_db_plain.applied_overrides, (
+        "Фикстура обязана давать базу без поправок"
+    )
+    coefficient = _pure_chromium_expansion(physical_db_plain)
+    assert coefficient > CHROMIUM_EXPANSION_WINDOW[1] * 2.0, (
+        "Чистая база вдруг перестала завышать расширение хрома: "
+        f"{coefficient * 1e6:.2f}e-6/K"
+    )
+
+
+def test_pure_chromium_expansion_matches_measurement(
+    physical_db: PhysicalDensityDatabase,
+) -> None:
+    """С поправкой чистый хром ложится на измерения: 8…10·10⁻⁶/K.
+
+    Это проверка самого восстановленного наклона, без примеси сплава.
+    Коэффициенты взяты из таблицы 1 статьи REF 14 самой базы
+    (Lu, Selleby, Sundman, Calphad 29 (2005) 68-89,
+    doi:10.1016/j.calphad.2005.05.001) и сверены с независимым измерением
+    Хиднерта (NBS RP1407, 1941, таблица 3).
+    """
+
+    entry = _chromium_override()
+    if entry is None:
+        pytest.skip("Нет файла-дополнения с поправкой по хрому.")
+    assert entry.is_filled, (
+        "Поправка по хрому не заполнена, хотя источник восстановлен в "
+        f"волне 11M-2. Состояние записи: {entry.status}."
+    )
+    assert physical_db.applied_overrides, (
+        "Поправка заполнена, но не применилась: проверьте enabled в файле "
+        "дополнения и переменную THERMOGAR_PHYSICAL_OVERRIDES."
+    )
+    coefficient = _pure_chromium_expansion(physical_db)
+    low, high = CHROMIUM_EXPANSION_WINDOW
+    assert low <= coefficient <= high, (
+        f"Средний коэффициент расширения чистого хрома "
+        f"{coefficient * 1e6:.2f}e-6/K вне окна "
+        f"{low * 1e6:.0f}…{high * 1e6:.0f}e-6/K"
+    )
+
+
+def test_chromium_override_keeps_the_reference_point_of_the_base(
+    physical_db: PhysicalDensityDatabase,
+    physical_db_plain: PhysicalDensityDatabase,
+) -> None:
+    """ρ(298,15 K) чистого хрома не сдвинута: правится наклон, не точка.
+
+    Опорное значение базы 7181,91 кг/м³ со справочником согласуется, а
+    V₀ = 7,04033e-6 м³/моль из таблицы 1 статьи описывает НЕмагнитный
+    объём и опорной точкой служить не может: M/V₀ даёт 7385 кг/м³, то есть
+    на 2,7 % выше справочных 7190.
+    """
+
+    if not physical_db.applied_overrides:
+        pytest.skip("Поправка не применена — сравнивать нечего.")
+    values = []
+    for database in (physical_db_plain, physical_db):
+        value, _, _ = database.density_from_site_fractions(
+            "BCC_A2", [{"CR": 1.0}, {"VA": 1.0}], 298.15
+        )
+        assert value is not None
+        values.append(float(value))
+    plain, corrected = values
+    assert plain == pytest.approx(7181.91, abs=0.01), (
+        f"Опорная точка базы уехала сама по себе: {plain:.2f} кг/м³"
+    )
+    assert corrected == pytest.approx(7181.91, abs=0.01), (
+        f"Поправка сдвинула опорную точку 298,15 K: {plain:.2f} -> {corrected:.2f}"
+    )
+
+
 def test_reference_density_survives_the_override(
     physical_db: PhysicalDensityDatabase,
     physical_db_plain: PhysicalDensityDatabase,
