@@ -5,7 +5,7 @@ ThermoGar ships a CPython 3.11.9 runtime together with the third-party
 packages listed below. Each package remains under its own licence; the
 licence text is reproduced where the package supplies one.
 
-Generated: 2026-09-04
+Generated: 2026-09-11
 
 ------------------------------------------------------------------------
 altair 6.2.2
@@ -13880,21 +13880,39 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 THERMODYNAMIC DATABASES
 ========================================================================
 
-ThermoGar bundles converted copies of the MatCalc open thermodynamic and
-mobility databases:
+ThermoGar ships derived copies of the MatCalc open thermodynamic and
+mobility databases. Upstream author and copyright holder: Erwin
+Povoden-Karadeniz, Institute of Materials Science and Technology, TU Wien;
+the steel database is co-authored with Aurelie Jacob.
+
+Each shipped *_with_mobility.*.tdb is a Derivative Database in the sense of
+ODbL-1.0. It was produced by converting the upstream TDB to pycalphad syntax
+and merging the compatible mobility parameters of the matching DDB into it.
+The derived files are distributed under ODbL-1.0, with the contents under
+DbCL-1.0, exactly as their sources. No parameter value was substituted.
 
   mc_ni  (nickel alloys)     databases/converted/mc_ni_v2036_with_mobility.garcalc.tdb
+           from mc_ni_v2036.tdb + mc_ni_v2012.ddb
   mc_al  (aluminium alloys)  databases/converted/al/mc_al_v2037_with_mobility.thermogar.tdb
+           from mc_al_v2037.tdb + mc_al_v2008.ddb
   mc_fe  (steels)            databases/converted/fe/mc_fe_v2062_with_mobility.thermogar.tdb
+           from mc_fe_v2062.tdb + mc_fe_v2016.ddb, plus compatibility patch
+           TG-FE-2062-C15-001 (one single G parameter of C15_LAVES disabled,
+           the original command kept verbatim as a comment)
 
-These are the freely distributed MatCalc "open databases" published by the
-MatCalc development team (Institute of Materials Science and Technology,
-TU Wien) for non-commercial research and teaching use. The files shipped
-here are format conversions of the upstream TDB releases: parameter values
-are unchanged, only the file syntax was normalised for pycalphad. The
-licence and attribution headers of the upstream releases are preserved
-verbatim inside each converted .tdb file - those headers are the
-authoritative terms. Consult the MatCalc project about commercial use.
+The licence and attribution headers of both the upstream TDB and the upstream
+DDB are preserved verbatim inside each derived .tdb file - those headers are
+the authoritative terms. File names, SHA-256 sums and the exact provenance of
+every source are listed in SOURCES.txt; the full licence texts are shipped in
+licenses/ODbL-1.0.txt and licenses/DbCL-1.0.txt.
+
+Note on commercial use. Two statements stand side by side here, and both
+are kept. The database headers state ODbL-1.0 and DbCL-1.0, under which
+commercial use is allowed. The description of this distribution calls the
+databases freely distributed for non-commercial research and teaching use.
+The two do not agree. ThermoGar does not resolve the difference by its own
+reading of the licence and removes neither wording: consult the MatCalc
+project about commercial use. See docs/DATABASES.md, section 1.1.
 
 The physical-property database (databases/physical/original/physical_data_v103.pdb)
 is compiled from published elemental property data; see PHYSICAL_DATA_README.md
