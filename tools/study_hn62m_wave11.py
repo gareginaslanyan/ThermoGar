@@ -2085,6 +2085,106 @@ def step_a4(force: bool = False) -> None:
 
 
 # --------------------------------------------------------------------------- #
+# 11D-3. Сверка профиля сегрегации с входом A3
+# --------------------------------------------------------------------------- #
+
+
+# Насколько профиль нового расчёта может разойтись со старым, чтобы времена
+# гомогенизации не пересчитывать. Порог назван постановкой 11D-3.
+D3_PROFILE_TOLERANCE = 0.10
+
+
+def d3_solid_segregation(result: Any, phase: str = A3_PHASE) -> dict[str, float]:
+    """Размах сегрегации в твёрдой фазе по посчитанным точкам расчёта Шейля.
+
+    Искусственная точка сброса остатка отбрасывается: состав фазы в ней —
+    не результат расчёта, а состав последнего сошедшегося равновесия,
+    переписанный ещё раз.
+    """
+
+    cut = last_real_index(result)
+    compositions = result.phase_compositions.get(phase)
+    if not compositions:
+        raise RuntimeError(f"В расчёте Шейля нет составов фазы {phase}.")
+    span: dict[str, float] = {}
+    for element in ("MO", "CR"):
+        values = np.asarray(compositions[element], dtype=float)[: cut + 1]
+        values = values[np.isfinite(values) & (values > 0.0)]
+        if values.size == 0:
+            raise RuntimeError(f"В фазе {phase} нет положительных значений {element}.")
+        span[f"{element}_min"] = float(values.min())
+        span[f"{element}_max"] = float(values.max())
+        span[f"{element}_точек"] = float(values.size)
+    return span
+
+
+def step_d3(force: bool = False) -> None:
+    """Сверка нового профиля сегрегации с тем, что взят входом A3 и 11D-2.
+
+    Отдельный шаг, потому что считать здесь нечего: расчёт Шейля уже лежит в
+    кэше A4, и повторять его ради одной таблицы незачем.
+    """
+
+    progress = load_progress()
+    if progress.get("11D-3", {}).get("готов") and not force:
+        log("11D-3 пропущен, посчитан ранее (--force для пересчёта)")
+        return
+
+    ctx = Context()
+    mole = wt_to_mole(ctx, full_wt())
+    result, payload = run_scheil(ctx, mole, "контрольный состав, без исключений",
+                                 A4_STEP_K, ())
+    fresh = d3_solid_segregation(result)
+    old = a3_segregation()
+
+    rows: list[dict[str, Any]] = []
+    worst = 0.0
+    for element in ("MO", "CR"):
+        old_span = old[f"{element}_max"] - old[f"{element}_min"]
+        new_span = fresh[f"{element}_max"] - fresh[f"{element}_min"]
+        gap = abs(new_span - old_span) / old_span if old_span > 0.0 else math.inf
+        worst = max(worst, gap)
+        rows.append({
+            "элемент": element,
+            "вход A3: ось дендрита": old[f"{element}_min"],
+            "вход A3: междендритная": old[f"{element}_max"],
+            "вход A3: размах": old_span,
+            "новый расчёт: ось дендрита": fresh[f"{element}_min"],
+            "новый расчёт: междендритная": fresh[f"{element}_max"],
+            "новый расчёт: размах": new_span,
+            "новый расчёт: точек": int(fresh[f"{element}_точек"]),
+            "расхождение размаха, %": round(100.0 * gap, 2),
+        })
+    table = pd.DataFrame(rows)
+    write_csv(table, "d3_segregation_check.csv")
+
+    recompute = worst > D3_PROFILE_TOLERANCE
+    summary = {
+        "подпункт": "11D-3. Сверка профиля сегрегации с входом A3 и 11D-2",
+        "источник нового профиля": (
+            f"расчёт Шейля шагом {A4_STEP_K} K, только посчитанные точки, "
+            f"фаза {A3_PHASE}"
+        ),
+        "источник старого профиля": A3_SEGREGATION_INPUT,
+        "порог пересчёта, доля": D3_PROFILE_TOLERANCE,
+        "наибольшее расхождение размаха, %": round(100.0 * worst, 2),
+        "пересчитывать 11D-2": bool(recompute),
+        "таблица": table.to_dict("records"),
+    }
+    write_json(summary, "d3_segregation_check.json")
+    log(f"11D-3 профиль: наибольшее расхождение размаха {100.0 * worst:.2f} %, "
+        f"пересчёт 11D-2 {'нужен' if recompute else 'не нужен'}")
+
+    progress["11D-3"] = {
+        "готов": True,
+        "время": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "наибольшее расхождение размаха, %": round(100.0 * worst, 2),
+        "пересчёт 11D-2": bool(recompute),
+    }
+    save_progress(progress)
+
+
+# --------------------------------------------------------------------------- #
 # A5. Марганец
 # --------------------------------------------------------------------------- #
 
@@ -2406,7 +2506,7 @@ def step_a1(force: bool = False) -> None:
 
 
 STEPS = {"a1": step_a1, "a2": step_a2, "a3": step_a3,
-         "d2": step_d2, "a4": step_a4, "a5": step_a5}
+         "d2": step_d2, "a4": step_a4, "d3": step_d3, "a5": step_a5}
 
 
 def main(argv: Sequence[str] | None = None) -> int:
