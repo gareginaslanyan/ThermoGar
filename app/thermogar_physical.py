@@ -28,7 +28,7 @@ import ast
 import hashlib
 import math
 import re
-from typing import Any, Iterable
+from typing import Any, Iterable, Mapping
 
 import numpy as np
 import pandas as pd
@@ -113,6 +113,18 @@ DEFAULT_MATRIX_SITE_RATIOS: dict[str, tuple[float, float]] = {
 }
 INTERSTITIAL_NAMES = {"C", "N", "H", "O", "B", "VA"}
 
+# Атомные массы, г/моль. Нужны здесь потому, что смешение плотностей идёт по
+# массе: ``1/ρ = Σ wᵢ/ρᵢ``. Вакансия массы не несёт и в сумму не входит.
+_ATOMIC_MASSES: dict[str, float] = {
+    "VA": 0.0, "H": 1.008, "B": 10.811, "C": 12.011, "N": 14.007, "O": 15.999,
+    "MG": 24.305, "AL": 26.982, "SI": 28.085, "P": 30.974, "S": 32.06,
+    "TI": 47.867, "V": 50.942, "CR": 51.996, "MN": 54.938, "FE": 55.845,
+    "CO": 58.933, "NI": 58.693, "CU": 63.546, "ZN": 65.38, "Y": 88.906,
+    "ZR": 91.224, "NB": 92.906, "MO": 95.95, "PD": 106.42, "AG": 107.868,
+    "SN": 118.71, "LA": 138.905, "HF": 178.49, "TA": 180.948, "W": 183.84,
+    "RE": 186.207, "PT": 195.084, "AU": 196.967, "PB": 207.2,
+}
+
 
 @dataclass(frozen=True)
 class FunctionDefinition:
@@ -155,6 +167,7 @@ class PhysicalCalculationResult:
     mass_coverage_pct: float
     direct_mole_pct: float
     inherited_mole_pct: float
+    estimated_mole_pct: float
     quality_label: str
     warnings: list[str]
     physical_database_sha256: str
@@ -335,6 +348,87 @@ class PhysicalDensityDatabase:
             self.function_value,
         )
 
+    # Фазы, из которых берётся плотность чистого элемента для оценки по правилу
+    # смеси. Порядок — по убыванию распространённости структуры; берётся первая,
+    # где у элемента есть собственный конечный член.
+    ELEMENT_DENSITY_PHASES = ("FCC_A1", "BCC_A2", "HCP_A3", "LIQUID")
+
+    def element_density(
+        self,
+        element: str,
+        temperature_k: float,
+    ) -> float | None:
+        """Плотность чистого элемента по любой доступной модели PDB."""
+
+        element = str(element).upper()
+        if element in {"VA", ""}:
+            return None
+        for phase in self.ELEMENT_DENSITY_PHASES:
+            if phase not in self.phases:
+                continue
+            for second in ({"VA": 1.0}, {element: 1.0}, {}):
+                site_fractions = [{element: 1.0}]
+                if second:
+                    site_fractions.append(second)
+                try:
+                    value, coverage, _warnings = self.density_from_site_fractions(
+                        phase, site_fractions, temperature_k
+                    )
+                except Exception:
+                    continue
+                if value is not None and coverage > 0.999 and value > 0.0:
+                    return float(value)
+        return None
+
+    def estimate_density_by_mixture(
+        self,
+        composition: Mapping[str, float],
+        temperature_k: float,
+    ) -> tuple[float | None, float, list[str]]:
+        """Плотность фазы по правилу смеси из плотностей элементов.
+
+        Используется там, где собственной DP-модели у фазы нет. Аддитивен
+        объём, поэтому смешение идёт по массе: ``1/ρ = Σ wᵢ/ρᵢ``. Оценка грубая
+        — она не знает ни структуры фазы, ни объёмного эффекта образования, —
+        и вызывающая сторона обязана пометить результат как оценочный.
+
+        Возвращает ``(плотность, покрытие по массе, предупреждения)``.
+        """
+
+        masses: dict[str, float] = {}
+        for element, fraction in composition.items():
+            name = str(element).upper()
+            if name in {"VA", ""} or not np.isfinite(fraction) or fraction <= 0.0:
+                continue
+            atomic_mass = _ATOMIC_MASSES.get(name)
+            if not atomic_mass:
+                continue
+            masses[name] = float(fraction) * atomic_mass
+        total_mass = sum(masses.values())
+        if total_mass <= 0.0:
+            return None, 0.0, ["Состав фазы пуст: оценка невозможна."]
+
+        volume = 0.0
+        covered_mass = 0.0
+        unknown: list[str] = []
+        for element, mass in masses.items():
+            density = self.element_density(element, temperature_k)
+            if density is None or density <= 0.0:
+                unknown.append(element)
+                continue
+            volume += mass / density
+            covered_mass += mass
+
+        coverage = covered_mass / total_mass
+        warnings: list[str] = []
+        if unknown:
+            warnings.append(
+                "Нет плотности элементов: " + ", ".join(sorted(unknown))
+            )
+        if volume <= 0.0 or coverage < 0.9:
+            return None, coverage, warnings
+        return covered_mass / volume, coverage, warnings
+
     def resolve_phase(self, thermodynamic_db: Any, phase_name: str) -> PhaseModelResolution:
         phase_name = str(phase_name).upper()
         if phase_name in self.phases:
@@ -432,6 +526,8 @@ class PhysicalDensityDatabase:
         ]
 
         density = 0.0
+        mass_sum = 0.0
+        volume_sum = 0.0
         covered_weight = 0.0
         missing_endmembers: list[str] = []
 
@@ -478,10 +574,30 @@ class PhysicalDensityDatabase:
             # usual "last assessment" convention in text databases.
             _specificity, _index, selected = max(candidates)
             value = self.parameter_value(selected, temperature_k)
-            density += weight * value
+            if not math.isfinite(value) or value <= 0.0:
+                missing_endmembers.append(":".join(endmember))
+                continue
+            # Плотности не аддитивны — аддитивны объёмы. Правильное смешение
+            # конечных членов: 1/ρ = Σ wᵢ/ρᵢ по массовым долям, что для
+            # мольных долей ``weight`` записывается как
+            # ρ = Σ wᵢMᵢ / Σ (wᵢMᵢ/ρᵢ). Прежняя формула ρ = Σ wᵢρᵢ завышала
+            # плотность тем сильнее, чем больше разброс плотностей
+            # составляющих.
+            endmember_mass = sum(
+                _ATOMIC_MASSES.get(species, 0.0) for species in endmember
+            )
+            if endmember_mass <= 0.0:
+                missing_endmembers.append(":".join(endmember))
+                continue
+            mass_sum += weight * endmember_mass
+            volume_sum += weight * endmember_mass / value
             covered_weight += weight
 
+        # Собранная по объёмам плотность конечных членов.
+        density = mass_sum / volume_sum if volume_sum > 0.0 else 0.0
+
         # Add explicit binary interaction terms (Redlich-Kister form).
+        interaction_density = 0.0
         for parameter in interaction_parameters:
             pattern, global_default = _normalized_pattern(
                 physical_phase,
@@ -518,10 +634,12 @@ class PhysicalDensityDatabase:
                     break
 
             if valid and abs(multiplier) > 1e-18:
-                density += multiplier * self.parameter_value(
+                interaction_density += multiplier * self.parameter_value(
                     parameter,
                     temperature_k,
                 )
+
+        density += interaction_density
 
         warnings: list[str] = []
         if missing_endmembers:
@@ -629,6 +747,7 @@ def calculate_physical_properties(
             "covered_mass": 0.0,
             "direct_amount": 0.0,
             "inherited_amount": 0.0,
+            "estimated_amount": 0.0,
             "physical_phases": set(),
             "qualities": set(),
             "notes": set(),
@@ -642,6 +761,7 @@ def calculate_physical_properties(
     covered_phase_amount = 0.0
     direct_phase_amount = 0.0
     inherited_phase_amount = 0.0
+    estimated_phase_amount = 0.0
     covered_mass = 0.0
     covered_volume = 0.0
 
@@ -685,6 +805,32 @@ def calculate_physical_properties(
         aggregate["notes"].add(resolution.note)
 
         if resolution.physical_phase is None:
+            # Своей DP-модели нет. Молчать нельзя: на контрольном никелевом
+            # составе всегда есть хотя бы MnS, и из-за одной непокрытой фазы
+            # плотность сплава не выдавалась вовсе. Берём оценку по правилу
+            # смеси и помечаем её как оценочную.
+            estimate, estimate_coverage, estimate_warnings = (
+                physical_db.estimate_density_by_mixture(composition, temperature_k)
+            )
+            for warning in estimate_warnings:
+                aggregate["warnings"].add(warning)
+            if estimate is None or estimate <= 0.0:
+                continue
+            aggregate["qualities"].add("mixture")
+            aggregate["notes"].add(
+                "Плотность оценена по правилу смеси из плотностей элементов; "
+                "погрешность до 10 %."
+            )
+            phase_volume = phase_mass / estimate
+            aggregate["volume"] += phase_volume
+            aggregate["covered_amount"] += phase_amount
+            aggregate["covered_mass"] += phase_mass
+            aggregate["estimated_amount"] += phase_amount
+            covered_phase_amount += phase_amount
+            covered_mass += phase_mass
+            covered_volume += phase_volume
+            estimated_phase_amount += phase_amount
+            del estimate_coverage
             continue
 
         aggregate["physical_phases"].add(resolution.physical_phase)
@@ -804,6 +950,8 @@ def calculate_physical_properties(
             status = "нет данных"
         elif qualities == {"direct"}:
             status = "прямая модель"
+        elif "mixture" in qualities:
+            status = "оценка по правилу смеси"
         elif "inherited" in qualities or "structural" in qualities:
             status = "оценка по связанной фазе"
         else:
@@ -874,9 +1022,20 @@ def calculate_physical_properties(
         else 0.0
     )
 
+    estimated_share = (
+        100.0 * estimated_phase_amount / total_phase_amount
+        if total_phase_amount > 0
+        else 0.0
+    )
+
     if full_volume_available:
         alloy_density = total_mass / covered_volume
-        if inherited_phase_amount > 1e-8:
+        if estimated_phase_amount > 1e-8:
+            quality_label = (
+                "с оценкой по правилу смеси для "
+                f"{estimated_share:.2f} % мольной доли фаз"
+            )
+        elif inherited_phase_amount > 1e-8:
             quality_label = "оценочная: есть плотности связанных фаз"
         else:
             quality_label = "полная по доступным прямым DP-моделям"
@@ -885,6 +1044,27 @@ def calculate_physical_properties(
         quality_label = "неполная: не все равновесные фазы обеспечены плотностью"
 
     warnings: list[str] = []
+    if estimated_phase_amount > 1e-8:
+        estimated_names = sorted(
+            name
+            for name, values in aggregates.items()
+            if float(values["estimated_amount"]) > 1e-12
+        )
+        if estimated_share < 1.0:
+            # Меньше процента мольной доли — на плотность сплава такие фазы
+            # практически не влияют. Говорим об этом прямо, а не пугаем.
+            warnings.append(
+                "Плотность фаз " + ", ".join(estimated_names)
+                + " оценена по правилу смеси; их суммарная мольная доля "
+                f"{estimated_share:.2f} % — влияние на плотность сплава "
+                "пренебрежимо."
+            )
+        else:
+            warnings.append(
+                "Плотность фаз " + ", ".join(estimated_names)
+                + " оценена по правилу смеси; погрешность до 10 %. "
+                f"Суммарная мольная доля таких фаз {estimated_share:.2f} %."
+            )
     if not missing_table.empty:
         warnings.append(
             "Для части равновесных фаз нет физической модели; общая плотность "
@@ -904,6 +1084,7 @@ def calculate_physical_properties(
     return PhysicalCalculationResult(
         phase_table=phase_table,
         missing_table=missing_table,
+        estimated_mole_pct=float(estimated_share),
         alloy_density_kg_m3=float(alloy_density) if alloy_density else None,
         alloy_density_g_cm3=(
             float(alloy_density) / 1000.0 if alloy_density else None
@@ -1062,9 +1243,28 @@ def _site_fractions_from_equilibrium(
     phase_name: str,
     y_row: np.ndarray,
 ) -> list[dict[str, float]]:
+    """Разложить строку ``Y`` равновесия по подрешёткам фазы.
+
+    Вакансия обязана быть в списке компонентов модели. Равновесие всегда
+    считается с ``VA``, поэтому строка ``Y`` содержит её долю; если же
+    ``Model`` построить без ``VA``, среди его ``site_fractions`` вакансии не
+    будет, доли сдвинутся по индексам, а межузельная подрешётка после
+    нормировки выродится в чистый внедрённый элемент.
+
+    Именно это и происходило на никелевом сплаве с углеродом: подрешётка
+    ``(C,VA)`` с долей углерода 2,5·10⁻⁴ превращалась в ``(C)``, модель
+    плотности считала карбидный конечный член, и плотность матрицы выходила
+    4,9 г/см³ вместо 8,5. Вызывающая сторона обычно передаёт список элементов
+    без вакансии, поэтому ``VA`` добавляется здесь.
+    """
+
     from pycalphad import Model
 
-    model = Model(thermodynamic_db, components, phase_name)
+    model_components = [str(name).upper() for name in components]
+    if "VA" not in model_components:
+        model_components.append("VA")
+
+    model = Model(thermodynamic_db, model_components, phase_name)
     symbols = list(model.site_fractions)
     if len(symbols) > len(y_row):
         raise ValueError("В результате недостаточно внутренних степеней свободы.")
@@ -1080,7 +1280,20 @@ def _site_fractions_from_equilibrium(
         result[sublattice_index][symbol.species.name.upper()] = value
 
     normalized: list[dict[str, float]] = []
-    for sublattice in result:
+    for sublattice_index, sublattice in enumerate(result):
+        expected = {
+            str(species).upper()
+            for species in model.constituents[sublattice_index]
+        }
+        missing = expected - set(sublattice)
+        if missing:
+            # Подрешётка разобрана не полностью — нормировать по неполному
+            # набору нельзя, доли получатся завышенными. Пусть сработает
+            # запасной путь по составу фазы.
+            raise ValueError(
+                "В Y-координатах нет составляющих подрешётки "
+                f"{sublattice_index + 1}: {', '.join(sorted(missing))}."
+            )
         total = sum(max(0.0, value) for value in sublattice.values())
         if total <= 0:
             raise ValueError("Пустая подрешётка в Y-координатах.")
