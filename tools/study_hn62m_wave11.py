@@ -96,6 +96,10 @@ A2_REQUIRED_C = (25.0, 400.0, 700.0, 900.0, 1100.0, 1300.0)
 A2_SCAN_C = tuple(float(50 * index) for index in range(1, 27))  # 50…1300 с шагом 50
 A2_ESTIMATED_LIMIT_PCT = 1.0
 A2_PDENS = 100
+# Плотности выборки для повтора точки, сошедшейся в пустое решение. Волна 9
+# ловила ровно ту же дыру на 350 °C (results/hn62m/p6_density.csv) и лечила её
+# так же; список и порядок оттуда.
+A2_RETRY_PDENS: tuple[int, ...] = (200, 300, 50)
 # Фазы, у которых собственной модели плотности в PDB нет; названы в постановке.
 # Их доля и решает, прикидка низкотемпературная плотность или расчёт.
 A2_WATCHED_PHASES: tuple[str, ...] = (
@@ -614,10 +618,27 @@ def a2_point(ctx: Context, physical_db: Any, mole: Mapping[str, float],
 
     temperature_k = float(temperature_c) + 273.15
     started = time.perf_counter()
-    equilibrium_result = solve_raw(ctx, mole, temperature_c, A2_PDENS)
+
+    # Точка может сойтись в пустое решение: фаз нет, плотности нет. Молча
+    # оставить дыру в кривой нельзя — повторяем с другой плотностью выборки и
+    # записываем, какая помогла.
+    used_pdens = A2_PDENS
+    equilibrium_result = solve_raw(ctx, mole, temperature_c, used_pdens)
     result = calculate_physical_properties(
         ctx.db, equilibrium_result, list(ELEMENTS), temperature_k, physical_db
     )
+    for retry_pdens in A2_RETRY_PDENS:
+        if result.alloy_density_kg_m3 is not None and not result.phase_table.empty:
+            break
+        log(f"A2 {temperature_c:.0f} °C: пустое решение при pdens={used_pdens}, "
+            f"повтор при pdens={retry_pdens}")
+        del equilibrium_result, result
+        gc.collect()
+        used_pdens = retry_pdens
+        equilibrium_result = solve_raw(ctx, mole, temperature_c, used_pdens)
+        result = calculate_physical_properties(
+            ctx.db, equilibrium_result, list(ELEMENTS), temperature_k, physical_db
+        )
     seconds = time.perf_counter() - started
 
     table = result.phase_table
@@ -672,6 +693,7 @@ def a2_point(ctx: Context, physical_db: Any, mole: Mapping[str, float],
         "T, °C": float(temperature_c),
         "плотность, кг/м³": None if density is None else round(float(density), 1),
         "плотность, г/см³": None if density is None else round(float(density) / 1000.0, 4),
+        "pdens точки": int(used_pdens),
         "оценочных фаз, % молей": round(float(result.estimated_mole_pct), 3),
         "покрытие по массе, %": round(float(result.mass_coverage_pct), 3),
         "прямая модель, % молей": round(float(result.direct_mole_pct), 3),
@@ -724,7 +746,14 @@ def a2_density(force: bool = False) -> dict[str, Any]:
     warning_rows: list[dict[str, Any]] = []
     for temperature in temperatures:
         key = round(float(temperature), 3)
-        if key in done_rows and key in done_phases and key in done_warnings:
+        # Точка с непосчитанной плотностью не переиспользуется: в прошлом
+        # прогоне она была дырой, и повтор с другой плотностью выборки должен
+        # получить свой шанс.
+        reusable = (
+            key in done_rows and key in done_phases and key in done_warnings
+            and pd.notna(done_rows[key][0].get("плотность, кг/м³"))
+        )
+        if reusable:
             rows.append(done_rows[key][0])
             phase_rows.extend(done_phases[key])
             warning_rows.extend(done_warnings[key])
