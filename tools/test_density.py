@@ -11,6 +11,7 @@ Ni–Cr–Mo, монотонность по температуре.
 
 from __future__ import annotations
 
+import copy
 import re
 import sys
 from pathlib import Path
@@ -27,6 +28,7 @@ from pycalphad import Database, equilibrium, variables as v
 from pycalphad.core.utils import filter_phases, unpack_species
 
 import thermogar_database_repair as repair
+import thermogar_verified_physical as verified_physical
 from thermogar_physical import (
     PhysicalDensityDatabase,
     calculate_physical_properties,
@@ -49,17 +51,28 @@ CONTROL_COMPONENTS = (
     "NI", "CR", "MO", "C", "SI", "MN", "S", "NB", "AL", "TI", "FE", "VA",
 )
 
-_CACHE: dict[str, Any] = {}
+# Разобранная и починенная база. Наружу не отдаётся никогда: тесты получают
+# изолированную копию, см. _database. Разбор одного TDB стоит около 4,5 с, и
+# повторять его на каждый тест незачем — незачем и делить один объект.
+_MASTER: dict[str, Any] = {}
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def physical_db() -> PhysicalDensityDatabase:
+    """Своя физическая база на каждый тест.
+
+    Область видимости — тест, а не модуль: у ``PhysicalDensityDatabase`` есть
+    изменяемые ``functions`` и кэш значений, и делить их между тестами значит
+    заводить ту же зависимость от порядка, из-за которой чинился `BL-19`.
+    Разбор PDB стоит меньше миллисекунды, так что делить нечего ради чего.
+    """
+
     if not PDB_PATH.is_file():
         pytest.skip(f"Нет PDB: {PDB_PATH}")
     return PhysicalDensityDatabase(PDB_PATH)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def physical_db_plain() -> PhysicalDensityDatabase:
     """База без единой нашей поправки, что бы ни стояло в окружении."""
 
@@ -99,14 +112,39 @@ def _mean_linear_expansion(
 
 
 def _database(path: Path) -> Any:
+    """Изолированная копия разобранной базы — своя на каждый вызов.
+
+    `BL-19`: до волны 11N здесь отдавался один и тот же объект ``Database``
+    всем тестам сразу. Тест, который проходит или падает в зависимости от
+    порядка выполнения, однажды соврёт в обе стороны, поэтому общего
+    изменяемого состояния тут быть не должно вовсе — независимо от того,
+    кто именно его правит.
+
+    Копия делается руками, а не одним ``deepcopy``: ``Database.__deepcopy__``
+    самого pycalphad копирует только ``_parameters``, а ``phases``,
+    ``symbols`` и ``species`` оставляет **общими** с оригиналом. То есть
+    правка модельных подсказок фазы в «копии» дошла бы до всех. Копирование
+    стоит около 2 мс против 4,5 с на повторный разбор TDB.
+    """
+
     key = str(path)
-    if key not in _CACHE:
+    if key not in _MASTER:
         if not path.is_file():
             pytest.skip(f"Нет базы: {path}")
         database = Database(str(path))
         repair.repair_database(database, database_label=path.name)
-        _CACHE[key] = database
-    return _CACHE[key]
+        _MASTER[key] = database
+    return _isolated_copy(_MASTER[key])
+
+
+def _isolated_copy(database: Any) -> Any:
+    """Копия базы, ничего изменяемого не делящая с оригиналом."""
+
+    copied = copy.deepcopy(database)
+    copied.phases = copy.deepcopy(database.phases)
+    copied.symbols = copy.deepcopy(database.symbols)
+    copied.species = copy.deepcopy(database.species)
+    return copied
 
 
 def _solve(
@@ -716,3 +754,273 @@ def test_override_file_is_honest_about_itself() -> None:
             # Незаполненная правка обязана быть выключена — иначе она молча
             # подменит величину пустотой.
             assert not overrides.enabled or entry.expression is None
+# --------------------------------------------------------------------------- #
+# 11N-2. Автоматический набор фаз не уносит расчёт плотности
+# --------------------------------------------------------------------------- #
+
+
+@pytest.mark.parametrize("tdb", [NI_TDB, AL_TDB, FE_TDB], ids=["ni", "al", "fe"])
+def test_automatic_phase_set_builds_after_the_detector(tdb: Path) -> None:
+    """Автоматический набор фаз строится в pycalphad, а не валит расчёт.
+
+    Раздел плотности на автоматическом наборе берёт все фазы базы (для
+    никелевой это 99 штук) и до волны 11N отдавал их движку, минуя детектор
+    волны 10. На никелевой базе с углеродом в составе ``Model`` пары
+    ``BCC_B2``/``BCC_A2`` не строится, и ``Workspace`` падал с ``ValueError``
+    ещё до расчёта равновесия — пользователь получал ``BACKEND_FAILED``.
+
+    Строится только ``Workspace``: именно там был отказ, а равновесие на сотне
+    фаз здесь считать незачем. Проверяются все три базы, потому что дефект —
+    свойство описания пары фаз, а не конкретной базы.
+    """
+
+    from pycalphad import Workspace
+
+    database = _database(tdb)
+    components = list(CONTROL_COMPONENTS)
+    # Ровно то, что даёт политика привязки на автоматическом наборе: все фазы
+    # базы за вычетом C15_LAVES, который снимается до расчёта.
+    phases = sorted(name for name in database.phases if name != "C15_LAVES")
+    kept, removed = verified_physical.buildable_phases(database, components, phases)
+    assert kept, "Детектор снял вообще всё — так быть не должно"
+
+    conditions: dict[Any, float] = {v.N: 1.0, v.P: 101325.0, v.T: 1373.15}
+    conditions.update({v.X(element): value for element, value in sorted(CONTROL_X.items())})
+    Workspace(
+        database=database,
+        components=components,
+        phases=list(kept),
+        conditions=conditions,
+    )
+
+    if tdb == NI_TDB:
+        assert "BCC_B2" in removed, (
+            "На никелевой базе с углеродом BCC_B2 обязана сниматься: "
+            "именно она и уносила расчёт"
+        )
+
+
+def test_excluded_phases_are_explained_in_the_result() -> None:
+    """Снятые фазы объясняются пользователю, а не исчезают молча.
+
+    Текст один на оба расчётных пути: ``ThermoGar_app.unbuildable_phase_note``
+    берёт его из ``thermogar_verified_physical``. Если тексты разойдутся,
+    пользователь получит разные объяснения одного и того же.
+    """
+
+    database = _database(NI_TDB)
+    components = list(CONTROL_COMPONENTS)
+    phases = sorted(name for name in database.phases if name != "C15_LAVES")
+    _kept, removed = verified_physical.buildable_phases(database, components, phases)
+
+    note = verified_physical.excluded_phases_note(removed)
+    assert "BCC_B2" in note, note
+    assert "BCC_A2" in note, "Не названа фаза, из-за которой сняли: " + note
+    assert "не отказ расчёта" in note, (
+        "Сообщение не говорит, что расчёт продолжается: " + note
+    )
+    assert verified_physical.excluded_phases_note({}) == ""
+
+
+def test_backend_failure_message_names_the_error() -> None:
+    """Отказ движка уходит пользователю текстом, а не одним именем класса.
+
+    Волна 11K получила «BACKEND_FAILED: ValueError» и код ошибки — по такой
+    строке нельзя ни понять, что случилось, ни разобрать обращение.
+    """
+
+    detail = verified_physical._backend_failure_detail(
+        ValueError(
+            "Order (BCC_B2) and disorder (BCC_A2) model must have no "
+            "interstitial sublattice or a single matching one"
+        )
+    )
+    assert detail.startswith("ValueError: ")
+    assert "BCC_B2" in detail
+
+    # Исключение без текста не должно давать пустую строку.
+    assert verified_physical._backend_failure_detail(RuntimeError()) == "RuntimeError"
+    # Длинный текст обрезается, но остаётся читаемым.
+    long_detail = verified_physical._backend_failure_detail(ValueError("x" * 5000))
+    assert len(long_detail) < 500 and long_detail.endswith("...")
+def test_missing_elements_are_named_instead_of_a_pycalphad_error() -> None:
+    """Состав с элементами, которых в базе нет, отвергается внятно.
+
+    Алюминиевая база не описывает Mo, C, S и Nb. Отдай ей контрольный
+    никелевый состав — и pycalphad уронит расчёт своим «Number of degrees of
+    freedom is not zero» через одиннадцать секунд: условия по составу он
+    примет, а лишние компоненты молча отбросит. Пользователю от такой строки
+    толку нет, поэтому элементы называются до вызова движка.
+    """
+
+    database = _database(AL_TDB)
+    absent = verified_physical._elements_absent_from(
+        database, list(CONTROL_COMPONENTS)
+    )
+    assert set(absent) == {"MO", "C", "S", "NB"}, absent
+    # Вакансия — не элемент состава и в список попадать не должна.
+    assert "VA" not in absent
+
+    database_ni = _database(NI_TDB)
+    assert verified_physical._elements_absent_from(
+        database_ni, list(CONTROL_COMPONENTS)
+    ) == ()
+# --------------------------------------------------------------------------- #
+# 11N-3. Никель и молибден верны — сторож против «починки» верного
+# --------------------------------------------------------------------------- #
+
+# Оценка среднего линейного коэффициента расширения по таблице 1 статьи REF 14
+# самой базы: Lu, Selleby, Sundman, Calphad 29 (2005) 68-89,
+# doi:10.1016/j.calphad.2005.05.001. Интервал 25…1100 °C. Значения разобраны
+# мастером по той же таблице, по которой в волне 11M восстановлен хром.
+LU2005_MEAN_EXPANSION = {
+    "NI": 17.14e-6,
+    "MO": 5.30e-6,
+}
+# Окно сторожа. Двадцать процентов — заведомо шире, чем расхождение метода
+# (никель 1,5 %, молибден 12 %), и заведомо уже, чем дефект переноса, каким он
+# оказался у хрома: там отношение к оценке 3,2.
+LU2005_TOLERANCE = 0.20
+
+
+def _pure_element_expansion(
+    physical_database: PhysicalDensityDatabase,
+    phase: str,
+    element: str,
+) -> float:
+    """Средний линейный коэффициент расширения чистого элемента, 25…1100 °C.
+
+    Формула та же, что у матрицы и у хрома: ᾱ = ((ρ₂₅/ρ₁₁₀₀)^(1/3) − 1) / ΔT.
+    """
+
+    densities: list[float] = []
+    for temperature_c in (25.0, 1100.0):
+        value, coverage, warnings = physical_database.density_from_site_fractions(
+            phase, [{element: 1.0}, {"VA": 1.0}], temperature_c + 273.15
+        )
+        assert value is not None, (
+            f"{element} при {temperature_c} °C: плотность не посчитана {warnings}"
+        )
+        assert coverage > 0.999
+        densities.append(float(value))
+    cold, hot = densities
+    return ((cold / hot) ** (1.0 / 3.0) - 1.0) / (1100.0 - 25.0)
+
+
+@pytest.mark.parametrize(
+    "phase, element",
+    [("FCC_A1", "NI"), ("BCC_A2", "MO")],
+)
+def test_nickel_and_molybdenum_expansion_match_the_source(
+    physical_db: PhysicalDensityDatabase,
+    phase: str,
+    element: str,
+) -> None:
+    """Никель и молибден воспроизводят оценку Lu 2005 — трогать их не надо.
+
+    Тест сторожит в обе стороны. Он поймает будущую поломку переноса, как у
+    хрома, и он же поймает попытку «поправить» то, что верно: никель
+    расходится с оценкой на 1,5 %, молибден на 12 %, и никакая поправка тут
+    не нужна.
+
+    Про молибденовые 12 %. Расхождение направлено вверх и невелико; оно того
+    же порядка, что разброс самих измерений расширения тугоплавких металлов
+    до 1100 °C. У хрома отношение к оценке 3,2 — это другой класс величины,
+    и потому чинили только его.
+    """
+
+    estimate = LU2005_MEAN_EXPANSION[element]
+    coefficient = _pure_element_expansion(physical_db, phase, element)
+    ratio = coefficient / estimate
+    assert abs(ratio - 1.0) <= LU2005_TOLERANCE, (
+        f"{element}: база даёт {coefficient * 1e6:.2f}e-6/K против оценки "
+        f"Lu 2005 {estimate * 1e6:.2f}e-6/K, отношение {ratio:.2f}. "
+        "Либо сломан перенос, либо кто-то наложил на элемент поправку."
+    )
+
+
+@pytest.mark.parametrize("element", ["NI", "MO"])
+def test_nickel_and_molybdenum_are_not_overridden(element: str) -> None:
+    """Ни одна поправка проекта не касается никеля и молибдена.
+
+    Проверка отдельная от окна: окно в 20 % пропустило бы небольшую поправку,
+    а её быть не должно вовсе — волна 11N-3 постановила, что оба элемента
+    база описывает верно.
+    """
+
+    path = default_overrides_path()
+    if not path.is_file():
+        pytest.skip("Файла-дополнения нет.")
+    overrides = load_physical_overrides(path)
+    for entry in overrides.entries:
+        assert element not in entry.identifier.upper().split("-"), (
+            f"Появилась поправка на {element}: {entry.identifier}. "
+            "Никель и молибден проверены по Lu 2005 и верны."
+        )
+
+
+@pytest.mark.parametrize(
+    "phase, element",
+    [("FCC_A1", "NI"), ("BCC_A2", "MO")],
+)
+def test_nickel_and_molybdenum_are_the_same_in_the_plain_database(
+    physical_db: PhysicalDensityDatabase,
+    physical_db_plain: PhysicalDensityDatabase,
+    phase: str,
+    element: str,
+) -> None:
+    """Наклон ρ(T) у никеля и молибдена одинаков с поправками и без них.
+
+    Прямое доказательство, что перекрывающий слой их не трогает: у хрома те
+    же два прогона расходятся втрое.
+    """
+
+    with_overrides = _pure_element_expansion(physical_db, phase, element)
+    plain = _pure_element_expansion(physical_db_plain, phase, element)
+    assert with_overrides == pytest.approx(plain, rel=1.0e-12), (
+        f"{element}: {with_overrides * 1e6:.3f} против {plain * 1e6:.3f}e-6/K"
+    )
+# --------------------------------------------------------------------------- #
+# 11N-4. Тесты не делят изменяемое состояние (BL-19)
+# --------------------------------------------------------------------------- #
+
+
+def test_each_test_gets_its_own_database() -> None:
+    """`_database` отдаёт изолированную копию, а не общий объект.
+
+    Проверяется именно то, чего не даёт ``copy.deepcopy`` самого pycalphad:
+    ``phases``, ``symbols`` и ``species`` у копии свои. Без этого правка в
+    одном тесте доходила бы до всех следующих, и порядок выполнения менял бы
+    результат — это и есть `BL-19`.
+    """
+
+    first = _database(NI_TDB)
+    second = _database(NI_TDB)
+    assert first is not second
+    for attribute in ("phases", "symbols", "species", "_parameters"):
+        assert getattr(first, attribute) is not getattr(second, attribute), (
+            f"{attribute} общий у двух копий базы"
+        )
+    assert first.phases["FCC_A1"] is not second.phases["FCC_A1"]
+
+    # Правка в одной копии не видна в следующей.
+    first.phases.pop("FCC_A1")
+    first.symbols["ТОЛЬКО_ДЛЯ_ТЕСТА"] = 1.0
+    third = _database(NI_TDB)
+    assert "FCC_A1" in third.phases
+    assert "ТОЛЬКО_ДЛЯ_ТЕСТА" not in third.symbols
+    assert set(third.phases) == set(second.phases)
+
+
+def test_physical_database_fixtures_are_per_test(
+    physical_db: PhysicalDensityDatabase,
+) -> None:
+    """Физическая база тоже своя на каждый тест.
+
+    Тест портит свой экземпляр намеренно. Если бы фикстура была модульной,
+    следующий тест получил бы испорченную базу — и падал бы или проходил в
+    зависимости от порядка.
+    """
+
+    physical_db.functions.clear()
+    assert not physical_db.functions
