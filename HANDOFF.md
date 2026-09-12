@@ -1,4 +1,4 @@
-# HANDOFF — ThermoGar 0.3.1
+# HANDOFF — ThermoGar 0.4.0
 
 Всё, что нужно, чтобы запустить программу, собрать установщик и прогнать тесты.
 Рабочий корень: `C:\Users\gareg\Desktop\ThermoGar`.
@@ -7,7 +7,7 @@
 
 ## Состояние проекта
 
-**Выпущено:** 0.3.1 от 2026-09-04.
+**Выпущено:** 0.4.0 от 2026-09-12; предыдущий выпуск 0.3.1 от 2026-09-04.
 
 **Волна 9** — расчётное исследование ХН62М(Sc)-ВИ на базе `mc_ni`
 (`docs\HN62M_STUDY.md`, отчёт `tasks\WAVE9_REPORT.md`). Влита.
@@ -80,7 +80,7 @@ powershell -ExecutionPolicy Bypass -File packaging\build_installer.ps1
 ```
 
 Цепочка: `generate_notices.ps1` → `stage_payload.ps1` → `makensis` → SHA-256 → `dist\`.
-Результат — `dist\ThermoGar-0.3.1-win64.exe` и `dist\ThermoGar-0.3.1-win64.build.json` с размером,
+Результат — `dist\ThermoGar-0.4.0-win64.exe` и `dist\ThermoGar-0.4.0-win64.build.json` с размером,
 числом файлов, SHA-256 и `estimated_size_kb` — размером установки для «Программ и компонентов»,
 который передаётся в NSIS через `/DESTIMATED_SIZE_KB`. Занимает около 20 минут, почти всё
 время — копирование и хеширование рантайма (15 003 файла, ~549 МБ).
