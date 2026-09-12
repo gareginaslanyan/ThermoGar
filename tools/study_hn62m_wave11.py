@@ -2919,6 +2919,285 @@ def step_j4(force: bool = False) -> None:
 
 
 # --------------------------------------------------------------------------- #
+# 11Q-2. Равновесный солидус остаточной жидкости
+# --------------------------------------------------------------------------- #
+
+# Путь Шейля при шаге 0,5 K до конца не доходит: он обрывается отказом
+# сходимости, и точка обрыва зависит от плотности выборки (11J-2, 11P-3).
+# Гнаться за солвером дальше бессмысленно — сдвиг обрыва не затухает, а
+# ускоряется. Поэтому здесь заход с другой стороны: состав жидкости в
+# последней посчитанной точке пути берётся самостоятельным сплавом, и для него
+# ищется равновесный солидус — одна хорошо обусловленная задача вместо плохо
+# сходящегося пути. Приём из волны 10, где так считали локальный солидус
+# междендритного участка.
+#
+# Проверка, ради которой пункт и ставится: три прогона обрываются на разной
+# доле твёрдого (0,9672, 0,9706, 0,9905). Если равновесный солидус их
+# остаточных жидкостей выйдет примерно одинаковым, значит физический конец
+# затвердевания найден, а плавает только точка численного обрыва.
+Q1_SOURCE_NAME = "child_j2_1_force.json"
+# Плотность выборки для равновесий. Взята наибольшая из A1: на ней посчитаны
+# окончательные ликвидус и солидус контрольного состава, и числа этого пункта
+# сравнимы с ними напрямую.
+Q1_PDENS = 500
+Q1_TOLERANCE_K = 0.1
+# Вилка шире солидусной вилки A1 (1000…1450): остаточная жидкость обогащена
+# сильно, и её солидус заранее не известен. Нижний край заведомо твёрдый,
+# верхний — заведомо выше ликвидуса контрольного состава (1375,0 °C).
+Q1_BRACKET = (700.0, 1400.0)
+# На сколько ниже найденного солидуса смотреть устойчивый набор фаз. Отступ
+# больше точности деления, иначе набор брался бы из точки, про которую само
+# деление ещё не решило, твёрдая она или нет.
+Q1_PHASES_OFFSET_K = 1.0
+# Доля фазы, ниже которой её в набор не пишем. Тот же порог, что у `solve`.
+Q1_PHASE_FLOOR = 1.0e-6
+# «Разброс порядка градусов» из постановки, взят как 5 K: это и «порядка
+# градусов», и заведомо меньше расхождения самих точек обрыва (1296,1 против
+# 1262,1 °C, то есть 34,0 K), ради проверки которого пункт и ставится.
+Q1_SPREAD_LIMIT_K = 5.0
+# Запасной ликвидус на случай, когда сводки A1 в дереве нет. Число то же, что
+# в `a1_summary.json` и в таблице 11J-2.
+Q1_LIQUIDUS_FALLBACK_C = 1375.01
+
+
+def q1_liquidus_c() -> float:
+    """Равновесный ликвидус контрольного состава из сводки A1."""
+
+    path = OUT / "a1_summary.json"
+    if path.is_file():
+        payload = json.loads(path.read_text("utf-8"))
+        value = payload.get("окончательный ликвидус, °C")
+        if value is not None:
+            return float(value)
+    return Q1_LIQUIDUS_FALLBACK_C
+
+
+def q1_residual_liquids() -> list[dict[str, Any]]:
+    """Состав жидкости в последней посчитанной точке каждого прогона 11J-2.
+
+    Кривые лежат готовыми в кэше потомка, пути не пересчитываются. Последняя
+    строка кривой — искусственная точка сброса остатка (`точка посчитана`
+    равно `False`), поэтому берётся последняя строка с `точка посчитана`.
+    """
+
+    path = CACHE / Q1_SOURCE_NAME
+    if not path.is_file():
+        raise RuntimeError(f"нет кэша прогонов 11J-2: {path}")
+    payload = json.loads(path.read_text("utf-8"))
+
+    cases: list[dict[str, Any]] = []
+    for label, records in payload["кривые"].items():
+        real = [row for row in records if row.get("точка посчитана")]
+        if not real:
+            raise RuntimeError(f"{label}: посчитанных точек в кривой нет")
+        last = real[-1]
+        mole = {
+            key[len("x(LIQUID,"):-1]: float(value)
+            for key, value in last.items()
+            if key.startswith("x(LIQUID,") and math.isfinite(float(value))
+        }
+        missing = sorted(set(ELEMENTS) - set(mole))
+        if missing:
+            raise RuntimeError(f"{label}: в составе жидкости нет {missing}")
+        total = sum(mole.values())
+        cases.append({
+            "прогон": label,
+            "pdens пути": int(str(label).split()[-1]),
+            "доля твёрдого на останове": float(last["доля твёрдого"]),
+            "доля жидкости на останове": 1.0 - float(last["доля твёрдого"]),
+            "T останова, °C": float(last["T, °C"]),
+            "сумма мольных долей жидкости до нормировки": total,
+            "состав жидкости, мольные доли": {
+                element: mole[element] / total for element in sorted(mole)
+            },
+        })
+    cases.sort(key=lambda case: case["pdens пути"])
+    return cases
+
+
+def q1_equilibrium_solidus(
+    ctx: Context, mole: Mapping[str, float], cache: EquilibriumCache
+) -> tuple[float, int]:
+    """Солидус состава половинным делением — метод пункта 11A-1b.
+
+    Признак тот же, что у `a1_solidus`: жидкость присутствует, если её доля
+    больше `A1_PRESENT_FLOOR`. Отличается только вилка.
+    """
+
+    def has_liquid(temperature_c: float) -> bool:
+        fractions = solve(ctx, mole, temperature_c, Q1_PDENS, cache)
+        return fractions.get("LIQUID", 0.0) > A1_PRESENT_FLOOR
+
+    low, high = Q1_BRACKET
+    return _bisect(
+        has_liquid, low, high, Q1_TOLERANCE_K,
+        low_expected=False, high_expected=True,
+        what="равновесный солидус остаточной жидкости",
+    )
+
+
+def q1_residual_solidus(force: bool = False) -> dict[str, Any]:
+    """Равновесный солидус трёх остаточных жидкостей. Считается в потомке."""
+
+    del force
+    ctx = Context()
+    cache = EquilibriumCache(Q1_PDENS)
+
+    rows: list[dict[str, Any]] = []
+    for case in q1_residual_liquids():
+        mole = case["состав жидкости, мольные доли"]
+        started = time.perf_counter()
+        solidus, calls = q1_equilibrium_solidus(ctx, mole, cache)
+        seconds = time.perf_counter() - started
+
+        below = solve(ctx, mole, solidus - Q1_PHASES_OFFSET_K, Q1_PDENS, cache)
+        phases = {
+            name: round(amount, 6)
+            for name, amount in sorted(below.items(), key=lambda pair: -pair[1])
+            if amount > Q1_PHASE_FLOOR
+        }
+        log(f"{case['прогон']}: равновесный солидус {solidus:.2f} °C "
+            f"({calls} равновесий, {seconds:.1f} с); фазы ниже него: "
+            f"{', '.join(phases) or 'ни одной'}")
+
+        row = dict(case)
+        row.update({
+            "равновесный солидус остаточной жидкости, °C": round(solidus, 2),
+            "T устойчивого набора фаз, °C": round(solidus - Q1_PHASES_OFFSET_K, 2),
+            "устойчивые фазы ниже солидуса": list(phases),
+            "доли устойчивых фаз": phases,
+            "равновесий": calls,
+            "секунд": round(seconds, 1),
+        })
+        rows.append(row)
+        gc.collect()
+
+    return {
+        "таблица": rows,
+        "pdens равновесий": Q1_PDENS,
+        "точность деления, K": Q1_TOLERANCE_K,
+        "вилка, °C": list(Q1_BRACKET),
+        "фаз в наборе": len(ctx.phases),
+        "ремонт базы": bool(ctx.repair_available),
+        "из кэша равновесий": cache.hits,
+        "посчитано равновесий": cache.misses,
+    }
+
+
+def q1_verdict(spread: float) -> str:
+    """Сошлись ли три солидуса. Порог назван в постановке: «порядка градусов»."""
+
+    if spread <= Q1_SPREAD_LIMIT_K:
+        return (
+            f"три значения сошлись: разброс {spread:.2f} K при пороге "
+            f"{Q1_SPREAD_LIMIT_K:.1f} K, то есть физический конец затвердевания "
+            f"найден, а плавает только точка численного обрыва"
+        )
+    return (
+        f"три значения разъехались: разброс {spread:.2f} K при пороге "
+        f"{Q1_SPREAD_LIMIT_K:.1f} K, то есть остаточные жидкости трёх прогонов "
+        f"уже не одно и то же вещество и вопрос остаётся открытым"
+    )
+
+
+def step_q1(force: bool = False) -> None:
+    progress = load_progress()
+    if progress.get("11Q-2", {}).get("готов") and not force:
+        log("11Q-2 пропущен, посчитан ранее (--force для пересчёта)")
+        return
+
+    import psutil
+
+    free = psutil.virtual_memory().available / 1024.0 ** 3
+    if free < J2_MIN_FREE_GIB:
+        log(f"11Q-2 не начинался: свободной физической памяти {free:.1f} ГиБ "
+            f"при требуемых {J2_MIN_FREE_GIB:.1f} ГиБ")
+        return
+
+    payload = run_child(["--q1", "1"] + (["--force"] if force else []))
+    rows = payload["таблица"]
+
+    table = pd.DataFrame([
+        {
+            "прогон": row["прогон"],
+            "pdens пути": row["pdens пути"],
+            "доля твёрдого на останове": round(row["доля твёрдого на останове"], 6),
+            "доля остаточной жидкости, %": round(
+                100.0 * row["доля жидкости на останове"], 3
+            ),
+            "T останова пути, °C": round(row["T останова, °C"], 2),
+            "равновесный солидус остаточной жидкости, °C":
+                row["равновесный солидус остаточной жидкости, °C"],
+            "устойчивые фазы ниже солидуса":
+                ", ".join(row["устойчивые фазы ниже солидуса"]),
+            "равновесий": row["равновесий"],
+            "секунд": row["секунд"],
+        }
+        for row in rows
+    ])
+    write_csv(table, "q1_residual_solidus.csv")
+
+    values = [
+        float(row["равновесный солидус остаточной жидкости, °C"]) for row in rows
+    ]
+    spread = max(values) - min(values)
+    liquidus = q1_liquidus_c()
+
+    summary = {
+        "подпункт": "11Q-2. Равновесный солидус остаточной жидкости",
+        "метод": (
+            "состав жидкости в последней посчитанной точке пути Шейля берётся "
+            "самостоятельным сплавом; его солидус ищется половинным делением по "
+            f"признаку «доля LIQUID > {A1_PRESENT_FLOOR:g}» с точностью "
+            f"{Q1_TOLERANCE_K} K в вилке "
+            f"{Q1_BRACKET[0]:.0f}…{Q1_BRACKET[1]:.0f} °C, pdens {Q1_PDENS}, "
+            "режим «все фазы»"
+        ),
+        "источник составов": f"results/hn62m_tech/cache/{Q1_SOURCE_NAME}",
+        "таблица": rows,
+        "разброс трёх солидусов, K": round(spread, 2),
+        "порог совпадения, K": Q1_SPREAD_LIMIT_K,
+        "вердикт": q1_verdict(spread),
+        "равновесный ликвидус контрольного состава, °C": liquidus,
+        "интервал кристаллизации по наибольшему солидусу, K": round(
+            liquidus - max(values), 1
+        ),
+        "интервал кристаллизации по наименьшему солидусу, K": round(
+            liquidus - min(values), 1
+        ),
+        "оговорка о смысле числа": (
+            "равновесный солидус остаточной жидкости — не то же самое, что "
+            "конец пути Шейля: внутри самой этой жидкости сегрегация "
+            "продолжится, поэтому действительный конец затвердевания лежит ниже "
+            "полученной температуры. Это оценка конца сверху по температуре, а "
+            "интервала кристаллизации — снизу"
+        ),
+        "оговорка о доле вещества": (
+            "речь идёт о малой доле сплава: остаточная жидкость составляет "
+            + "; ".join(
+                f"{100.0 * row['доля жидкости на останове']:.2f} % при pdens "
+                f"{row['pdens пути']}" for row in rows
+            )
+        ),
+        "pdens равновесий": payload["pdens равновесий"],
+        "фаз в наборе": payload["фаз в наборе"],
+        "ремонт базы": payload["ремонт базы"],
+        "из кэша равновесий": payload["из кэша равновесий"],
+        "посчитано равновесий": payload["посчитано равновесий"],
+    }
+    write_json(summary, "q1_summary.json")
+    log(f"11Q-2: {summary['вердикт']}")
+
+    progress["11Q-2"] = {
+        "готов": True,
+        "время": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "солидусы, °C": values,
+        "разброс, K": round(spread, 2),
+    }
+    save_progress(progress)
+
+
+# --------------------------------------------------------------------------- #
 # Ввод-вывод
 # --------------------------------------------------------------------------- #
 
@@ -3286,7 +3565,7 @@ def step_a1(force: bool = False) -> None:
 
 STEPS = {"a1": step_a1, "a2": step_a2, "a3": step_a3,
          "d2": step_d2, "a4": step_a4, "d3": step_d3, "a5": step_a5,
-         "j2": step_j2, "j4": step_j4}
+         "j2": step_j2, "j4": step_j4, "q1": step_q1}
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -3301,6 +3580,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--a4", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--a5", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--j2", type=int, default=None, help=argparse.SUPPRESS)
+    parser.add_argument("--q1", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--handoff", default=None, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
 
@@ -3323,6 +3603,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         payload = a5_manganese(force=args.force)
     elif args.j2 is not None:
         payload = j2_dense(force=args.force)
+    elif args.q1 is not None:
+        payload = q1_residual_solidus(force=args.force)
     else:
         payload = None
 
