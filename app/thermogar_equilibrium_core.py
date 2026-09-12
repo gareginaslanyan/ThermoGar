@@ -4,7 +4,8 @@ The module contains no solver implementation.  A backend is injected through
 the :class:`EquilibriumBackend` protocol and its raw phase rows are validated,
 aggregated, and checked for phase balance and component conservation before an
 answer is returned.  The remaining helpers cover composition-basis conversion,
-monotonic linear crossings, and solidification-trajectory validation.
+monotonic linear crossings, bisected transition temperatures, and
+solidification-trajectory validation.
 """
 
 from __future__ import annotations
@@ -646,6 +647,103 @@ def find_monotonic_linear_crossings(
     _fail("CROSSING_NOT_FOUND")
 
 
+@_dataclass(frozen=True, slots=True)
+class BisectedTransition:
+    """One transition temperature located by halving, with its evidence."""
+
+    value: float
+    low: float
+    high: float
+    tolerance: float
+    evaluations: int
+
+
+def bisect_transition_temperature(
+    predicate: object,
+    low: object,
+    high: object,
+    tolerance: object,
+) -> BisectedTransition:
+    """Locate a transition by halving the bracket, not by interpolating a grid.
+
+    ``predicate`` answers one question about a temperature — «is the phase
+    already there?» — and must be ``False`` at ``low`` and ``True`` at
+    ``high``.  Both ends are evaluated rather than assumed: a bracket that does
+    not span the transition yields a midpoint of the wrong interval, which
+    looks like an answer and is not one.
+
+    Why halving and not interpolation between sampled points.  A phase
+    fraction does not vary linearly with temperature near its own boundary; it
+    leaves zero with a near-vertical slope.  Interpolating a sampled curve to a
+    small threshold fraction therefore reports a temperature governed by the
+    sample spacing instead of by the phase boundary, and the error grows with
+    the step.  Halving evaluates the predicate where it matters and converges
+    to the stated tolerance regardless of curvature.
+    """
+
+    if not callable(predicate):
+        _fail("BISECT_PREDICATE_INVALID")
+    lower = _binary64(
+        low,
+        invalid_reason="BISECT_BOUND_INVALID",
+        nonfinite_reason="BISECT_BOUND_NONFINITE",
+        overflow_reason="BISECT_BOUND_OVERFLOW",
+    )
+    upper = _binary64(
+        high,
+        invalid_reason="BISECT_BOUND_INVALID",
+        nonfinite_reason="BISECT_BOUND_NONFINITE",
+        overflow_reason="BISECT_BOUND_OVERFLOW",
+    )
+    width = _binary64(
+        tolerance,
+        invalid_reason="BISECT_TOLERANCE_INVALID",
+        nonfinite_reason="BISECT_TOLERANCE_NONFINITE",
+        overflow_reason="BISECT_TOLERANCE_OVERFLOW",
+    )
+    if not lower < upper:
+        _fail("BISECT_BRACKET_INVALID")
+    if not width > 0.0:
+        _fail("BISECT_TOLERANCE_NONPOSITIVE")
+
+    evaluations = 0
+
+    def answer(temperature: float) -> bool:
+        nonlocal evaluations
+        evaluations += 1
+        value = predicate(temperature)  # type: ignore[operator]
+        if type(value) is not bool:
+            _fail("BISECT_PREDICATE_VALUE_INVALID")
+        return value
+
+    if answer(lower) or not answer(upper):
+        _fail("BISECT_BRACKET_NOT_SPANNING")
+
+    left = lower
+    right = upper
+    while right - left > width:
+        middle = 0.5 * (left + right)
+        if not _math.isfinite(middle) or not left < middle < right:
+            # Разрешение binary64 кончилось раньше запрошенного допуска:
+            # дальше деление стоит на месте, и цикл стал бы вечным.
+            break
+        if answer(middle):
+            right = middle
+        else:
+            left = middle
+
+    value = 0.5 * (left + right)
+    if not _math.isfinite(value):
+        _fail("BISECT_ARITHMETIC_INVALID")
+    return BisectedTransition(
+        value=0.0 if value == 0.0 else value,
+        low=left,
+        high=right,
+        tolerance=width,
+        evaluations=evaluations,
+    )
+
+
 def _solidification_fraction(value: object) -> float:
     result = _binary64(
         value,
@@ -797,11 +895,13 @@ __all__ = (
     "EquilibriumResult",
     "EquilibriumBackend",
     "LinearCrossing",
+    "BisectedTransition",
     "SolidificationPoint",
     "SolidificationTrajectory",
     "evaluate_equilibrium",
     "mass_to_mole_fractions",
     "mole_to_mass_fractions",
     "find_monotonic_linear_crossings",
+    "bisect_transition_temperature",
     "validate_solidification_trajectory",
 )

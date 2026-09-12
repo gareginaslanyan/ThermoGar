@@ -1,0 +1,115 @@
+{
+  "ni": {
+    "phases_with_mobility": 4,
+    "keys": 35,
+    "degenerate_defaults_before": 28,
+    "duplicated_keys_before": 22,
+    "constituent_slots_total": 537,
+    "explicit_covered_before": 91,
+    "explicit_covered_after": 525,
+    "removed": 28,
+    "materialised": 434,
+    "kept_as_only_source": 6,
+    "kept_as_different_expression": 11,
+    "degenerate_defaults_after": 0,
+    "duplicated_keys_after": 0,
+    "missing_after": [
+      [
+        "BCC_B2",
+        "MQ",
+        "NI",
+        [
+          "FE",
+          "SI"
+        ]
+      ],
+      [
+        "BCC_B2",
+        "MQ",
+        "TI",
+        [
+          "FE",
+          "SI"
+        ]
+      ],
+      [
+        "NIAL",
+        "MQ",
+        "AL",
+        [
+          "AL",
+          "TI"
+        ]
+      ],
+      [
+        "NIAL",
+        "MQ",
+        "CO",
+        [
+          "CO",
+          "TI"
+        ]
+      ],
+      [
+        "NIAL",
+        "MQ",
+        "CR",
+        [
+          "CR",
+          "TI"
+        ]
+      ],
+      [
+        "NIAL",
+        "MQ",
+        "NI",
+        [
+          "TI"
+        ]
+      ],
+      [
+        "NIAL",
+        "MQ",
+        "TI",
+        [
+          "TI"
+        ]
+      ]
+    ],
+    "missing_after_count": 7
+  },
+  "al": {
+    "phases_with_mobility": 2,
+    "keys": 15,
+    "degenerate_defaults_before": 11,
+    "duplicated_keys_before": 10,
+    "constituent_slots_total": 180,
+    "explicit_covered_before": 50,
+    "explicit_covered_after": 132,
+    "removed": 11,
+    "materialised": 82,
+    "kept_as_only_source": 1,
+    "kept_as_different_expression": 3,
+    "degenerate_defaults_after": 0,
+    "duplicated_keys_after": 0,
+    "missing_after": [],
+    "missing_after_count": 0
+  },
+  "fe": {
+    "phases_with_mobility": 3,
+    "keys": 79,
+    "degenerate_defaults_before": 80,
+    "duplicated_keys_before": 45,
+    "constituent_slots_total": 1504,
+    "explicit_covered_before": 121,
+    "explicit_covered_after": 1504,
+    "removed": 80,
+    "materialised": 1403,
+    "kept_as_only_source": 34,
+    "kept_as_different_expression": 28,
+    "degenerate_defaults_after": 0,
+    "duplicated_keys_after": 0,
+    "missing_after": [],
+    "missing_after_count": 0
+  }
+}

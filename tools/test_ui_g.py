@@ -338,7 +338,22 @@ def test_homogenization_unavailable_on_al_is_explained() -> None:
 # --------------------------------------------------------------------------- #
 
 
-@pytest.mark.parametrize("database_key", DB_KEYS)
+# The Fe cell (BCC_A2 / M23C6 at 700 C) is marked slow, not skipped. Measured
+# in wave 11L: Ni 39 s, Al 27 s, Fe more than 30 min for the same 3.6 s of
+# model time, at 100 % of one core and a 262 MiB working set. The cost is in
+# kawin's default driving-force method: `getDrivingForce` -> tangent ->
+# `getLocalEq` runs a pycalphad equilibrium for every nucleation-rate
+# evaluation, and Fe-C-Cr with M23C6 is the expensive corner. It is neither a
+# hang nor a memory problem, so the cell stays in the suite and is run on
+# demand with `-m slow`.
+@pytest.mark.parametrize(
+    "database_key",
+    (
+        "ni",
+        "al",
+        pytest.param("fe", marks=pytest.mark.slow),
+    ),
+)
 def test_kwn_precipitation(database_key: str) -> None:
     matrix, precipitate, temperature = KWN_CELL[database_key]
     app = start_app(database_key)
@@ -408,8 +423,13 @@ def test_kwn_precipitation(database_key: str) -> None:
     assert provenance["matrix_order_disorder_role"]["role"] != "ordered"
 
 
+@pytest.mark.slow
 def test_fe_kwn_provenance_status_is_neutral() -> None:
-    """Attention point 3: the Fe status is metadata, not a gate."""
+    """Attention point 3: the Fe status is metadata, not a gate.
+
+    Slow for the same reason as the Fe cell of ``test_kwn_precipitation``: the
+    KWN run behind it took over 900 s in wave 11L.
+    """
 
     assert precipitation_module.FE_KWN_PUBLICATION_STATUS == "NOT_ASSESSED"
 

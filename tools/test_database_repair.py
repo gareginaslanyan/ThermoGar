@@ -691,3 +691,96 @@ def test_excluded_phase_metadata_has_reason() -> None:
         assert item.disordered_phase
     note = repair.excluded_phases_note(removed)
     assert "исключены" in note and "BCC_B2" in note
+
+
+def test_balance_is_measured_on_the_conserved_quantity() -> None:
+    """Невязка баланса считается по u-долям, а не по мольным (волна 11L).
+
+    Решатели ``kawin`` работают в объёмно-фиксированной системе отсчёта и
+    хранят состояние в u-долях ``u_k = x_k / сумма замещающих``: внедрённый
+    углерод сидит в междоузлиях и узлов решётки не создаёт. При закрытых
+    границах конечно-объёмная схема сохраняет среднюю u-долю. Средняя мольная
+    доля при этом смещается, потому что знаменатель меняется от узла к узлу, —
+    и на стальной паре ``C=0,1…0,3 / CR=8…14`` смещение доходит до 7,2e-6, то
+    есть в семь раз выше допуска 1e-6.
+
+    Тест закрепляет обе половины: по u-долям расчёт сходится, по мольным на
+    той же паре — нет. Если кто-то вернёт проверку на мольные доли, тест
+    упадёт и назовёт причину.
+    """
+
+    pytest.importorskip("kawin")
+    import thermogar_diffusion as diffusion
+    from thermogar_release_policy import RELEASE_DATABASE_LABELS
+
+    path = ROOT / DATABASES["fe"]
+    if not path.is_file():
+        pytest.skip(f"Нет базы: {path}")
+
+    result = diffusion.run_diffusion(
+        db=object(),
+        database_key="fe",
+        database_path=path,
+        database_label=RELEASE_DATABASE_LABELS.get("fe", ""),
+        balance="FE",
+        units="wt",
+        left_text="C=0.1, CR=8",
+        right_text="C=0.3, CR=14",
+        temperature_c=900.0,
+        time_h=0.001,
+        length_um=100.0,
+        interface_percent=50.0,
+        nodes=20,
+        phases=["FCC_A1"],
+        model_kind="single",
+        input_provenance="Приёмочный тест волны 11L, пункт 11L-1; research-only",
+        input_confirmation=True,
+    )
+
+    assert diffusion._has_interstitials_in(result.elements), (
+        "В паре нет внедрённого элемента — тест проверяет не то, что задумано"
+    )
+    assert result.max_balance_error <= 1e-6, result.max_balance_error
+
+    mole_error = float(
+        np.max(
+            np.abs(
+                np.mean(result.final_at, axis=0) - np.mean(result.initial_at, axis=0)
+            )
+        )
+    )
+    assert mole_error > 1e-6, (
+        "Средняя мольная доля на стальной паре сохранилась — тогда переход на "
+        "u-доли ничем не подкреплён, и разницу надо объяснять заново"
+    )
+
+
+def test_u_fraction_balance_equals_mole_balance_without_interstitials() -> None:
+    """Без внедрённых элементов u ≡ x, и число невязки не меняется.
+
+    Переход на u-доли не должен ослаблять проверку на никеле и алюминии: там
+    сумма замещающих равна единице в каждом узле, поэтому обе величины
+    совпадают побитно.
+    """
+
+    import thermogar_diffusion as diffusion
+
+    elements = ["NI", "AL", "CR"]
+    profile = np.array(
+        [
+            [0.724, 0.058, 0.218],
+            [0.700, 0.070, 0.230],
+            [0.650, 0.100, 0.250],
+        ]
+    )
+    assert not diffusion._has_interstitials_in(elements)
+    assert np.array_equal(diffusion._u_fractions(elements, profile), profile)
+
+    with_carbon = ["FE", "C", "CR"]
+    assert diffusion._has_interstitials_in(with_carbon)
+    u_frac = diffusion._u_fractions(with_carbon, profile)
+    assert not np.allclose(u_frac, profile), (
+        "С углеродом u-доли обязаны отличаться от мольных"
+    )
+    # Сумма замещающих в u-долях равна единице по построению.
+    assert np.allclose(u_frac[:, 0] + u_frac[:, 2], 1.0)

@@ -48,6 +48,7 @@ try:
     from kawin.diffusion.mesh import Cartesian1D, ProfileBuilder, StepProfile1D
     from kawin.solver import explicitEulerIterator
     from kawin.thermo import GeneralThermodynamics
+    from kawin.thermo.Mobility import interstitials as KAWIN_INTERSTITIALS
 
     KAWIN_AVAILABLE = True
     KAWIN_IMPORT_ERROR = ""
@@ -62,6 +63,9 @@ except Exception as import_error:  # pragma: no cover - зависит от ок
     StepProfile1D = None
     explicitEulerIterator = None
     GeneralThermodynamics = None
+    # Список kawin, повторённый для случая, когда пакет не загрузился:
+    # баланс считается и без него.
+    KAWIN_INTERSTITIALS = ("C", "N", "O", "H", "B")
     KAWIN_AVAILABLE = False
     KAWIN_IMPORT_ERROR = str(import_error)
 
@@ -574,24 +578,81 @@ def _profile_dataframe(
     return pd.DataFrame(data)
 
 
+def _u_fractions(elements: list[str], profile_at: np.ndarray) -> np.ndarray:
+    """u-доли профиля: ``u_k = x_k / сумма замещающих``.
+
+    Повторяет ``kawin.thermo.Mobility.x_to_u_frac``; своя реализация нужна,
+    чтобы баланс считался и без установленного kawin — тогда ветка импорта
+    подставляет свой список внедрённых элементов.
+    """
+
+    profile = np.atleast_2d(np.asarray(profile_at, dtype=float))
+    substitutional = [
+        index
+        for index, element in enumerate(elements)
+        if str(element).upper() not in set(KAWIN_INTERSTITIALS)
+    ]
+    if not substitutional:
+        return profile
+    u_sum = np.sum(profile[:, substitutional], axis=1)
+    return profile / u_sum[:, np.newaxis]
+
+
+def _has_interstitials_in(elements: list[str]) -> bool:
+    """Есть ли в наборе элемент, который kawin считает внедрённым."""
+
+    return any(
+        str(element).upper() in set(KAWIN_INTERSTITIALS) for element in elements
+    )
+
+
 def _balance_dataframe(
     elements: list[str],
     initial_at: np.ndarray,
     final_at: np.ndarray,
 ) -> tuple[pd.DataFrame, float]:
+    """Баланс вещества по сохраняющейся величине — средней u-доле.
+
+    Решатели kawin ведут расчёт в объёмно-фиксированной системе отсчёта и
+    хранят состояние в u-долях ``u_k = x_k / сумма замещающих``: внедрённые
+    элементы (C, N, O, H, B) сидят в междоузлиях и не создают узлов решётки,
+    поэтому плотность вещества на единицу объёма пропорциональна именно u, а
+    не мольной доле. При закрытых границах конечно-объёмная схема сохраняет
+    среднюю u-долю; средняя мольная доля при этом сохраняться не обязана,
+    потому что знаменатель ``сумма замещающих`` меняется от узла к узлу и
+    перенос углерода его перераспределяет.
+
+    Поэтому невязка считается по u-долям. Для систем без внедрённых элементов
+    ``u ≡ x``, и число не меняется — проверено на mc_ni и mc_al в волне 11L.
+    Мольные доли остаются в таблице: пользователю нужны они, а не u.
+    """
+
     initial_mean = np.mean(initial_at, axis=0)
     final_mean = np.mean(final_at, axis=0)
     difference = final_mean - initial_mean
-    maximum = float(np.max(np.abs(difference)))
-    table = pd.DataFrame(
-        {
-            "Элемент": elements,
-            "Среднее начальное, ат.%": 100.0 * initial_mean,
-            "Среднее итоговое, ат.%": 100.0 * final_mean,
-            "Разница, ат.%": 100.0 * difference,
-        }
-    )
-    return table, maximum
+
+    initial_u_mean = np.mean(_u_fractions(elements, initial_at), axis=0)
+    final_u_mean = np.mean(_u_fractions(elements, final_at), axis=0)
+    u_difference = final_u_mean - initial_u_mean
+    maximum = float(np.max(np.abs(u_difference)))
+
+    columns: dict[str, Any] = {
+        "Элемент": elements,
+        "Среднее начальное, ат.%": 100.0 * initial_mean,
+        "Среднее итоговое, ат.%": 100.0 * final_mean,
+        "Разница, ат.%": 100.0 * difference,
+    }
+    if _has_interstitials_in(elements):
+        # Без внедрённых элементов эти столбцы дословно повторяли бы три
+        # предыдущих, поэтому показываются только там, где они что-то говорят.
+        columns.update(
+            {
+                "Среднее начальное, u-доля": initial_u_mean,
+                "Среднее итоговое, u-доля": final_u_mean,
+                "Разница, u-доля": u_difference,
+            }
+        )
+    return pd.DataFrame(columns), maximum
 
 
 def _apply_chart_chrome(axis: Any, roles: dict[str, str]) -> None:
@@ -866,6 +927,12 @@ def _run_model(
         ("Граница пары, % длины", float(interface_pct)),
         ("Число конечных объёмов", int(nodes)),
         ("Граничные условия", "нулевой поток на обоих концах"),
+        (
+            "Сохраняющаяся величина баланса",
+            "средняя u-доля (x / сумма замещающих)"
+            if _has_interstitials_in(couple.elements)
+            else "средняя мольная доля (внедрённых элементов нет, u = x)",
+        ),
         ("Система отсчёта", "объёмно-фиксированная" if method_key == "single" else "локальное равновесие + эффективная подвижность"),
         ("Элементы", ", ".join(couple.elements)),
         ("Фазы", ", ".join(phases)),
@@ -910,6 +977,11 @@ def _run_model(
                 "Статус": "пройдена" if composition_sum_error <= 1e-8 else "не пройдена",
             },
             {
+                # Имя строки не меняется: по нему её берут thermogar_self_test
+                # и раздел руководства. С волны 11L невязка считается по
+                # u-долям — сохраняющейся величине объёмно-фиксированной
+                # системы отсчёта; сама величина названа в таблице баланса и
+                # в подписи под метрикой.
                 "Проверка": "Сохранение среднего состава",
                 "Значение": max_balance_error,
                 "Допуск": 1e-6,
@@ -1065,10 +1137,14 @@ def _result_display(
     with metric_col2:
         st.metric("Время выдержки, ч", f"{result.actual_time_s / 3600.0:.3g}")
     with metric_col3:
-        st.metric("Макс. ошибка баланса, ат.%", f"{100.0 * result.max_balance_error:.3e}")
+        st.metric("Макс. ошибка баланса, u-доля", f"{result.max_balance_error:.3e}")
 
     if result.max_balance_error <= 1e-6:
-        st.success("Численная проверка сохранения среднего состава пройдена.")
+        st.success(
+            "Численная проверка сохранения среднего состава пройдена. "
+            "Невязка считается по u-долям — величине, которую сохраняет "
+            "объёмно-фиксированная система отсчёта решателя."
+        )
     elif result.max_balance_error <= 1e-4:
         st.warning("Баланс состава выполнен с повышенной численной погрешностью.")
     else:

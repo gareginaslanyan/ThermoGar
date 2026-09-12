@@ -110,6 +110,18 @@ _REASONS = {
     "SOLIDIFICATION_PHASE_DUPLICATE": "Solidification phase names must be unique per node.",
     "SOLIDIFICATION_PHASE_SUM_INVALID": "Per-node phase fractions must sum to the solid fraction.",
     "SOLIDIFICATION_PROGRESS_INVALID": "Solidification fractions contradict the declared direction.",
+    "BISECT_PREDICATE_INVALID": "The transition predicate must be callable.",
+    "BISECT_BOUND_INVALID": "Bracket bounds must be binary64-compatible numbers.",
+    "BISECT_BOUND_NONFINITE": "Bracket bounds must be finite.",
+    "BISECT_BOUND_OVERFLOW": "A bracket bound is outside binary64 range.",
+    "BISECT_BRACKET_INVALID": "The lower bound must be strictly below the upper bound.",
+    "BISECT_TOLERANCE_INVALID": "The tolerance must be a binary64-compatible number.",
+    "BISECT_TOLERANCE_NONFINITE": "The tolerance must be finite.",
+    "BISECT_TOLERANCE_OVERFLOW": "The tolerance is outside binary64 range.",
+    "BISECT_TOLERANCE_NONPOSITIVE": "The tolerance must be strictly positive.",
+    "BISECT_PREDICATE_VALUE_INVALID": "The transition predicate must return a bool.",
+    "BISECT_BRACKET_NOT_SPANNING": "The predicate does not change across the bracket.",
+    "BISECT_ARITHMETIC_INVALID": "Bisection left the finite binary64 domain.",
 }
 
 NUMERICAL_ADAPTER_REASON_CODES: _Mapping[str, str] = _MappingProxyType(_REASONS)
