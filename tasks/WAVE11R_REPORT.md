@@ -464,7 +464,41 @@ OVERALL: PASS
 
 Выполняется последним и только потому, что 11R-3, 11R-4 и 11R-5 прошли.
 
-<!-- 11R-6-OUTPUT -->
+Предмержевая проверка: неотслеживаемых файлов волн в дереве `main` не осталось. Задания
+`WAVE11N_LIGHT_OPUS.md`, `WAVE11Q_OPUS.md` и `WAVE11R_RELEASE_OPUS.md` закоммичены веткой
+(`9620387`); их местные копии в `main` сверены с блобами по нормализованному содержанию
+(10022 / 10163 / 13605 байт, 103 / 100 / 140 строк, SHA-256 `b3442101...`, `ac13afc3...`,
+`da1157f3...` — все три совпали) и сняты как побайтовые дубли. Посторонние файлы задачи APP-576
+(`REPORT_APP-576.md`, `ZADACHA_APP-576_TERMOGAR_SOLIDUS_VJ159.md`, `uliki_576/`) не тронуты:
+решения по ним нет.
+
+**Слияние своей ветки в `main` сделано по прямому указанию мастера** (задание 11R-6): релиз
+завершает волну 11. Это единственное место в проекте, где волна мержит свою ветку, и оно
+названо отступлением от `RULES.md`, раздел «Ветки и слияния».
+
+```
+git merge --no-ff wave11-release -m "Merge wave 11R: release 0.4.0"
+Merge made by the 'ort' strategy.
+ 27 files changed, 1688 insertions(+), 122 deletions(-)
+ rename docs/guide/{ThermoGar_Guide_0.3.1.html => ThermoGar_Guide_0.4.0.html} (99%)
+```
+
+`git push origin main` дословно:
+
+```
+To https://github.com/gareginaslanyan/ThermoGar.git
+   fc5011c..df15a0e  main -> main
+```
+
+`git tag -a v0.4.0 -m "ThermoGar 0.4.0"`, затем `git push origin v0.4.0` дословно:
+
+```
+To https://github.com/gareginaslanyan/ThermoGar.git
+ * [new tag]         v0.4.0 -> v0.4.0
+```
+
+Теги в репозитории: `v0.3.0`, `v0.3.1`, **`v0.4.0`**. `main` ушёл вперёд от `origin/main` на
+93 коммита — все они ушли одним пушем.
 
 ---
 
@@ -472,11 +506,31 @@ OVERALL: PASS
 
 `git log --oneline -12`:
 
-<!-- GIT-LOG -->
+```
+df15a0e Merge wave 11R: release 0.4.0
+9620387 docs(tasks): задания волн 11N (лёгкий поток), 11Q и 11R
+e354b57 docs(11R): отчёт волны 11R
+60d84e8 release(11R-5): версия 0.4.0, раздел CHANGELOG про изменение результатов
+f4b9015 fix(11R-4): деинсталлятор снимает каталог licenses
+f5e32f3 test(11R-3): фикстура плотности сравнивает приложение с базой без перекрытия
+bceadd8 feat(11R-2): интервал хрупкости как главная величина, сверка метода на доле твёрдого 0,95
+834624f Merge wave 11Q: branch integration, equilibrium solidus of the residual liquid
+e4e705b docs(11Q): отчёт волны 11Q
+cdc2f58 feat(11Q-2,11Q-3): равновесный солидус остаточной жидкости — три значения разъехались
+8cf90f3 Merge wave 11N: density on the automatic phase set, BL-10 closed, per-test database isolation
+7add6b7 Merge waves 11D/11J/11L/11P: density slope, homogenisation, Scheil tail, manganese withdrawn, u-fraction balance
+```
 
 `git status --short`:
 
-<!-- GIT-STATUS -->
+```
+?? REPORT_APP-576.md
+?? ZADACHA_APP-576_TERMOGAR_SOLIDUS_VJ159.md
+?? uliki_576/
+```
+
+Остались только посторонние файлы задачи APP-576, которые трогать не велено. Неотслеживаемых
+файлов волн нет.
 
 ---
 
