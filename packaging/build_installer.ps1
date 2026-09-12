@@ -11,7 +11,7 @@
 
 .EXAMPLE
   .\packaging\build_installer.ps1
-  .\packaging\build_installer.ps1 -Version 0.3.1 -KeepStage
+  .\packaging\build_installer.ps1 -Version 0.4.0 -KeepStage
 #>
 [CmdletBinding()]
 param(
