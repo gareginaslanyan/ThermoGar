@@ -109,11 +109,23 @@ def linear_alpha(density_hot: float, density_cold: float,
 
 @pytest.fixture(scope="module")
 def physical_db() -> Any:
+    """База плотностей **без перекрывающего слоя проекта**.
+
+    Тесты этого файла отвечают на вопрос «приложение добавляет своё или так
+    написано в базе», поэтому сравнивать надо с базой как есть. С волны 11M-2
+    к базе применяется перекрытие плотности хрома
+    (`databases/physical/overrides/physical_data_v103.overrides.json`), и по
+    умолчанию конструктор его подхватывает: тогда смесь Ni-Cr-Mo от функций
+    базы отличается на 1,4e-7 при 298,15 K и на 2 % при 1373,15 K — это
+    поправка, а не «код добавил своё». Перекрытие проверяется своими тестами в
+    `tools/test_density.py`, раздел «11K-2».
+    """
+
     from thermogar_physical import PhysicalDensityDatabase
 
     if not PDB_PATH.is_file():
         pytest.skip(f"Нет базы плотностей {PDB_PATH}")
-    return PhysicalDensityDatabase(str(PDB_PATH))
+    return PhysicalDensityDatabase(str(PDB_PATH), overrides=None)
 
 
 @pytest.fixture(scope="module")
