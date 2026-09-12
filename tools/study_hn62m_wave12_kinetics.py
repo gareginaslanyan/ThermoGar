@@ -210,7 +210,17 @@ K_PBM = dict(cMin=1.0e-10, cMax=1.0e-9, bins=150, minBins=100, maxBins=200,
 PRESENT_FLOOR = w12.E1_VISIBLE_FLOOR
 
 # Доля равновесия, по достижении которой случай считается «дошедшим».
-REACHED_FRACTION = 0.95
+#
+# 0,90, а не 0,95, и причина в поведении самой модели, а не в желании смягчить
+# критерий. KWN — среднеполевая модель: после того как зарождение кончилось,
+# доля выделений подходит к равновесию через огрубление, то есть логарифмически
+# медленно. В посчитанных случаях с полным выделением доля за 87 600 ч выходит
+# на 94…95 % равновесия собственной двухфазной задачи и продолжает ползти
+# вверх. Порог 0,95 пометил бы такой случай как «не дошло», а это не то, что
+# он должен различать: различать он должен «выделилось» и «не выделилось».
+# Сколько именно набралось — стоит отдельным числом в столбце «доля
+# равновесия», и вывод строится по нему, а не по этому признаку.
+REACHED_FRACTION = 0.90
 
 
 def elements() -> list[str]:
@@ -475,6 +485,68 @@ def gamma_estimate_available() -> dict[str, Any]:
 # --------------------------------------------------------------------------- #
 # Кэш случаев на диске
 # --------------------------------------------------------------------------- #
+
+
+VOLUMES_PATH_NAME = "k1_volumes.json"
+
+
+def volumes_and_references(ctx: Any, mole: Mapping[str, float],
+                           mole_full: Mapping[str, float]
+                           ) -> tuple[dict[float, dict[str, Any]],
+                                      dict[float, dict[str, Any]]]:
+    """Молярные объёмы и равновесие двух фаз — из кэша, иначе посчитать.
+
+    Кэш здесь не ради скорости, а ради памяти, и это главное в устройстве
+    подпункта. Молярные объёмы берутся из равновесия на полном наборе 48 фаз,
+    а `w11.Context.compiled` строит символьные модели всех сорока восьми и
+    держит их до конца процесса: около 1,3 ГиБ рабочего набора, которые
+    KWN-счёту не нужны совсем — он работает на двух фазах. Освободить их
+    внутри процесса не помогает: CPython отпускает объекты, но не возвращает
+    арены системе, и рабочий набор остаётся прежним (проверено).
+
+    Поэтому тяжёлое равновесие считается один раз, результат ложится на диск,
+    и долгий прогон кинетики его читает, ни разу не трогая `compiled()`.
+    Первый прогон подпункта этого не делал и был снят системой по нехватке
+    памяти на пятнадцатом случае из двадцати четырёх.
+    """
+
+    path = CACHE / VOLUMES_PATH_NAME
+    if path.is_file():
+        stored = json.loads(path.read_text("utf-8"))
+        if stored.get("состав, мольные доли id") == w11.composition_id(mole):
+            volumes = {float(key): value
+                       for key, value in stored["молярные объёмы"].items()}
+            references = {float(key): value
+                          for key, value in stored["равновесие двух фаз"].items()}
+            if all(temperature in volumes and temperature in references
+                   for temperature in K_TEMPERATURES_C):
+                log(f"молярные объёмы и равновесие двух фаз из кэша "
+                    f"({path.name}); модели 48 фаз не строятся")
+                return volumes, references
+
+    from thermogar_physical import PhysicalDensityDatabase
+
+    physical_db = PhysicalDensityDatabase(str(ROOT / PDB_REL))
+    volumes: dict[float, dict[str, Any]] = {}
+    references: dict[float, dict[str, Any]] = {}
+    for temperature in K_TEMPERATURES_C:
+        volumes[temperature] = phase_molar_volumes(
+            ctx, physical_db, mole_full, temperature
+        )
+        references[temperature] = reference_equilibrium(ctx, mole, temperature)
+    del physical_db
+    gc.collect()
+
+    CACHE.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({
+        "состав, мольные доли id": w11.composition_id(mole),
+        "молярные объёмы": {f"{key:g}": value
+                            for key, value in volumes.items()},
+        "равновесие двух фаз": {f"{key:g}": value
+                                for key, value in references.items()},
+    }, ensure_ascii=False, indent=2), "utf-8")
+    log(f"молярные объёмы и равновесие двух фаз записаны в {path.name}")
+    return volumes, references
 
 
 class CaseCache:
@@ -765,7 +837,6 @@ def k1_kinetics(force: bool = False, gammas: Sequence[float] = K_GAMMA,
     """Карта чувствительности. Считается в потомке."""
 
     from thermogar_precipitation import _build_precipitation_thermodynamics
-    from thermogar_physical import PhysicalDensityDatabase
 
     cache = CaseCache()
     if force:
@@ -792,23 +863,19 @@ def k1_kinetics(force: bool = False, gammas: Sequence[float] = K_GAMMA,
     ctx = w11.Context()
     mole = w11.wt_to_mole(ctx, working_wt())
     mole_full = w11.wt_to_mole(ctx, w11.full_wt())
-    physical_db = PhysicalDensityDatabase(str(ROOT / PDB_REL))
 
-    volumes: dict[float, dict[str, Any]] = {}
-    references: dict[float, dict[str, Any]] = {}
+    volumes, references = volumes_and_references(ctx, mole, mole_full)
     for temperature in K_TEMPERATURES_C:
-        volumes[temperature] = phase_molar_volumes(
-            ctx, physical_db, mole_full, temperature
-        )
-        references[temperature] = reference_equilibrium(ctx, mole, temperature)
         log(f"{temperature:.0f} °C: V_m {MATRIX_PHASE} "
             f"{volumes[temperature][MATRIX_PHASE]['молярный объём, см³/моль']:.4f}, "
             f"{PRECIPITATE_PHASE} "
             f"{volumes[temperature][PRECIPITATE_PHASE]['молярный объём, см³/моль']:.4f} "
             f"см³/моль; равновесие двух фаз: P-фаза "
             f"{references[temperature]['мольная доля P-фазы, %']:.4f} мольн. %")
-    del physical_db
+    ctx._models = None
+    ctx._phase_records = None
     gc.collect()
+    log(f"свободно {w12.free_gib():.2f} ГиБ перед счётом кинетики")
 
     thermodynamics, thermodynamics_class = _build_precipitation_thermodynamics(
         ctx.db, elements(), [MATRIX_PHASE, PRECIPITATE_PHASE]
@@ -1750,14 +1817,48 @@ def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
     w12.save_progress(progress)
 
 
-STEPS = {"k1": step_k1}
+def step_volumes(force: bool = False, **_ignored: Any) -> None:
+    """Посчитать молярные объёмы и равновесие двух фаз и выйти.
+
+    Отдельный шаг, а не часть прогона кинетики, и причина — память.
+    Равновесие на полном наборе 48 фаз тянет за собой символьные модели всех
+    сорока восьми, около 1,3 ГиБ рабочего набора, и CPython не возвращает их
+    системе даже после освобождения объектов. В отдельном процессе они
+    умирают вместе с ним, а прогон кинетики читает готовые числа с диска и
+    моделей 48 фаз не строит вовсе.
+
+    Порядок запуска подпункта поэтому такой:
+
+        ... study_hn62m_wave12_kinetics.py --only volumes
+        ... study_hn62m_wave12_kinetics.py --only k1
+    """
+
+    path = CACHE / VOLUMES_PATH_NAME
+    if path.is_file() and force:
+        path.unlink()
+    ctx = w11.Context()
+    mole = w11.wt_to_mole(ctx, working_wt())
+    mole_full = w11.wt_to_mole(ctx, w11.full_wt())
+    volumes, references = volumes_and_references(ctx, mole, mole_full)
+    for temperature in K_TEMPERATURES_C:
+        log(f"{temperature:.0f} °C: V_m {MATRIX_PHASE} "
+            f"{volumes[temperature][MATRIX_PHASE]['молярный объём, см³/моль']:.4f}, "
+            f"{PRECIPITATE_PHASE} "
+            f"{volumes[temperature][PRECIPITATE_PHASE]['молярный объём, см³/моль']:.4f} "
+            f"см³/моль; равновесие двух фаз: P-фаза "
+            f"{references[temperature]['мольная доля P-фазы, %']:.4f} мольн. %")
+
+
+STEPS = {"volumes": step_volumes, "k1": step_k1}
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Волна 12, подпункт 12-1: кинетика P-фазы в ЭК199-ВИ"
     )
-    parser.add_argument("--only", default="all", help="k1; через запятую")
+    parser.add_argument("--only", default="all",
+                    help="volumes, k1; через запятую. volumes готовит\n"
+                         "молярные объёмы отдельным процессом, см. step_volumes")
     parser.add_argument("--force", action="store_true", help="пересчитать готовое")
     parser.add_argument("--gammas", default=None,
                         help="межфазные энергии, Дж/м², через запятую")
@@ -1797,7 +1898,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     requested = [name.strip().lower() for name in args.only.split(",")
                  if name.strip()]
     if requested == ["all"]:
-        requested = list(STEPS)
+        # Умолчание — только кинетика. Шаг volumes намеренно не входит в
+        # «всё»: его смысл в том, чтобы идти отдельным процессом, и запуск
+        # обоих шагов подряд в одном процессе этот смысл отменяет.
+        requested = ["k1"]
     unknown = [name for name in requested if name not in STEPS]
     if unknown:
         parser.error(f"неизвестные подпункты: {', '.join(unknown)}")
@@ -1805,10 +1909,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     for name in requested:
         started = time.perf_counter()
         log(f"=== {name.upper()} ===")
-        STEPS[name](force=args.force, gammas=gammas,
-                    per_decade=args.per_decade, t_min_h=args.t_min_h,
-                    min_free_gib=args.min_free_gib,
-                    tables_only=args.tables_only)
+        if name == "volumes":
+            STEPS[name](force=args.force)
+        else:
+            STEPS[name](force=args.force, gammas=gammas,
+                        per_decade=args.per_decade, t_min_h=args.t_min_h,
+                        min_free_gib=args.min_free_gib,
+                        tables_only=args.tables_only)
         log(f"=== {name.upper()} готов за {time.perf_counter() - started:.1f} с ===")
     return 0
 
