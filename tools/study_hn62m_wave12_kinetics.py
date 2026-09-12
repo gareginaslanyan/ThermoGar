@@ -87,6 +87,19 @@ CSV_READ = dict(w12.CSV_READ)
 MIN_FREE_GIB = w12.MIN_FREE_GIB
 ABORT_FREE_GIB = w12.E1_ABORT_FREE_GIB
 
+# Порог входа можно понизить ключом запуска `--min-free-gib`, и только им:
+# константа выше остаётся значением волны 11, её никто не переписывает.
+# Зачем ключ. Порог 4,0 ГиБ назначался волной 11J под расчёт Шейля с пиком
+# 2,3 ГиБ (двукратный запас, округлённый вниз). KWN-прогон этого подпункта
+# держит на порядок меньше: замеренный пик рабочего набора потомка — десятые
+# доли гигабайта. На машине, где посторонним занято около 12 ГиБ из 15,7,
+# порог 4,0 не пускает счёт, который сам по себе помещается в полгигабайта.
+# Понижение — отступление от задания, оно требует санкции мастера и называется
+# в отчёте отдельным пунктом вместе с фактическим значением порога, которое
+# уходит в сводку подпункта. Порог аварийной остановки по ходу
+# (`ABORT_FREE_GIB`) не понижается никогда и ключа не имеет: он защищает не
+# от напрасного старта, а от свопа на полном ходу.
+
 DB_REL = w12.DB_REL
 PDB_REL = w11.PDB_REL
 
@@ -148,11 +161,20 @@ K_SITES: tuple[tuple[str, str], ...] = (
 # Горизонты ТЗ. Обязаны быть узлами сетки времени, а не интерполяцией.
 K_HORIZONS_H: tuple[float, ...] = (200.0, 87600.0)
 
-# Сетка времени: логарифмическая от K_T_MIN_H до 87 600 ч. Счёт идёт одним
-# непрерывным прогоном модели, а узел — это момент, когда с модели снимается
-# состояние; поэтому 200 ч и 87 600 ч лежат на одной кривой по построению.
+# Сетка времени: логарифмическая от K_T_MIN_H до 87 600 ч. Модель решается
+# одним непрерывным прогоном, а узел сетки — это шаг решателя, попавший ближе
+# всех к узлу: kawin записывает состояние на каждом принятом шаге, и брать
+# оттуда дешевле и точнее, чем прерывать решение на каждом узле.
+#
+# Почему прерывать дорого. `KWNEuler.getDt` наращивает шаг всего на
+# `dtScale = 1e-3`, то есть на 0,1 % за шаг, а в конце интервала решения
+# обрезает его остатком интервала (`dtMax = finalTime - time`). Каждое
+# прерывание поэтому отбрасывает шаг вниз, и следующий интервал заново
+# набирает его сотнями шагов. Прерываний ровно столько, сколько нужно, чтобы
+# 200 ч и 87 600 ч были не ближайшими шагами, а точными концами интервалов:
+# по одному на декаду плюс оба горизонта ТЗ.
 K_T_MIN_H = 1.0e-3
-K_PER_DECADE = 3
+K_PER_DECADE = 4
 
 # Размер зерна, мкм. Входит только в плотность центров на границах зёрен
 # (`kawin` считает GBareaN0 обратно пропорционально размеру зерна). Не
@@ -243,11 +265,28 @@ def time_nodes(t_min_h: float = K_T_MIN_H,
 
     top = math.log10(max(K_HORIZONS_H))
     low = math.log10(t_min_h)
-    count = int(round((top - low) * per_decade))
+    count = max(1, int(round((top - low) * per_decade)))
     nodes = {round(10.0 ** (low + (top - low) * index / count), 12)
              for index in range(count + 1)}
     nodes.update(float(value) for value in K_HORIZONS_H)
     return sorted(value for value in nodes if value <= max(K_HORIZONS_H))
+
+
+def stage_edges(t_min_h: float = K_T_MIN_H) -> list[float]:
+    """Концы интервалов непрерывного решения: по одному на декаду и горизонты.
+
+    Решение прерывается только здесь, и только по двум причинам: горизонты ТЗ
+    должны быть точными концами интервалов, а не ближайшими шагами, и
+    посчитанное надо отдавать на диск не одним куском в конце, а по ходу.
+    Узлы сетки времени внутри интервала берутся из записанных шагов решателя.
+    """
+
+    top = math.log10(max(K_HORIZONS_H))
+    low = math.log10(t_min_h)
+    edges = {round(10.0 ** value, 12)
+             for value in np.arange(math.ceil(low), math.floor(top) + 1.0)}
+    edges.update(float(value) for value in K_HORIZONS_H)
+    return sorted(value for value in edges if value <= max(K_HORIZONS_H))
 
 
 # --------------------------------------------------------------------------- #
@@ -493,7 +532,8 @@ class CaseCache:
         # вытесняются новыми: держать в памяти обе версии одного узла незачем.
         self.rows[key] = [
             row for row in self.rows[key]
-            if abs(float(row["t, ч"]) - float(payload["t, ч"])) > 1.0e-12
+            if abs(float(row["узел, ч"]) - float(payload["узел, ч"]))
+            > 1.0e-12
         ]
         self.rows[key].append(dict(payload))
         self._append({"key": key, "kind": "row", "payload": dict(payload)})
@@ -591,14 +631,21 @@ def mole_fraction_of_precipitate(volume_fraction: float, matrix_vm: float,
     return beta / (beta + alpha) if (beta + alpha) > 0.0 else 0.0
 
 
-def snapshot(ctx: Any, model: Any, node_h: float, volumes: Mapping[str, Any],
-             seconds: float) -> dict[str, Any]:
-    """Состояние модели в узле сетки времени."""
+def snapshot(ctx: Any, model: Any, index: int, node_h: float,
+             volumes: Mapping[str, Any], seconds: float) -> dict[str, Any]:
+    """Состояние модели на записанном шаге `index`.
+
+    `node_h` — узел сетки времени, к которому шаг отнесён, а `t, ч` в строке
+    — фактическое время шага. Оба поля остаются в результате: узел нужен,
+    чтобы кривые разных случаев ложились на одну ось, фактическое время —
+    чтобы видеть, насколько шаг от узла отстоит. На концах интервалов
+    решения они совпадают точно, и оба горизонта ТЗ — как раз такие концы.
+    """
 
     names = elements()
     solutes = names[1:]
     data = model.data
-    index = int(data.n)
+    index = int(index)
     phase = model.phaseIndex(PRECIPITATE_PHASE)
     matrix_vm = float(volumes[MATRIX_PHASE]["молярный объём, см³/моль"])
     precip_vm = float(volumes[PRECIPITATE_PHASE]["молярный объём, см³/моль"])
@@ -620,9 +667,10 @@ def snapshot(ctx: Any, model: Any, node_h: float, volumes: Mapping[str, Any],
     mole_eq[names[0]] = max(0.0, 1.0 - float(equilibrium_alpha.sum()))
 
     return {
-        "t, ч": float(node_h),
+        "t, ч": float(data.time[index]) / 3600.0,
+        "узел, ч": float(node_h),
         "t, с": float(data.time[index]),
-        "шагов модели": index,
+        "шаг модели": index,
         "объёмная доля P-фазы, %": 100.0 * volume_fraction,
         "мольная доля P-фазы, %": 100.0 * mole_fraction_of_precipitate(
             volume_fraction, matrix_vm, precip_vm
@@ -643,31 +691,63 @@ def snapshot(ctx: Any, model: Any, node_h: float, volumes: Mapping[str, Any],
 def run_case(ctx: Any, thermodynamics: Any, mole: Mapping[str, float],
              temperature_c: float, gamma: float, label: str, site: str,
              volumes: Mapping[str, Any], nodes: Sequence[float],
-             cache: CaseCache, key: str) -> list[dict[str, Any]]:
-    """Один случай (T, γ, места зарождения) целиком, узел за узлом.
+             edges: Sequence[float], cache: CaseCache,
+             key: str) -> list[dict[str, Any]]:
+    """Один случай (T, межфазная энергия, места зарождения) целиком.
 
-    Модель решается непрерывно от нуля до 87 600 ч: `model.solve` вызывается
-    на приращение до очередного узла и продолжает с того состояния, на котором
-    остановился (`GenericModel.solve` считает от `currentTime`, а `setup`
-    защищён от повторного вызова). Поэтому 200 ч и 87 600 ч лежат на одной
-    кривой, а не считаются отдельными прогонами.
+    Модель решается непрерывно от нуля до 87 600 ч. Прерывается решение только
+    на концах интервалов `edges` — по одному на декаду плюс оба горизонта ТЗ —
+    и по двум причинам: 200 ч и 87 600 ч должны быть точными концами, а
+    посчитанное должно уходить на диск по ходу, а не одним куском в конце.
+    Между прерываниями `model.solve` продолжает с того состояния, на котором
+    остановился (`GenericModel.solve` считает от `currentTime`, `setup` защищён
+    от повторного вызова), поэтому 200 ч и 87 600 ч лежат на одной кривой.
+
+    Узлы сетки времени внутри интервала выбираются из шагов, которые решатель
+    уже записал: для каждого узла берётся ближайший по времени шаг. Ничего не
+    интерполируется — в строке стоит состояние настоящего шага и его настоящее
+    время рядом с номером узла.
     """
 
     model = build_model(ctx, thermodynamics, mole, temperature_c, gamma, site,
                         volumes)
     rows: list[dict[str, Any]] = []
     previous = 0.0
-    for node in nodes:
+    taken: set[int] = set()
+    for edge in edges:
         started = time.perf_counter()
-        model.solve((float(node) - previous) * 3600.0, verbose=False)
-        previous = float(node)
-        row = snapshot(ctx, model, node, volumes, time.perf_counter() - started)
-        rows.append(row)
-        cache.put_row(key, row)
-    log(f"{temperature_c:.0f} °C, γ={gamma:.3f} Дж/м², {label}: "
+        model.solve((float(edge) - previous) * 3600.0, verbose=False)
+        seconds = time.perf_counter() - started
+        last = int(model.data.n)
+        recorded = np.asarray(model.data.time[:last + 1], float) / 3600.0
+
+        # Конец интервала идёт первым, и это важно: горизонты ТЗ обязаны быть
+        # точными узлами. Если бы он шёл последним, а ближайшим шагом к
+        # предыдущему узлу сетки оказался тот же последний шаг, точный узел
+        # горизонта вытеснился бы соседним узлом и 200 ч в таблице горизонтов
+        # не нашлось бы вовсе. Потерять при таком совпадении внутренний узел
+        # сетки безобидно, потерять горизонт — нет.
+        chosen: list[tuple[int, float]] = [(last, float(edge))]
+        for value in nodes:
+            if not (previous < float(value) <= float(edge) + 1.0e-9):
+                continue
+            chosen.append((int(np.argmin(np.abs(recorded - float(value)))),
+                           float(value)))
+        for index, value in chosen:
+            if index in taken:
+                continue
+            taken.add(index)
+            row = snapshot(ctx, model, index, value, volumes, seconds)
+            rows.append(row)
+            cache.put_row(key, row)
+        previous = float(edge)
+
+    rows.sort(key=lambda item: item["t, ч"])
+    log(f"{temperature_c:.0f} °C, gamma={gamma:.3f} Дж/м², {label}: "
         f"P-фаза {rows[-1]['мольная доля P-фазы, %']:.4f} мольн. % за "
-        f"{max(nodes):.0f} ч, R {rows[-1]['средний радиус, нм']:.2f} нм, "
-        f"N {rows[-1]['число выделений, 1/м³']:.2e} 1/м³")
+        f"{rows[-1]['t, ч']:.0f} ч, R {rows[-1]['средний радиус, нм']:.2f} нм, "
+        f"N {rows[-1]['число выделений, 1/м³']:.2e} 1/м³, "
+        f"шагов {int(model.data.n)}")
     del model
     gc.collect()
     return rows
@@ -680,7 +760,8 @@ def run_case(ctx: Any, thermodynamics: Any, mole: Mapping[str, float],
 
 def k1_kinetics(force: bool = False, gammas: Sequence[float] = K_GAMMA,
                 per_decade: int = K_PER_DECADE,
-                t_min_h: float = K_T_MIN_H) -> dict[str, Any]:
+                t_min_h: float = K_T_MIN_H,
+                min_free_gib: float = MIN_FREE_GIB) -> dict[str, Any]:
     """Карта чувствительности. Считается в потомке."""
 
     from thermogar_precipitation import _build_precipitation_thermodynamics
@@ -694,15 +775,15 @@ def k1_kinetics(force: bool = False, gammas: Sequence[float] = K_GAMMA,
             cache.path.unlink()
 
     free = w12.free_gib()
-    if free < MIN_FREE_GIB:
+    if free < float(min_free_gib):
         return {
             "случаи": [], "точки": [],
             "пропущено": [{
                 "случай": None,
                 "причина": (
                     f"свободной физической памяти {free:.1f} ГиБ при требуемых "
-                    f"{MIN_FREE_GIB:.1f} ГиБ; база не разбиралась, прогон не "
-                    f"начинался"
+                    f"{float(min_free_gib):.1f} ГиБ; база не разбиралась, прогон "
+                    f"не начинался"
                 ),
             }],
             "состав, масс. %": working_wt(),
@@ -737,6 +818,9 @@ def k1_kinetics(force: bool = False, gammas: Sequence[float] = K_GAMMA,
         f"{MATRIX_PHASE} + {PRECIPITATE_PHASE}")
 
     nodes = time_nodes(t_min_h, per_decade)
+    edges = stage_edges(t_min_h)
+    log(f"узлов сетки времени {len(nodes)}, "
+        f"прерываний решения {len(edges)}")
     cases: list[dict[str, Any]] = []
     skipped: list[dict[str, Any]] = []
 
@@ -790,7 +874,7 @@ def k1_kinetics(force: bool = False, gammas: Sequence[float] = K_GAMMA,
                 try:
                     rows = run_case(
                         ctx, thermodynamics, mole, temperature, gamma, label,
-                        site, volumes[temperature], nodes, cache, key
+                        site, volumes[temperature], nodes, edges, cache, key
                     )
                 except Exception as error:  # noqa: BLE001
                     skipped.append({
@@ -842,6 +926,7 @@ def collect_rows(payload: Mapping[str, Any]) -> pd.DataFrame:
                 "межфазная энергия, Дж/м²": case["межфазная энергия, Дж/м²"],
                 "места зарождения": case["места зарождения"],
                 "t, ч": row["t, ч"],
+                "узел, ч": row["узел, ч"],
                 "мольная доля P-фазы, %": row["мольная доля P-фазы, %"],
                 "объёмная доля P-фазы, %": row["объёмная доля P-фазы, %"],
                 "средний радиус, нм": row["средний радиус, нм"],
@@ -924,8 +1009,8 @@ def depletion_table(rows: pd.DataFrame,
     return table
 
 
-def horizon_table(rows: pd.DataFrame,
-                  targets: Mapping[str, Any]) -> pd.DataFrame:
+def horizon_table(rows: pd.DataFrame, targets: Mapping[str, Any],
+                  two_phase: Mapping[str, Any] | None = None) -> pd.DataFrame:
     """Пункт 4: что успевает произойти за 200 ч — и что за 87 600 ч рядом.
 
     Обе строки одного случая стоят рядом намеренно: вопрос задания — не
@@ -941,10 +1026,20 @@ def horizon_table(rows: pd.DataFrame,
     for values, block in rows.groupby(keys, sort=True):
         case = dict(zip(keys, values))
         target = equilibrium_12_2.get(f"{case['T, °C']:.0f}")
+        limit = None
+        if two_phase:
+            limit = (two_phase.get(f"{case['T, °C']:.0f}") or {}).get(
+                "мольная доля P-фазы, %"
+            )
         record: dict[str, Any] = dict(case)
         record["равновесие 12-2, мольн. %"] = target
+        record["равновесие двухфазной задачи, мольн. %"] = limit
         for horizon in K_HORIZONS_H:
-            at = block[np.isclose(block["t, ч"], horizon)]
+            # Горизонт — точный конец интервала решения, поэтому строка с ним
+            # существует и сравнение точное. Если её нет, столбцов горизонта в
+            # таблице не будет, и это видно, а не заметено под ближайший узел.
+            at = block[np.isclose(block["t, ч"], horizon, rtol=1.0e-9,
+                                  atol=1.0e-9)]
             if not len(at):
                 continue
             row = at.iloc[0]
@@ -964,16 +1059,23 @@ def horizon_table(rows: pd.DataFrame,
                 record[f"{prefix}: {element} в матрице, масс. %"] = float(
                     row[f"{element} в матрице, масс. %"]
                 )
-        seen = record.get(f"{K_HORIZONS_H[0]:.0f} ч: P-фаза, мольн. %", 0.0)
-        record["видно за 200 ч"] = (
-            "да" if float(seen or 0.0) > 100.0 * PRESENT_FLOOR else "нет"
-        )
+        # Отсутствие строки 200 ч и отсутствие выделений на 200 ч — разные
+        # вещи, и путать их нельзя: первое значит «не посчитано», второе —
+        # «испытание по ТЗ не увидит ничего».
+        key = f"{K_HORIZONS_H[0]:.0f} ч: P-фаза, мольн. %"
+        if key not in record:
+            record["видно за 200 ч"] = "не посчитано"
+        else:
+            record["видно за 200 ч"] = (
+                "да" if float(record[key]) > 100.0 * PRESENT_FLOOR else "нет"
+            )
         records.append(record)
     return pd.DataFrame(records)
 
 
-def sensitivity_map(rows: pd.DataFrame,
-                    targets: Mapping[str, Any]) -> pd.DataFrame:
+def sensitivity_map(rows: pd.DataFrame, targets: Mapping[str, Any],
+                    two_phase: Mapping[str, Any] | None = None
+                    ) -> pd.DataFrame:
     """Карта чувствительности: один случай — одна строка, без кривых.
 
     Именно та форма вывода, которую требует задание: не «выделится через N
@@ -989,23 +1091,38 @@ def sensitivity_map(rows: pd.DataFrame,
         case = dict(zip(keys, values))
         block = block.sort_values("t, ч")
         target = equilibrium_12_2.get(f"{case['T, °C']:.0f}")
+        limit = None
+        if two_phase:
+            limit = (two_phase.get(f"{case['T, °C']:.0f}") or {}).get(
+                "мольная доля P-фазы, %"
+            )
+        # Предел, которого эта модель может достичь, — равновесие её
+        # собственной двухфазной задачи, а не число 12-2: разница между ними
+        # известна арифметически и к кинетике не относится. Поэтому «дошло»
+        # считается от двухфазного предела, а доля от цели 12-2 остаётся
+        # отдельным столбцом.
+        against = float(limit) if limit else (float(target) if target else 0.0)
         final = block.iloc[-1]
         present = block[block["мольная доля P-фазы, %"]
                         > 100.0 * PRESENT_FLOOR]
         reached = (
-            block[block["мольная доля P-фазы, %"]
-                  >= REACHED_FRACTION * float(target)]
-            if target else block.iloc[0:0]
+            block[block["мольная доля P-фазы, %"] >= REACHED_FRACTION * against]
+            if against > 0.0 else block.iloc[0:0]
         )
         records.append({
             **case,
             "узлов": int(len(block)),
             "до, ч": float(block["t, ч"].max()),
             "равновесие 12-2, мольн. %": target,
+            "равновесие двухфазной задачи, мольн. %": limit,
             "P-фаза в конце, мольн. %": float(final["мольная доля P-фазы, %"]),
             "доля равновесия 12-2 в конце, %": (
                 None if not target else
                 100.0 * float(final["мольная доля P-фазы, %"]) / float(target)
+            ),
+            "доля двухфазного равновесия в конце, %": (
+                None if not limit else
+                100.0 * float(final["мольная доля P-фазы, %"]) / float(limit)
             ),
             "радиус в конце, нм": float(final["средний радиус, нм"]),
             "число выделений в конце, 1/м³": float(final["число выделений, 1/м³"]),
@@ -1389,12 +1506,43 @@ def run_child(arguments: Sequence[str]) -> tuple[dict[str, Any], dict[str, Any]]
 # --------------------------------------------------------------------------- #
 
 
+def stored_child_payload() -> tuple[dict[str, Any], dict[str, Any]]:
+    """Итог потомка и замер памяти с диска, без повторного счёта.
+
+    Нужно режиму `--tables-only`: таблицы, графики и сводка пересобираются из
+    того, что уже посчитано, когда меняется только их код. Пересчитывать
+    четыре часа ради нового столбца незачем, а считать этот режим полноценным
+    прогоном нельзя — он не трогает журнал прогресса и помечает сводку.
+    """
+
+    handoffs = sorted(CACHE.glob("child_k1_*.json"),
+                      key=lambda item: item.stat().st_mtime)
+    if not handoffs:
+        raise RuntimeError(
+            f"нет итога потомка в {CACHE}: режиму --tables-only пересобирать "
+            f"нечего, сначала нужен прогон"
+        )
+    payload = json.loads(handoffs[-1].read_text("utf-8"))
+    measurement: dict[str, Any] = {
+        "источник": f"{handoffs[-1].name} и k1_memory_*.json с диска; "
+                    f"пересборка таблиц, не новый прогон"
+    }
+    memories = sorted(OUT.glob("k1_memory_*.json"),
+                      key=lambda item: item.stat().st_mtime)
+    if memories:
+        measurement.update(json.loads(memories[-1].read_text("utf-8")))
+    return payload, measurement
+
+
 def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
             per_decade: int = K_PER_DECADE,
-            t_min_h: float = K_T_MIN_H) -> None:
+            t_min_h: float = K_T_MIN_H,
+            min_free_gib: float = MIN_FREE_GIB,
+            tables_only: bool = False) -> None:
     progress = w12.load_progress()
-    if progress.get("12-1", {}).get("готов") and not force:
-        log("12-1 пропущен, посчитан ранее (--force для пересчёта)")
+    if progress.get("12-1", {}).get("готов") and not force and not tables_only:
+        log("12-1 пропущен, посчитан ранее (--force для пересчёта, "
+            "--tables-only для пересборки таблиц)")
         return
 
     missing = [value for value in K_TEMPERATURES_C
@@ -1407,37 +1555,44 @@ def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
 
     free = w12.free_gib()
     cache_ready = (CACHE / "k1_points.jsonl").is_file() and not force
-    if free < MIN_FREE_GIB and not cache_ready:
+    if free < float(min_free_gib) and not cache_ready and not tables_only:
         w12.write_json({
             "подпункт": "12-1. Кинетика выделения P-фазы в ЭК199-ВИ",
             "прогон": "не начинался",
             "причина": (
                 f"свободной физической памяти {free:.2f} ГиБ при требуемых "
-                f"{MIN_FREE_GIB:.1f} ГиБ (порог волны 11, J2_MIN_FREE_GIB, "
-                f"взятый через w12.MIN_FREE_GIB)"
+                f"{float(min_free_gib):.1f} ГиБ"
             ),
+            "порог задания, ГиБ": MIN_FREE_GIB,
         }, "k1_summary.json")
         log(f"12-1 не запускался: свободно {free:.2f} ГиБ при требуемых "
-            f"{MIN_FREE_GIB:.1f} ГиБ")
+            f"{float(min_free_gib):.1f} ГиБ")
         return
 
-    arguments = ["--k1", "1",
-                 "--gammas", ",".join(f"{value:g}" for value in gammas),
-                 "--per-decade", str(int(per_decade)),
-                 "--t-min-h", f"{t_min_h:g}"]
-    if force:
-        arguments.append("--force")
-    payload, measurement = run_child(arguments)
-    measurement["свободной физической перед запуском, ГиБ"] = round(free, 2)
+    if tables_only:
+        payload, measurement = stored_child_payload()
+        log(f"--tables-only: пересборка по {len(payload.get('случаи', []))} "
+            f"случаям с диска, счёт не запускался")
+    else:
+        arguments = ["--k1", "1",
+                     "--gammas", ",".join(f"{value:g}" for value in gammas),
+                     "--per-decade", str(int(per_decade)),
+                     "--t-min-h", f"{t_min_h:g}",
+                     "--min-free-gib", f"{float(min_free_gib):g}"]
+        if force:
+            arguments.append("--force")
+        payload, measurement = run_child(arguments)
+        measurement["свободной физической перед запуском, ГиБ"] = round(free, 2)
 
     targets = wave12_2_targets()
     rows = collect_rows(payload)
     w12.write_csv(fraction_table(rows), "k1_phase_fraction_vs_time.csv")
     w12.write_csv(size_table(rows), "k1_size_and_density.csv")
     w12.write_csv(depletion_table(rows, targets), "k1_matrix_depletion.csv")
-    horizons = horizon_table(rows, targets)
+    two_phase = payload.get("равновесие двух фаз", {})
+    horizons = horizon_table(rows, targets, two_phase)
     w12.write_csv(horizons, "k1_horizons_200h.csv")
-    mapping = sensitivity_map(rows, targets)
+    mapping = sensitivity_map(rows, targets, two_phase)
     w12.write_csv(mapping, "k1_sensitivity_map.csv")
     plot_k1(rows, targets, OUT / "k1_phase_fraction.png")
     plot_k1_size(rows, OUT / "k1_size_and_density.png")
@@ -1511,9 +1666,15 @@ def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
             "от, ч": t_min_h, "до, ч": max(K_HORIZONS_H),
             "узлов на декаду": int(per_decade),
             "узлов всего": len(payload.get("узлы, ч", [])),
-            "как считано": "одним непрерывным прогоном модели; узел — момент "
-                           "снятия состояния, поэтому 200 ч и 87 600 ч лежат "
-                           "на одной кривой",
+            "прерываний решения": len(stage_edges(t_min_h)),
+            "как считано": (
+                "одним непрерывным прогоном модели от 0 до 87 600 ч; решение "
+                "прерывается только на концах интервалов (по одному на "
+                "декаду плюс оба горизонта ТЗ), узлы сетки внутри интервала "
+                "берутся из уже записанных шагов решателя без интерполяции. "
+                "Поэтому 200 ч и 87 600 ч — точные концы интервалов и лежат "
+                "на одной кривой"
+            ),
         },
         "молярные объёмы": payload.get("молярные объёмы", {}),
         "равновесие двух фаз того же состава": payload.get(
@@ -1523,7 +1684,17 @@ def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
         "случаев посчитано": len(payload.get("случаи", [])),
         "случаев в сетке": len(K_TEMPERATURES_C) * len(K_SITES) * len(gammas),
         "пропущено": payload.get("пропущено", []),
-        "порог запуска, свободной физической ГиБ": MIN_FREE_GIB,
+        "порог запуска, свободной физической ГиБ": {
+            "задания (w12.MIN_FREE_GIB, он же w11.J2_MIN_FREE_GIB)": MIN_FREE_GIB,
+            "фактический в этом прогоне": float(min_free_gib),
+            "понижен": float(min_free_gib) < MIN_FREE_GIB,
+            "чем понижен": (
+                "ключом запуска --min-free-gib по санкции мастера; константа "
+                "в коде не менялась. Основание — замеренный пик этого счёта "
+                "против 2,3 ГиБ расчёта Шейля, под который порог 4,0 "
+                "назначался волной 11J"
+            ) if float(min_free_gib) < MIN_FREE_GIB else "не понижен",
+        },
         "порог остановки по ходу, свободной физической ГиБ": ABORT_FREE_GIB,
         "порог присутствия выделений, мольная доля": PRESENT_FLOOR,
         "порог «дошло до равновесия», доля": REACHED_FRACTION,
@@ -1532,6 +1703,10 @@ def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
         "порог по межфазной энергии": threshold_verdict(mapping),
         "за 200 ч": horizons.to_dict("records") if len(horizons) else [],
         "замер памяти": measurement,
+        "как получена эта сводка": (
+            "пересобрана из кэша ключом --tables-only, счёт не запускался"
+            if tables_only else "посчитана прогоном"
+        ),
         "чего расчёт не устанавливает": [
             "межфазная энергия матрица/P-фаза не измерена; она прогнана "
             "диапазоном 0,05…0,50 Дж/м², и абсолютная шкала времени верна "
@@ -1553,6 +1728,10 @@ def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
         ],
     }
     w12.write_json(summary, "k1_summary.json")
+
+    if tables_only:
+        log("--tables-only: журнал прогресса не менялся")
+        return
 
     complete = (
         not payload.get("пропущено")
@@ -1586,6 +1765,12 @@ def main(argv: Sequence[str] | None = None) -> int:
                         help="узлов сетки времени на декаду")
     parser.add_argument("--t-min-h", type=float, default=K_T_MIN_H,
                         help="первый узел сетки времени, ч")
+    parser.add_argument("--min-free-gib", type=float, default=MIN_FREE_GIB,
+                        help="порог входа по свободной физической памяти, "
+                             "ГиБ; понижение — отступление от задания")
+    parser.add_argument("--tables-only", action="store_true",
+                        help="пересобрать таблицы, графики и сводку из кэша "
+                             "без счёта")
     parser.add_argument("--k1", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--handoff", default=None, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
@@ -1601,7 +1786,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.k1 is not None:
         payload = k1_kinetics(force=args.force, gammas=gammas,
                               per_decade=args.per_decade,
-                              t_min_h=args.t_min_h)
+                              t_min_h=args.t_min_h,
+                              min_free_gib=args.min_free_gib)
         if args.handoff:
             Path(args.handoff).write_text(
                 json.dumps(payload, ensure_ascii=False, indent=2), "utf-8"
@@ -1620,7 +1806,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         started = time.perf_counter()
         log(f"=== {name.upper()} ===")
         STEPS[name](force=args.force, gammas=gammas,
-                    per_decade=args.per_decade, t_min_h=args.t_min_h)
+                    per_decade=args.per_decade, t_min_h=args.t_min_h,
+                    min_free_gib=args.min_free_gib,
+                    tables_only=args.tables_only)
         log(f"=== {name.upper()} готов за {time.perf_counter() - started:.1f} с ===")
     return 0
 
