@@ -3198,6 +3198,341 @@ def step_q1(force: bool = False) -> None:
 
 
 # --------------------------------------------------------------------------- #
+# Подпункт R1: интервал хрупкости и сверка солидусов на одной доле твёрдого
+# --------------------------------------------------------------------------- #
+
+
+# Волна 11R. Полный интервал кристаллизации этим методом не определяется: два
+# захода (11J/11P по пути, 11Q через равновесие) его не ограничили. Зато
+# средняя часть пути у трёх прогонов совпадает до 0,03 K, поэтому называется
+# другая величина — интервал хрупкости между двумя долями твёрдого.
+#
+# Границы 0,90 и 0,99 — соглашение, а не физика: 0,90 берётся как доля, ниже
+# которой жидкость ещё связна, 0,99 — как доля, выше которой связной жидкости
+# уже нет. Числа в этом окне устойчивы, в отличие от полного интервала.
+R1_BRITTLE_RANGE = (0.90, 0.99)
+# Доли твёрдого, на которых сверяются три прогона между собой. 0,50/0,90/0,95
+# посчитаны у всех трёх, 0,98 и 0,99 — только у pdens 500.
+R1_CHECK_FRACTIONS = (0.50, 0.90, 0.95, 0.98, 0.99)
+# Доля твёрдого для сверки равновесных солидусов остаточных жидкостей
+# (предложение волны 11Q). Наибольшая из посчитанных у всех трёх прогонов:
+# сравниваются три оценки одной величины, а не три разных вещества, как в 11Q.
+R1_SAME_FRACTION = 0.95
+# Порог совпадения тот же, что в 11Q: разброс «порядка градусов».
+R1_SPREAD_LIMIT_K = Q1_SPREAD_LIMIT_K
+
+
+def r1_curves() -> dict[str, list[dict[str, Any]]]:
+    """Кривые трёх прогонов 11J-2 из кэша потомка. Пути не пересчитываются."""
+
+    path = CACHE / Q1_SOURCE_NAME
+    if not path.is_file():
+        raise RuntimeError(f"нет кэша прогонов 11J-2: {path}")
+    payload = json.loads(path.read_text("utf-8"))
+    return payload["кривые"]
+
+
+def r1_real_points(records: Sequence[Mapping[str, Any]]) -> list[Mapping[str, Any]]:
+    """Только посчитанные точки: последняя строка кривой — сброс остатка."""
+
+    real = [row for row in records if row.get("точка посчитана")]
+    if not real:
+        raise RuntimeError("посчитанных точек в кривой нет")
+    return real
+
+
+def r1_at_fraction(
+    records: Sequence[Mapping[str, Any]], target: float
+) -> dict[str, Any] | None:
+    """Температура и состав жидкости при доле твёрдого ``target``.
+
+    Линейная интерполяция между двумя соседними **посчитанными** точками, тем
+    же правилом, что и `temperature_at_fraction`: внутрь скачка, которым солвер
+    сбрасывает нерастворённый остаток, не интерполируем. Если доля не
+    достигнута — ``None``.
+    """
+
+    real = r1_real_points(records)
+    solid = [float(row["доля твёрдого"]) for row in real]
+    if target > max(solid):
+        return None
+
+    for index in range(1, len(solid)):
+        low, high = solid[index - 1], solid[index]
+        if not (low <= target <= high and high != low):
+            continue
+        weight = (target - low) / (high - low)
+        before, after = real[index - 1], real[index]
+        temperature = (
+            float(before["T, °C"])
+            + weight * (float(after["T, °C"]) - float(before["T, °C"]))
+        )
+        mole: dict[str, float] = {}
+        for element in ELEMENTS:
+            key = f"x(LIQUID,{element})"
+            if key not in before or key not in after:
+                raise RuntimeError(f"в кривой нет {key}")
+            low_x, high_x = float(before[key]), float(after[key])
+            if not (math.isfinite(low_x) and math.isfinite(high_x)):
+                raise RuntimeError(f"{key}: нечисловое значение на доле {target}")
+            mole[element] = low_x + weight * (high_x - low_x)
+        total = sum(mole.values())
+        return {
+            "доля твёрдого": target,
+            "T, °C": temperature,
+            "сумма мольных долей жидкости до нормировки": total,
+            "состав жидкости, мольные доли": {
+                element: value / total for element, value in sorted(mole.items())
+            },
+        }
+    return None
+
+
+def r1_brittle_range() -> dict[str, Any]:
+    """Интервал хрупкости и сверка трёх прогонов по долям твёрдого."""
+
+    curves = r1_curves()
+    low_level, high_level = R1_BRITTLE_RANGE
+
+    rows: list[dict[str, Any]] = []
+    for level in R1_CHECK_FRACTIONS:
+        row: dict[str, Any] = {"доля твёрдого": level}
+        values: list[float] = []
+        for label, records in curves.items():
+            point = r1_at_fraction(records, level)
+            row[f"T, °C — {label}"] = (
+                None if point is None else round(point["T, °C"], 2)
+            )
+            if point is not None:
+                values.append(point["T, °C"])
+        row["прогонов"] = len(values)
+        row["размах, K"] = round(max(values) - min(values), 3) if values else None
+        rows.append(row)
+
+    reference = "pdens 500"
+    if reference not in curves:
+        raise RuntimeError(f"в кэше нет прогона {reference}")
+    low_point = r1_at_fraction(curves[reference], low_level)
+    high_point = r1_at_fraction(curves[reference], high_level)
+    if low_point is None or high_point is None:
+        raise RuntimeError(
+            f"{reference}: доли {low_level} и {high_level} посчитанными точками "
+            "не достигнуты"
+        )
+
+    at_low = [
+        point["T, °C"] for point in
+        (r1_at_fraction(records, low_level) for records in curves.values())
+        if point is not None
+    ]
+    reached_high = [
+        label for label, records in curves.items()
+        if r1_at_fraction(records, high_level) is not None
+    ]
+
+    return {
+        "таблица сверки": rows,
+        "верхняя граница, доля твёрдого": low_level,
+        "T верхней границы, °C": round(low_point["T, °C"], 2),
+        "прогонов на верхней границе": len(at_low),
+        "размах верхней границы, K": round(max(at_low) - min(at_low), 3),
+        "нижняя граница, доля твёрдого": high_level,
+        "T нижней границы, °C": round(high_point["T, °C"], 2),
+        "прогоны, достигшие нижней границы": reached_high,
+        "интервал хрупкости, K": round(low_point["T, °C"] - high_point["T, °C"], 1),
+    }
+
+
+def r1_same_fraction_solidus(force: bool = False) -> dict[str, Any]:
+    """Равновесные солидусы остаточных жидкостей на одной доле твёрдого.
+
+    Отличие от 11Q-2: состав берётся не в точке обрыва каждого прогона (она у
+    всех разная), а на одной и той же доле твёрдого. Тогда три числа — три
+    оценки одной величины, и их расхождение говорит об устойчивости метода, а
+    не о том, что взято разное вещество.
+    """
+
+    del force
+    ctx = Context()
+    cache = EquilibriumCache(Q1_PDENS)
+    curves = r1_curves()
+
+    rows: list[dict[str, Any]] = []
+    for label in sorted(curves, key=lambda name: int(str(name).split()[-1])):
+        point = r1_at_fraction(curves[label], R1_SAME_FRACTION)
+        if point is None:
+            raise RuntimeError(
+                f"{label}: доля твёрдого {R1_SAME_FRACTION} не достигнута"
+            )
+        mole = point["состав жидкости, мольные доли"]
+        started = time.perf_counter()
+        solidus, calls = q1_equilibrium_solidus(ctx, mole, cache)
+        seconds = time.perf_counter() - started
+
+        below = solve(ctx, mole, solidus - Q1_PHASES_OFFSET_K, Q1_PDENS, cache)
+        phases = {
+            name: round(amount, 6)
+            for name, amount in sorted(below.items(), key=lambda pair: -pair[1])
+            if amount > Q1_PHASE_FLOOR
+        }
+        log(f"{label}: на доле твёрдого {R1_SAME_FRACTION} равновесный солидус "
+            f"{solidus:.2f} °C ({calls} равновесий, {seconds:.1f} с); фазы ниже "
+            f"него: {', '.join(phases) or 'ни одной'}")
+
+        rows.append({
+            "прогон": label,
+            "pdens пути": int(str(label).split()[-1]),
+            "доля твёрдого": R1_SAME_FRACTION,
+            "T пути на этой доле, °C": round(point["T, °C"], 2),
+            "состав жидкости, мольные доли": mole,
+            "равновесный солидус остаточной жидкости, °C": round(solidus, 2),
+            "T устойчивого набора фаз, °C": round(solidus - Q1_PHASES_OFFSET_K, 2),
+            "устойчивые фазы ниже солидуса": list(phases),
+            "доли устойчивых фаз": phases,
+            "равновесий": calls,
+            "секунд": round(seconds, 1),
+        })
+        gc.collect()
+
+    return {
+        "таблица": rows,
+        "доля твёрдого": R1_SAME_FRACTION,
+        "pdens равновесий": Q1_PDENS,
+        "точность деления, K": Q1_TOLERANCE_K,
+        "вилка, °C": list(Q1_BRACKET),
+        "фаз в наборе": len(ctx.phases),
+        "ремонт базы": bool(ctx.repair_available),
+        "из кэша равновесий": cache.hits,
+        "посчитано равновесий": cache.misses,
+    }
+
+
+def r1_verdict(spread: float) -> str:
+    """Сошлись ли три солидуса, взятые на одной доле твёрдого."""
+
+    if spread <= R1_SPREAD_LIMIT_K:
+        return (
+            f"три значения сошлись: разброс {spread:.2f} K при пороге "
+            f"{R1_SPREAD_LIMIT_K:.1f} K — метод исправен, а разъезд 56,7 K в "
+            "волне 11Q объясняется именно тем, что составы брались в разных "
+            "точках пути"
+        )
+    return (
+        f"три значения разъехались: разброс {spread:.2f} K при пороге "
+        f"{R1_SPREAD_LIMIT_K:.1f} K — расходятся оценки одной и той же "
+        "величины, значит неустойчив сам метод, а не только выбор точки пути"
+    )
+
+
+def step_r1(force: bool = False) -> None:
+    progress = load_progress()
+    brittle = r1_brittle_range()
+    write_csv(pd.DataFrame(brittle["таблица сверки"]), "r1_fraction_check.csv")
+    log(f"11R-2: интервал хрупкости {brittle['интервал хрупкости, K']} K "
+        f"(fs {brittle['верхняя граница, доля твёрдого']} — "
+        f"{brittle['T верхней границы, °C']} °C, "
+        f"fs {brittle['нижняя граница, доля твёрдого']} — "
+        f"{brittle['T нижней границы, °C']} °C)")
+
+    if progress.get("11R-2", {}).get("готов") and not force:
+        log("11R-2: сверка солидусов пропущена, посчитана ранее (--force)")
+        payload = json.loads((OUT / "r1_same_fraction.json").read_text("utf-8"))
+    else:
+        import psutil
+
+        free = psutil.virtual_memory().available / 1024.0 ** 3
+        if free < J2_MIN_FREE_GIB:
+            log(f"11R-2 не начинался: свободной физической памяти {free:.1f} ГиБ "
+                f"при требуемых {J2_MIN_FREE_GIB:.1f} ГиБ")
+            return
+        payload = run_child(["--r1", "1"] + (["--force"] if force else []))
+    rows = payload["таблица"]
+
+    values = [
+        float(row["равновесный солидус остаточной жидкости, °C"]) for row in rows
+    ]
+    spread = max(values) - min(values)
+
+    table = pd.DataFrame([
+        {
+            "прогон": row["прогон"],
+            "pdens пути": row["pdens пути"],
+            "доля твёрдого": row["доля твёрдого"],
+            "T пути на этой доле, °C": row["T пути на этой доле, °C"],
+            "равновесный солидус остаточной жидкости, °C":
+                row["равновесный солидус остаточной жидкости, °C"],
+            "устойчивые фазы ниже солидуса":
+                ", ".join(row["устойчивые фазы ниже солидуса"]),
+            "равновесий": row["равновесий"],
+            "секунд": row["секунд"],
+        }
+        for row in rows
+    ])
+    write_csv(table, "r1_same_fraction_solidus.csv")
+
+    summary = {
+        "подпункт":
+            "11R-2. Интервал хрупкости и сверка метода на одной доле твёрдого",
+        "интервал хрупкости": brittle,
+        "оговорки к интервалу хрупкости": [
+            "границы 0,90 и 0,99 по доле твёрдого — соглашение, а не физика; "
+            "принято, что ниже 0,90 жидкость ещё связна, а выше 0,99 связной "
+            "жидкости уже нет",
+            "верхняя граница подтверждена тремя прогонами, нижняя получена из "
+            "одного: доля твёрдого 0,99 достигнута только при pdens 500, "
+            "поэтому она может немного сдвинуться",
+            "полный интервал кристаллизации этим методом не определяется и "
+            "остаётся справочной оценкой снизу «не менее 112,9 K»",
+        ],
+        "сверка на одной доле твёрдого": {
+            "постановка": (
+                "предложение волны 11Q: сравнить равновесные солидусы "
+                "остаточных жидкостей на одной и той же доле твёрдого "
+                f"({R1_SAME_FRACTION}), где посчитаны все три прогона. Тогда "
+                "сравниваются три оценки одной величины, а не три разных "
+                "вещества"
+            ),
+            "метод": (
+                "состав жидкости берётся линейной интерполяцией между двумя "
+                "соседними посчитанными точками пути; дальше — тот же солидус "
+                "половинным делением по признаку «доля LIQUID > "
+                f"{A1_PRESENT_FLOOR:g}» с точностью {Q1_TOLERANCE_K} K в вилке "
+                f"{Q1_BRACKET[0]:.0f}…{Q1_BRACKET[1]:.0f} °C, pdens {Q1_PDENS}, "
+                "режим «все фазы»"
+            ),
+            "источник составов": f"results/hn62m_tech/cache/{Q1_SOURCE_NAME}",
+            "таблица": rows,
+            "разброс трёх солидусов, K": round(spread, 2),
+            "порог совпадения, K": R1_SPREAD_LIMIT_K,
+            "вердикт": r1_verdict(spread),
+            "чем это не является": (
+                "это проверка согласованности метода, а не ответ на вопрос о "
+                "конце затвердевания: на доле твёрдого 0,95 затвердевание ещё "
+                "не кончилось"
+            ),
+            "pdens равновесий": payload["pdens равновесий"],
+            "фаз в наборе": payload["фаз в наборе"],
+            "ремонт базы": payload["ремонт базы"],
+            "из кэша равновесий": payload["из кэша равновесий"],
+            "посчитано равновесий": payload["посчитано равновесий"],
+        },
+        "равновесный интервал кристаллизации, K": 30.5,
+    }
+    write_json(summary, "r1_summary.json")
+    write_json(payload, "r1_same_fraction.json")
+    log(f"11R-2: {summary['сверка на одной доле твёрдого']['вердикт']}")
+
+    progress["11R-2"] = {
+        "готов": True,
+        "время": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "интервал хрупкости, K": brittle["интервал хрупкости, K"],
+        "солидусы на доле 0,95, °C": values,
+        "разброс, K": round(spread, 2),
+    }
+    save_progress(progress)
+
+
+# --------------------------------------------------------------------------- #
 # Ввод-вывод
 # --------------------------------------------------------------------------- #
 
@@ -3565,7 +3900,7 @@ def step_a1(force: bool = False) -> None:
 
 STEPS = {"a1": step_a1, "a2": step_a2, "a3": step_a3,
          "d2": step_d2, "a4": step_a4, "d3": step_d3, "a5": step_a5,
-         "j2": step_j2, "j4": step_j4, "q1": step_q1}
+         "j2": step_j2, "j4": step_j4, "q1": step_q1, "r1": step_r1}
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -3581,6 +3916,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--a5", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--j2", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--q1", type=int, default=None, help=argparse.SUPPRESS)
+    parser.add_argument("--r1", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--handoff", default=None, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
 
@@ -3605,6 +3941,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         payload = j2_dense(force=args.force)
     elif args.q1 is not None:
         payload = q1_residual_solidus(force=args.force)
+    elif args.r1 is not None:
+        payload = r1_same_fraction_solidus(force=args.force)
     else:
         payload = None
 
