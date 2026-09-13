@@ -32,6 +32,13 @@ _build_precipitation_thermodynamics`, номенклатура мест заро
     set PYTHONHASHSEED=0
     C:\\Users\\gareg\\Desktop\\ThermoGar\\.venv-windows\\Scripts\\python.exe -X utf8 ^
         tools\\study_hn62m_wave12_kinetics.py --only k1
+    rem подпункт 12-9 — те же девять значений межфазной энергии при 580 °C
+    C:\\Users\\gareg\\Desktop\\ThermoGar\\.venv-windows\\Scripts\\python.exe -X utf8 ^
+        tools\\study_hn62m_wave12_kinetics.py --only volumes ^
+        --temperatures 580 --prefix k9 --subpoint 12-9
+    C:\\Users\\gareg\\Desktop\\ThermoGar\\.venv-windows\\Scripts\\python.exe -X utf8 ^
+        tools\\study_hn62m_wave12_kinetics.py --only k1 ^
+        --temperatures 580 --prefix k9 --subpoint 12-9 --min-free-gib 2.0
 
 Память. Порог запуска — `w12.MIN_FREE_GIB` (4,0 ГиБ, значение волны 11
 `J2_MIN_FREE_GIB`), порог остановки по ходу — `w12.E1_ABORT_FREE_GIB`
@@ -145,6 +152,38 @@ MATRIX_ELEMENTS: tuple[str, ...] = tuple(w12.E1_MATRIX_ELEMENTS)
 # Температуры ТЗ, по которым ставится вопрос о кинетике. Обе есть в списке
 # точек ТЗ волны 12-2 (`w12.E1_REQUIRED_C`), проверяется при старте.
 K_TEMPERATURES_C: tuple[float, ...] = (700.0, 750.0)
+
+# Подпункт, чьи результаты пишет прогон, и префикс его файлов. Модуль считает
+# одну и ту же карту чувствительности при любой температуре из точек ТЗ
+# (`w12.E1_REQUIRED_C`), и какую именно считать — задаётся ключами
+# `--temperatures`, `--prefix` и `--subpoint`, а не правкой кода. Умолчания —
+# подпункта 12-1, чтобы его команда прогона осталась прежней. Подпункт 12-9
+# зовёт тот же модуль с `--temperatures 580 --prefix k9 --subpoint 12-9`.
+#
+# Префикс разделяет всё, что пишется на диск: кэш точек, кэш молярных объёмов,
+# файл итога потомка, замеры памяти, таблицы, графики и сводку. Иначе прогон
+# при новой температуре затёр бы кэш подпункта 12-1, а его четыре часа счёта
+# пропали бы.
+SUBPOINT = "12-1"
+PREFIX = "k1"
+
+
+def configure(temperatures: Sequence[float] | None = None,
+              prefix: str | None = None,
+              subpoint: str | None = None) -> None:
+    """Назначить температуры и префикс подпункта на этот процесс.
+
+    Зовётся из `main` до всякого счёта, в том числе в потомке: ключи ему
+    передаются те же. Своего состояния, кроме этих трёх имён, у модуля нет.
+    """
+
+    global K_TEMPERATURES_C, PREFIX, SUBPOINT
+    if temperatures:
+        K_TEMPERATURES_C = tuple(float(value) for value in temperatures)
+    if prefix:
+        PREFIX = str(prefix)
+    if subpoint:
+        SUBPOINT = str(subpoint)
 
 # Межфазная энергия, Дж/м². Диапазон задания 0,05…0,50. Шаг логарифмический, а
 # не равномерный, и вот почему: барьер зарождения растёт как γ³, а движущая
@@ -374,19 +413,35 @@ def phase_molar_volumes(ctx: Any, physical_db: Any, mole: Mapping[str, float],
     return payload
 
 
+def all_elements() -> list[str]:
+    """Полный набор компонентов волны 11, с ниобием. Основа первой."""
+
+    rest = sorted(name for name in w11.ELEMENTS if name != w11.BALANCE)
+    return [w11.BALANCE, *rest]
+
+
 def reference_equilibrium(ctx: Any, mole: Mapping[str, float],
-                          temperature_c: float) -> dict[str, Any]:
+                          temperature_c: float,
+                          component_names: Sequence[str] | None = None
+                          ) -> dict[str, Any]:
     """Равновесие в той же паре фаз и том же наборе компонентов, что у KWN.
 
     Нужно, чтобы предел кинетики сравнивался с равновесием той же задачи, а не
     только с числом волны 12-2, посчитанным на 48 фазах и одиннадцати
     компонентах. Разница между двумя равновесиями — цена сокращения, и она
     должна быть видна отдельно от расхождений самой кинетики.
+
+    Цена сокращения складывается из двух слагаемых, и они разделяются набором
+    компонентов: `component_names=None` — десять компонентов, тот самый набор,
+    который решает KWN; `component_names=all_elements()` — те же две фазы, но
+    все одиннадцать. Разность первого и второго есть цена одного ниобия,
+    разность второго и равновесия волны 12-2 — цена двухфазности.
     """
 
     from pycalphad import equilibrium, variables as v
 
-    components = [*elements(), "VA"]
+    names = list(component_names) if component_names else elements()
+    components = [*names, "VA"]
     conditions: dict[Any, float] = {
         v.P: 101325.0, v.N: 1.0, v.T: float(temperature_c) + 273.15
     }
@@ -498,12 +553,16 @@ def gamma_estimate_available() -> dict[str, Any]:
 # --------------------------------------------------------------------------- #
 
 
-VOLUMES_PATH_NAME = "k1_volumes.json"
+def volumes_path() -> Path:
+    """Кэш молярных объёмов и равновесия двух фаз — свой у каждого подпункта."""
+
+    return CACHE / f"{PREFIX}_volumes.json"
 
 
 def volumes_and_references(ctx: Any, mole: Mapping[str, float],
                            mole_full: Mapping[str, float]
                            ) -> tuple[dict[float, dict[str, Any]],
+                                      dict[float, dict[str, Any]],
                                       dict[float, dict[str, Any]]]:
     """Молярные объёмы и равновесие двух фаз — из кэша, иначе посчитать.
 
@@ -521,7 +580,7 @@ def volumes_and_references(ctx: Any, mole: Mapping[str, float],
     памяти на пятнадцатом случае из двадцати четырёх.
     """
 
-    path = CACHE / VOLUMES_PATH_NAME
+    path = volumes_path()
     if path.is_file():
         stored = json.loads(path.read_text("utf-8"))
         if stored.get("состав, мольные доли id") == w11.composition_id(mole):
@@ -529,22 +588,31 @@ def volumes_and_references(ctx: Any, mole: Mapping[str, float],
                        for key, value in stored["молярные объёмы"].items()}
             references = {float(key): value
                           for key, value in stored["равновесие двух фаз"].items()}
+            references_full = {
+                float(key): value for key, value in
+                stored.get("равновесие двух фаз, все компоненты", {}).items()
+            }
             if all(temperature in volumes and temperature in references
+                   and temperature in references_full
                    for temperature in K_TEMPERATURES_C):
                 log(f"молярные объёмы и равновесие двух фаз из кэша "
                     f"({path.name}); модели 48 фаз не строятся")
-                return volumes, references
+                return volumes, references, references_full
 
     from thermogar_physical import PhysicalDensityDatabase
 
     physical_db = PhysicalDensityDatabase(str(ROOT / PDB_REL))
     volumes: dict[float, dict[str, Any]] = {}
     references: dict[float, dict[str, Any]] = {}
+    references_full: dict[float, dict[str, Any]] = {}
     for temperature in K_TEMPERATURES_C:
         volumes[temperature] = phase_molar_volumes(
             ctx, physical_db, mole_full, temperature
         )
         references[temperature] = reference_equilibrium(ctx, mole, temperature)
+        references_full[temperature] = reference_equilibrium(
+            ctx, mole_full, temperature, component_names=all_elements()
+        )
     del physical_db
     gc.collect()
 
@@ -555,9 +623,12 @@ def volumes_and_references(ctx: Any, mole: Mapping[str, float],
                             for key, value in volumes.items()},
         "равновесие двух фаз": {f"{key:g}": value
                                 for key, value in references.items()},
+        "равновесие двух фаз, все компоненты": {
+            f"{key:g}": value for key, value in references_full.items()
+        },
     }, ensure_ascii=False, indent=2), "utf-8")
     log(f"молярные объёмы и равновесие двух фаз записаны в {path.name}")
-    return volumes, references
+    return volumes, references, references_full
 
 
 class CaseCache:
@@ -574,7 +645,7 @@ class CaseCache:
 
     def __init__(self) -> None:
         CACHE.mkdir(parents=True, exist_ok=True)
-        self.path = CACHE / "k1_points.jsonl"
+        self.path = CACHE / f"{PREFIX}_points.jsonl"
         self.rows: dict[str, list[dict[str, Any]]] = {}
         self.done: dict[str, dict[str, Any]] = {}
         if self.path.is_file():
@@ -890,7 +961,9 @@ def k1_kinetics(force: bool = False, gammas: Sequence[float] = K_GAMMA,
     mole = w11.wt_to_mole(ctx, working_wt())
     mole_full = w11.wt_to_mole(ctx, w11.full_wt())
 
-    volumes, references = volumes_and_references(ctx, mole, mole_full)
+    volumes, references, references_full = volumes_and_references(
+        ctx, mole, mole_full
+    )
     for temperature in K_TEMPERATURES_C:
         log(f"{temperature:.0f} °C: V_m {MATRIX_PHASE} "
             f"{volumes[temperature][MATRIX_PHASE]['молярный объём, см³/моль']:.4f}, "
@@ -958,6 +1031,10 @@ def k1_kinetics(force: bool = False, gammas: Sequence[float] = K_GAMMA,
                             f"{key_t:.0f}": value
                             for key_t, value in references.items()
                         },
+                        "равновесие двух фаз, все компоненты": {
+                            f"{key_t:.0f}": value
+                            for key_t, value in references_full.items()
+                        },
                         "класс термодинамики kawin": thermodynamics_class,
                         "фаз в базе": len(ctx.phases),
                         "ремонт базы доступен": bool(ctx.repair_available),
@@ -993,6 +1070,9 @@ def k1_kinetics(force: bool = False, gammas: Sequence[float] = K_GAMMA,
                             for key_t, value in volumes.items()},
         "равновесие двух фаз": {f"{key_t:.0f}": value
                                 for key_t, value in references.items()},
+        "равновесие двух фаз, все компоненты": {
+            f"{key_t:.0f}": value for key_t, value in references_full.items()
+        },
         "класс термодинамики kawin": thermodynamics_class,
         "фаз в базе": len(ctx.phases),
         "ремонт базы доступен": bool(ctx.repair_available),
@@ -1328,7 +1408,7 @@ def plot_k1(rows: pd.DataFrame, targets: Mapping[str, Any], path: Path) -> None:
             axis.grid(alpha=0.3)
             axis.legend(fontsize=7)
     figure.suptitle(
-        "12-1. Доля P-фазы от времени; пунктир — 200 ч и 87 600 ч по ТЗ. "
+        f"{SUBPOINT}. Доля P-фазы от времени; пунктир — 200 ч и 87 600 ч по ТЗ. "
         "Межфазная энергия не измерена, а прогнана диапазоном"
     )
     figure.tight_layout()
@@ -1378,7 +1458,7 @@ def plot_k1_size(rows: pd.DataFrame, path: Path) -> None:
             axis.set_title(f"{temperature:.0f} °C")
             axis.grid(alpha=0.3)
             axis.legend(fontsize=6, ncol=2)
-    figure.suptitle("12-1. Размер и число выделений P-фазы; сплошная — объём "
+    figure.suptitle(f"{SUBPOINT}. Размер и число выделений P-фазы; сплошная — объём "
                     "зерна, штриховая — границы зёрен")
     figure.tight_layout()
     figure.savefig(path, dpi=150)
@@ -1436,7 +1516,7 @@ def plot_k1_depletion(rows: pd.DataFrame, targets: Mapping[str, Any],
             axis.set_title(f"{temperature:.0f} °C")
             axis.grid(alpha=0.3)
             axis.legend(fontsize=6, ncol=2)
-    figure.suptitle("12-1. Обеднение матрицы FCC_A1 по хрому и молибдену; "
+    figure.suptitle(f"{SUBPOINT}. Обеднение матрицы FCC_A1 по хрому и молибдену; "
                     "красная штриховая — равновесие подпункта 12-2")
     figure.tight_layout()
     figure.savefig(path, dpi=150)
@@ -1468,7 +1548,7 @@ def memory_report(stem: str, record: Mapping[str, Any], seconds: float,
         - float(record["занято подкачки до старта, ГиБ"]), 3
     )
     OUT.mkdir(parents=True, exist_ok=True)
-    path = OUT / f"k1_memory_{stem}.json"
+    path = OUT / f"{PREFIX}_memory_{stem}.json"
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), "utf-8")
     if final:
         log(
@@ -1545,7 +1625,7 @@ def run_child(arguments: Sequence[str]) -> tuple[dict[str, Any], dict[str, Any]]
 
     stem = "_".join(argument.strip("-").replace(".", "_").replace(",", "_")
                     for argument in arguments)
-    handoff = CACHE / f"child_k1_{stem}.json"
+    handoff = CACHE / f"child_{PREFIX}_{stem}.json"
     CACHE.mkdir(parents=True, exist_ok=True)
     if handoff.is_file():
         handoff.unlink()
@@ -1608,7 +1688,7 @@ def stored_child_payload() -> tuple[dict[str, Any], dict[str, Any]]:
     прогоном нельзя — он не трогает журнал прогресса и помечает сводку.
     """
 
-    handoffs = sorted(CACHE.glob("child_k1_*.json"),
+    handoffs = sorted(CACHE.glob(f"child_{PREFIX}_*.json"),
                       key=lambda item: item.stat().st_mtime)
     if not handoffs:
         raise RuntimeError(
@@ -1635,17 +1715,20 @@ def stored_child_payload() -> tuple[dict[str, Any], dict[str, Any]]:
 
     # Молярные объёмы и равновесие двух фаз — из их собственного кэша: он
     # новее итога потомка и не зависит от того, дошёл ли тот до конца.
-    volumes_path = CACHE / VOLUMES_PATH_NAME
-    if volumes_path.is_file():
-        stored = json.loads(volumes_path.read_text("utf-8"))
+    volumes_path = volumes_path()
+    if stored_volumes_path.is_file():
+        stored = json.loads(stored_volumes_path.read_text("utf-8"))
         payload["молярные объёмы"] = stored["молярные объёмы"]
         payload["равновесие двух фаз"] = stored["равновесие двух фаз"]
+        payload["равновесие двух фаз, все компоненты"] = stored.get(
+            "равновесие двух фаз, все компоненты", {}
+        )
 
     measurement: dict[str, Any] = {
-        "источник": f"{handoffs[-1].name} и k1_memory_*.json с диска; "
+        "источник": f"{handoffs[-1].name} и {PREFIX}_memory_*.json с диска; "
                     f"пересборка таблиц, не новый прогон"
     }
-    memories = sorted(OUT.glob("k1_memory_*.json"),
+    memories = sorted(OUT.glob(f"{PREFIX}_memory_*.json"),
                       key=lambda item: item.stat().st_mtime)
     if memories:
         measurement.update(json.loads(memories[-1].read_text("utf-8")))
@@ -1658,8 +1741,8 @@ def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
             min_free_gib: float = MIN_FREE_GIB,
             tables_only: bool = False) -> None:
     progress = w12.load_progress()
-    if progress.get("12-1", {}).get("готов") and not force and not tables_only:
-        log("12-1 пропущен, посчитан ранее (--force для пересчёта, "
+    if progress.get(SUBPOINT, {}).get("готов") and not force and not tables_only:
+        log(f"{SUBPOINT} пропущен, посчитан ранее (--force для пересчёта, "
             "--tables-only для пересборки таблиц)")
         return
 
@@ -1672,18 +1755,18 @@ def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
         )
 
     free = w12.free_gib()
-    cache_ready = (CACHE / "k1_points.jsonl").is_file() and not force
+    cache_ready = (CACHE / f"{PREFIX}_points.jsonl").is_file() and not force
     if free < float(min_free_gib) and not cache_ready and not tables_only:
         w12.write_json({
-            "подпункт": "12-1. Кинетика выделения P-фазы в ЭК199-ВИ",
+            "подпункт": f"{SUBPOINT}. Кинетика выделения P-фазы в ЭК199-ВИ",
             "прогон": "не начинался",
             "причина": (
                 f"свободной физической памяти {free:.2f} ГиБ при требуемых "
                 f"{float(min_free_gib):.1f} ГиБ"
             ),
             "порог задания, ГиБ": MIN_FREE_GIB,
-        }, "k1_summary.json")
-        log(f"12-1 не запускался: свободно {free:.2f} ГиБ при требуемых "
+        }, f"{PREFIX}_summary.json")
+        log(f"{SUBPOINT} не запускался: свободно {free:.2f} ГиБ при требуемых "
             f"{float(min_free_gib):.1f} ГиБ")
         return
 
@@ -1693,6 +1776,10 @@ def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
             f"случаям с диска, счёт не запускался")
     else:
         arguments = ["--k1", "1",
+                     "--temperatures",
+                     ",".join(f"{value:g}" for value in K_TEMPERATURES_C),
+                     "--prefix", PREFIX,
+                     "--subpoint", SUBPOINT,
                      "--gammas", ",".join(f"{value:g}" for value in gammas),
                      "--per-decade", str(int(per_decade)),
                      "--t-min-h", f"{t_min_h:g}",
@@ -1704,21 +1791,23 @@ def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
 
     targets = wave12_2_targets()
     rows = collect_rows(payload)
-    w12.write_csv(fraction_table(rows), "k1_phase_fraction_vs_time.csv")
-    w12.write_csv(size_table(rows), "k1_size_and_density.csv")
-    w12.write_csv(depletion_table(rows, targets), "k1_matrix_depletion.csv")
+    w12.write_csv(fraction_table(rows), f"{PREFIX}_phase_fraction_vs_time.csv")
+    w12.write_csv(size_table(rows), f"{PREFIX}_size_and_density.csv")
+    w12.write_csv(depletion_table(rows, targets), f"{PREFIX}_matrix_depletion.csv")
     two_phase = payload.get("равновесие двух фаз", {})
     horizons = horizon_table(rows, targets, two_phase)
-    w12.write_csv(horizons, "k1_horizons_200h.csv")
+    w12.write_csv(horizons, f"{PREFIX}_horizons_200h.csv")
     mapping = sensitivity_map(rows, targets, two_phase)
-    w12.write_csv(mapping, "k1_sensitivity_map.csv")
-    plot_k1(rows, targets, OUT / "k1_phase_fraction.png")
-    plot_k1_size(rows, OUT / "k1_size_and_density.png")
-    plot_k1_depletion(rows, targets, OUT / "k1_matrix_depletion.png")
+    w12.write_csv(mapping, f"{PREFIX}_sensitivity_map.csv")
+    plot_k1(rows, targets, OUT / f"{PREFIX}_phase_fraction.png")
+    plot_k1_size(rows, OUT / f"{PREFIX}_size_and_density.png")
+    plot_k1_depletion(rows, targets, OUT / f"{PREFIX}_matrix_depletion.png")
 
     summary = {
-        "подпункт": "12-1. Кинетика выделения P-фазы в ЭК199-ВИ (ХН62М(Sc)-ВИ) "
-                    "при 700 и 750 °C",
+        "подпункт": f"{SUBPOINT}. Кинетика выделения P-фазы в ЭК199-ВИ "
+                    f"(ХН62М(Sc)-ВИ) при "
+                    + " и ".join(f"{value:.0f}" for value in K_TEMPERATURES_C)
+                    + " °C",
         "база": DB_REL,
         "sha256 базы": w12.database_sha256(),
         "база плотностей": PDB_REL,
@@ -1798,6 +1887,16 @@ def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
         "равновесие двух фаз того же состава": payload.get(
             "равновесие двух фаз", {}
         ),
+        "равновесие двух фаз на всех компонентах": payload.get(
+            "равновесие двух фаз, все компоненты", {}
+        ),
+        "цена сокращения задачи": (
+            "предел кинетики обязан приходить не к равновесию волны 12-2 "
+            "(48 фаз, 11 компонентов), а к равновесию двух фаз без ниобия. "
+            "Разность 12-2 и двух фаз на всех компонентах — цена "
+            "двухфазности; разность двух фаз на всех компонентах и двух фаз "
+            "без ниобия — цена исключения ниобия"
+        ),
         "равновесная цель подпункта 12-2": targets,
         "случаев посчитано": len(payload.get("случаи", [])),
         "случаев в сетке": len(K_TEMPERATURES_C) * len(K_SITES) * len(gammas),
@@ -1845,7 +1944,7 @@ def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
             "рассматриваются",
         ],
     }
-    w12.write_json(summary, "k1_summary.json")
+    w12.write_json(summary, f"{PREFIX}_summary.json")
 
     if tables_only:
         log("--tables-only: журнал прогресса не менялся")
@@ -1856,7 +1955,7 @@ def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
         and len(payload.get("случаи", []))
         == len(K_TEMPERATURES_C) * len(K_SITES) * len(gammas)
     )
-    progress["12-1"] = {
+    progress[SUBPOINT] = {
         "готов": complete,
         "время": time.strftime("%Y-%m-%d %H:%M:%S"),
         "случаев посчитано": len(payload.get("случаи", [])),
@@ -1884,13 +1983,15 @@ def step_volumes(force: bool = False, **_ignored: Any) -> None:
         ... study_hn62m_wave12_kinetics.py --only k1
     """
 
-    path = CACHE / VOLUMES_PATH_NAME
+    path = volumes_path()
     if path.is_file() and force:
         path.unlink()
     ctx = w11.Context()
     mole = w11.wt_to_mole(ctx, working_wt())
     mole_full = w11.wt_to_mole(ctx, w11.full_wt())
-    volumes, references = volumes_and_references(ctx, mole, mole_full)
+    volumes, references, references_full = volumes_and_references(
+        ctx, mole, mole_full
+    )
     for temperature in K_TEMPERATURES_C:
         log(f"{temperature:.0f} °C: V_m {MATRIX_PHASE} "
             f"{volumes[temperature][MATRIX_PHASE]['молярный объём, см³/моль']:.4f}, "
@@ -1898,6 +1999,15 @@ def step_volumes(force: bool = False, **_ignored: Any) -> None:
             f"{volumes[temperature][PRECIPITATE_PHASE]['молярный объём, см³/моль']:.4f} "
             f"см³/моль; равновесие двух фаз: P-фаза "
             f"{references[temperature]['мольная доля P-фазы, %']:.4f} мольн. %")
+        log(f"{temperature:.0f} °C: цена сокращения задачи по доле P-фазы — "
+            f"две фазы и все компоненты "
+            f"{references_full[temperature]['мольная доля P-фазы, %']:.4f}, "
+            f"две фазы без ниобия "
+            f"{references[temperature]['мольная доля P-фазы, %']:.4f} мольн. %; "
+            f"матрица двух фаз без ниобия: MO "
+            f"{references[temperature]['матрица, масс. %'].get('MO', 0.0):.3f}, "
+            f"CR "
+            f"{references[temperature]['матрица, масс. %'].get('CR', 0.0):.3f} масс. %")
 
 
 STEPS = {"volumes": step_volumes, "k1": step_k1}
@@ -1905,7 +2015,9 @@ STEPS = {"volumes": step_volumes, "k1": step_k1}
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Волна 12, подпункт 12-1: кинетика P-фазы в ЭК199-ВИ"
+        description="Волна 12, подпункты 12-1 и 12-9: кинетика P-фазы "
+                    "в ЭК199-ВИ. Что считать — ключи --temperatures, "
+                    "--prefix, --subpoint"
     )
     parser.add_argument("--only", default="all",
                     help="volumes, k1; через запятую. volumes готовит\n"
@@ -1913,6 +2025,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--force", action="store_true", help="пересчитать готовое")
     parser.add_argument("--gammas", default=None,
                         help="межфазные энергии, Дж/м², через запятую")
+    parser.add_argument("--temperatures", default=None,
+                        help="температуры, °C, через запятую; каждая обязана "
+                             "быть точкой ТЗ волны 12-2. Умолчание — "
+                             "температуры подпункта 12-1")
+    parser.add_argument("--prefix", default=None,
+                        help="префикс файлов результатов и кэша; умолчание k1. "
+                             "Своим префиксом подпункт не затирает чужой кэш")
+    parser.add_argument("--subpoint", default=None,
+                        help="номер подпункта для сводки, журнала прогресса и "
+                             "подписей графиков; умолчание 12-1")
     parser.add_argument("--per-decade", type=int, default=K_PER_DECADE,
                         help="узлов сетки времени на декаду")
     parser.add_argument("--t-min-h", type=float, default=K_T_MIN_H,
@@ -1926,6 +2048,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--k1", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--handoff", default=None, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
+
+    configure(
+        temperatures=(
+            [float(value) for value in args.temperatures.split(",")
+             if value.strip()] if args.temperatures else None
+        ),
+        prefix=args.prefix,
+        subpoint=args.subpoint,
+    )
 
     gammas = (
         tuple(float(value) for value in args.gammas.split(",") if value.strip())
