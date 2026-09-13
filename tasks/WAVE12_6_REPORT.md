@@ -515,7 +515,7 @@ da7c5b8 merge(12-6): влить wave12-volume в main — изменение о�
 | `00c035f` | программа `docs/IZHSR_1476_PROGRAMMA.md` |
 | `020dcfb` | записка `docs/IZHSR_1476.md` и `tasks/SOURCES_WANTED.md` |
 | `eb97a18` | реестр `tasks/REGISTER.md` |
-| — | этот отчёт, коммит приведён в готовом дереве |
+| `ba49bc6` | этот отчёт `tasks/WAVE12_6_REPORT.md` |
 
 Копия отчёта положена в `C:\Users\gareg\Desktop\ThermoGar\tasks\` по правилу
 «Ветки и слияния».
