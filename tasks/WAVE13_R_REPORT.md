@@ -237,11 +237,16 @@ SHA-256 (первые 12 знаков), полная таблица — `results
 
 ## Git
 
-`git log --oneline main..wave13-release` перед коммитом отчёта:
+`git log --oneline main..wave13-release` на конец работы (перед коммитом этого раздела):
 
 ```
+2b1bfb0 docs(13-Р): отчёт — выпуск 0.4.1 остановлен на пункте 1
 33ed0e7 docs(13-Р): задание выпуска 0.4.1
 ```
+
+`git status --short` в `ThermoGar-w13r` на конец работы (перед коммитом этого раздела): пусто.
+
+Ветка `wave13-release` в `origin` не пушилась, в `main` не вливалась.
 
 `git log --oneline -5` в `main`:
 
@@ -251,13 +256,6 @@ fde6d43 merge(13-Д): влить wave13-fixes в main — BL-20 подвижно
 0c8baae docs(13-Д): EK199_IZHSR-1476.docx, положенный мастером
 ab69420 fix(13-Д): BL-22 — отказ на сетке, не разрешающей зародыш, и доля 100 % как ошибка
 7bf1859 fix(13-Д): BL-20 — LN(1,00E-4) в MQ(FCC_A1&NB,NB:*) читать как ln(1.00E-4)
-```
-
-`git status --short` в `ThermoGar-w13r` перед коммитом отчёта:
-
-```
-?? results/wave13_r/
-?? tasks/WAVE13_R_REPORT.md
 ```
 
 `git status --short` в `main` (`C:\Users\gareg\Desktop\ThermoGar`) перед копированием отчёта:
