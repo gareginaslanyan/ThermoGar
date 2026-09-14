@@ -366,4 +366,30 @@ radii», поэтому формально верно. Код не трогал.
 
 ## 7. Состояние ветки
 
-*Дописывается в конце работы.*
+Ветка `wave13-grid` в дереве `ThermoGar-w13f`. В `main` не вливалась, не пушилась. В код
+приложения и тестов ничего не внесено: изменены только `tasks/REGISTER.md` и
+`tasks/WAVE13_R_REPORT.md` (errata), добавлены этот отчёт и `results/wave13_f/f2_grid/`.
+
+`git log --oneline -3` перед коммитом этого раздела:
+
+```
+d0db76a test(13-Ф): BL-26 — опыт cMax ниже и выше зародыша на Ni-9,8Al-8,3Cr; вывод по третьей проверке
+7051afc docs(13-Ф): BL-26 — механизм kawin и чтение выходов волны 12; errata 13-Р2; BL-27, BL-28, BL-19
+22976f9 Merge wave 13-Р: release 0.4.1 report addendum
+```
+
+`git status --short` в `ThermoGar-w13f` перед коммитом этого раздела: пусто. Сам раздел идёт
+третьим коммитом ветки, `docs(13-Ф): отчёт — состояние ветки`.
+
+`git status --short` в `main` (`ThermoGar`) не менялся этой задачей:
+
+```
+?? REPORT_APP-576.md
+?? ZADACHA_APP-576_TERMOGAR_SOLIDUS_VJ159.md
+?? tasks/WAVE13_B1_OPUS.md
+?? tasks/WAVE13_B2_OPUS.md
+?? tasks/WAVE13_B2_REPORT.md
+?? uliki_576/
+```
+
+Дерево `ThermoGar-w13f` не снято: его снимает следующая волна после приёмки.
