@@ -326,16 +326,13 @@ C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Scripts\python.exe -X utf8 ^
 
 ## Состояние ветки
 
-`git log --oneline wave12-kinetics580..wave13-pphase` на момент коммита отчёта:
+`git log --oneline wave12-kinetics580..wave13-pphase` после коммита отчёта; этот
+раздел дописан следующим коммитом `docs(13-A)`, который в список не попадает:
 
 ```
+a03cd32 docs(13-A): отчёт задачи 13-А — P-фаза mc_ni 2.036 и поправка к долям волны 12
 5bb3c6d feat(13-A): сечения Ni-Cr-Mo, состав P-фазы, D_NIMO и баланс молибдена
 ff52b34 feat(13-A): инструмент проверки P-фазы mc_ni 2.036 и задание волны 13-А
-e91ff01 docs(12-9): номер коммита отчёта и состояние дерева в журнале ветки
 ```
 
-`git status --short` перед коммитом отчёта:
-
-```
-?? tasks/WAVE13_A_REPORT.md
-```
+`git status --short` после коммита отчёта — пусто (дерево чистое).
