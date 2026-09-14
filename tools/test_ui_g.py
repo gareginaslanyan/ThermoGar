@@ -85,6 +85,13 @@ KWN_CELL = {
 # Short model time of the matrix cells, hours.
 SHORT_TIME_H = 0.001
 
+# Size classes of the KWN matrix cells. Wave 13-Р2: with the section's default
+# radii 0.2...10 nm, 30 classes are 0.327 nm wide, while the critical radius of
+# gamma-prime in Ni-15Al at 800 C is about 0.30 nm. Such a grid does not resolve
+# the nucleus, and since BL-22 (13-Д) the application refuses it before solving;
+# the earlier passes of the Ni cell were on that grid. 40 classes give 0.245 nm.
+KWN_BINS = 40
+
 
 # --------------------------------------------------------------------------- #
 # Harness
@@ -371,7 +378,7 @@ def test_kwn_precipitation(database_key: str) -> None:
     state[f"precipitation_{database_key}_user_precipitate"] = precipitate
     state[f"precipitation_{database_key}_user_temperature_c"] = temperature
     state[f"precipitation_{database_key}_user_duration_h"] = SHORT_TIME_H
-    state[f"precipitation_{database_key}_user_bins"] = 30
+    state[f"precipitation_{database_key}_user_bins"] = KWN_BINS
     app.run()
 
     widget(
