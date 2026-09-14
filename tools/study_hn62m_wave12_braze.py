@@ -24,6 +24,10 @@
     C:\\Users\\gareg\\Desktop\\ThermoGar\\.venv-windows\\Scripts\\python.exe -X utf8 ^
         tools\\study_hn62m_wave12_braze.py --only b1
     ... --only b2      # солидус обогащённой основы, отдельный прогон
+    rem волна 13, поток G — та же сетка при точках ТЗ 580 и 595 °C
+    C:\\Users\\gareg\\Desktop\\ThermoGar\\.venv-windows\\Scripts\\python.exe -X utf8 ^
+        tools\\study_hn62m_wave12_braze.py --only b1 ^
+        --temperatures 580,595 --prefix g1 --subpoint 13G-1 --min-free-gib 2.5
 
 Память. Порог запуска тот же, что у волн 11 и 12-2 (`w12.MIN_FREE_GIB`,
 4,0 ГиБ), порог остановки по ходу — тот же `w12.E1_ABORT_FREE_GIB`. Тяжёлый
@@ -131,6 +135,49 @@ CROSS_SI: tuple[float, ...] = (SI_BASE, 2.0, 5.0)
 SERVICE_C: tuple[float, ...] = (700.0, 750.0)
 BRAZE_C: tuple[float, ...] = (1050.0, 1150.0, 1200.0)
 TEMPERATURES: tuple[float, ...] = SERVICE_C + BRAZE_C
+
+# Подпункт, чьи результаты пишет прогон, и префикс его файлов. Умолчания —
+# подпункта 12-4, чтобы его команда прогона осталась прежней. Волна 13 (поток
+# G) считает ту же сетку при 580 и 595 °C и зовёт модуль ключами
+# `--temperatures 580,595 --prefix g1 --subpoint 13G-1`. Префикс разделяет
+# кэш точек, итог потомка, замеры памяти, таблицы, график и сводку — иначе
+# прогон при новых температурах затёр бы результаты 12-4. Так же устроены
+# ключи модуля кинетики в подпункте 12-9.
+SUBPOINT = "12-4"
+PREFIX = "e4"
+# Порог входа, фактически применённый прогоном. Константа `MIN_FREE_GIB`
+# остаётся общей, ключ `--min-free-gib` меняет только это значение, и в сводку
+# уходят оба (правило «Память и параллельность» из `tasks/RULES.md`). Порог
+# остановки по ходу ключом не меняется.
+RUN_MIN_FREE_GIB = MIN_FREE_GIB
+
+
+def configure(temperatures: Sequence[float] | None = None,
+              prefix: str | None = None,
+              subpoint: str | None = None,
+              min_free_gib: float | None = None) -> None:
+    """Назначить температуры, префикс, подпункт и порог входа на этот процесс.
+
+    Зовётся из `main` до всякого счёта, в том числе в потомке: ключи ему
+    передаются те же.
+    """
+
+    global TEMPERATURES, PREFIX, SUBPOINT, RUN_MIN_FREE_GIB
+    if temperatures:
+        TEMPERATURES = tuple(float(value) for value in temperatures)
+    if prefix:
+        PREFIX = str(prefix)
+    if subpoint:
+        SUBPOINT = str(subpoint)
+    if min_free_gib is not None:
+        RUN_MIN_FREE_GIB = float(min_free_gib)
+
+
+def service_mode(temperature_c: float) -> bool:
+    """Служебная ли температура: служебная 12-4 или точка ТЗ волны 12-2."""
+
+    return (float(temperature_c) in SERVICE_C
+            or float(temperature_c) in w12.E1_REQUIRED_C)
 
 # Плотность стартовой выборки и ряд повторов — волны 12-2, чтобы числа узла
 # «бора нет, кремний основы» совпали с числами 12-2, а не разъехались с ними
@@ -313,7 +360,7 @@ class BrazePointCache(w12.PointCache):
 
     def __init__(self) -> None:
         CACHE.mkdir(parents=True, exist_ok=True)
-        self.path = CACHE / "e4_points.jsonl"
+        self.path = CACHE / f"{PREFIX}_points.jsonl"
         self.records: dict[str, dict[str, Any]] = {}
         if self.path.is_file():
             for line in self.path.read_text("utf-8").splitlines():
@@ -321,7 +368,7 @@ class BrazePointCache(w12.PointCache):
                     continue
                 record = json.loads(line)
                 self.records[record["key"]] = record["payload"]
-            log(f"кэш точек 12-4: {len(self.records)} записей")
+            log(f"кэш точек {SUBPOINT}: {len(self.records)} записей")
 
 
 # --------------------------------------------------------------------------- #
@@ -344,14 +391,14 @@ def b1_grid(force: bool = False) -> dict[str, Any]:
             cache.path.unlink()
 
     free = free_gib()
-    if free < MIN_FREE_GIB:
+    if free < RUN_MIN_FREE_GIB:
         return {
             "точки": [],
             "пропущено": [{
                 "узел": None, "T, °C": None,
                 "причина": (
                     f"свободной физической памяти {free:.2f} ГиБ при требуемых "
-                    f"{MIN_FREE_GIB:.1f} ГиБ; база не разбиралась, прогон не "
+                    f"{RUN_MIN_FREE_GIB:.1f} ГиБ; база не разбиралась, прогон не "
                     f"начинался"
                 ),
             }],
@@ -484,7 +531,7 @@ class SolidusCache:
 
     def __init__(self) -> None:
         CACHE.mkdir(parents=True, exist_ok=True)
-        self.path = CACHE / "e4_solidus_points.jsonl"
+        self.path = CACHE / f"{PREFIX}_solidus_points.jsonl"
         self.records: dict[str, float] = {}
         if self.path.is_file():
             for line in self.path.read_text("utf-8").splitlines():
@@ -527,14 +574,14 @@ def b2_solidus(force: bool = False) -> dict[str, Any]:
             cache.path.unlink()
 
     free = free_gib()
-    if free < MIN_FREE_GIB:
+    if free < RUN_MIN_FREE_GIB:
         return {
             "узлы": [],
             "пропущено": [{
                 "узел": None,
                 "причина": (
                     f"свободной физической памяти {free:.2f} ГиБ при требуемых "
-                    f"{MIN_FREE_GIB:.1f} ГиБ; прогон не начинался"
+                    f"{RUN_MIN_FREE_GIB:.1f} ГиБ; прогон не начинался"
                 ),
             }],
         }
@@ -622,7 +669,7 @@ def node_columns(point: Mapping[str, Any]) -> dict[str, Any]:
         "узел": node_label(point["B, масс. %"], point["SI, масс. %"]),
         "оси задания": ", ".join(point["оси"]),
         "T, °C": point["T, °C"],
-        "режим": "служба" if point["T, °C"] in SERVICE_C else "пайка и ТО",
+        "режим": "служба" if service_mode(point["T, °C"]) else "пайка и ТО",
     }
 
 
@@ -944,7 +991,7 @@ def plot_b1(borides: pd.DataFrame, matrix: pd.DataFrame, path: Path) -> None:
     axes[1].legend(fontsize=6, ncol=2)
 
     figure.suptitle(
-        "12-4. Бор и кремний припоя в основе ЭК199-ВИ (без скандия), "
+        f"{SUBPOINT}. Бор и кремний припоя в основе ЭК199-ВИ (без скандия), "
         f"mc_ni 2.036, pdens {PDENS}"
     )
     figure.tight_layout()
@@ -977,7 +1024,7 @@ def memory_report(stem: str, record: Mapping[str, Any], seconds: float,
         - float(record["занято подкачки до старта, ГиБ"]), 3
     )
     OUT.mkdir(parents=True, exist_ok=True)
-    path = OUT / f"e4_memory_{stem}.json"
+    path = OUT / f"{PREFIX}_memory_{stem}.json"
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), "utf-8")
     if final:
         log(
@@ -1051,8 +1098,9 @@ def run_child(arguments: Sequence[str]) -> tuple[dict[str, Any], dict[str, Any]]
     `w11.memory_probe`, шаги опроса и сброса тоже волны 11.
     """
 
-    stem = "_".join(argument.strip("-") for argument in arguments)
-    handoff = CACHE / f"child_e4_{stem}.json"
+    stem = "_".join(argument.strip("-").replace(".", "_").replace(",", "_")
+                    for argument in arguments)
+    handoff = CACHE / f"child_{PREFIX}_{stem}.json"
     CACHE.mkdir(parents=True, exist_ok=True)
     if handoff.is_file():
         handoff.unlink()
@@ -1182,52 +1230,55 @@ def p_phase_verdict(p_table: pd.DataFrame) -> list[dict[str, Any]]:
 
 def step_b1(force: bool = False) -> None:
     progress = w12.load_progress()
-    if progress.get("12-4 сетка", {}).get("готов") and not force:
-        log("12-4 сетка пропущена, посчитана ранее (--force для пересчёта)")
+    if progress.get(f"{SUBPOINT} сетка", {}).get("готов") and not force:
+        log(f"{SUBPOINT} сетка пропущена, посчитана ранее (--force для пересчёта)")
         return
 
     free = free_gib()
-    cache_ready = (CACHE / "e4_points.jsonl").is_file() and not force
-    if free < MIN_FREE_GIB and not cache_ready:
+    cache_ready = (CACHE / f"{PREFIX}_points.jsonl").is_file() and not force
+    if free < RUN_MIN_FREE_GIB and not cache_ready:
         w12.write_json({
-            "подпункт": "12-4. Бор и кремний припоя в основе ЭК199-ВИ",
+            "подпункт": f"{SUBPOINT}. Бор и кремний припоя в основе ЭК199-ВИ",
             "прогон": "не начинался",
             "причина": (
                 f"свободной физической памяти {free:.2f} ГиБ при требуемых "
-                f"{MIN_FREE_GIB:.1f} ГиБ (порог волны 11, J2_MIN_FREE_GIB)"
+                f"{RUN_MIN_FREE_GIB:.1f} ГиБ"
             ),
-        }, "e4_summary.json")
-        log(f"12-4 не запускался: свободно {free:.2f} ГиБ при требуемых "
-            f"{MIN_FREE_GIB:.1f} ГиБ")
+            "порог по умолчанию, ГиБ": MIN_FREE_GIB,
+        }, f"{PREFIX}_summary.json")
+        log(f"{SUBPOINT} не запускался: свободно {free:.2f} ГиБ при требуемых "
+            f"{RUN_MIN_FREE_GIB:.1f} ГиБ")
         return
 
-    payload, measurement = run_child(["--b1", "1"] + (["--force"] if force else []))
+    payload, measurement = run_child(
+        ["--b1", "1"] + child_keys() + (["--force"] if force else [])
+    )
     measurement["свободной физической перед запуском, ГиБ"] = round(free, 2)
     points = payload["точки"]
     if not points:
         w12.write_json({
-            "подпункт": "12-4. Бор и кремний припоя в основе ЭК199-ВИ",
+            "подпункт": f"{SUBPOINT}. Бор и кремний припоя в основе ЭК199-ВИ",
             "прогон": "пуст",
             "пропущено": payload["пропущено"],
             "замер памяти": measurement,
-        }, "e4_summary.json")
+        }, f"{PREFIX}_summary.json")
         return
 
     enable_boron()
     sublattices = db_sublattices()
 
     fractions = fraction_table(points)
-    w12.write_csv(fractions, "e4_phase_fractions.csv")
+    w12.write_csv(fractions, f"{PREFIX}_phase_fractions.csv")
     borides = boride_table(points, sublattices)
-    w12.write_csv(borides, "e4_borides_silicides.csv")
+    w12.write_csv(borides, f"{PREFIX}_borides_silicides.csv")
     matrix = matrix_table(points)
-    w12.write_csv(matrix, "e4_matrix_fcc_a1.csv")
+    w12.write_csv(matrix, f"{PREFIX}_matrix_fcc_a1.csv")
     p_table = p_phase_table(points)
-    w12.write_csv(p_table, "e4_p_phase.csv")
+    w12.write_csv(p_table, f"{PREFIX}_p_phase.csv")
     compositions = composition_table(points)
-    w12.write_csv(compositions, "e4_phase_compositions.csv")
+    w12.write_csv(compositions, f"{PREFIX}_phase_compositions.csv")
     balance = balance_table(points)
-    w12.write_csv(balance, "e4_mass_balance.csv")
+    w12.write_csv(balance, f"{PREFIX}_mass_balance.csv")
     # Невязку баланса имеет смысл смотреть только там, где решение есть: у
     # пустой точки собранный из фаз состав равен нулю, и «невязка» равна
     # минус всему составу. Такие точки названы отдельным числом.
@@ -1235,7 +1286,7 @@ def step_b1(force: bool = False) -> None:
         point for point in points if point.get("сошлась", True)
     ]
     balance_converged = balance_table(converged_points)
-    plot_b1(borides, matrix, OUT / "e4_braze.png")
+    plot_b1(borides, matrix, OUT / f"{PREFIX}_braze.png")
 
     # Сверка узла без припоя с результатом 12-2. Узел (0; 0,10) — тот же
     # состав, и при 700 и 750 °C числа обязаны совпасть до знаков округления
@@ -1248,7 +1299,7 @@ def step_b1(force: bool = False) -> None:
             checks.append({
                 "T, °C": float(temperature),
                 "элемент": element,
-                "12-4, узел без припоя, масс. %": own[temperature][element],
+                f"{SUBPOINT}, узел без припоя, масс. %": own[temperature][element],
                 "12-2, e1_matrix_fcc_a1.csv, масс. %": reference[temperature][element],
                 "разность, масс. %": (
                     own[temperature][element] - reference[temperature][element]
@@ -1266,8 +1317,10 @@ def step_b1(force: bool = False) -> None:
 
     summary = {
         "подпункт": (
-            "12-4. Что делает с основой сплава ЭК199-ВИ бор и кремний из припоя"
+            f"{SUBPOINT}. Что делает с основой сплава ЭК199-ВИ бор и кремний "
+            f"из припоя"
         ),
+        "модуль": "tools/study_hn62m_wave12_braze.py (подпункт 12-4)",
         "база": DB_REL,
         "sha256 базы": w12.database_sha256(),
         "бор в базе": True,
@@ -1292,7 +1345,8 @@ def step_b1(force: bool = False) -> None:
         "pdens": PDENS,
         "ряд повторов pdens": list(RETRY_PDENS),
         "из них своих, добавленных в 12-4": list(EXTRA_RETRY_PDENS),
-        "порог запуска, свободной физической ГиБ": MIN_FREE_GIB,
+        "порог запуска, свободной физической ГиБ": RUN_MIN_FREE_GIB,
+        "порог запуска по умолчанию, ГиБ": MIN_FREE_GIB,
         "порог остановки по ходу, свободной физической ГиБ": ABORT_FREE_GIB,
         "порог присутствия фазы, мольные доли": PRESENT_FLOOR,
         "порог присутствия элемента в фазе, мольные доли": IN_PHASE_FLOOR,
@@ -1344,14 +1398,14 @@ def step_b1(force: bool = False) -> None:
             "как далеко бор успеет уйти от шва",
         ],
     }
-    w12.write_json(summary, "e4_summary.json")
+    w12.write_json(summary, f"{PREFIX}_summary.json")
 
     complete = (
         not payload["пропущено"]
         and len(points) == len(nodes()) * len(TEMPERATURES)
         and all(point.get("сошлась", True) for point in points)
     )
-    progress["12-4 сетка"] = {
+    progress[f"{SUBPOINT} сетка"] = {
         "готов": complete,
         "время": time.strftime("%Y-%m-%d %H:%M:%S"),
         "точек посчитано": len(points),
@@ -1364,30 +1418,32 @@ def step_b1(force: bool = False) -> None:
 
 def step_b2(force: bool = False) -> None:
     progress = w12.load_progress()
-    if progress.get("12-4 солидус", {}).get("готов") and not force:
-        log("12-4 солидус пропущен, посчитан ранее (--force для пересчёта)")
+    if progress.get(f"{SUBPOINT} солидус", {}).get("готов") and not force:
+        log(f"{SUBPOINT} солидус пропущен, посчитан ранее (--force для пересчёта)")
         return
 
     free = free_gib()
-    cache_ready = (CACHE / "e4_solidus_points.jsonl").is_file() and not force
-    if free < MIN_FREE_GIB and not cache_ready:
+    cache_ready = (CACHE / f"{PREFIX}_solidus_points.jsonl").is_file() and not force
+    if free < RUN_MIN_FREE_GIB and not cache_ready:
         w12.write_json({
             "подпункт": "12-4, пункт 5. Солидус обогащённой бором и кремнием основы",
             "прогон": "не начинался",
             "причина": (
                 f"свободной физической памяти {free:.2f} ГиБ при требуемых "
-                f"{MIN_FREE_GIB:.1f} ГиБ"
+                f"{RUN_MIN_FREE_GIB:.1f} ГиБ"
             ),
-        }, "e4_solidus_summary.json")
-        log(f"12-4 солидус не запускался: свободно {free:.2f} ГиБ")
+        }, f"{PREFIX}_solidus_summary.json")
+        log(f"{SUBPOINT} солидус не запускался: свободно {free:.2f} ГиБ")
         return
 
-    payload, measurement = run_child(["--b2", "1"] + (["--force"] if force else []))
+    payload, measurement = run_child(
+        ["--b2", "1"] + child_keys() + (["--force"] if force else [])
+    )
     measurement["свободной физической перед запуском, ГиБ"] = round(free, 2)
     rows = payload["узлы"]
     table = solidus_table(rows)
     if len(table):
-        w12.write_csv(table, "e4_solidus.csv")
+        w12.write_csv(table, f"{PREFIX}_solidus.csv")
 
     summary = {
         "подпункт": "12-4, пункт 5. Солидус обогащённой бором и кремнием основы",
@@ -1421,9 +1477,9 @@ def step_b2(force: bool = False) -> None:
             "узел, из расчёта не следует",
         ],
     }
-    w12.write_json(summary, "e4_solidus_summary.json")
+    w12.write_json(summary, f"{PREFIX}_solidus_summary.json")
 
-    progress["12-4 солидус"] = {
+    progress[f"{SUBPOINT} солидус"] = {
         "готов": bool(rows) and not payload["пропущено"]
         and len(rows) == len(SOLIDUS_NODES),
         "время": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -1431,6 +1487,22 @@ def step_b2(force: bool = False) -> None:
         "узлов в подмножестве": len(SOLIDUS_NODES),
     }
     w12.save_progress(progress)
+
+
+def child_keys() -> list[str]:
+    """Ключи, которые потомок получает те же, что родитель.
+
+    При умолчаниях подпункта 12-4 список пуст, и имя итога потомка остаётся
+    прежним: `child_e4_b1_1.json`.
+    """
+
+    keys: list[str] = []
+    if SUBPOINT != "12-4" or PREFIX != "e4" or TEMPERATURES != SERVICE_C + BRAZE_C:
+        keys += ["--temperatures", ",".join(f"{value:g}" for value in TEMPERATURES),
+                 "--prefix", PREFIX, "--subpoint", SUBPOINT]
+    if RUN_MIN_FREE_GIB != MIN_FREE_GIB:
+        keys += ["--min-free-gib", f"{RUN_MIN_FREE_GIB:g}"]
+    return keys
 
 
 STEPS = {"b1": step_b1, "b2": step_b2}
@@ -1442,10 +1514,32 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     parser.add_argument("--only", default="all", help="b1, b2; через запятую")
     parser.add_argument("--force", action="store_true", help="пересчитать готовое")
+    parser.add_argument("--temperatures", default=None,
+                        help="температуры, °C, через запятую; умолчание — "
+                             "температуры подпункта 12-4")
+    parser.add_argument("--prefix", default=None,
+                        help="префикс файлов результатов и кэша; умолчание e4")
+    parser.add_argument("--subpoint", default=None,
+                        help="номер подпункта для сводки, журнала прогресса и "
+                             "подписи графика; умолчание 12-4")
+    parser.add_argument("--min-free-gib", type=float, default=None,
+                        help="порог входа по свободной физической памяти, ГиБ; "
+                             f"умолчание {MIN_FREE_GIB:g}. Порог остановки по "
+                             "ходу этим ключом не меняется")
     parser.add_argument("--b1", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--b2", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--handoff", default=None, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
+
+    configure(
+        temperatures=(
+            [float(value) for value in args.temperatures.split(",")
+             if value.strip()] if args.temperatures else None
+        ),
+        prefix=args.prefix,
+        subpoint=args.subpoint,
+        min_free_gib=args.min_free_gib,
+    )
 
     OUT.mkdir(parents=True, exist_ok=True)
     CACHE.mkdir(parents=True, exist_ok=True)
