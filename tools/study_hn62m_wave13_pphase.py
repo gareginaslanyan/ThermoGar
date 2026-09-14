@@ -700,9 +700,12 @@ def field_summary(points: Sequence[Mapping[str, Any]], temperature: float,
 def plot_sections(points: Sequence[Mapping[str, Any]], sections: Sequence[float], path: Path) -> None:
     all_sets = sorted({phase_set(point) for temperature in sections
                        for point in section_points(points, temperature)})
-    palette = plt.get_cmap("tab20")
-    colours = {name: palette(index % 20) for index, name in enumerate(all_sets)}
-    figure, axes = plt.subplots(1, len(sections), figsize=(6.2 * len(sections), 6.4), squeeze=False)
+    # Наборов больше двадцати, и одна tab20 даёт совпадающие цвета: палитра
+    # собрана из трёх качественных карт подряд.
+    palette = [plt.get_cmap(name)(index) for name, count in
+               (("tab20", 20), ("Dark2", 8), ("Set1", 9)) for index in range(count)]
+    colours = {name: palette[index % len(palette)] for index, name in enumerate(all_sets)}
+    figure, axes = plt.subplots(1, len(sections), figsize=(6.2 * len(sections), 8.6), squeeze=False)
     for axis, temperature in zip(axes[0], sections):
         section = section_points(points, temperature)
         for name in all_sets:
@@ -735,9 +738,10 @@ def plot_sections(points: Sequence[Mapping[str, Any]], sections: Sequence[float]
             if label not in labels:
                 handles.append(handle)
                 labels.append(label)
-    figure.legend(handles, labels, loc="lower center", ncol=3, fontsize=7)
     figure.suptitle("13-А. Сечения Ni–Cr–Mo, mc_ni 2.036, шаг 2,5 ат. %")
-    figure.tight_layout(rect=(0, 0.16, 1, 0.97))
+    figure.tight_layout(rect=(0, 0.27, 1, 0.97))
+    figure.legend(handles, labels, loc="lower center", ncol=4, fontsize=8,
+                  bbox_to_anchor=(0.5, 0.005))
     figure.savefig(path, dpi=140)
     plt.close(figure)
     log(f"записано {path.relative_to(ROOT)}")
