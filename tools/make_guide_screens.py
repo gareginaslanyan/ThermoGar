@@ -43,8 +43,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 GUIDE_ROOT = REPO_ROOT / "docs" / "guide"
 IMG_ROOT = GUIDE_ROOT / "img"
-HTML_NAME = "ThermoGar_Guide_0.4.0.html"
-HTML_TITLE = "ThermoGar 0.4.0 — иллюстрированное руководство"
+HTML_NAME = "ThermoGar_Guide_0.4.1.html"
+HTML_TITLE = "ThermoGar 0.4.1 — иллюстрированное руководство"
 
 # Отдельное состояние только для съёмки: установленная программа и
 # %LOCALAPPDATA%\ThermoGar не затрагиваются. Путь короткий намеренно —

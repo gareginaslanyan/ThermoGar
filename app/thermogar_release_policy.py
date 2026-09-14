@@ -20,8 +20,8 @@ from typing import Final
 APP_NAME: Final = "ThermoGar"
 APP_LINEAGE: Final = "SWR"
 APP_GATE: Final = "-"
-APP_STAGE: Final = "0.4.0"
-APP_VERSION: Final = "0.4.0"
+APP_STAGE: Final = "0.4.1"
+APP_VERSION: Final = "0.4.1"
 RELEASE_CLASS: Final = (
     "Исследовательское ПО — экспериментальная валидация не проводилась"
 )
