@@ -1,0 +1,56 @@
+2026-09-14 15:30:06.612 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-14 15:30:06.671 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\precipitation\NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+==============================================================================
+THERMOGAR — SOFTWARE SELF TEST
+==============================================================================
+Project: .
+Python: 3.11.9
+Platform: Windows-10-10.0.26200-SP0
+Release class: Исследовательское ПО — экспериментальная валидация не проводилась
+Production use: NOT_ASSESSED
+
+FILES
+   PASS app/ThermoGar_app.py
+   PASS app/thermogar_stage14.py
+   PASS app/thermogar_properties.py
+   PASS app/thermogar_diffusion.py
+   PASS app/thermogar_precipitation.py
+   PASS app/thermogar_database_guard.py
+   PASS app/thermogar_physical.py
+   PASS app/thermogar_workspace.py
+   PASS app/thermogar_palette.py
+   PASS app/thermogar_release_policy.py
+   PASS app/thermogar_release_ui.py
+   PASS app/style.css
+   PASS .streamlit/config.toml
+   PASS configs/ne04_database_domains.json
+   PASS databases/physical/original/physical_data_v103.pdb
+
+DATABASES
+   PASS Никелевые сплавы phases=99 expected=99
+   PASS Алюминиевые сплавы phases=195 expected=195
+
+CALCULATIONS
+   PASS Ni–15 ат.% Al, 700 °C phases= FCC_A1, GAMMA_PRIME sum= 1.0000000000002127
+   PASS Al–4 ат.% Cu, 500 °C phases= GP_MAT, THETA_AL2CU sum= 0.9999999999980349
+
+PHYSICAL DATABASE
+   PASS functions=101 parameters=121 density=2595.1807206479502 coverage=100.0
+
+PROPERTIES
+   PASS elastic=True vrh=True strengthening=True E_Hill=182.14285714285717 educational_total=264.1197009229512
+
+DIFFUSION
+   PASS kawin=0.5.0 phase=FCC_A1 time=3.6 mass_error=1.999999994783952e-08
+
+Fe database guard — DIAGNOSTIC ONLY, NEVER A RELEASE BASELINE:
+  working exact parameter: 0 upstream exact parameter: 1 upstream profile: True passport: True STRUCTURE_OK
+
+PRECIPITATION
+   PASS kawin=0.5.0 matrix=FCC_A1 precipitate=GAMMA_PRIME setup=True
+
+==============================================================================
+RESULT: SOFTWARE REGRESSION PASSED — NOT MATERIAL QUALIFICATION
+==============================================================================

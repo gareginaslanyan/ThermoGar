@@ -1,0 +1,2 @@
+{"job": "notslow__test_backend_calculations.py", "exit": 15, "last_line": "................", "seconds": 191.7, "peak_tree_gib": 1.2, "free_at_start_gib": 1.66, "min_free_gib": 0.36, "aborted_low_memory": true}
+{"job": "notslow__test_database_repair.py", "exit": 15, "last_line": "...................", "seconds": 185.5, "peak_tree_gib": 1.48, "free_at_start_gib": 1.65, "min_free_gib": 0.3, "aborted_low_memory": true}
