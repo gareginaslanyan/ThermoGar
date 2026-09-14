@@ -1,0 +1,49 @@
+{
+ "mode": "on",
+ "free_at_start_gib": 7.067,
+ "after_database": {
+  "rss_gib": 0.21,
+  "peak_wset_gib": 0.2166,
+  "private_gib": 0.8708,
+  "peak_pagefile_gib": 0.8777
+ },
+ "seconds_database": 8.67,
+ "seconds_build_calc_model": 1.25,
+ "after_calc_model": {
+  "rss_gib": 0.2603,
+  "peak_wset_gib": 0.2603,
+  "private_gib": 0.9225,
+  "peak_pagefile_gib": 0.9225
+ },
+ "seconds_build_estimate_model": 0.92,
+ "seconds_nucleus_estimates": 2.83,
+ "nucleus_estimates_nm": [
+  [
+   973.15,
+   0.9568812344249824,
+   1.060281009960868
+  ]
+ ],
+ "after_estimate": {
+  "rss_gib": 0.3084,
+  "peak_wset_gib": 0.3849,
+  "private_gib": 1.0371,
+  "peak_pagefile_gib": 1.1142
+ },
+ "seconds_solve": 472.91,
+ "seconds_total": 486.59,
+ "after_solve": {
+  "rss_gib": 0.3216,
+  "peak_wset_gib": 0.3849,
+  "private_gib": 1.051,
+  "peak_pagefile_gib": 1.1142
+ },
+ "solver_steps": 7580,
+ "final_time_h": 87600.0,
+ "final_volume_fraction": 0.21980859291926233,
+ "final_mean_radius_nm": 207.32928336924022,
+ "sampled_rss_max_gib": 0.3664,
+ "sampled_private_max_gib": 1.0959,
+ "estimate_model_alive_during_solve": true,
+ "min_free_during_run_note": "см. раннер"
+}

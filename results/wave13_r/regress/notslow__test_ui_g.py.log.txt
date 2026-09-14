@@ -1,0 +1,80 @@
+..........F.................                                             [100%]
+================================== FAILURES ===================================
+_________________________ test_kwn_precipitation[ni] __________________________
+
+database_key = 'ni'
+
+    @pytest.mark.parametrize(
+        "database_key",
+        (
+            "ni",
+            "al",
+            pytest.param("fe", marks=pytest.mark.slow),
+        ),
+    )
+    def test_kwn_precipitation(database_key: str) -> None:
+        matrix, precipitate, temperature = KWN_CELL[database_key]
+        app = start_app(database_key)
+    
+        matrix_options = widget(
+            app, "selectbox", f"precipitation_{database_key}_user_matrix"
+        ).options
+        assert matrix in matrix_options, (
+            f"{matrix} не предлагается матрицей для базы {database_key}: "
+            f"{matrix_options}"
+        )
+    
+        state = app.session_state
+        state[f"precipitation_{database_key}_user_matrix"] = matrix
+        state[f"precipitation_{database_key}_user_precipitate"] = precipitate
+        state[f"precipitation_{database_key}_user_temperature_c"] = temperature
+        state[f"precipitation_{database_key}_user_duration_h"] = SHORT_TIME_H
+        state[f"precipitation_{database_key}_user_bins"] = 30
+        app.run()
+    
+        widget(
+            app, "button", f"precipitation_{database_key}_user_calculate"
+        ).click().run()
+        assert_no_traceback(app)
+>       assert new_errors(app) == [], new_errors(app)
+E       AssertionError: ['Расчёт не выполнен из-за неверных исходных данных.
+E         
+E         Сетка размеров слишком грубая: ширина класса 0.327 нм не меньш... 100 %. Уменьшите «Начальный максимальный радиус» или возьмите больше классов: при этом диапазоне нужно не меньше 33.']
+E       assert ['Расчёт не в...е меньше 33.'] == []
+E         
+E         Left contains one more item: 'Расчёт не выполнен из-за неверных исходных данных.\n\nСетка размеров слишком грубая: ширина класса 0.327 нм не меньше...о 100 %. Уменьшите «Начальный максимальный радиус» или возьмите больше классов: при этом диапазоне нужно не меньше 33.'
+E         Use -v to get more diff
+
+tools\test_ui_g.py:381: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-14 12:51:20.033 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-14 12:51:20.033 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-14 12:51:20.033 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-14 12:51:20.033 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-14 12:51:20.033 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-14 12:51:22.010 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-14 12:51:22.010 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-14 12:51:22.010 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-14 12:51:22.010 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-14 12:51:22.010 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+============================== warnings summary ===============================
+tools/test_ui_g.py::test_kwn_precipitation[ni]
+tools/test_ui_g.py::test_kwn_precipitation[al]
+  C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\precipitation\NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+    incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tools/test_ui_g.py::test_kwn_precipitation[ni] - AssertionError: ['Рас...
+1 failed, 27 passed, 3 deselected, 2 warnings in 286.21s (0:04:46)

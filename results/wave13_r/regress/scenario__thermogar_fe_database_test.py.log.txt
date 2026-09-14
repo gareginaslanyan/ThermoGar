@@ -1,0 +1,40 @@
+THERMOGAR STAGE 13.2 — FE C15_LAVES ACCEPTANCE
+Project: C:\Users\gareg\Desktop\ThermoGar-w13r
+Working: C:\Users\gareg\Desktop\ThermoGar-w13r\databases\converted\fe\mc_fe_v2062_with_mobility.thermogar.tdb
+Unpatched diagnostic: C:\Users\gareg\Desktop\ThermoGar-w13r\databases\diagnostic\fe\mc_fe_v2062_unpatched_with_mobility.thermogar.tdb
+
+=== STRUCTURAL CHECK ===
+PASS: patch id recorded
+PASS: patch applied
+PASS: matched exactly one command
+PASS: working -9e6 inactive
+PASS: diagnostic -9e6 active
+PASS: working C15_LAVES has 18 G parameters
+PASS: diagnostic C15_LAVES has 19 G parameters
+PASS: C15_LAVES changed by exactly one parameter
+PASS: LAVES_PHASE unchanged
+PASS: C15_LAVES phase remains defined
+PASS: C15_LAVES model constituents are FE, MN, NI, SI
+
+=== HIGH-TEMPERATURE MELTING CHECK ===
+Benchmark composition, wt.%: CR=11.5,NI=0.7,MN=0.7,SI=0.3,C=0.20,MO=0.6,W=0.9,V=0.225
+Note: this is a midpoint proxy from published 20Х12ВНМФ grade ranges. Use --high-temp-composition for an exact heat analysis.
+T=1800 K | working LIQUID=1.00000000, C15=0.00000000 | diagnostic LIQUID=0.96539617, C15=0.03460383 | PASS
+T=1900 K | working LIQUID=1.00000000, C15=0.00000000 | diagnostic LIQUID=0.96587049, C15=0.03412951 | PASS
+T=2000 K | working LIQUID=1.00000000, C15=0.00000000 | diagnostic LIQUID=0.96633144, C15=0.03366856 | PASS
+PASS: working profile reaches LIQUID=1.000 at 1800–2000 K
+PASS: unpatched profile reproduces the high-T C15 symptom
+
+=== Mn–Ni–Si C15_LAVES SURVIVAL CHECK ===
+Witness, at.%: MN=33.333333, NI=53.333333, SI=13.333333 ((Ni,Si)2Mn AB2 line)
+The disabled FE,NI:MN,SI reciprocal parameter requires Fe and is inactive in this Fe-free subsystem.
+T=500 K | working C15=1.00000000 | diagnostic C15=1.00000000 | max Δ=0.000e+00 | PASS
+T=700 K | working C15=1.00000000 | diagnostic C15=1.00000000 | max Δ=0.000e+00 | PASS
+T=900 K | working C15=0.66925092 | diagnostic C15=0.66925092 | max Δ=0.000e+00 | PASS
+T=1100 K | working C15=0.17656212 | diagnostic C15=0.17656212 | max Δ=0.000e+00 | PASS
+PASS: C15_LAVES remains equilibrium-stable after the patch within 673–2000 K
+PASS: working and unpatched profiles agree in Fe-free Mn–Ni–Si
+Best witness: T=700 K, C15_LAVES=1.00000000
+
+RESULT: PASSED
+Reports: C:\Users\gareg\Desktop\ThermoGar-w13r\results\validation\stage13_2

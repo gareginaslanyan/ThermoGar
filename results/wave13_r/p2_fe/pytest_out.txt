@@ -1,0 +1,84 @@
+.                                                                        [100%]
+============================== warnings summary ===============================
+tools\test_backend_calculations.py:502
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:502: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(DEFAULT_TIMEOUT)
+
+tools\test_backend_calculations.py:530
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:530: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(DEFAULT_TIMEOUT)
+
+tools\test_backend_calculations.py:549
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:549: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(DEFAULT_TIMEOUT)
+
+tools\test_backend_calculations.py:566
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:566: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(DEFAULT_TIMEOUT)
+
+tools\test_backend_calculations.py:592
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:592: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(SLOW_TIMEOUT)
+
+tools\test_backend_calculations.py:617
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:617: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(SLOW_TIMEOUT)
+
+tools\test_backend_calculations.py:645
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:645: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(SLOW_TIMEOUT)
+
+tools\test_backend_calculations.py:674
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:674: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(SLOW_TIMEOUT)
+
+tools\test_backend_calculations.py:715
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:715: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(DEFAULT_TIMEOUT)
+
+tools\test_backend_calculations.py:735
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:735: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(SLOW_TIMEOUT)
+
+tools\test_backend_calculations.py:772
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:772: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(DEFAULT_TIMEOUT)
+
+tools\test_backend_calculations.py:807
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:807: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(DEFAULT_TIMEOUT)
+
+tools\test_backend_calculations.py:861
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:861: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(DEFAULT_TIMEOUT)
+
+tools\test_backend_calculations.py:900
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:900: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(DEFAULT_TIMEOUT)
+
+tools\test_backend_calculations.py:950
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:950: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(DEFAULT_TIMEOUT)
+
+tools\test_backend_calculations.py:988
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:988: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(DEFAULT_TIMEOUT)
+
+tools\test_backend_calculations.py:1051
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:1051: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(SLOW_TIMEOUT)
+
+tools\test_backend_calculations.py:1120
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:1120: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(SLOW_TIMEOUT)
+
+tools\test_backend_calculations.py:1174
+  C:\Users\gareg\Desktop\ThermoGar-w13r\tools\test_backend_calculations.py:1174: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.timeout(SLOW_TIMEOUT)
+
+tools/test_backend_calculations.py::test_kwn_module[fe]
+  C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\precipitation\NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+    incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1 passed, 20 warnings in 136.35s (0:02:16)
