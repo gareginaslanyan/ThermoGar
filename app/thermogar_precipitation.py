@@ -8,7 +8,7 @@
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from importlib.metadata import PackageNotFoundError, version
 from io import BytesIO
 from pathlib import Path
@@ -121,6 +121,8 @@ class PrecipitationResult:
     figures: dict[str, plt.Figure]
     npz: bytes
     provenance: bytes
+    # Сообщения о правках базы, касающихся элементов расчёта (BL-20).
+    warnings: list[str] = field(default_factory=list)
 
 
 def _pkg(name: str) -> str:
@@ -449,7 +451,24 @@ def _psd_figure(table: pd.DataFrame, phase: str) -> plt.Figure:
     return figure
 
 
-def _quality(data: Any, pindex: int, solute_count: int) -> pd.DataFrame:
+# Доля, начиная с которой считаем, что kawin упёрся в свой потолок 1.
+VOLUME_FRACTION_CEILING = 1.0 - 1e-6
+
+
+def _size_class_width_nm(cmin_nm: float, cmax_nm: float, bins: int) -> float:
+    """Ширина класса начальной сетки: kawin строит её линейно по радиусу."""
+
+    return (float(cmax_nm) - float(cmin_nm)) / int(bins)
+
+
+def _quality(
+    data: Any,
+    pindex: int,
+    solute_count: int,
+    cmin_nm: float | None = None,
+    cmax_nm: float | None = None,
+    bins: int | None = None,
+) -> pd.DataFrame:
     checks: list[dict[str, str]] = []
     def add(name: str, ok: bool, note: str) -> None:
         checks.append({"Проверка": name, "Статус": "пройдена" if ok else "ошибка", "Примечание": note})
@@ -465,7 +484,124 @@ def _quality(data: Any, pindex: int, solute_count: int) -> pd.DataFrame:
     add("Радиус неотрицателен", bool(np.all(radius >= -1e-20)), "Средний радиус неотрицателен.")
     add("Плотность неотрицательна", bool(np.all(density >= -1e-6)), "Количество частиц неотрицательно.")
     add("Состав матрицы допустим", bool(composition.shape[1] == solute_count and np.all(np.isfinite(composition)) and np.all((composition >= -1e-8) & (composition <= 1+1e-8))), "Проверка независимых компонентов.")
+    # BL-22. kawin обрезает долю единицей и после этого перестаёт пересчитывать
+    # состав матрицы (KWNEuler: volFrac = min(..., 1), при сумме долей 1 состав
+    # не обновляется). Доля 100 % — след зародышей, записанных в класс шире их
+    # самих, а не результат расчёта.
+    add(
+        "Объёмная доля не упёрлась в 100 %",
+        bool(not fraction.size or np.nanmax(fraction) < VOLUME_FRACTION_CEILING),
+        "Доля 100 % означает негодную сетку размеров, а не полное превращение.",
+    )
+    if cmin_nm is not None and cmax_nm is not None and bins is not None:
+        width_nm = _size_class_width_nm(cmin_nm, cmax_nm, bins)
+        nucleation = np.asarray(data.nucRate[:, pindex], float)
+        rcrit_nm = 1e9*np.asarray(data.Rcrit[:, pindex], float)
+        rnuc_nm = 1e9*np.asarray(data.Rnuc[:, pindex], float)
+        nucleating = (nucleation > 0) & (rnuc_nm > 0)
+        coarse = nucleating & (rcrit_nm <= width_nm)
+        below = nucleating & (rnuc_nm < float(cmin_nm))
+        coarse_note = f"Ширина класса начальной сетки {width_nm:.4g} нм"
+        if np.any(coarse):
+            coarse_note += (
+                f", критический радиус на шагах зарождения — от "
+                f"{np.min(rcrit_nm[coarse]):.4g} нм: зародыши шире не разрешены."
+            )
+        else:
+            coarse_note += "."
+        add("Ширина класса меньше критического радиуса", not bool(np.any(coarse)), coarse_note)
+        below_note = f"Минимальный радиус сетки {float(cmin_nm):.4g} нм"
+        if np.any(below):
+            below_note += (
+                f", радиус зародыша — от {np.min(rnuc_nm[below]):.4g} нм: kawin "
+                "кладёт такие зародыши в последний, самый крупный класс сетки."
+            )
+        else:
+            below_note += "."
+        add("Зародыш не меньше минимального радиуса сетки", not bool(np.any(below)), below_note)
     return pd.DataFrame(checks)
+
+
+def _nucleus_estimates(
+    model: Any,
+    precipitate_phase: str,
+    temperatures_k: list[float],
+) -> list[tuple[float, float, float]]:
+    """Критический радиус и радиус зародыша на первом шаге, нм, по температурам.
+
+    Считается теми же функциями kawin, что и в самом расчёте
+    (``KWNBase._calcNucleationRate``), по начальному составу матрицы. Кэш
+    термодинамики kawin не задействуется (``removeCache=True``), чтобы оценка
+    не меняла начальные приближения самого расчёта.
+    Температуры без положительной движущей силы пропускаются: зарождения там
+    нет, и сетке нечего разрешать.
+    """
+
+    import kawin.precipitation.NucleationRate as nucleation_functions
+
+    model.setup()
+    p = model.phaseIndex(precipitate_phase)
+    parameters = model.precipitates[p]
+    composition = np.squeeze(model.data.composition[0])
+    estimates: list[tuple[float, float, float]] = []
+    for temperature_k in sorted({float(value) for value in temperatures_k}):
+        _chemical, volume_dg, _beta = nucleation_functions.volumetricDrivingForce(
+            model.therm, composition, temperature_k, parameters,
+            removeCache=True,
+        )
+        volume_dg = float(np.squeeze(volume_dg))
+        if not np.isfinite(volume_dg) or volume_dg <= 0:
+            continue
+        rcrit, _gcrit = nucleation_functions.nucleationBarrier(volume_dg, parameters)
+        rnuc = nucleation_functions.nucleationRadius(temperature_k, rcrit, parameters)
+        estimates.append((temperature_k, 1e9*float(rcrit), 1e9*float(rnuc)))
+    return estimates
+
+
+def _check_size_grid(
+    estimates: list[tuple[float, float, float]],
+    cmin_nm: float,
+    cmax_nm: float,
+    bins: int,
+) -> None:
+    """BL-22: не пускать в расчёт сетку, на которой зародыш не разрешён.
+
+    kawin кладёт зародыш радиусом ``Rnuc`` в класс
+    ``argmax(PSDbounds > Rnuc) - 1`` (``PopulationBalance.getdXdtEuler``).
+    Если класс не уже критического радиуса, зародыш записывается частицей с
+    радиусом центра класса, и объём выделений завышается на порядки — вплоть
+    до ложной доли 100 %. Если зародыш меньше ``cMin``, индекс становится -1,
+    и зародыш уходит в последний, самый крупный класс.
+
+    На первом шаге движущая сила наибольшая, а критический радиус
+    наименьший, поэтому оценка по начальному составу — самая строгая.
+    """
+
+    if not estimates:
+        return
+    temperature_k, _rcrit_nm, rnuc_nm = min(estimates, key=lambda item: item[2])
+    if rnuc_nm < float(cmin_nm):
+        raise ValueError(
+            f"Сетка размеров не принимает зародыши: радиус зародыша {rnuc_nm:.3g} нм "
+            f"(оценка при {temperature_k - 273.15:.1f} °C по начальному составу) "
+            f"меньше минимального радиуса сетки {float(cmin_nm):.3g} нм. kawin "
+            "записал бы такие зародыши в последний, самый крупный класс сетки, и "
+            "результат был бы неверным. Уменьшите «Минимальный радиус» ниже "
+            f"{rnuc_nm:.3g} нм."
+        )
+    width_nm = _size_class_width_nm(cmin_nm, cmax_nm, bins)
+    temperature_k, rcrit_nm, _rnuc_nm = min(estimates, key=lambda item: item[1])
+    if width_nm >= rcrit_nm:
+        needed_bins = int(np.floor((float(cmax_nm) - float(cmin_nm)) / rcrit_nm)) + 1
+        raise ValueError(
+            f"Сетка размеров слишком грубая: ширина класса {width_nm:.3g} нм не "
+            f"меньше критического радиуса зародыша {rcrit_nm:.3g} нм (оценка при "
+            f"{temperature_k - 273.15:.1f} °C по начальному составу). Зародыши "
+            "попали бы в класс шире себя, объём выделений был бы завышен, и расчёт "
+            "показал бы ложную объёмную долю вплоть до 100 %. Уменьшите «Начальный "
+            "максимальный радиус» или возьмите больше классов: при этом диапазоне "
+            f"нужно не меньше {needed_bins}."
+        )
 
 
 def _summary(time_h: np.ndarray, fraction: np.ndarray, radius_nm: np.ndarray, density: np.ndarray, nuc_rate: np.ndarray) -> pd.DataFrame:
@@ -528,6 +664,17 @@ def _repair_loaded_database(database: Any) -> None:
         repair.repair_database(database)
     except Exception:
         pass
+
+
+def _database_override_warnings(database: Any, elements: list[str]) -> list[str]:
+    """Сообщения о правках базы, которые касаются элементов расчёта."""
+
+    try:
+        import thermogar_database_repair as repair
+
+        return repair.override_warnings(database, elements)
+    except Exception:
+        return []
 
 
 def _bind_release_database(
@@ -627,6 +774,7 @@ def run_precipitation(
         raise RuntimeError("Kawin precipitation недоступен: " + PRECIPITATION_IMPORT_ERROR)
     elements, x_at, _x_wt = _composition_vectors(db, balance, composition_text, units)
     solutes = elements[1:]
+    database_warnings = _database_override_warnings(db, elements)
     if matrix_phase == precipitate_phase:
         raise ValueError("Матрица и выделение должны различаться.")
     if matrix_phase not in db.phases or precipitate_phase not in db.phases:
@@ -686,6 +834,16 @@ def run_precipitation(
         cMin=float(cmin_nm)*1e-9, cMax=float(cmax_nm)*1e-9, bins=int(bins),
         minBins=max(20, int(bins)//2), maxBins=max(80, int(bins)*2), adaptive=True,
     )
+    try:
+        nucleus_estimates = _nucleus_estimates(
+            model,
+            precipitate_phase,
+            [float(item["temperature_c"]) + 273.15 for item in profile],
+        )
+    except Exception:
+        # Оценка не удалась — решение остаётся за проверками после расчёта.
+        nucleus_estimates = []
+    _check_size_grid(nucleus_estimates, cmin_nm, cmax_nm, int(bins))
     model.setPSDrecording(False)
     if hasattr(model, "cacheCalculations"):
         model.cacheCalculations(True)
@@ -730,7 +888,7 @@ def run_precipitation(
         "Радиус класса, нм": 1e9*np.asarray(pbm.PSDsize, float),
         "Число частиц в классе, 1/м³": np.asarray(pbm.PSD, float),
     })
-    quality = _quality(data, p, len(solutes))
+    quality = _quality(data, p, len(solutes), cmin_nm, cmax_nm, int(bins))
     summary = _summary(time_h, fraction, radius_nm, density, nuc_rate)
     settings_rows = [
         ("База", database_label), ("Файл базы", str(database_path)),
@@ -753,6 +911,7 @@ def run_precipitation(
         ("Минимальный радиус, нм", cmin_nm), ("Максимальный радиус, нм", cmax_nm),
         ("Классов размеров", bins),
         ("Источник физических входов", input_provenance.strip()),
+        ("Правки базы ThermoGar", "; ".join(database_warnings) or "нет"),
         ("Класс расчёта", "исследовательский сценарий, не прогноз материала"),
     ]
     # Колонка значений намеренно текстовая: смесь строк и чисел в одном
@@ -782,6 +941,7 @@ def run_precipitation(
         "temperature_profile": profile,
         "parameters": {key: value for key, value in settings_rows},
         "input_confirmation": True,
+        "database_overrides": database_warnings,
         "limitations": [
             "user-supplied interfacial energy and molar volumes",
             "spherical particles and homogeneous matrix",
@@ -803,6 +963,7 @@ def run_precipitation(
         interface_composition=interface_table, psd=psd, quality=quality,
         figures=figures, npz=buffer.getvalue(),
         provenance=json.dumps(provenance, ensure_ascii=False, indent=2, default=str).encode("utf-8-sig"),
+        warnings=list(database_warnings),
     )
 
 
@@ -1137,6 +1298,8 @@ def render_precipitation_section(
     if result.database_key != database_key:
         st.info("Результат относится к другой базе. Выполните расчёт заново.")
         return
+    for warning in getattr(result, "warnings", ()) or ():
+        st.warning(warning)
     if (result.quality["Статус"] == "пройдена").all():
         st.success("Внутренние численные проверки пройдены.")
     else:

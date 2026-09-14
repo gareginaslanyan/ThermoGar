@@ -314,7 +314,11 @@ CASES: dict[str, Case] = {
         kwn_solute_x=(0.0092, 0.1216),
         kwn_gamma=0.3,
         kwn_molar_volume_cm3=7.09,
-        kwn_size_nm=(0.5, 20.0),
+        # BL-22: при 30 классах сетка (0,5; 20) нм даёт ширину класса 0,65 нм,
+        # а критический радиус M23C6 на первом шаге — 0,47 нм (оценка kawin при
+        # 700 °C, волна 13-Д). Такую сетку run_precipitation теперь отклоняет;
+        # (0,5; 10) нм даёт 0,32 нм, радиус зародыша 0,53 нм остаётся выше cMin.
+        kwn_size_nm=(0.5, 10.0),
         elastic_rows=(
             {"phase": "BCC_B2", "volume_fraction": 0.95, "bulk_gpa": 170.0, "shear_gpa": 82.0},
             {"phase": "M23C6", "volume_fraction": 0.05, "bulk_gpa": 260.0, "shear_gpa": 130.0},
