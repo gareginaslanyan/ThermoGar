@@ -1,0 +1,15 @@
+{
+    "schema":  1,
+    "product":  "ThermoGar",
+    "version":  "0.4.1",
+    "vi_product_version":  "0.4.1.0",
+    "built_utc":  "2026-09-14T08:45:05Z",
+    "build_seconds":  977,
+    "nsis":  "C:\\Program Files (x86)\\NSIS\\makensis.exe",
+    "payload_files":  15078,
+    "payload_bytes":  581134698,
+    "installer":  "ThermoGar-0.4.1-win64.exe",
+    "installer_bytes":  118501790,
+    "installer_sha256":  "206A5C8F76051A92BCCBB56101E524F86B746D92A1C9C21FF9ACF43B810358A8",
+    "estimated_size_kb":  567515
+}

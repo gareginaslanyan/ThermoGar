@@ -1,0 +1,36 @@
+{
+ "python": "C:\\Users\\gareg\\Desktop\\ThermoGar\\.venv-windows\\Scripts\\python.exe",
+ "app_dir": "C:\\Users\\gareg\\AppData\\Local\\Temp\\claude\\C--Users-gareg\\ee1468d8-613c-482f-8a91-824b91b65a34\\scratchpad\\p2\\src_123c7e4\\app",
+ "APP_VERSION": "0.4.0",
+ "thermogar_precipitation": "C:\\Users\\gareg\\AppData\\Local\\Temp\\claude\\C--Users-gareg\\ee1468d8-613c-482f-8a91-824b91b65a34\\scratchpad\\p2\\src_123c7e4\\app\\thermogar_precipitation.py",
+ "cases": {
+  "ni_al_cr_nb": {
+   "label": "Ni–9,8Al–8,3Cr–1Nb ат. %, γ/γ′, 800 °C",
+   "status": "FAIL",
+   "error": "RuntimeError: ln(1.0, 0.0)",
+   "traceback_tail": [
+    "    return Lambdify(args, *exprs, **kwargs)",
+    "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+    "  File \"symengine_wrapper.pyx\", line 5375, in symengine.lib.symengine_wrapper.Lambdify",
+    "  File \"symengine_wrapper.pyx\", line 4990, in symengine.lib.symengine_wrapper._Lambdify.__init__",
+    "  File \"symengine_wrapper.pyx\", line 5223, in symengine.lib.symengine_wrapper.LLVMDouble._init",
+    "RuntimeError: ln(1.0, 0.0)"
+   ],
+   "seconds": 9.7
+  },
+  "alloy718_base": {
+   "label": "Ni–19Cr–5,1Nb–0,5Al–0,9Ti масс. % (основа 718 без Fe и Mo), γ/γ′, 750 °C",
+   "status": "FAIL",
+   "error": "RuntimeError: ln(1.0, 0.0)",
+   "traceback_tail": [
+    "    return Lambdify(args, *exprs, **kwargs)",
+    "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+    "  File \"symengine_wrapper.pyx\", line 5375, in symengine.lib.symengine_wrapper.Lambdify",
+    "  File \"symengine_wrapper.pyx\", line 4990, in symengine.lib.symengine_wrapper._Lambdify.__init__",
+    "  File \"symengine_wrapper.pyx\", line 5223, in symengine.lib.symengine_wrapper.LLVMDouble._init",
+    "RuntimeError: ln(1.0, 0.0)"
+   ],
+   "seconds": 7.4
+  }
+ }
+}

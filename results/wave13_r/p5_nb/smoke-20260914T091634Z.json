@@ -1,0 +1,81 @@
+{
+    "schema":  1,
+    "started_utc":  "20260914T091634Z",
+    "installer":  "C:\\Users\\gareg\\Desktop\\ThermoGar-w13r\\dist\\ThermoGar-0.4.1-win64.exe",
+    "install_root":  "C:\\Program Files\\ThermoGar",
+    "elevated_helper":  true,
+    "uac_prompts":  1,
+    "overall":  "PASS",
+    "ui_port":  57549,
+    "control_port":  55132,
+    "health":  {
+                   "schema":  1,
+                   "status":  "HEALTHY",
+                   "install_identity_sha256":  "9713241A7C1DDEFF2A562EA7382797BB432A4A6426486E58A2B20661F345B97F",
+                   "supervisor_pid":  3348,
+                   "supervisor_creation_filetime":  "134338507015360770",
+                   "child_pid":  22976,
+                   "child_creation_filetime":  "134338507025451518",
+                   "control_port":  55132,
+                   "ui_port":  57549,
+                   "nonce":  "6b4db2d25c77eede43009e5576324db0473b6faec2e16700dc4343c15953dec9"
+               },
+    "steps":  [
+                  {
+                      "step":  1,
+                      "name":  "silent install",
+                      "status":  "PASS",
+                      "seconds":  51.6,
+                      "detail":  "installer exit 0"
+                  },
+                  {
+                      "step":  2,
+                      "name":  "files, shortcut, registry",
+                      "status":  "PASS",
+                      "seconds":  0.1,
+                      "detail":  "missing=0 database=True shortcut=True registry=True version=0.4.1"
+                  },
+                  {
+                      "step":  3,
+                      "name":  "launcher started",
+                      "status":  "PASS",
+                      "seconds":  3.1,
+                      "detail":  "pid=3348 alive=True cwd=C:\\Users\\gareg\\AppData\\Local\\Temp\\thermogar-smoke-13c63ca1"
+                  },
+                  {
+                      "step":  4,
+                      "name":  "healthcheck HEALTHY",
+                      "status":  "PASS",
+                      "seconds":  58.2,
+                      "detail":  "after 58.2s ui_port=57549 control_port=55132 last={\"schema\":1,\"status\":\"HEALTHY\",\"install_identity_sha256\":\"9713241A7C1DDEFF2A562EA7382797BB432A4A6426486E58A2B20661F345B97F\",\"supervisor_pid\":3348,\"supervisor_creation_filetime\":\"134338507015360770\",\"child_pid\":22976,\"child_creation_filetime\":\"134338507025451518\",\"control_port\":55132,\"ui_port\":57549,\"nonce\":\"6b4db2d25c77eede43009e5576324db0473b6faec2e16700dc4343c15953dec9\"}"
+                  },
+                  {
+                      "step":  5,
+                      "name":  "UI 200, app script runs clean",
+                      "status":  "PASS",
+                      "seconds":  1.4,
+                      "detail":  "GET / -\u003e 200 (11141 bytes, Streamlit shell: True); script-health-check -\u003e 200 \u0027ok\u0027"
+                  },
+                  {
+                      "step":  6,
+                      "name":  "stop: no processes, ports free",
+                      "status":  "PASS",
+                      "seconds":  2.9,
+                      "detail":  "stop exit 0, remaining processes 0, ports free True, out={\"schema\":1,\"status\":\"STOPPED\",\"supervisor_pid\":3348,\"supervisor_creation_filetime\":\"134338507015360770\",\"nonce\":\"6b4db2d25c77eede43009e5576324db0473b6faec2e16700dc4343c15953dec9\"}"
+                  },
+                  {
+                      "step":  7,
+                      "name":  "silent uninstall, LOCALAPPDATA kept",
+                      "status":  "PASS",
+                      "seconds":  6.6,
+                      "detail":  "uninstaller exit 0, leftover files 0, registry gone True, shortcut gone True, LOCALAPPDATA kept True"
+                  },
+                  {
+                      "step":  8,
+                      "name":  "upgrade over existing install, user project kept",
+                      "status":  "PASS",
+                      "seconds":  220.9,
+                      "detail":  "install exit 0, files True; start healthy True, stop exit 0 clean True; upgrade install exit 0, files True; restart healthy True ui_port 55071, UI and script-health-check 200 True; stop exit 0 clean True; project kept across upgrade True, identical True; uninstall exit 0 removed True, project kept True"
+                  }
+              ]
+}
