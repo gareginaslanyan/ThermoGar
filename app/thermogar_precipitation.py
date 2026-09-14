@@ -530,11 +530,19 @@ def _nucleus_estimates(
     """Критический радиус и радиус зародыша на первом шаге, нм, по температурам.
 
     Считается теми же функциями kawin, что и в самом расчёте
-    (``KWNBase._calcNucleationRate``), по начальному составу матрицы. Кэш
-    термодинамики kawin не задействуется (``removeCache=True``), чтобы оценка
-    не меняла начальные приближения самого расчёта.
+    (``KWNBase._calcNucleationRate``), по начальному составу матрицы.
     Температуры без положительной движущей силы пропускаются: зарождения там
     нет, и сетке нечего разрешать.
+
+    Функция вызывает ``model.setup()`` и движущую силу на переданной модели и
+    меняет её состояние. ``removeCache=True`` от этого не защищает: волна 13-Р
+    показала, что такой вызов на объектах самого расчёта сдвигает его числа
+    (до 6·10⁻⁸ относительных на Ni–9,8Al–8,3Cr при 800 °C). Поэтому
+    ``run_precipitation`` передаёт сюда отдельную модель со своим объектом
+    термодинамики, собранную теми же параметрами, а расчёт идёт на другой;
+    кинетика с оценкой и без неё совпадает побайтово
+    (``tools/test_precipitation_grid.py``). Модель, переданную сюда, для
+    расчёта не использовать.
     """
 
     import kawin.precipitation.NucleationRate as nucleation_functions
@@ -802,41 +810,50 @@ def run_precipitation(
     if schedule_mode == "isothermal":
         if duration_h <= 0:
             raise ValueError("Время выдержки должно быть больше нуля.")
-        temperature = TemperatureParameters(float(temperature_c)+273.15)
         final_time = float(duration_h)*3600
         profile = [{"time_h": 0.0, "temperature_c": float(temperature_c)}, {"time_h": float(duration_h), "temperature_c": float(temperature_c)}]
     else:
         times_h, temperatures_c = _temperature_profile(profile_text)
-        temperature = TemperatureParameters(times_h.tolist(), (temperatures_c+273.15).tolist())
         final_time = float(times_h[-1])*3600
         profile = [{"time_h": float(t), "temperature_c": float(T)} for t, T in zip(times_h, temperatures_c)]
 
-    therm, thermodynamics_class = _build_precipitation_thermodynamics(
-        db,
-        elements,
-        [matrix_phase, precipitate_phase],
-    )
-    matrix = MatrixParameters(solutes)
-    matrix.initComposition = np.asarray(x_at[1:], float)
-    matrix.volume.setVolume(float(matrix_vm)*1e-6, "VM", 1)
-    matrix.GBenergy = float(gb_energy)
-    matrix.nucleationSites.setNucleationDensity(
-        grainSize=float(grain_size_um), aspectRatio=1,
-        dislocationDensity=float(dislocation_density), bulkN0=float(bulk_n0),
-    )
-    precip = PrecipitateParameters(precipitate_phase)
-    precip.gamma = float(gamma)
-    precip.volume.setVolume(float(precip_vm)*1e-6, "VM", 1)
-    precip.nucleation.setNucleationType(nucleation_type)
+    def build_model() -> tuple[Any, str]:
+        if schedule_mode == "isothermal":
+            temperature = TemperatureParameters(float(temperature_c)+273.15)
+        else:
+            temperature = TemperatureParameters(times_h.tolist(), (temperatures_c+273.15).tolist())
+        therm, thermodynamics_class = _build_precipitation_thermodynamics(
+            db,
+            elements,
+            [matrix_phase, precipitate_phase],
+        )
+        matrix = MatrixParameters(solutes)
+        matrix.initComposition = np.asarray(x_at[1:], float)
+        matrix.volume.setVolume(float(matrix_vm)*1e-6, "VM", 1)
+        matrix.GBenergy = float(gb_energy)
+        matrix.nucleationSites.setNucleationDensity(
+            grainSize=float(grain_size_um), aspectRatio=1,
+            dislocationDensity=float(dislocation_density), bulkN0=float(bulk_n0),
+        )
+        precip = PrecipitateParameters(precipitate_phase)
+        precip.gamma = float(gamma)
+        precip.volume.setVolume(float(precip_vm)*1e-6, "VM", 1)
+        precip.nucleation.setNucleationType(nucleation_type)
 
-    model = PrecipitateModel(matrix, [precip], therm, temperature)
-    model.setPBMParameters(
-        cMin=float(cmin_nm)*1e-9, cMax=float(cmax_nm)*1e-9, bins=int(bins),
-        minBins=max(20, int(bins)//2), maxBins=max(80, int(bins)*2), adaptive=True,
-    )
+        built = PrecipitateModel(matrix, [precip], therm, temperature)
+        built.setPBMParameters(
+            cMin=float(cmin_nm)*1e-9, cMax=float(cmax_nm)*1e-9, bins=int(bins),
+            minBins=max(20, int(bins)//2), maxBins=max(80, int(bins)*2), adaptive=True,
+        )
+        return built, thermodynamics_class
+
+    model, thermodynamics_class = build_model()
     try:
+        # Своя модель и своя термодинамика: вызов движущей силы после setup()
+        # на объектах расчёта сдвигал сам расчёт в 8-м знаке (13-Р).
+        estimate_model, _estimate_class = build_model()
         nucleus_estimates = _nucleus_estimates(
-            model,
+            estimate_model,
             precipitate_phase,
             [float(item["temperature_c"]) + 273.15 for item in profile],
         )

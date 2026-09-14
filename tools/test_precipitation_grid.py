@@ -239,3 +239,55 @@ def test_run_precipitation_on_resolved_grid_passes_all_checks() -> None:
     assert "Зародыш не меньше минимального радиуса сетки" in names
     # В составе нет ниобия — сообщения о правке его подвижности нет.
     assert result.warnings == []
+
+
+def _numeric_outputs(result) -> dict[str, bytes]:
+    """Все числа расчёта KWN в побайтово сравнимом виде."""
+
+    import io
+
+    outputs = {
+        name: getattr(result, name).to_csv(float_format="%.17g", lineterminator="\n").encode()
+        for name in ("kinetics", "summary", "matrix_composition", "interface_composition", "psd")
+    }
+    # Сам zip в ``npz`` несёт время записи, поэтому сравниваются массивы.
+    with np.load(io.BytesIO(result.npz), allow_pickle=False) as arrays:
+        for key in sorted(arrays.files):
+            array = np.ascontiguousarray(arrays[key])
+            outputs[f"npz:{key}"] = f"{array.dtype}|{array.shape}|".encode() + array.tobytes()
+    return outputs
+
+
+def test_nucleus_estimate_does_not_change_kinetics(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Оценка зародыша до расчёта не меняет ни одного числа расчёта.
+
+    Волна 13-Р нашла, что оценка на объектах самого расчёта (``setup()`` и
+    движущая сила на общей модели) сдвигала кинетику до 6·10⁻⁸ относительных
+    даже с ``removeCache=True``. Теперь оценка идёт на своей модели; тест
+    считает один и тот же расчёт с оценкой и с выключенной оценкой и требует
+    побайтового совпадения всех таблиц и массивов модели.
+    """
+
+    original = precipitation._nucleus_estimates
+    calls: list[list[tuple[float, float, float]]] = []
+
+    def recorded(model, precipitate_phase, temperatures_k):
+        estimates = original(model, precipitate_phase, temperatures_k)
+        calls.append(estimates)
+        return estimates
+
+    monkeypatch.setattr(precipitation, "_nucleus_estimates", recorded)
+    with_estimate = _run_demo()
+    # Оценка действительно посчитана, а не проглочена исключением:
+    # критический радиус γ′ при 800 °C — 0,797 нм (13-Д).
+    assert len(calls) == 1 and len(calls[0]) == 1, calls
+    assert calls[0][0][1] == pytest.approx(0.797, abs=5e-3)
+
+    monkeypatch.setattr(precipitation, "_nucleus_estimates", lambda *arguments: [])
+    without_estimate = _run_demo()
+
+    first = _numeric_outputs(with_estimate)
+    second = _numeric_outputs(without_estimate)
+    assert first.keys() == second.keys()
+    differing = [name for name in first if first[name] != second[name]]
+    assert not differing, f"оценка зародыша изменила: {differing}"
