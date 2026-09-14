@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT / "app") not in sys.path:
     sys.path.insert(0, str(ROOT / "app"))
 
+import symengine
 from pycalphad import Database
 
 import thermogar_database_repair as repair
@@ -784,3 +785,143 @@ def test_u_fraction_balance_equals_mole_balance_without_interstitials() -> None:
     )
     # Сумма замещающих в u-долях равна единице по построению.
     assert np.allclose(u_frac[:, 0] + u_frac[:, 2], 1.0)
+
+
+# --------------------------------------------------------------------------- #
+# BL-20: десятичная запятая в подвижности ниобия
+# --------------------------------------------------------------------------- #
+
+# Компоненты, на которых 12-1 изолировал отказ: с любым четвёртым элементом,
+# кроме ниобия, класс собирается.
+NB_COMPONENTS = ["NI", "CR", "MO", "NB"]
+
+
+def _nb_fcc_self_mobility(database: Any) -> list[Any]:
+    table = database._parameters.table(  # noqa: SLF001
+        database._parameters.default_table_name  # noqa: SLF001
+    )
+    return [
+        record
+        for record in table.all()
+        if record.get("phase_name") == "FCC_A1"
+        and record.get("parameter_type") == "MQ"
+        and repair._diffusing_species_name(record) == "NB"  # noqa: SLF001
+        and repair._constituent_names(record.get("constituent_array"))  # noqa: SLF001
+        == (("NB",), ("*",))
+    ]
+
+
+def test_nb_mobility_breaks_kawin_without_override() -> None:
+    """Без правки сборка термодинамики kawin с ниобием падает — фиксация дефекта.
+
+    Если однажды разборщик начнёт понимать запятую сам, тест упадёт, и правку
+    можно будет снять.
+    """
+
+    pytest.importorskip("kawin")
+    from kawin.thermo import MulticomponentThermodynamics
+
+    database = _fresh("ni")
+    with pytest.raises(RuntimeError, match=r"ln\(1\.0, 0\.0\)"):
+        thermodynamics = MulticomponentThermodynamics(
+            database, NB_COMPONENTS, ["FCC_A1"]
+        )
+        thermodynamics.getTracerDiffusivity([0.2, 0.1, 0.01], 1273.15, phase="FCC_A1")
+
+
+def test_nb_mobility_override_reads_decimal_comma() -> None:
+    """LN(1,00E-4) читается как ln(1.00E-4): -350000 + R·T·ln(1e-4)."""
+
+    database = _fresh("ni")
+    report = repair.repair_database(database, database_label="mc_ni")
+
+    records = _nb_fcc_self_mobility(database)
+    assert len(records) == 1
+    expression = records[0]["parameter"]
+    assert not expression.atoms(symengine.FunctionSymbol)
+    # R, подставленная pycalphad при разборе базы.
+    gas_constant = 8.3145
+    for temperature_k in (853.15, 1273.15):
+        value = float(expression.subs({"T": temperature_k}))
+        expected = -350000.0 + gas_constant * temperature_k * math.log(1.00e-4)
+        assert value == pytest.approx(expected, rel=1e-12)
+
+    identifiers = [item.identifier for item in report["applied_overrides"]]
+    assert identifiers == ["BL-20"]
+    assert report["warnings"] == [repair.NB_FCC_MOBILITY_DECIMAL_COMMA.user_message]
+    assert "LN(1,00E-4)" in report["warnings"][0]
+
+
+def test_nb_mobility_override_is_idempotent_and_survives_pickle() -> None:
+    """Повторный вызов ничего не меняет, а признак правки едет с базой в кэш."""
+
+    import pickle
+
+    database = _fresh("ni")
+    assert repair.repair_record_overrides(database)
+    before = str(_nb_fcc_self_mobility(database)[0]["parameter"])
+    assert repair.repair_record_overrides(database) == ()
+    assert str(_nb_fcc_self_mobility(database)[0]["parameter"]) == before
+    assert len(repair.applied_overrides(database)) == 1
+
+    restored = pickle.loads(pickle.dumps(database, protocol=pickle.HIGHEST_PROTOCOL))
+    assert [item.identifier for item in repair.applied_overrides(restored)] == ["BL-20"]
+    assert repair.repair_database(restored)["warnings"], (
+        "База из кэша потеряла сообщение о правке"
+    )
+
+
+def test_nb_override_does_not_touch_other_databases() -> None:
+    """На базах без испорченной записи правка ничего не делает."""
+
+    for key in ("al", "fe"):
+        database = _fresh(key)
+        assert repair.repair_record_overrides(database) == ()
+        assert repair.repair_database(database)["applied_overrides"] == ()
+        assert repair.override_warnings(database) == []
+
+
+def test_override_warnings_filtered_by_elements() -> None:
+    """Сообщение о подвижности ниобия показывается только составу с ниобием."""
+
+    database = _fresh("ni")
+    repair.repair_database(database)
+    assert repair.override_warnings(database, ["NI", "AL", "CR"]) == []
+    assert len(repair.override_warnings(database, ["NI", "CR", "nb"])) == 1
+
+
+def test_multicomponent_thermodynamics_with_niobium_builds_after_repair() -> None:
+    """BL-20: сборка MulticomponentThermodynamics на составе с ниобием не падает.
+
+    Подвижность ниобия после сборки конечна и положительна.
+    """
+
+    pytest.importorskip("kawin")
+    from kawin.thermo import MulticomponentThermodynamics
+
+    database = _fresh("ni")
+    repair.repair_database(database, database_label="mc_ni")
+    thermodynamics = MulticomponentThermodynamics(
+        database, NB_COMPONENTS, ["FCC_A1"]
+    )
+    values = np.asarray(
+        thermodynamics.getTracerDiffusivity([0.2, 0.1, 0.01], 1273.15, phase="FCC_A1"),
+        dtype=float,
+    ).ravel()
+    assert values.shape == (4,)
+    assert np.all(np.isfinite(values)) and np.all(values > 0), values
+
+
+def test_release_binding_of_kwn_applies_nb_override() -> None:
+    """Штатный путь KWN (``_bind_release_database``) получает исправленную базу."""
+
+    import thermogar_precipitation as precipitation
+    from thermogar_release_policy import RELEASE_DATABASE_LABELS
+
+    path = ROOT / DATABASES["ni"]
+    if not path.is_file():
+        pytest.skip(f"Нет базы: {path}")
+    *_rest, database = precipitation._bind_release_database(  # noqa: SLF001
+        "ni", path, RELEASE_DATABASE_LABELS["ni"]
+    )
+    assert [item.identifier for item in repair.applied_overrides(database)] == ["BL-20"]

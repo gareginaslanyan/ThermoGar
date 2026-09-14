@@ -8,8 +8,9 @@
 Правки идемпотентны: повторный вызов на том же объекте ничего не меняет и
 возвращает отчёт с нулевыми счётчиками.
 
-Единственная правка этого модуля на сегодня — умолчания подвижности; см.
-``repair_mobility_defaults``.
+Правок две: умолчания подвижности (``repair_mobility_defaults``) и точечные
+правки опечаток в отдельных записях (``repair_record_overrides``). Точечные
+правки называются пользователю: ``applied_overrides`` и ``override_warnings``.
 """
 
 from __future__ import annotations
@@ -498,16 +499,219 @@ def drop_broken_order_disorder(
     return kept, removed
 
 
-# Версия логики дедупликации. Входит в ключ кэша разобранных баз: без этого
-# пользователь со старым кэшем получил бы прежнее поведение.
-MOBILITY_DEDUP_VERSION = 3
+# --------------------------------------------------------------------------- #
+# Точечные правки записей: опечатки, которые разборщик понимает иначе
+# --------------------------------------------------------------------------- #
+
+
+@dataclass(frozen=True)
+class RecordOverride:
+    """Одна наша правка отдельной записи разобранной базы.
+
+    Поля повторяют ``thermogar_physical.DensityOverride``, чтобы обе базы
+    сообщали о правках одинаково: что заменено, на что, почему и откуда число.
+    """
+
+    identifier: str
+    phase_name: str
+    parameter_type: str
+    diffusing_species: str
+    constituents: tuple[tuple[str, ...], ...]
+    element: str
+    original_expression: str
+    expression: str
+    broken_function: str
+    broken_arguments: tuple[float, ...]
+    replacement_argument: float
+    reason: str
+    source: str
+    wave: str
+    user_message: str
+
+
+# BL-20. Строка подвижности ниобия в mc_ni записана с десятичной запятой:
+#   PARAMETER MQ(FCC_A1&NB,NB:*) 273.00  -350000+R*T*LN(1,00E-4); 6000.00  N
+# ``pycalphad`` отдаёт её ``symengine.sympify``, для которого запятая —
+# разделитель аргументов, а ``00E-4`` — число 0.0. Получается неопределённая
+# функция ``ln(1.0, 0.0)``: равновесию она не мешает (MQ в энергию Гиббса не
+# входит), а ``kawin`` падает на компиляции ``MOB_NB`` с
+# ``RuntimeError: ln(1.0, 0.0)`` на любом составе с ниобием. Разбор —
+# ``tasks/WAVE13_G_REPORT.md``, раздел «BL-20».
+NB_FCC_MOBILITY_DECIMAL_COMMA = RecordOverride(
+    identifier="BL-20",
+    phase_name="FCC_A1",
+    parameter_type="MQ",
+    diffusing_species="NB",
+    constituents=(("NB",), ("*",)),
+    element="NB",
+    original_expression="-350000+R*T*LN(1,00E-4)",
+    expression="-350000+R*T*LN(1.00E-4)",
+    broken_function="ln",
+    broken_arguments=(1.0, 0.0),
+    replacement_argument=1.00e-4,
+    reason=(
+        "десятичная запятая в аргументе LN: разборщик читает LN(1,00E-4) как "
+        "двухаргументную функцию ln(1, 0.0), которую kawin не может "
+        "скомпилировать"
+    ),
+    source=(
+        "Число взято из самой строки базы, заменён только разделитель: "
+        "databases/converted/mc_ni_v2036_with_mobility.garcalc.tdb:10583, "
+        "перенесено конвертером из databases/original/ni/mc_ni_v2012.ddb:476; "
+        "ссылка строки REF:pov10 (E. Povoden-Karadeniz, unpublished, 2010) не "
+        "опубликована, и сверить значение с первоисточником не с чем."
+    ),
+    wave="13-Д",
+    user_message=(
+        "Подвижность ниобия в FCC_A1: в базе записано LN(1,00E-4) с десятичной "
+        "запятой, ThermoGar читает это как ln(1.00E-4). Правка сделана поверх "
+        "разобранной базы, байты файла не менялись; число взято из той же "
+        "строки, первоисточник строки (pov10) не опубликован и не сверен."
+    ),
+)
+
+RECORD_OVERRIDES: tuple[RecordOverride, ...] = (NB_FCC_MOBILITY_DECIMAL_COMMA,)
+
+# Правки, применённые к объекту базы. Хранится на самом объекте, а не в
+# модуле: база уходит в кэш и в пул процессов через pickle, и признак правки
+# должен доехать туда вместе с исправленной записью.
+_OVERRIDES_ATTRIBUTE = "_thermogar_applied_overrides"
+
+
+def _constituent_names(constituent_array: Any) -> tuple[tuple[str, ...], ...]:
+    try:
+        return tuple(
+            tuple(str(getattr(item, "name", item)) for item in sublattice)
+            for sublattice in constituent_array
+        )
+    except TypeError:
+        return ()
+
+
+def _broken_calls(expression: Any, override: RecordOverride) -> list[Any]:
+    """Узлы выражения — неопределённые функции, описанные правкой."""
+
+    try:
+        import symengine
+
+        atoms = expression.atoms(symengine.FunctionSymbol)
+    except Exception:
+        return []
+    found = []
+    for atom in atoms:
+        if str(atom.get_name()) != override.broken_function:
+            continue
+        try:
+            arguments = tuple(float(argument) for argument in atom.args)
+        except (TypeError, ValueError):
+            continue
+        if arguments == override.broken_arguments:
+            found.append(atom)
+    return found
+
+
+def repair_record_overrides(
+    database: Any,
+    database_label: str = "",
+    overrides: Iterable[RecordOverride] = RECORD_OVERRIDES,
+) -> tuple[RecordOverride, ...]:
+    """Исправить записи, перечисленные в ``RECORD_OVERRIDES``.
+
+    Запись меняется, только если совпало всё: фаза, тип параметра,
+    диффундирующий элемент, составляющие и сама испорченная функция с теми же
+    аргументами. На любой другой базе, в том числе на исправленной версии той
+    же базы, правка ничего не делает. Повторный вызов тоже ничего не делает.
+
+    Возвращает правки, применённые этим вызовом; все правки объекта —
+    ``applied_overrides``.
+    """
+
+    import symengine
+
+    table = database._parameters.table(  # noqa: SLF001 — публичного доступа нет
+        database._parameters.default_table_name  # noqa: SLF001
+    )
+    applied: list[RecordOverride] = []
+    for override in overrides:
+        changed = False
+        for record in table.all():
+            if (
+                str(record.get("phase_name", "")) != override.phase_name
+                or str(record.get("parameter_type", "")) != override.parameter_type
+                or _diffusing_species_name(record) != override.diffusing_species
+                or _constituent_names(record.get("constituent_array"))
+                != override.constituents
+            ):
+                continue
+            expression = record.get("parameter")
+            calls = _broken_calls(expression, override)
+            if not calls:
+                continue
+            replacement = symengine.log(
+                symengine.RealDouble(override.replacement_argument)
+            )
+            fixed = expression.xreplace({call: replacement for call in calls})
+            table.update({"parameter": fixed}, doc_ids=[int(record.doc_id)])
+            changed = True
+        if changed:
+            applied.append(override)
+            _log(
+                f"правка записи {override.identifier}: {database_label or 'база'} — "
+                f"{override.parameter_type}({override.phase_name}&"
+                f"{override.diffusing_species},"
+                f"{':'.join(','.join(names) for names in override.constituents)}) "
+                f"{override.original_expression} -> {override.expression}"
+            )
+    if applied:
+        known = {item.identifier for item in applied_overrides(database)}
+        setattr(
+            database,
+            _OVERRIDES_ATTRIBUTE,
+            applied_overrides(database)
+            + tuple(item for item in applied if item.identifier not in known),
+        )
+    return tuple(applied)
+
+
+def applied_overrides(database: Any) -> tuple[RecordOverride, ...]:
+    """Все точечные правки, применённые к этому объекту базы."""
+
+    return tuple(getattr(database, _OVERRIDES_ATTRIBUTE, ()) or ())
+
+
+def override_warnings(
+    database: Any,
+    elements: Iterable[str] | None = None,
+) -> list[str]:
+    """Тексты для пользователя о применённых правках.
+
+    С ``elements`` остаются только правки, которые касаются элементов расчёта:
+    исправленная подвижность ниобия не влияет на состав без ниобия.
+    """
+
+    wanted = None if elements is None else {str(name).upper() for name in elements}
+    return [
+        item.user_message
+        for item in applied_overrides(database)
+        if wanted is None or item.element in wanted
+    ]
+
+
+# Версия логики правок загрузки. Входит в ключ кэша разобранных баз: без этого
+# пользователь со старым кэшем получил бы прежнее поведение. 4 — правка BL-20.
+MOBILITY_DEDUP_VERSION = 4
 
 _LAST_REPORTS: dict[str, MobilityRepairReport] = {}
 
 
 def repair_database(database: Any, database_label: str = "") -> dict[str, Any]:
-    """Все правки загрузки разом; вызывается из путей загрузки базы."""
+    """Все правки загрузки разом; вызывается из путей загрузки базы.
 
+    Точечные правки идут первыми: дедупликация сравнивает выражения, и
+    испорченная запись не должна в этом участвовать.
+    """
+
+    repair_record_overrides(database, database_label=database_label)
     mobility = repair_mobility_defaults(database, database_label=database_label)
     if not mobility.already_repaired:
         _LAST_REPORTS[database_label or "база"] = mobility
@@ -517,7 +721,11 @@ def repair_database(database: Any, database_label: str = "") -> dict[str, Any]:
                 "  подозрительно: умолчание и явная строка различаются — "
                 f"{key[0]} / {key[1]} / {key[2]} / порядок {key[3]}"
             )
-    return {"mobility_defaults": mobility}
+    return {
+        "mobility_defaults": mobility,
+        "applied_overrides": applied_overrides(database),
+        "warnings": override_warnings(database),
+    }
 
 
 def _log(message: str) -> None:
