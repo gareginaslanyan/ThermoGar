@@ -1,0 +1,4 @@
+# Стенд тестов; в runtime установщика не входит; conftest.py без pytest-timeout не загружается — 17-Б.
+pytest==9.1.1
+pytest-cov==7.1.0
+pytest-timeout==2.4.0
