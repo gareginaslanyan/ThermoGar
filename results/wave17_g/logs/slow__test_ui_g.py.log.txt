@@ -1,0 +1,124 @@
+F.F                                                                      [100%]
+================================== FAILURES ===================================
+_________________________ test_kwn_precipitation[fe] __________________________
+
+database_key = 'fe'
+
+    @pytest.mark.parametrize(
+        "database_key",
+        (
+            "ni",
+            "al",
+            pytest.param("fe", marks=pytest.mark.slow),
+        ),
+    )
+    def test_kwn_precipitation(database_key: str) -> None:
+        matrix, precipitate, temperature = KWN_CELL[database_key]
+        app = start_app(database_key)
+    
+        matrix_options = widget(
+            app, "selectbox", f"precipitation_{database_key}_user_matrix"
+        ).options
+        assert matrix in matrix_options, (
+            f"{matrix} не предлагается матрицей для базы {database_key}: "
+            f"{matrix_options}"
+        )
+    
+        state = app.session_state
+        state[f"precipitation_{database_key}_user_matrix"] = matrix
+        state[f"precipitation_{database_key}_user_precipitate"] = precipitate
+        state[f"precipitation_{database_key}_user_temperature_c"] = temperature
+        state[f"precipitation_{database_key}_user_duration_h"] = SHORT_TIME_H
+        state[f"precipitation_{database_key}_user_bins"] = KWN_BINS
+        app.run()
+    
+        widget(
+            app, "button", f"precipitation_{database_key}_user_calculate"
+        ).click().run()
+        assert_no_traceback(app)
+>       assert new_errors(app) == [], new_errors(app)
+E       AssertionError: ['Одна или несколько внутренних проверок не пройдены.', 'Библиотека не выгружена: Не удалось записать файл в папку данных ThermoGar.']
+E       assert ['Одна или не...х ThermoGar.'] == []
+E         
+E         Left contains 2 more items, first extra item: 'Одна или несколько внутренних проверок не пройдены.'
+E         Use -v to get more diff
+
+tools\test_ui_g.py:388: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-18 01:27:45.921 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:27:45.922 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:27:45.922 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:27:45.922 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:27:45.933 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:27:48.312 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:27:48.313 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:27:48.313 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:27:48.313 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:27:48.313 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+__________________ test_ni_kwn_reaches_a_precipitated_state ___________________
+
+    @pytest.mark.slow
+    def test_ni_kwn_reaches_a_precipitated_state() -> None:
+        """One hour at 800 C must actually grow gamma-prime, not just run."""
+    
+        matrix, precipitate, temperature = KWN_CELL["ni"]
+        app = start_app("ni")
+        state = app.session_state
+        state["precipitation_ni_user_matrix"] = matrix
+        state["precipitation_ni_user_precipitate"] = precipitate
+        state["precipitation_ni_user_temperature_c"] = temperature
+        state["precipitation_ni_user_duration_h"] = 1.0
+        app.run()
+        widget(app, "button", "precipitation_ni_user_calculate").click().run()
+        assert_no_traceback(app)
+>       assert new_errors(app) == [], new_errors(app)
+E       AssertionError: ['Библиотека не выгружена: Не удалось записать файл в папку данных ThermoGar.']
+E       assert ['Библиотека ...х ThermoGar.'] == []
+E         
+E         Left contains one more item: 'Библиотека не выгружена: Не удалось записать файл в папку данных ThermoGar.'
+E         Use -v to get more diff
+
+tools\test_ui_g.py:655: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-18 01:29:35.818 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:29:35.819 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:29:35.819 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:29:35.819 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:29:35.819 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:29:37.114 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:29:37.114 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:29:37.114 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:29:37.114 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+============================== warnings summary ===============================
+tools/test_ui_g.py::test_kwn_precipitation[fe]
+tools/test_ui_g.py::test_fe_kwn_provenance_status_is_neutral
+tools/test_ui_g.py::test_ni_kwn_reaches_a_precipitated_state
+  D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\kawin\precipitation\NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+    incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tools/test_ui_g.py::test_kwn_precipitation[fe] - AssertionError: ['Одн...
+FAILED tools/test_ui_g.py::test_ni_kwn_reaches_a_precipitated_state - Asserti...
+2 failed, 1 passed, 29 deselected, 3 warnings in 176.91s (0:02:56)

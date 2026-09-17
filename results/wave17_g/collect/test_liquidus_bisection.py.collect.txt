@@ -1,0 +1,4 @@
+tools/test_liquidus_bisection.py::test_bisection_finds_control_liquidus_and_solidus
+tools/test_liquidus_bisection.py::test_grid_interpolation_misses_both_windows
+
+2 tests collected in 0.11s

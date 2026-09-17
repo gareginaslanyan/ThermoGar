@@ -1,0 +1,16 @@
+THERMOGAR STAGE 13.2 — CONVERTER PATCH TEST
+PASS: patch id
+PASS: patch applied
+PASS: matched exactly one
+PASS: working exact command inactive
+PASS: diagnostic exact command active
+PASS: working C15 parameter count
+PASS: diagnostic C15 parameter count
+PASS: LAVES_PHASE unchanged
+PASS: diagnostic record unapplied
+PASS: fail-closed for 0 exact matches
+PASS: fail-closed for 2 exact matches
+PASS: converter JSON records disabled parameter
+PASS: merged JSON inherits disabled parameter
+PASS: merged TDB has no active -9e6
+RESULT: PASSED

@@ -1,0 +1,8 @@
+tools/test_phase_presets.py::test_stable_phases_match_on_temperature_scan[ni]
+tools/test_phase_presets.py::test_stable_phases_match_on_composition_scan[ni]
+tools/test_phase_presets.py::test_stable_phases_match_on_temperature_scan[al]
+tools/test_phase_presets.py::test_stable_phases_match_on_composition_scan[al]
+tools/test_phase_presets.py::test_stable_phases_match_on_temperature_scan[fe]
+tools/test_phase_presets.py::test_stable_phases_match_on_composition_scan[fe]
+
+6/21 tests collected (15 deselected) in 2.17s
