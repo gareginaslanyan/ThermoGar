@@ -1,0 +1,51 @@
+случай	файл	be1fe81	d755d0d	совпадает
+nicr_on	prepare_projection.json	dee9a2b1cf76	dee9a2b1cf76	да
+nicr_on	prepare_warnings.json	00ab9b1191cf	00ab9b1191cf	да
+nicr_on	summary.json	831a7d82622c	831a7d82622c	да
+nicr_on	vrh_bounds.json	af372490fac5	af372490fac5	да
+nicr_on	vrh_phase_rows.json	0e3d080248d9	0e3d080248d9	да
+nicr_on	vrh_projection.json	a44b27d0ce2c	a44b27d0ce2c	да
+nicr_on	vrh_summary.json	022bf8361c09	022bf8361c09	да
+nicr_on	xlsx_sheet_Voigt-Reuss-Hill.csv	aee3dd0b4b9f	aee3dd0b4b9f	да
+nicr_on	xlsx_sheet_Входные значения по фазам.csv	3f864fea0d4a	3f864fea0d4a	да
+nicr_on	xlsx_sheet_Итог.csv	35504f690ccc	35504f690ccc	да
+nicr_off	prepare_projection.json	bafcdbaf7080	bafcdbaf7080	да
+nicr_off	prepare_warnings.json	0fe5bcb0ddd4	0fe5bcb0ddd4	да
+nicr_off	summary.json	1de5440ff275	1de5440ff275	да
+nicr_off	vrh_bounds.json	af372490fac5	af372490fac5	да
+nicr_off	vrh_phase_rows.json	0e3d080248d9	0e3d080248d9	да
+nicr_off	vrh_projection.json	a44b27d0ce2c	a44b27d0ce2c	да
+nicr_off	vrh_summary.json	022bf8361c09	022bf8361c09	да
+nicr_off	xlsx_sheet_Voigt-Reuss-Hill.csv	aee3dd0b4b9f	aee3dd0b4b9f	да
+nicr_off	xlsx_sheet_Входные значения по фазам.csv	3f864fea0d4a	3f864fea0d4a	да
+nicr_off	xlsx_sheet_Итог.csv	35504f690ccc	35504f690ccc	да
+fecrc_on	prepare_projection.json	2b7d6af2dea2	2b7d6af2dea2	да
+fecrc_on	prepare_warnings.json	00ab9b1191cf	00ab9b1191cf	да
+fecrc_on	summary.json	a2481080f482	a2481080f482	да
+fecrc_on	vrh_bounds.json	3e8faf4d3542	3e8faf4d3542	да
+fecrc_on	vrh_phase_rows.json	fd23a0f9cf71	fd23a0f9cf71	да
+fecrc_on	vrh_projection.json	ac10d089f4b4	ac10d089f4b4	да
+fecrc_on	vrh_summary.json	9ed41465509d	9ed41465509d	да
+fecrc_on	xlsx_sheet_Voigt-Reuss-Hill.csv	f9b1e0256902	f9b1e0256902	да
+fecrc_on	xlsx_sheet_Входные значения по фазам.csv	9676b17dc96f	9676b17dc96f	да
+fecrc_on	xlsx_sheet_Итог.csv	087a07935713	087a07935713	да
+fecrc_off	prepare_projection.json	aac3986d56df	aac3986d56df	да
+fecrc_off	prepare_warnings.json	0fe5bcb0ddd4	0fe5bcb0ddd4	да
+fecrc_off	summary.json	13bbfa12ada8	13bbfa12ada8	да
+fecrc_off	vrh_bounds.json	503a4688c375	503a4688c375	да
+fecrc_off	vrh_phase_rows.json	a380c3fb85ab	a380c3fb85ab	да
+fecrc_off	vrh_projection.json	8dc4a37ea8fe	8dc4a37ea8fe	да
+fecrc_off	vrh_summary.json	8117b32c576c	8117b32c576c	да
+fecrc_off	xlsx_sheet_Voigt-Reuss-Hill.csv	f15ee89508af	f15ee89508af	да
+fecrc_off	xlsx_sheet_Входные значения по фазам.csv	47cd63789809	47cd63789809	да
+fecrc_off	xlsx_sheet_Итог.csv	37ed07fbacff	37ed07fbacff	да
+nicrc_on	prepare_projection.json	нет	22f827f7bb6b	нет
+nicrc_on	prepare_warnings.json	нет	6f8660c9183e	нет
+nicrc_on	summary.json	нет	331b2d8fb0c9	нет
+nicrc_on	vrh_bounds.json	нет	78ebe30f9620	нет
+nicrc_on	vrh_phase_rows.json	нет	76c26e02bb8e	нет
+nicrc_on	vrh_projection.json	нет	e86b32e76650	нет
+nicrc_on	vrh_summary.json	нет	f2859b57a1fc	нет
+nicrc_on	xlsx_sheet_Voigt-Reuss-Hill.csv	нет	ef2cca584ded	нет
+nicrc_on	xlsx_sheet_Входные значения по фазам.csv	нет	1c2676200570	нет
+nicrc_on	xlsx_sheet_Итог.csv	нет	d12e9dbf8d1c	нет

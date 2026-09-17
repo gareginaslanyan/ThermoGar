@@ -1,0 +1,20 @@
+[строк «missing ScriptRunContext» вырезано: 5760]
+2026-09-16 18:07:39.349 
+  [33m[1mWarning:[0m to view a Streamlit app on a browser, use Streamlit in a file and
+  run it with the following command:
+
+    streamlit run [FILE_NAME] [ARGUMENTS]
+2026-09-16 18:07:39.351 Session state does not function when running a script without `streamlit run`
+2026-09-16 18:07:39.417 
+  [33m[1mWarning:[0m to view a Streamlit app on a browser, use Streamlit in a file and
+  run it with the following command:
+
+    streamlit run [FILE_NAME] [ARGUMENTS]
+2026-09-16 18:07:39.419 Session state does not function when running a script without `streamlit run`
+2026-09-16 18:07:39.419 
+  [33m[1mWarning:[0m to view a Streamlit app on a browser, use Streamlit in a file and
+  run it with the following command:
+
+    streamlit run [FILE_NAME] [ARGUMENTS]
+2026-09-16 18:07:39.422 Session state does not function when running a script without `streamlit run`
+{"mode": "on", "toggles": [{"label": "Применять поправки проекта ThermoGar к физической базе", "value": true, "disabled": false, "key": "physical_overrides_enabled"}], "errors": [], "files": {}, "single_state_overrides": true, "single_density_kg_m3": [8256.92979779211], "scan_state_overrides": true, "scan_density_kg_m3": [8476.860532072638, 8443.248571201615, 8408.182928633489, 8371.99821940022, 8334.763847095648, 8296.438699626306, 8256.929797792109, 8216.118510228218, 8173.8736308631715, 8130.058217195962, 8084.53350594347]}

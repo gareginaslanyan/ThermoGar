@@ -1,0 +1,6 @@
+{"log": "test_physical_overrides_toggle.py.log.txt", "exit": 0, "aborted_low_memory": false, "free_at_start_gib": 5.5, "min_free_gib": 5.03, "peak_tree_gib": 0.56, "seconds": 86.1}
+{"log": "thermogar_verified_properties_test.py.log.txt", "exit": 0, "aborted_low_memory": false, "free_at_start_gib": 5.57, "min_free_gib": 5.36, "peak_tree_gib": 0.2, "seconds": 5.2}
+{"log": "thermogar_properties_test.py.log.txt", "exit": 5, "aborted_low_memory": false, "free_at_start_gib": 5.57, "min_free_gib": 5.54, "peak_tree_gib": 0.05, "seconds": 0.8}
+{"log": "thermogar_properties_test.py.log.txt", "exit": 0, "aborted_low_memory": false, "free_at_start_gib": 5.55, "min_free_gib": 5.34, "peak_tree_gib": 0.19, "seconds": 3.7}
+{"log": "thermogar_verified_physical_test.py.log.txt", "exit": 0, "aborted_low_memory": false, "free_at_start_gib": 5.55, "min_free_gib": 5.45, "peak_tree_gib": 0.1, "seconds": 1.9}
+{"log": "test_ui_f.py.elastic.log.txt", "exit": 0, "aborted_low_memory": false, "free_at_start_gib": 5.57, "min_free_gib": 4.14, "peak_tree_gib": 1.46, "seconds": 72.4}

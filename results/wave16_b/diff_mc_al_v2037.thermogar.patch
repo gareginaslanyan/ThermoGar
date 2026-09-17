@@ -1,0 +1,2347 @@
+--- databases/original/al/mc_al_v2037.tdb
++++ databases/converted/al/mc_al_v2037.thermogar.tdb
+@@ -1,3 +1,7 @@
++$ THERMOGAR_CONVERSION
++$ Source file is preserved separately and remains authoritative.
++$ MatCalc-only metadata disabled below is retained as comments.
++$ Conversion target: pycalphad-compatible thermodynamic TDB.
+ $************************************************************************** 
+ $
+ $ mc_al_v2.037.tdb
+@@ -324,18 +328,25 @@
+ $***************************************************************************
+ $
+ $ Defines Al as reference element
+-REFERENCE_ELEMENT AL !
++$ THERMOGAR_DISABLED: reference_element_disabled
++$REFERENCE_ELEMENT AL !
+ $
+ $ new MatCalc syntax (5.23.1036)
+-ATTACH_CONTRIBUTION GP_MAT FCC_A1 ORDER_DISORDER !
++$ THERMOGAR_DISABLED: MatCalc ATTACH_CONTRIBUTION
++$ATTACH_CONTRIBUTION GP_MAT FCC_A1 ORDER_DISORDER !
++TYPE_DEFINITION X GES AMEND_PHASE_DESCRIPTION GP_MAT DIS_PART FCC_A1 !
++TYPE_DEFINITION % SEQ * !
+ $
+ $ if phase TH_DP_GPB is selected, add composition set #1 for GPB Al4Cu2Mg2
+-ADD_COMPOSITION_SET TH_DP_GPB :MG:MG:AL:CU:CU: !
++$ THERMOGAR_DISABLED: composition_sets_disabled
++$ADD_COMPOSITION_SET TH_DP_GPB :MG:MG:AL:CU:CU: !
+ $
+ $ if phase CL_SPL is selected, add composition set #1 for Mg-rich cluster
+-ADD_COMPOSITION_SET CL_SPL :MG: !
++$ THERMOGAR_DISABLED: composition_sets_disabled
++$ADD_COMPOSITION_SET CL_SPL :MG: !
+ $ if phase CL_SPL is selected, add composition set #2 for Si-rich cluster
+-ADD_COMPOSITION_SET CL_SPL :SI: !
++$ THERMOGAR_DISABLED: composition_sets_disabled
++$ADD_COMPOSITION_SET CL_SPL :SI: !
+ $
+ $***************************************************************************
+ $
+@@ -346,21 +357,28 @@
+ $$ ############################ FCC_A1 ##########################
+ $
+ $ default for fcc_A1 is Al
+-PARAMETER HMVA(FCC_A1,*;0) 273.00 +64200; 6000.00  N
+-REF:pov10 !
++$ THERMOGAR_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(FCC_A1,*;0) 273.00 +64200; 6000.00  N
++$REF:pov10 !
+ 
+-PARAMETER HMVA(FCC_A1,AL:*;0) 273.00 +64200; 6000.00  N
+-REF:pov10 !
+-PARAMETER HMVA(FCC_A1,CU:*;0) 273.00 +125000; 6000.00  N
+-REF:pov10 !
+-PARAMETER HMVA(FCC_A1,FE:*;0) 273.00 +135000; 6000.00  N
+-REF:75 !
+-PARAMETER HMVA(FCC_A1,MG:*;0) 273.00 +64200; 6000.00  N
+-REF:pov11 !
+-PARAMETER HMVA(FCC_A1,NI:*;0) 273.00 +170000; 6000.00  N
+-REF:pov10 !
+-PARAMETER HMVA(FCC_A1,SI:*;0) 273.00 +64200; 6000.00  N
+-REF:pov11 !
++$ THERMOGAR_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(FCC_A1,AL:*;0) 273.00 +64200; 6000.00  N
++$REF:pov10 !
++$ THERMOGAR_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(FCC_A1,CU:*;0) 273.00 +125000; 6000.00  N
++$REF:pov10 !
++$ THERMOGAR_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(FCC_A1,FE:*;0) 273.00 +135000; 6000.00  N
++$REF:75 !
++$ THERMOGAR_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(FCC_A1,MG:*;0) 273.00 +64200; 6000.00  N
++$REF:pov11 !
++$ THERMOGAR_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(FCC_A1,NI:*;0) 273.00 +170000; 6000.00  N
++$REF:pov10 !
++$ THERMOGAR_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(FCC_A1,SI:*;0) 273.00 +64200; 6000.00  N
++$REF:pov11 !
+ 
+ $***************************************************************************
+ $
+@@ -706,9 +724,9 @@
+ $                   THERMODYNAMIC DATA: LIQUID
+ $###########################################################################
+ $
+- PHASE LIQUID % 1  1.0 > 
+-Random substitutional model. 
+->> 6 !
++$ MATCALC_DESCRIPTION: Random substitutional model.
++$ MATCALC_PRIORITY: 6
++ PHASE LIQUID % 1  1.0 !
+     CONSTITUENT LIQUID  : AL,CR,CU,FE,MG,MN,NI,SC,SI,TI,ZN,ZR : !
+ $
+ $---------------------------------------
+@@ -1203,7 +1221,9 @@
+ $###########################################################################
+ $
+  TYPE_DEFINITION ' GES A_P_D FCC_A1 MAGNETIC  -3.0    0.28 !
+- PHASE FCC_A1  %'  2 1   1 > Al-Matrix phase, face-centered cubic >> 5 !
++$ MATCALC_DESCRIPTION: Al-Matrix phase, face-centered cubic
++$ MATCALC_PRIORITY: 5
++ PHASE FCC_A1  %'X  2 1   1 !
+     CONSTITUENT FCC_A1 : AL%,CR,CU,FE,MG,MN,NI,SC,SI,TI,
+     ZN,ZR : VA : !
+ $
+@@ -1587,17 +1607,20 @@
+ REF:0 !
+ 
+ $ Pure unary fcc-phases for thermodynamic computations
+- PHASE FCCAL  %  2 1   1 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE FCCAL  %  2 1   1 !
+     CONSTITUENT FCCAL  : AL : VA :  !
+ PARAMETER G(FCCAL,AL:VA;0) 273.00 GHSERAL#; 6000.00   N  
+ REF:0 !
+ $
+- PHASE FCCMG  %  2 1   1 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE FCCMG  %  2 1   1 !
+     CONSTITUENT FCCMG  : MG : VA :  !
+ PARAMETER G(FCCMG,MG:VA;0) 273.00 +2600-0.90*T+GHSERMG#; 6000.00  N
+ REF:0 !
+ $
+- PHASE FCCSI  %  2 1   1 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE FCCSI  %  2 1   1 !
+     CONSTITUENT FCCSI  : SI : VA :  !
+ PARAMETER G(FCCSI,SI:VA;0) 273.00 +51000-21.8*T+GHSERSI#; 6000.00   N  
+ REF:0 !
+@@ -1607,7 +1630,9 @@
+ $###########################################################################
+ $
+  TYPE_DEFINITION & GES A_P_D BCC_A2 MAGNETIC  -1.0    0.4 !
+- PHASE BCC_A2  %&  2 1   3 > relevant in Al-Cu >> 2 !
++$ MATCALC_DESCRIPTION: relevant in Al-Cu
++$ MATCALC_PRIORITY: 2
++ PHASE BCC_A2  %&  2 1   3 !
+     CONSTITUENT BCC_A2  : AL,CR,CU%,FE,MG,MN,NI,SC,SI,TI,ZN,ZR : VA :  !
+ $
+ $--------------------------------------
+@@ -1967,7 +1992,8 @@
+ $###########################################################################
+ $
+  TYPE_DEFINITION ) GES A_P_D HCP_A3 MAGNETIC  -3.0    0.28 !
+- PHASE HCP_A3  %)  2 1   .5 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE HCP_A3  %)  2 1   .5 !
+     CONSTITUENT HCP_A3  : AL,CR,CU,FE,MG%,MN,NI,SC,SI,TI%,
+     ZN,ZR : VA :  !
+ $
+@@ -2201,7 +2227,8 @@
+ $                   THERMODYNAMIC DATA:   H C P _ZN
+ $###########################################################################
+ $
+- PHASE HCP_ZN % 2 1 .5 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE HCP_ZN % 2 1 .5 !
+      CONSTITUENT HCP_ZN  : AL,CR,CU,FE,MG,MN,SI,ZN% : VA : !
+ $
+ $--------------------------------------
+@@ -2301,7 +2328,8 @@
+ $
+ 
+  TYPE_DEFINITION C GES A_P_D CBCC_A12 MAGNETIC  -1.0    0.4 !
+- PHASE CBCC_A12 %C 2 1 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CBCC_A12 %C 2 1 1 !
+     CONSTITUENT CBCC_A12  : AL,CR,CU,FE,MG,MN,SI,ZR : VA : !
+ $
+ PARAMETER G(CBCC_A12,AL:VA;0) 273.00 +10083.00-4.813*T+GHSERAL#; 6000.00  N
+@@ -2364,7 +2392,8 @@
+ $                   THERMODYNAMIC DATA:  CUB_A13 
+ $###########################################################################
+ $
+- PHASE CUB_A13 % 2 1 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CUB_A13 % 2 1 1 !
+     CONSTITUENT CUB_A13  : AL,CR,CU,FE,MG,MN,SI,ZR : VA : !
+ PARAMETER G(CUB_A13,AL:VA;0) 273.00 +10920.44-4.8116*T+GHSERAL#; 6000.00  N
+ REF:31 !
+@@ -2436,9 +2465,9 @@
+ $                   THERMODYNAMIC DATA:  SI_DIAMOND_A4 
+ $###########################################################################
+ $
+- PHASE SI_DIAMOND_A4 % 1 1 > 
+-Silicon precipitate. Space group Fd3m, prototype: C(diamond) 
+->> 4 !
++$ MATCALC_DESCRIPTION: Silicon precipitate. Space group Fd3m, prototype: C(diamond)
++$ MATCALC_PRIORITY: 4
++ PHASE SI_DIAMOND_A4 % 1 1 !
+     CONSTITUENT SI_DIAMOND_A4  : AL,CR,CU,MG,SI%,TI,ZN : !
+ PARAMETER G(SI_DIAMOND_A4,AL;0) 273.00 +10000+15*T+GHSERAL#; 6000.00  N
+ REF:pov14 !
+@@ -2470,10 +2499,9 @@
+ $                   THERMODYNAMIC DATA:  AL4CR
+ $###########################################################################
+ $
+- PHASE AL4CR % 2 4 1 > 
+-Orthorhombic epsilon-phase. 
+-Potential precipitate in Cr-containing Al-alloys. [REF:C1] 
+->> 2 !
++$ MATCALC_DESCRIPTION: Orthorhombic epsilon-phase. Potential precipitate in Cr-containing Al-alloys. [REF:C1]
++$ MATCALC_PRIORITY: 2
++ PHASE AL4CR % 2 4 1 !
+     CONSTITUENT AL4CR  : AL%,SI : AL,CR%,CU,FE,MN : !
+ PARAMETER G(AL4CR,AL:AL;0) 273.00 +25868.2+5.0*GHSERAL#; 6000.00  N
+ REF:68 !
+@@ -2526,11 +2554,9 @@
+ $                   THERMODYNAMIC DATA:  AL11CR2
+ $###########################################################################
+ $
+- PHASE AL11CR2 % 2 11 2 > 
+-Monoclinic eta-phase, high-temperatures equilibrium phase above 700C -  
+-pontential dispersoid only after solution treatment 
+-at high temperatures. [REF:C3]
+->> 2 !
++$ MATCALC_DESCRIPTION: Monoclinic eta-phase, high-temperatures equilibrium phase above 700C - pontential dispersoid only after solution treatment at high temperatures. [REF:C3]
++$ MATCALC_PRIORITY: 2
++ PHASE AL11CR2 % 2 11 2 !
+     CONSTITUENT AL11CR2  : AL%,SI : AL,CR%,MN : !
+ PARAMETER G(AL11CR2,AL:AL;0) 273.00 +30000+13.0*GHSERAL#; 6000.00  N
+ REF:68 !
+@@ -2564,12 +2590,9 @@
+ $                   THERMODYNAMIC DATA:  AL13CR2
+ $###########################################################################
+ $
+- PHASE AL13CR2 % 2 6.85 1.05 > 
+-Common Cr-precipitate in 7xxx Al-alloys. Synonymous to Al7Cr; 
+-both are specific stoichiometries of equilibrium Al-Cr intermetallic phases 
+-with a composition range between 12.5 to 14 at.% Cr. 
+-Monoclinic, space group C2/m. [REFS:C1,C2] 
+->> 3 !
++$ MATCALC_DESCRIPTION: Common Cr-precipitate in 7xxx Al-alloys. Synonymous to Al7Cr; both are specific stoichiometries of equilibrium Al-Cr intermetallic phases with a composition range between 12.5 to 14 at.% Cr. Monoclinic, space group C2/m. [REFS:C1,C2]
++$ MATCALC_PRIORITY: 3
++ PHASE AL13CR2 % 2 6.85 1.05 !
+     CONSTITUENT AL13CR2  : AL : AL,CR%,CU,FE,MN : !
+ PARAMETER G(AL13CR2,AL:AL;0) 273.00 +24074.5
+    +7.9*GHSERAL#; 6000.00  N
+@@ -2608,9 +2631,9 @@
+ $                   THERMODYNAMIC DATA:  ALCRCU_TAU
+ $###########################################################################
+ $
+- PHASE ALCRCU_TAU % 3 16 3  1 > 
+-Quaternary extension Al16(Cr,Fe)3Cu of Al-Cr-Cu-type tau-phases [C45]. 
+-Precipitate observed in 7xxx Al-alloy. >> 3 !
++$ MATCALC_DESCRIPTION: Quaternary extension Al16(Cr,Fe)3Cu of Al-Cr-Cu-type tau-phases [C45]. Precipitate observed in 7xxx Al-alloy.
++$ MATCALC_PRIORITY: 3
++ PHASE ALCRCU_TAU % 3 16 3  1 !
+     CONSTITUENT ALCRCU_TAU  : AL : CR,FE% : CU%,FE : !
+ PARAMETER G(ALCRCU_TAU,AL:CR:CU;0) 273.00 +16*GHSERAL#+3*GHSERCR#
+   +GHSERCU#-330000+100*T; 6000.00  N
+@@ -2636,8 +2659,9 @@
+ $                   THERMODYNAMIC DATA:  AL18CR2MG3
+ $###########################################################################
+ $
+- PHASE AL18CR2MG3 % 3 18 2 3 > E-phase, dispersoid in overaging regime 
+-in 7xxx Al-alloys [C42,C43]. Contains some Cu and Zn [C44] >> 3 !
++$ MATCALC_DESCRIPTION: E-phase, dispersoid in overaging regime in 7xxx Al-alloys [C42,C43]. Contains some Cu and Zn [C44]
++$ MATCALC_PRIORITY: 3
++ PHASE AL18CR2MG3 % 3 18 2 3 !
+     CONSTITUENT AL18CR2MG3  : AL : CR%,MN : CU,MG%,ZN : !
+ PARAMETER G(AL18CR2MG3,AL:CR:CU;0) 273.00 18*GHSERAL#+2*GHSERCR#+3*GHSERCU#
+  -310000+40*T; 6000.00  N
+@@ -2662,7 +2686,8 @@
+ $                   THERMODYNAMIC DATA:  AL9CR3SI
+ $###########################################################################
+ $
+- PHASE AL9CR3SI % 3 9 3 1 > >> 2 !
++$ MATCALC_PRIORITY: 2
++ PHASE AL9CR3SI % 3 9 3 1 !
+     CONSTITUENT AL9CR3SI  : AL : CR : SI : !
+ PARAMETER G(AL9CR3SI,AL:CR:SI;0) 273.00 +9*GHSERAL#+3*GHSERCR#
+    +GHSERSI#-258834.9+25.6494*T; 6000.00  N
+@@ -2672,7 +2697,8 @@
+ $                   THERMODYNAMIC DATA:  ALCRSI_T3 
+ $###########################################################################
+ $
+- PHASE ALCRSI_T3 % 2 11 4 > >> 2 !
++$ MATCALC_PRIORITY: 2
++ PHASE ALCRSI_T3 % 2 11 4 !
+     CONSTITUENT ALCRSI_T3  : AL,SI : CR : !
+ PARAMETER G(ALCRSI_T3,AL:CR;0) 273.00 0.417*GAL8CR5#+1.917*GAL4CR#
+    +18470.7; 6000.00  N
+@@ -2694,7 +2720,8 @@
+ $                   THERMODYNAMIC DATA:  AL13CR4SI4
+ $###########################################################################
+ $
+- PHASE AL13CR4SI4 % 3 13 4 4 > >> 2 !
++$ MATCALC_PRIORITY: 2
++ PHASE AL13CR4SI4 % 3 13 4 4 !
+     CONSTITUENT AL13CR4SI4  : AL : CR : SI : !
+ PARAMETER G(AL13CR4SI4,AL:CR:SI;0) 273.00 +4*GHSERCR#+13*GHSERAL#
+    +4*GHSERSI#-437554.6+69.7236*T; 6000.00  N
+@@ -2704,7 +2731,8 @@
+ $                   THERMODYNAMIC DATA:  AL58CR31SI11
+ $###########################################################################
+ $
+- PHASE AL58CR31SI11 % 3 58 31 11 > >> 2 !
++$ MATCALC_PRIORITY: 2
++ PHASE AL58CR31SI11 % 3 58 31 11 !
+     CONSTITUENT AL58CR31SI11  : AL : CR : SI : !
+ PARAMETER G(AL58CR31SI11,AL:CR:SI;0) 273.00 58*GHSERAL#+31*GHSERCR#
+    +11*GHSERSI#-1560841.1-388.2631*T; 6000.00  N
+@@ -2714,10 +2742,9 @@
+ $                   THERMODYNAMIC DATA:  AL7CU2FE
+ $###########################################################################
+ $
+- PHASE AL7CU2FE % 3 7 2 1 > 
+-Tetragonal. Common precipitate in 2524 Al-alloys, 
+-observed also in 7075. [REFS:C4,C5] 
+->> 3 !
++$ MATCALC_DESCRIPTION: Tetragonal. Common precipitate in 2524 Al-alloys, observed also in 7075. [REFS:C4,C5]
++$ MATCALC_PRIORITY: 3
++ PHASE AL7CU2FE % 3 7 2 1 !
+     CONSTITUENT AL7CU2FE  : AL : CU : FE : !
+ PARAMETER G(AL7CU2FE,AL:CU:FE;0)  273.00 -240000+46*T
+    +7*GHSERAL#+2*GHSERCU#+GHSERFE#; 6000.00  N
+@@ -2727,9 +2754,9 @@
+ $                   THERMODYNAMIC DATA:  AL23CUFE4
+ $###########################################################################
+ $
+- PHASE AL23CUFE4 % 3 23 1 4 > 
+-Precipitate observed in AA7xxx.
+->> 3 !
++$ MATCALC_DESCRIPTION: Precipitate observed in AA7xxx.
++$ MATCALC_PRIORITY: 3
++ PHASE AL23CUFE4 % 3 23 1 4 !
+     CONSTITUENT AL23CUFE4  : AL : CU : FE : !
+ PARAMETER G(AL23CUFE4,AL:CU:FE;0)  273.00 -635000+200*T
+    +23*GHSERAL#+GHSERCU#+4*GHSERFE#; 6000.00  N
+@@ -2739,13 +2766,9 @@
+ $                   THERMODYNAMIC DATA:  ALCUMN_T1
+ $###########################################################################
+ $
+- PHASE ALCUMN_T1  % 3 20 3 4 > 
+-T1-phase with orthorhombic crystal structure, space group Bbmm or Cmcm. 
+-Crystallizes during casting of Cu-Mn containing 2xxx alloys 
+-and as rodlike dispersoids.
+-Previously discribed as AL20CU2MN3 [REF:C5,C22,C23,C41], 
+-however experiments support stoichiometries close to Al20Cu3Mn4.
+->> 3 !
++$ MATCALC_DESCRIPTION: T1-phase with orthorhombic crystal structure, space group Bbmm or Cmcm. Crystallizes during casting of Cu-Mn containing 2xxx alloys and as rodlike dispersoids. Previously discribed as AL20CU2MN3 [REF:C5,C22,C23,C41], however experiments support stoichiometries close to Al20Cu3Mn4.
++$ MATCALC_PRIORITY: 3
++ PHASE ALCUMN_T1  % 3 20 3 4 !
+     CONSTITUENT ALCUMN_T1   : AL : CU : MN : !
+ PARAMETER G(ALCUMN_T1,AL:CU:MN;0) 273.00 +20*GHSERAL#+3*GHSERCU#
+    +4*GHSERMN#-555000+55*T; 6000.00  N
+@@ -2755,11 +2778,9 @@
+ $                   THERMODYNAMIC DATA:  AL13FE4
+ $###########################################################################
+ $
+- PHASE AL13FE4 % 3 0.6275 0.235 0.1375 > 
+-Monoclinic equilibrium phase, space group C2/m. 
+-Intermetallic particles observed in Fe-containing cast alloys 
+-and 8xxx series. [REF:C16,C17] 
+->> 2 !
++$ MATCALC_DESCRIPTION: Monoclinic equilibrium phase, space group C2/m. Intermetallic particles observed in Fe-containing cast alloys and 8xxx series. [REF:C16,C17]
++$ MATCALC_PRIORITY: 2
++ PHASE AL13FE4 % 3 0.6275 0.235 0.1375 !
+     CONSTITUENT AL13FE4  : AL : CR,FE%,MN,NI : AL,CU,SI,VA% : !
+ PARAMETER G(AL13FE4,AL:CR:AL;0) 273.00 -15000+5*T+0.765*GHSERAL#
+    +0.235*GHSERCR#; 6000.00  N
+@@ -2807,11 +2828,9 @@
+ $                   THERMODYNAMIC DATA:  ALCRFEMNSI_A
+ $###########################################################################
+ $
+- PHASE ALCRFEMNSI_A  % 4 16  4  1  2 > 
+-Cubic Alpha-AlCr(Fe)MnSi equilibrium phase 
+-with compositions close to Al9Mn2Si. 
+-Important dispersoid phase in 
+-Fe-, Cr-, Mn-containing Al-alloys. [REF:76] >> 4 !
++$ MATCALC_DESCRIPTION: Cubic Alpha-AlCr(Fe)MnSi equilibrium phase with compositions close to Al9Mn2Si. Important dispersoid phase in Fe-, Cr-, Mn-containing Al-alloys. [REF:76]
++$ MATCALC_PRIORITY: 4
++ PHASE ALCRFEMNSI_A  % 4 16  4  1  2 !
+     CONSTITUENT ALCRFEMNSI_A  : AL : CR,CU,FE%,MN% : SI : AL%,SI : !
+ PARAMETER G(ALCRFEMNSI_A,AL:MN:SI:AL;0)  273.00 -7.55772E+05+3.54443E+03*T
+   -573.95*T*LN(T)-.114419*T**2+9.70013E-06*T**3+3716760*T**(-1); 6000.00 N 
+@@ -2871,12 +2890,9 @@
+ $                   THERMODYNAMIC DATA:  AL8FEMNSI2
+ $###########################################################################
+ $
+- PHASE AL8FEMNSI2 % 4  0.69565 0.08696 0.08696 0.130435 > 
+-Intermetallic alpha_AlMnSi phase reported to crystallize during undercooling 
+-of Al-Si-Fe-Mn alloys. [REF:C18]
+-Has higher Si than cubic alpha-phase ALCRFEMNSI_A. Relevant in simulations 
+-of high-Si Al-alloys, such as A356.
+->> 2 !
++$ MATCALC_DESCRIPTION: Intermetallic alpha_AlMnSi phase reported to crystallize during undercooling of Al-Si-Fe-Mn alloys. [REF:C18] Has higher Si than cubic alpha-phase ALCRFEMNSI_A. Relevant in simulations of high-Si Al-alloys, such as A356.
++$ MATCALC_PRIORITY: 2
++ PHASE AL8FEMNSI2 % 4  0.69565 0.08696 0.08696 0.130435 !
+     CONSTITUENT AL8FEMNSI2  : AL : FE : MN : SI : !
+ PARAMETER G(AL8FEMNSI2,AL:FE:MN:SI;0) 273.00 -22000+2*T+0.69565*GHSERAL#
+    +0.08696*GHSERFE#+0.08696*GHSERMN#+0.130435*GHSERSI#; 6000.00  N
+@@ -2886,11 +2902,9 @@
+ $                   THERMODYNAMIC DATA:  ALFEMNSI_B
+ $###########################################################################
+ $
+- PHASE ALFEMNSI_B % 4  15    1    4    6 > 
+-Hexagonal Beta-Al(Fe)MnSi equilibrium phase, Al15Si1(Al,Si)4(Fe,Mn)6. 
+-Compositions significantly extending around (Al,Si)10Mn3.
+-Dispersoid phase in Fe-, Mn-containing Al-alloys. [REF:76] 
+->> 3 !
++$ MATCALC_DESCRIPTION: Hexagonal Beta-Al(Fe)MnSi equilibrium phase, Al15Si1(Al,Si)4(Fe,Mn)6. Compositions significantly extending around (Al,Si)10Mn3. Dispersoid phase in Fe-, Mn-containing Al-alloys. [REF:76]
++$ MATCALC_PRIORITY: 3
++ PHASE ALFEMNSI_B % 4  15    1    4    6 !
+     CONSTITUENT ALFEMNSI_B  : AL : SI : AL,SI : FE,MN : !
+ PARAMETER G(ALFEMNSI_B,AL:SI:AL:FE;0) 273.00 -557000
+    +19*GHSERAL#+6*GHSERFE#+GHSERSI#; 6000.00  N
+@@ -2909,12 +2923,9 @@
+ $                   THERMODYNAMIC DATA:  ALFENI_T1  
+ $###########################################################################
+ $
+- PHASE ALFENI_T1  % 2  0.8182 0.1818 > 
+-Ternary compound Al9FeNi. 
+-Al9Co2-type monoclinic structure with 22 atoms per form,ula unit. 
+-Contributes to hardening, reported for alloy 2618, 
+-with a high thermal stability of particles up to 600C. [REF:C19,C20,C21]  
+->> 2 !
++$ MATCALC_DESCRIPTION: Ternary compound Al9FeNi. Al9Co2-type monoclinic structure with 22 atoms per form,ula unit. Contributes to hardening, reported for alloy 2618, with a high thermal stability of particles up to 600C. [REF:C19,C20,C21]
++$ MATCALC_PRIORITY: 2
++ PHASE ALFENI_T1  % 2  0.8182 0.1818 !
+     CONSTITUENT ALFENI_T1  : AL : FE,NI : !
+ PARAMETER G(ALFENI_T1,AL:FE;0) 273.00 -19900+1.9*T
+    +0.8182*GHSERAL#+0.1818*GHSERFE#; 6000.00  N
+@@ -2927,9 +2938,9 @@
+ $                   THERMODYNAMIC DATA:  ALFESI_T6 
+ $###########################################################################
+ $
+-PHASE ALFESI_T6 %  4 0.598    0.152    0.1    0.15 > 
+-Monoclinic AlFeSi-Beta phase, roughly given as Al5FeSi.
+-Important dispersoid in Fe-containing Al-alloys >> 4 !
++$ MATCALC_DESCRIPTION: Monoclinic AlFeSi-Beta phase, roughly given as Al5FeSi. Important dispersoid in Fe-containing Al-alloys
++$ MATCALC_PRIORITY: 4
++PHASE ALFESI_T6 %  4 0.598    0.152    0.1    0.15 !
+     CONSTITUENT ALFESI_T6  : AL : CR,CU,FE,MN : SI : AL,SI : !
+ PARAMETER G(ALFESI_T6,AL:FE:SI:AL;0) 273.00 -19649+4.209*T+0.748*GHSERAL#
+    +0.152*GHSERFE#+0.1*GHSERSI#; 6000.00  N
+@@ -2980,12 +2991,9 @@
+ $                   THERMODYNAMIC DATA:  AL12MN  
+ $###########################################################################
+ $
+- PHASE AL12MN  % 2 12 1 > 
+-Body-centered cubic. 
+-Occasionally observed metastable Mn- and Fe containing particles 
+-in aluminium alloyed with Mn. 
+-Example: Al-0.7at% Mn, ellipsoid to rod-like particle morphologies.[REF:C26]
+- >> 2 !
++$ MATCALC_DESCRIPTION: Body-centered cubic. Occasionally observed metastable Mn- and Fe containing particles in aluminium alloyed with Mn. Example: Al-0.7at% Mn, ellipsoid to rod-like particle morphologies.[REF:C26]
++$ MATCALC_PRIORITY: 2
++ PHASE AL12MN  % 2 12 1 !
+     CONSTITUENT AL12MN  : AL : CR,FE,MN% : !
+ PARAMETER G(AL12MN,AL:CR;0) 273.00 -76500+12*GHSERAL#
+    +GHSERCR#; 6000.00  N
+@@ -3012,10 +3020,9 @@
+ $                   THERMODYNAMIC DATA:  AL3NI
+ $###########################################################################
+ $
+- PHASE AL3NI  %  2 0.75   0.25 > 
+-Potential precipitate in Ni-containing Al-alloys. 
+-Simple description used 
+->> 1 !
++$ MATCALC_DESCRIPTION: Potential precipitate in Ni-containing Al-alloys. Simple description used
++$ MATCALC_PRIORITY: 1
++ PHASE AL3NI  %  2 0.75   0.25 !
+     CONSTITUENT AL3NI  : AL : FE,NI% : !
+ PARAMETER G(AL3NI,AL:NI;0) 273.00 -48483.73+12.29913*T
+    +0.75*GHSERAL#+0.25*GHSERNI#; 6000.00  N
+@@ -3028,9 +3035,9 @@
+ $                   THERMODYNAMIC DATA:  AL3SC
+ $#############################################################################
+ $
+- PHASE AL3SC  % 2  3 1 > Ordered L12-type. 
+-Coherent, nano-scale precipitates in Sc-containing Al-alloys contribute to precipitation hardening. [REF:C28,C29] 
+->> 3 !
++$ MATCALC_DESCRIPTION: Ordered L12-type. Coherent, nano-scale precipitates in Sc-containing Al-alloys contribute to precipitation hardening. [REF:C28,C29]
++$ MATCALC_PRIORITY: 3
++ PHASE AL3SC  % 2  3 1 !
+     CONSTITUENT AL3SC   : AL : MG,SC%,ZR : !
+ PARAMETER G(AL3SC,AL:SC;0) 273.00 -168000+14.75*T+3*GHSERAL#
+  +GHSERSC#; 6000.00  N
+@@ -3046,7 +3053,8 @@
+ $                   THERMODYNAMIC DATA:  ALSC
+ $#############################################################################
+ $
+- PHASE ALSC  % 2  1 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALSC  % 2  1 1 !
+     CONSTITUENT ALSC   : AL : SC : !
+ PARAMETER G(ALSC,AL:SC;0) 273.00 -92000+0.5*T+GHSERAL#+GHSERSC#; 6000.00  N
+ REF:pov13 !
+@@ -3055,7 +3063,8 @@
+ $                   THERMODYNAMIC DATA:  AL2SC
+ $#############################################################################
+ $
+- PHASE AL2SC  % 2  2  1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL2SC  % 2  2  1 !
+     CONSTITUENT AL2SC  : AL : SC : !
+ PARAMETER G(AL2SC,AL:SC;0) 273.00 -144000+8.4*T+2*GHSERAL#
+  +GHSERSC#; 6000.00  N
+@@ -3065,7 +3074,8 @@
+ $                   THERMODYNAMIC DATA:  SC2AL
+ $#############################################################################
+ $
+- PHASE SC2AL  % 2  1   2 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE SC2AL  % 2  1   2 !
+     CONSTITUENT SC2AL  : AL : SC : !
+ PARAMETER G(SC2AL,AL:SC;0) 273.00 -124500+GHSERAL#+2*GHSERSC#; 6000.00  N
+ REF:pov13 !
+@@ -3074,9 +3084,9 @@
+ $                   THERMODYNAMIC DATA:  AL3TI_H
+ $###########################################################################
+ $
+- PHASE AL3TI_H  %  2 3 1 > 
+-Tetragonal high temperature modification with space group I4/mmm. 
+->> 2 !
++$ MATCALC_DESCRIPTION: Tetragonal high temperature modification with space group I4/mmm.
++$ MATCALC_PRIORITY: 2
++ PHASE AL3TI_H  %  2 3 1 !
+     CONSTITUENT AL3TI_H  : AL%,TI : AL,TI% :  !
+ PARAMETER G(AL3TI_H,AL:AL;0)  273.00 +80000+4*GHSERAL#; 6000.00  N
+ REF:77 !
+@@ -3103,9 +3113,9 @@
+ $                   THERMODYNAMIC DATA:  AL3TI_L
+ $###########################################################################
+ $
+- PHASE AL3TI_L  %  2 3 1 > 
+-Tetragonal low-temperature modification, space group I4/mmm. 
+->> 2 !
++$ MATCALC_DESCRIPTION: Tetragonal low-temperature modification, space group I4/mmm.
++$ MATCALC_PRIORITY: 2
++ PHASE AL3TI_L  %  2 3 1 !
+     CONSTITUENT AL3TI_L  : AL%,TI : AL,TI% :  !
+ PARAMETER G(AL3TI_L,AL:AL;0)  273.00 +80000+4*GHSERAL#; 6000.00  N
+ REF:77 !
+@@ -3132,10 +3142,9 @@
+ $                   THERMODYNAMIC DATA:  AL3ZR 
+ $###########################################################################
+ $
+- PHASE AL3ZR % 2 0.75 0.25 > tetragonal ordered D023 structure, Pd3Mn type. 
+-Coherent, nano-scale precipitates in Zr-Sc-containing Al-alloys 
+-contribute to precipitation hardening. [REF:C28,C30] 
+->> 3 !
++$ MATCALC_DESCRIPTION: tetragonal ordered D023 structure, Pd3Mn type. Coherent, nano-scale precipitates in Zr-Sc-containing Al-alloys contribute to precipitation hardening. [REF:C28,C30]
++$ MATCALC_PRIORITY: 3
++ PHASE AL3ZR % 2 0.75 0.25 !
+     CONSTITUENT AL3ZR  : AL : CU,FE,SC,ZR% : !
+ PARAMETER G(AL3ZR,AL:CU;0) 273.00 +0.75*GHSERAL#
+  +0.25*GHSERCU#-5000; 6000.00  N
+@@ -3160,10 +3169,9 @@
+ $                   THERMODYNAMIC DATA:  LC14_ZN2MG
+ $###########################################################################
+ $
+- PHASE LC14_ZN2MG % 2 2 1 > 
+-Mg-Zn Laves-Phase with hexagonal C14 structure.
+-Equilibrium precipitate in the overaging regime of AA7xxx alloys.   
+->> 3 !
++$ MATCALC_DESCRIPTION: Mg-Zn Laves-Phase with hexagonal C14 structure. Equilibrium precipitate in the overaging regime of AA7xxx alloys.
++$ MATCALC_PRIORITY: 3
++ PHASE LC14_ZN2MG % 2 2 1 !
+    CONSTITUENT LC14_ZN2MG  : AL,CU,MG,NI,ZN% : AL,CU,MG,NI,ZN : !
+ PARAM G(LC14_ZN2MG,ZN:MG;0) 273.00 +1*GHSERMG#+2*GHSERZN#
+  -36500+11*T; 6000.00  N
+@@ -3249,10 +3257,9 @@
+ $                   THERMODYNAMIC DATA:  MGALCUZN_T
+ $###########################################################################
+ $
+- PHASE MGALCUZN_T  %  4  0.321   0.07406  0.59259  0.01235 > 
+-Cu-containing T-Phase, equilibrium precipitate in the overaging regime 
+-of AA7xxx alloys [REF:C39,C40].   
+->> 3 !
++$ MATCALC_DESCRIPTION: Cu-containing T-Phase, equilibrium precipitate in the overaging regime of AA7xxx alloys [REF:C39,C40].
++$ MATCALC_PRIORITY: 3
++ PHASE MGALCUZN_T  %  4  0.321   0.07406  0.59259  0.01235 !
+     CONSTITUENT MGALCUZN_T  : MG : AL,MG% : AL,CU,MG,ZN : AL : !
+ PARAMETER G(MGALCUZN_T,MG:MG:AL:AL;0) 273.00 -1000-2.3*T+0.605*GHSERAL#
+  +0.395*GHSERMG#; 6000.00  N
+@@ -3312,11 +3319,9 @@
+ $                   THERMODYNAMIC DATA:  MG2SI_B
+ $###########################################################################
+ $
+- PHASE MG2SI_B % 2 2 1 > 
+-Face-centered cubic equilibrium phase. 
+-Incoherent precipitates (plates or cubes) in the overaging regime, 
+-6xxx alloys. [REF:C31,C32] 
+->> 4 !
++$ MATCALC_DESCRIPTION: Face-centered cubic equilibrium phase. Incoherent precipitates (plates or cubes) in the overaging regime, 6xxx alloys. [REF:C31,C32]
++$ MATCALC_PRIORITY: 4
++ PHASE MG2SI_B % 2 2 1 !
+     CONSTITUENT MG2SI_B  : MG : SI : !
+ $PARAMETER G(MG2SI_B,MG:SI;0) 273.00 -92000+434*T-75*T*LN(T)
+ $ -0.002*T**(+2)+630000*T**(-1); 6000.00  N
+@@ -3329,11 +3334,9 @@
+ $                   THERMODYNAMIC DATA:  PI_ALFEMGSI
+ $###########################################################################
+ $ 
+- PHASE PI_ALFEMGSI % 4 18 2 7 10 > 
+-Hexagonal equilibrium pi-phase. 
+-Occurs in Al-alloys with high contents of Si and Mg. 
+-Influencing ductility. [REF:C14,C15]
+->> 2 !
++$ MATCALC_DESCRIPTION: Hexagonal equilibrium pi-phase. Occurs in Al-alloys with high contents of Si and Mg. Influencing ductility. [REF:C14,C15]
++$ MATCALC_PRIORITY: 2
++ PHASE PI_ALFEMGSI % 4 18 2 7 10 !
+  CONSTITUENT PI_ALFEMGSI  : AL : FE : MG : SI : !
+ $PARAMETER G(PI_ALFEMGSI,AL:FE:MG:SI;0)  273.00 -440000+18*GHSERAL#
+ $   +2*GHSERFE#+7*GHSERMG#+10*GHSERSI#; 6000.00  N
+@@ -3347,12 +3350,9 @@
+ $                   THERMODYNAMIC DATA: Q_PHASE_L
+ $###########################################################################
+ $
+- PHASE Q_PHASE_L % 4 3 2 9 7 > 
+-Hexagonal equilibrium phase with 1 atom. 
+-Commonly precipitating in Cu-containing Al-alloys, e.g. 6xxx and 2xxx. [REF:C10] 
+-Low-T type reflecting lowest energy modification from 1st principles. [REF:C6]
+-Use this phase for simulations of precursor phase to heterogeneous Q_PHASE_H.
+->> 3 !
++$ MATCALC_DESCRIPTION: Hexagonal equilibrium phase with 1 atom. Commonly precipitating in Cu-containing Al-alloys, e.g. 6xxx and 2xxx. [REF:C10] Low-T type reflecting lowest energy modification from 1st principles. [REF:C6] Use this phase for simulations of precursor phase to heterogeneous Q_PHASE_H.
++$ MATCALC_PRIORITY: 3
++ PHASE Q_PHASE_L % 4 3 2 9 7 !
+     CONSTITUENT Q_PHASE_L  : AL : CU : MG : SI : !
+ PARAMETER G(Q_PHASE_L,AL:CU:MG:SI;0)  273.00 -365971.8+50*T
+    +3*GHSERAL#+2*GHSERCU#+9*GHSERMG#+7*GHSERSI#; 6000.00   N 
+@@ -3362,11 +3362,9 @@
+ $                   THERMODYNAMIC DATA: Q_PHASE_H
+ $###########################################################################
+ $
+- PHASE Q_PHASE_H % 4 4 2 8 7 > 
+-Hexagonal equilibrium phase with 21 atoms per unit cell. 
+-Commonly precipitating as heterogeneous laths in Cu-containing Al-alloys, 
+-e.g. 6xxx and 2xxx. [REF:C10] 
+->> 4 !
++$ MATCALC_DESCRIPTION: Hexagonal equilibrium phase with 21 atoms per unit cell. Commonly precipitating as heterogeneous laths in Cu-containing Al-alloys, e.g. 6xxx and 2xxx. [REF:C10]
++$ MATCALC_PRIORITY: 4
++ PHASE Q_PHASE_H % 4 4 2 8 7 !
+     CONSTITUENT Q_PHASE_H  : AL : CU : MG : SI : !
+ PARAMETER G(Q_PHASE_H,AL:CU:MG:SI;0)  273.00 -335000+10*T
+    +4*GHSERAL#+2*GHSERCU#+8*GHSERMG#+7*GHSERSI#; 6000.00   N 
+@@ -3376,10 +3374,9 @@
+ $                   THERMODYNAMIC DATA:  S_PHASE
+ $###########################################################################
+ $
+- PHASE S_PHASE  %  3  2  1  1 > 
+-Base-centered orthorhombic, space group Cmcm. 16 atoms per unit cell. 
+-Lath-shaped precipitates, often on dislocations. [REF:C12] 
+->> 3 !
++$ MATCALC_DESCRIPTION: Base-centered orthorhombic, space group Cmcm. 16 atoms per unit cell. Lath-shaped precipitates, often on dislocations. [REF:C12]
++$ MATCALC_PRIORITY: 3
++ PHASE S_PHASE  %  3  2  1  1 !
+     CONSTITUENT S_PHASE  : AL,SI : CU%,ZN : MG : !
+ PARAMETER G(S_PHASE,AL:CU:MG;0) 273.00 -66822.859+3.219093*T
+    -6.67532E-21*T**(7)+2*GHSERAL#+GHSERCU#+GHSERMG#; 6000.00  N
+@@ -3405,12 +3402,9 @@
+ $                   THERMODYNAMIC DATA:  THETA_AL2CU
+ $###########################################################################
+ $
+- PHASE THETA_AL2CU % 2 2 1 > 
+-Equilibrium phase in Al-Cu. Tetragonal C16 structure, 
+-4 formula units per unit cell. 
+-Commonly plate-like, heterogeneous precipitates at grain boundaries, 
+-over-aging regime. [REF:C8] 
+->> 4 !
++$ MATCALC_DESCRIPTION: Equilibrium phase in Al-Cu. Tetragonal C16 structure, 4 formula units per unit cell. Commonly plate-like, heterogeneous precipitates at grain boundaries, over-aging regime. [REF:C8]
++$ MATCALC_PRIORITY: 4
++ PHASE THETA_AL2CU % 2 2 1 !
+     CONSTITUENT THETA_AL2CU  : AL : AL,CU% : !
+ PARAMETER G(THETA_AL2CU,AL:AL;0) 273.00 +3.0*GALBCC#; 6000.00  N
+ REF:31 !
+@@ -3427,11 +3421,9 @@
+ $                   THERMODYNAMIC DATA:  AL_B_DP
+ $###########################################################################
+ $
+- PHASE AL_B_DP % 3 2  5  4 > 
+-Metastable Al-containing precipitate phase in the low-T beta double-prime precipitation regime.
+-Same structure as Al-free beta double-prime, monoclinic with space group C2/m.
+-Semicoherent needles in 6xxx alloys. [C36]
+->> 2 !
++$ MATCALC_DESCRIPTION: Metastable Al-containing precipitate phase in the low-T beta double-prime precipitation regime. Same structure as Al-free beta double-prime, monoclinic with space group C2/m. Semicoherent needles in 6xxx alloys. [C36]
++$ MATCALC_PRIORITY: 2
++ PHASE AL_B_DP % 3 2  5  4 !
+     CONSTITUENT AL_B_DP  : AL : MG : SI : !
+ PARAMETER G(AL_B_DP,AL:MG:SI;0)  273.00 -30000-20*T+2*GHSERAL#+5*GHSERMG#
+  +4*GHSERSI#; 6000.00  N
+@@ -3441,8 +3433,9 @@
+ $                   THERMODYNAMIC DATA:  ALCRSI
+ $###########################################################################
+ $
+- PHASE ALCRSI % 3 1 1 1 > metastable, potential precipitate in 6xxx Al-alloys. 
+-Ideal extension, to be optimized >> 2 !
++$ MATCALC_DESCRIPTION: metastable, potential precipitate in 6xxx Al-alloys. Ideal extension, to be optimized
++$ MATCALC_PRIORITY: 2
++ PHASE ALCRSI % 3 1 1 1 !
+     CONSTITUENT ALCRSI  : AL : CR : SI : !
+ PARAMETER G(ALCRSI,AL:CR:SI;0) 273.00 GHSERAL#+GHSERSI#
+    +GHSERCR#+UNASS#; 6000.00  N  
+@@ -3452,10 +3445,9 @@
+ $                   THERMODYNAMIC DATA:  ALMGZN_GP
+ $###########################################################################
+ $
+- PHASE ALMGZN_GP % 3 8 1 1.2 > 
+-GP-zones in AA7xxx. 
+-Averaged composition assessed from literature data (pov09). 
+->> 3 !
++$ MATCALC_DESCRIPTION: GP-zones in AA7xxx. Averaged composition assessed from literature data (pov09).
++$ MATCALC_PRIORITY: 3
++ PHASE ALMGZN_GP % 3 8 1 1.2 !
+     CONSTITUENT ALMGZN_GP  : AL : MG : ZN : !
+ PARAMETER G(ALMGZN_GP,AL:MG:ZN;0) 273.00 -12000+5*T
+    +8*GHSERAL#+GHSERMG#+1.2*GHSERZN#; 6000.00  N
+@@ -3465,10 +3457,9 @@
+ $                   THERMODYNAMIC DATA:  ALMG4ZN11
+ $###########################################################################
+ $
+- PHASE ALMG4ZN11 % 3 1 4 11 > 
+-NOTE - Not assessed yet. Metastable, reported as precipitate phase 
+-in Al-Zn-Mg-Li alloy. [REF:C13] 
+->> 2 !
++$ MATCALC_DESCRIPTION: NOTE - Not assessed yet. Metastable, reported as precipitate phase in Al-Zn-Mg-Li alloy. [REF:C13]
++$ MATCALC_PRIORITY: 2
++ PHASE ALMG4ZN11 % 3 1 4 11 !
+     CONSTITUENT ALMG4ZN11  : AL : MG : ZN : !
+ PARAMETER G(ALMG4ZN11,AL:MG:ZN;0) 273.00 -70000+30*T+GHSERAL#+4*GHSERMG#
+  +11*GHSERZN#; 6000.00  N
+@@ -3477,12 +3468,9 @@
+ $###########################################################################
+ $                   THERMODYNAMIC DATA:  AL6MN  
+ $###########################################################################
+- PHASE AL6MN  % 2 0.857143 0.142857 > 
+-Orthorhombic equilibrium phase with 28 atoms per unit cell. 
+-At high Mn-alloying.
+-Example: Hardenable Al-0.7 at.% Mn, ellipsoid 
+-to rod-like particle morphologies. [REF:C24,C25,C26] 
+->> 3 !
++$ MATCALC_DESCRIPTION: Orthorhombic equilibrium phase with 28 atoms per unit cell. At high Mn-alloying. Example: Hardenable Al-0.7 at.% Mn, ellipsoid to rod-like particle morphologies. [REF:C24,C25,C26]
++$ MATCALC_PRIORITY: 3
++ PHASE AL6MN  % 2 0.857143 0.142857 !
+     CONSTITUENT AL6MN   : AL : CR,FE,MN% : !
+ PARAMETER G(AL6MN,AL:CR;0) 273.00 +0.857143*GHSERAL#
+    +0.142857*GHSERCR#+50000; 6000.00  N
+@@ -3505,9 +3493,9 @@
+ $                   THERMODYNAMIC DATA:  MG_SRO
+ $###########################################################################
+ $
+- PHASE AL3MG  %  2  0.75  0.25 > 
+-nonstoich, close to ordered AlMg L12 phase 
+->> 3 !
++$ MATCALC_DESCRIPTION: nonstoich, close to ordered AlMg L12 phase
++$ MATCALC_PRIORITY: 3
++ PHASE AL3MG  %  2  0.75  0.25 !
+     CONSTITUENT AL3MG  : AL : Al,MG,SI : !
+ PARAMETER G(AL3MG,AL:MG;0) 273.00 -700
+  +0.25*GHSERMG#+0.75*GHSERAL#; 6000.00  N
+@@ -3547,12 +3535,9 @@
+ $                   THERMODYNAMIC DATA:  B_PRIME_L
+ $###########################################################################
+ $
+- PHASE B_PRIME_L % 3 3  9  7 > 
+-Metastable B prime phase - low-T type reflecting lowest energy modification 
+-from 1st principles. 
+-Structure can be related to the hexagonal structure of Q-Phase, 
+-with empty Cu-sites. [REF:C11,C37] 
+->> 2 !
++$ MATCALC_DESCRIPTION: Metastable B prime phase - low-T type reflecting lowest energy modification from 1st principles. Structure can be related to the hexagonal structure of Q-Phase, with empty Cu-sites. [REF:C11,C37]
++$ MATCALC_PRIORITY: 2
++ PHASE B_PRIME_L % 3 3  9  7 !
+     CONSTITUENT B_PRIME_L  : AL : MG : SI : !
+ PARAMETER G(B_PRIME_L,AL:MG:SI;0)  273.00 -140000-10*T+3*GHSERAL#+9*GHSERMG#
+  +7*GHSERSI#; 6000.00  N
+@@ -3562,11 +3547,9 @@
+ $                   THERMODYNAMIC DATA:  B_PRIME_H
+ $###########################################################################
+ $
+- PHASE B_PRIME_H % 3 4  8  7 > 
+-Metastable B prime phase. 
+-Structure can be related to the hexagonal structure of Q-Phase, 
+-with empty Cu-sites. [REF:C11,C37]
+->> 4 !
++$ MATCALC_DESCRIPTION: Metastable B prime phase. Structure can be related to the hexagonal structure of Q-Phase, with empty Cu-sites. [REF:C11,C37]
++$ MATCALC_PRIORITY: 4
++ PHASE B_PRIME_H % 3 4  8  7 !
+     CONSTITUENT B_PRIME_H  : AL : MG : SI : !
+ PARAMETER G(B_PRIME_H,AL:MG:SI;0)  273.00 -115000-30*T+4*GHSERAL#+8*GHSERMG#
+  +7*GHSERSI#; 6000.00  N
+@@ -3576,9 +3559,9 @@
+ $                   THERMODYNAMIC DATA:  CL_CUMG0
+ $###########################################################################
+ $
+- PHASE CL_CUMG0 % 2 2 2 > 
+-Initial metastable Cu-Mg Co-Cluster.
+->> 2 !
++$ MATCALC_DESCRIPTION: Initial metastable Cu-Mg Co-Cluster.
++$ MATCALC_PRIORITY: 2
++ PHASE CL_CUMG0 % 2 2 2 !
+     CONSTITUENT CL_CUMG0  : AL : CU,MG : !
+ PARAMETER G(CL_CUMG0,AL:MG;0) 273.00 +2*GHSERAL#+5200-1.8*T
+  +2*GHSERMG#; 6000.00  N
+@@ -3597,9 +3580,9 @@
+ $                   THERMODYNAMIC DATA:  CL_CUMG1
+ $###########################################################################
+ $
+- PHASE CL_CUMG1 % 2 2 5 > 
+-Early metastable Cu-Mg Co-Cluster. 
+->> 2 !
++$ MATCALC_DESCRIPTION: Early metastable Cu-Mg Co-Cluster.
++$ MATCALC_PRIORITY: 2
++ PHASE CL_CUMG1 % 2 2 5 !
+     CONSTITUENT CL_CUMG1  : AL : CU,MG : !
+ PARAMETER G(CL_CUMG1,AL:MG;0) 273.00 +2*GHSERAL#+13000-4.5*T
+  +5*GHSERMG#; 6000.00  N
+@@ -3618,10 +3601,9 @@
+ $                   THERMODYNAMIC DATA:  CL_FCC
+ $###########################################################################
+ $
+- PHASE CL_FCC % 2 1 1 > 
+-Early metastable Mg-Si Co-Cluster. [REF:C31,C32] 
+-Solely use in thermokinetic precipitation simulations. Stable Mg-endmember (comment pov23).
+->> 2 !
++$ MATCALC_DESCRIPTION: Early metastable Mg-Si Co-Cluster. [REF:C31,C32] Solely use in thermokinetic precipitation simulations. Stable Mg-endmember (comment pov23).
++$ MATCALC_PRIORITY: 2
++ PHASE CL_FCC % 2 1 1 !
+     CONSTITUENT CL_FCC  : MG,SI,CU : VA : !
+ $ Changes from Mg;0 and Si;0 were necessary to reproduce broad range 
+ $ of chemical composition of early clusters
+@@ -3644,9 +3626,9 @@
+ $                   THERMODYNAMIC DATA:  CL_MGX (previously CL_MGSI)
+ $###########################################################################
+ $
+-PHASE CL_MGX % 1 1 > 
+-Early metastable complex Co-Cluster phase. [REF:C31,C32] 
+->> 4 !
++$ MATCALC_DESCRIPTION: Early metastable complex Co-Cluster phase. [REF:C31,C32]
++$ MATCALC_PRIORITY: 4
++PHASE CL_MGX % 1 1 !
+     CONSTITUENT CL_MGX : CU,MG,SI,ZN : !
+ PARAMETER G(CL_MGX,CU;0) 273.00 +GHSERCU#+500; 6000.00  N
+ REF:pov23 !
+@@ -3680,10 +3662,9 @@
+ $                   THERMODYNAMIC DATA:  CL_SPL 
+ $###########################################################################
+ $
+- PHASE CL_SPL % 1 1 > 
+-Early metastable Mg-X Cluster. Reassessed 2025 (E. Povoden-Karadeniz)  
+-for improved demixing, splitting to Si-Rich and Mg-rich clusters. Mg-Si balanced Co-cluster less stabilised
+->> 2 !
++$ MATCALC_DESCRIPTION: Early metastable Mg-X Cluster. Reassessed 2025 (E. Povoden-Karadeniz) for improved demixing, splitting to Si-Rich and Mg-rich clusters. Mg-Si balanced Co-cluster less stabilised
++$ MATCALC_PRIORITY: 2
++ PHASE CL_SPL % 1 1 !
+     CONSTITUENT CL_SPL  : AL,MG%,SI% : !
+ PARAMETER G(CL_SPL,AL;0) 273.00 +50000+GHSERAL#; 6000.00  N
+ REF:pov25 !
+@@ -3706,9 +3687,9 @@
+ $                   THERMODYNAMIC DATA:  GP_MGZN
+ $###########################################################################
+ $
+- PHASE GP_MGZN % 3 6 24 8 > 
+-ordered GP in Al-Mg-Zn  
+->> 3 !
++$ MATCALC_DESCRIPTION: ordered GP in Al-Mg-Zn
++$ MATCALC_PRIORITY: 3
++ PHASE GP_MGZN % 3 6 24 8 !
+     CONSTITUENT GP_MGZN : ZN : ZN : MG : !
+ PARAMETER G(GP_MGZN,ZN:ZN:MG;0) 273.00 -125500+34*T
+   +30*GHSERZN#+8*GHSERMG#; 6000.00  N
+@@ -3718,9 +3699,9 @@
+ $                   THERMODYNAMIC DATA:  ETA_P_ALMGZN
+ $###########################################################################
+ $
+- PHASE ETA_P_ALMGZN % 3 4 11 1 > 
+-Metastable eta prime precipitate in AA7xxx [REF:C27]  
+->> 3 !
++$ MATCALC_DESCRIPTION: Metastable eta prime precipitate in AA7xxx [REF:C27]
++$ MATCALC_PRIORITY: 3
++ PHASE ETA_P_ALMGZN % 3 4 11 1 !
+     CONSTITUENT ETA_P_ALMGZN  : MG : ZN : AL : !
+ PARAMETER G(ETA_P_ALMGZN,MG:ZN:AL;0) 273.00 -61000+5*T
+   +GHSERAL#+11*GHSERZN#+4*GHSERMG#; 6000.00  N
+@@ -3731,11 +3712,9 @@
+ $###########################################################################
+ $
+ $ 4-sublattice model based on Hallstedt et al. 2007, Al-Li (pov09)
+- PHASE GP_MAT % 5 0.25   0.25   0.25   0.25   1 > 
+-Metastable, coherent Al-containing GP-Zones, "Matsuda-Phase":
+-These GP-zones are modeled as ordered fcc-based phase, giving Al2Mg1Si1 
+-according to Matsuda phase plus Al [REF:C33] 
+->> 4 !
++$ MATCALC_DESCRIPTION: Metastable, coherent Al-containing GP-Zones, "Matsuda-Phase": These GP-zones are modeled as ordered fcc-based phase, giving Al2Mg1Si1 according to Matsuda phase plus Al [REF:C33]
++$ MATCALC_PRIORITY: 4
++ PHASE GP_MAT %X 5 0.25   0.25   0.25   0.25   1 !
+  CONST GP_MAT  : AL% MG SI : AL% MG SI : AL MG% SI : AL MG SI% : VA : !
+ $
+ PARAMETER G(GP_MAT,AL:AL:AL:MG:VA;0) 273.00 +GFAL3MG#; 6000.00  N
+@@ -4626,16 +4605,17 @@
+ $ Parameter to settle rounding errors and destabilise disordered GP 
+ $ relative to fcc in thermodynamic equilibrium calculations 
+ $ above the order-disorder temperature of GP_MAT.
+-PARAMETER SE(GP_MAT) 273.00 +0.1; 6000.00  N
+-REF:koze12 !
++$ THERMOGAR_DISABLED: unsupported MatCalc SE parameter retained as comments
++$PARAMETER SE(GP_MAT) 273.00 +0.1; 6000.00  N
++$REF:koze12 !
+ $
+ $###########################################################################
+ $                   THERMODYNAMIC DATA:  L12AL3ZR 
+ $###########################################################################
+ $
+- PHASE L12AL3ZR % 2 0.75 0.25 > cubic ordered L12 structure, metastable. 
+-Coherent, nano-scale precipitates.
+->> 2 !
++$ MATCALC_DESCRIPTION: cubic ordered L12 structure, metastable. Coherent, nano-scale precipitates.
++$ MATCALC_PRIORITY: 2
++ PHASE L12AL3ZR % 2 0.75 0.25 !
+     CONSTITUENT L12AL3ZR  : AL : ZR : !
+ PARAMETER G(L12AL3ZR,AL:ZR;0) 273.00 -42500+8.5*T+0.75*GHSERAL#
+  +0.25*GHSERZR#; 6000.00  N
+@@ -4657,10 +4637,9 @@
+ $                   THERMODYNAMIC DATA:  MGSI_B_P
+ $###########################################################################
+ $
+- PHASE MGSI_B_P % 2 1.8  1 > 
+-Beta prime, metastable hexagonal close-packed rod-like Mg-Si precipitates 
+-in 6xxx alloys. [REF:C31,C32,C34] 
+->> 4 !
++$ MATCALC_DESCRIPTION: Beta prime, metastable hexagonal close-packed rod-like Mg-Si precipitates in 6xxx alloys. [REF:C31,C32,C34]
++$ MATCALC_PRIORITY: 4
++ PHASE MGSI_B_P % 2 1.8  1 !
+     CONSTITUENT MGSI_B_P  : MG : SI : !
+ $PARAMETER G(MGSI_B_P,MG:SI;0) 273.00 -68000+400*T-70*T*LN(T)
+ $   -0.006*T**2+500000*T**(-1); 6000.00  N
+@@ -4673,11 +4652,9 @@
+ $                   THERMODYNAMIC DATA:  MG5SI6_B_DP
+ $###########################################################################
+ $
+- PHASE MG5SI6_B_DP % 2 5  6 > 
+-Main metastable hardening phase in 6xxx, monoclinic 
+-with space group C2/m. Al-free Mg5Si6.
+-Semicoherent needles. [REF:C31,C32,C35].     
+->> 5 !
++$ MATCALC_DESCRIPTION: Main metastable hardening phase in 6xxx, monoclinic with space group C2/m. Al-free Mg5Si6. Semicoherent needles. [REF:C31,C32,C35].
++$ MATCALC_PRIORITY: 5
++ PHASE MG5SI6_B_DP % 2 5  6 !
+     CONSTITUENT MG5SI6_B_DP  : CU,MG : SI : !
+ PARAMETER G(MG5SI6_B_DP,MG:SI;0)  273.00 -5000-30*T-0.0096*T**2
+   -1e-7*T**3+5*GHSERMG#+6*GHSERSI#; 6000.00  N
+@@ -4694,9 +4671,9 @@
+ $                   THERMODYNAMIC DATA:  PRE_B_DP
+ $###########################################################################
+ $
+- PHASE PRE_B_DP % 3 1 4 6 > 
+-Pre-beta-double prime. Assumed stoichiometric pre-precipitate to beta-dp Mg5Si6
+->> 3 !!
++$ MATCALC_DESCRIPTION: Pre-beta-double prime. Assumed stoichiometric pre-precipitate to beta-dp Mg5Si6
++$ MATCALC_PRIORITY: 3
++ PHASE PRE_B_DP % 3 1 4 6 !!
+     CONSTITUENT PRE_B_DP : AL : MG : SI : !
+ PARAMETER G(PRE_B_DP,AL:MG:SI;0) 273.00 -10000+82*T
+    +GHSERAL#+4*GHSERMG#+6*GHSERSI#; 6000.00  N
+@@ -4706,12 +4683,9 @@
+ $                   THERMODYNAMIC DATA:  TH_DP_GPB
+ $###########################################################################
+ $
+- PHASE TH_DP_GPB % 5 1 1 4 1 1 > 
+-Metastable, coherent hardening phase Theta double-prime in Al-Cu and GPB zones 
+-in Al-Cu-Mg (composition set 1) alloys. GPB after Guinier-Preston-Bagaryatsky. 
+-Forming monatomic layers that agglomerate [REFS:C5,C6,C7]. 
+-Hypothetic solubilities of Mg and Si. 
+->> 3 !
++$ MATCALC_DESCRIPTION: Metastable, coherent hardening phase Theta double-prime in Al-Cu and GPB zones in Al-Cu-Mg (composition set 1) alloys. GPB after Guinier-Preston-Bagaryatsky. Forming monatomic layers that agglomerate [REFS:C5,C6,C7]. Hypothetic solubilities of Mg and Si.
++$ MATCALC_PRIORITY: 3
++ PHASE TH_DP_GPB % 5 1 1 4 1 1 !
+     CONSTITUENT TH_DP_GPB  : AL%,MG,SI : AL%,MG,SI : AL : CU%,MG,SI : 
+                            CU%,MG,SI :  !
+ PARAMETER G(TH_DP_GPB,AL:AL:AL:CU:CU;0) 273.00 +6*GHSERAL#+2*GHSERCU#
+@@ -4876,10 +4850,9 @@
+ $                   THERMODYNAMIC DATA:  THETA_PRIME
+ $###########################################################################
+ $
+- PHASE THETA_PRIME % 2 2 1 > 
+-Important tetragonal hardening phase in Al-Cu. 
+-Commonly plate-like. [REF:C9,C10] 
+->> 4 !
++$ MATCALC_DESCRIPTION: Important tetragonal hardening phase in Al-Cu. Commonly plate-like. [REF:C9,C10]
++$ MATCALC_PRIORITY: 4
++ PHASE THETA_PRIME % 2 2 1 !
+     CONSTITUENT THETA_PRIME  : AL : CU : !
+ PARAMETER G(THETA_PRIME,AL:CU;0) 273.00 -49250+10.75*T+2*GHSERAL#
+  +GHSERCU#; 6000.00  N
+@@ -4889,10 +4862,9 @@
+ $                   THERMODYNAMIC DATA:  U1_PHASE
+ $###########################################################################
+ $
+- PHASE U1_PHASE % 3 2  1  2 > 
+-Needle-like precipitate with trigonal structure observed in 6xxx 
+-in the beta prime precipitation regime. [REF:C37] 
+->> 3 !
++$ MATCALC_DESCRIPTION: Needle-like precipitate with trigonal structure observed in 6xxx in the beta prime precipitation regime. [REF:C37]
++$ MATCALC_PRIORITY: 3
++ PHASE U1_PHASE % 3 2  1  2 !
+     CONSTITUENT U1_PHASE  : AL : MG : SI : !
+ PARAMETER G(U1_PHASE,AL:MG:SI;0)  273.00 -5000-10*T-0.0055*T**2
+   +3e-6*T**3+150000*T**(-1)+2*GHSERAL#+GHSERMG#+2*GHSERSI#; 6000.00  N
+@@ -4902,10 +4874,9 @@
+ $                   THERMODYNAMIC DATA:  U2_PHASE
+ $###########################################################################
+ $
+- PHASE U2_PHASE % 3 1  1  1 > 
+-Needle-like precipitate with orthorhombic structure in 6xxx 
+-in the beta' precipitation regime. [REF:C37] 
+->> 3 !
++$ MATCALC_DESCRIPTION: Needle-like precipitate with orthorhombic structure in 6xxx in the beta' precipitation regime. [REF:C37]
++$ MATCALC_PRIORITY: 3
++ PHASE U2_PHASE % 3 1  1  1 !
+     CONSTITUENT U2_PHASE  : AL : MG : SI : !
+ PARAMETER G(U2_PHASE,AL:MG:SI;0)  273.00 -14000-3.75*T-0.0015*T**2
+   +7.5e-7*T**3+62500*T**(-1)+GHSERAL#+GHSERMG#+GHSERSI#; 6000.00  N
+@@ -4915,7 +4886,8 @@
+ $                   THERMODYNAMIC DATA:  ALCR
+ $###########################################################################
+ $
+- PHASE ALCR % 2 1 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALCR % 2 1 1 !
+     CONSTITUENT ALCR  : AL%,CR : AL,CR% : !
+ PARAMETER G(ALCR,AL:AL;0) 273.00 +2.0*GHSERAL#+4.0; 6000.00  N
+ REF:31 !
+@@ -4941,7 +4913,8 @@
+ $                   THERMODYNAMIC DATA:  ALCR2
+ $###########################################################################
+ $
+- PHASE ALCR2 % 2 1 2 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALCR2 % 2 1 2 !
+     CONSTITUENT ALCR2  : AL,CR : AL,CR : !
+ PARAMETER G(ALCR2,AL:AL;0) 273.00 +15000
+    +GHSERAL#+GHSERAL#; 6000.00  N
+@@ -4971,7 +4944,8 @@
+ $                   THERMODYNAMIC DATA:  AL8CR5_H
+ $###########################################################################
+ $
+- PHASE AL8CR5_H % 2 8 5 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL8CR5_H % 2 8 5 !
+     CONSTITUENT AL8CR5_H  : AL : CR : !
+ PARAMETER G(AL8CR5_H,AL:CR;0) 273.00 -147732.0-58.5*T
+    +8*GHSERAL#+5*GHSERCR#; 6000.00  N
+@@ -4981,7 +4955,8 @@
+ $                   THERMODYNAMIC DATA:  AL8CR5_L
+ $###########################################################################
+ $
+- PHASE AL8CR5_L % 2 8 5 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL8CR5_L % 2 8 5 !
+     CONSTITUENT AL8CR5_L  : AL : CR : !
+ PARAMETER G(AL8CR5_L,AL:CR;0) 273.00 -229515.0
+    +8*GHSERAL#+5*GHSERCR#; 6000.00  N
+@@ -4991,7 +4966,8 @@
+ $                   THERMODYNAMIC DATA:  AL9CR4_H
+ $###########################################################################
+ $
+- PHASE AL9CR4_H % 2 9 4 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL9CR4_H % 2 9 4 !
+     CONSTITUENT AL9CR4_H  : AL : CR : !
+ PARAMETER G(AL9CR4_H,AL:CR;0) 273.00 -134433.0-56.16*T
+    +9*GHSERAL#+4*GHSERCR#; 6000.00  N
+@@ -5001,7 +4977,8 @@
+ $                   THERMODYNAMIC DATA:  AL9CR4_L
+ $###########################################################################
+ $
+- PHASE AL9CR4_L % 2 9 4 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL9CR4_L % 2 9 4 !
+     CONSTITUENT AL9CR4_L  : AL : CR : !
+ PARAMETER G(AL9CR4_L,AL:CR;0) 273.00 -230750.0+16.094*T
+    +9*GHSERAL#+4*GHSERCR#; 6000.00  N
+@@ -5011,7 +4988,9 @@
+ $                   THERMODYNAMIC DATA:  AL2CU3_D
+ $###########################################################################
+ $
+- PHASE AL2CU3_D % 2 5 8 > delta phase >> 2 !
++$ MATCALC_DESCRIPTION: delta phase
++$ MATCALC_PRIORITY: 2
++ PHASE AL2CU3_D % 2 5 8 !
+     CONSTITUENT AL2CU3_D  : AL%,CU,ZN : AL,CU% : !
+ PARAMETER G(AL2CU3_D,AL:AL;0) 273.00 +50000+5*GHSERAL#
+  +8*GHSERAL#; 6000.00  N
+@@ -5049,9 +5028,9 @@
+ $ Description according to https://www.oqmd.org/materials/composition/AlCu2.
+ $ Assumed vibrational entropic contribution to G. (E. Povoden-Karadeniz, 2024) 
+  
+- PHASE ALCU2 % 2 0.33333 0.66667 > Metastable phase. Orthorhombic, 
+- space group cmcm
+- >> 2 !
++$ MATCALC_DESCRIPTION: Metastable phase. Orthorhombic, space group cmcm
++$ MATCALC_PRIORITY: 2
++ PHASE ALCU2 % 2 0.33333 0.66667 !
+     CONSTITUENT ALCU2  : AL : CU : !
+ PARAMETER G(ALCU2,AL:CU;0) 273.00 -19000-1.5*T
+    +0.33333*GHSERAL#+0.66667*GHSERCU#; 6000.00  N
+@@ -5061,9 +5040,9 @@
+ $                   THERMODYNAMIC DATA:  ALCU_G_P 
+ $###########################################################################
+ $
+- PHASE ALCU_G_P % 4 2 2 3 6 > Cu9Al4 Gamma prime phase. Cubic, equilibrium phase. 
+- D83 from Strukturbericht. 
+- Space group P-43m >> 2 !
++$ MATCALC_DESCRIPTION: Cu9Al4 Gamma prime phase. Cubic, equilibrium phase. D83 from Strukturbericht. Space group P-43m
++$ MATCALC_PRIORITY: 2
++ PHASE ALCU_G_P % 4 2 2 3 6 !
+     CONSTITUENT ALCU_G_P  : AL,CU% : CU : CU : AL,CU% : !
+ PARAMETER G(ALCU_G_P,AL:CU:CU:AL;0) 273.00 +20000
+    +5*GHSERCU#+8*GHSERAL#; 6000.00  N
+@@ -5088,7 +5067,9 @@
+ $                   THERMODYNAMIC DATA:  ALCU_G 
+ $###########################################################################
+ $
+- PHASE ALCU_G % 4 2 2 3 6 > stable as high T gamma spec in Al-Cu >> 2 !
++$ MATCALC_DESCRIPTION: stable as high T gamma spec in Al-Cu
++$ MATCALC_PRIORITY: 2
++ PHASE ALCU_G % 4 2 2 3 6 !
+     CONSTITUENT ALCU_G : AL CU% : CU : CU : AL CU% : !
+ PARAMETER G(ALCU_G,AL:CU:CU:AL;0) 273.00 +25000
+    +5*GHSERCU#+8*GHSERAL#; 6000.00  N
+@@ -5113,7 +5094,9 @@
+ $                   THERMODYNAMIC DATA:  ALCU_EPL
+ $###########################################################################
+ $
+- PHASE ALCU_EPL % 2 1 1 > epsilon prime phase low T >> 2 !
++$ MATCALC_DESCRIPTION: epsilon prime phase low T
++$ MATCALC_PRIORITY: 2
++ PHASE ALCU_EPL % 2 1 1 !
+     CONSTITUENT ALCU_EPL  : AL%,CU,ZN : CU : !
+ $PARAMETER G(ALCU_EPL,AL:CU;0) 273.00 -36976+1.2*T+GHSERAL#
+ $ +GHSERCU#; 6000.00  N
+@@ -5145,7 +5128,9 @@
+ $                   THERMODYNAMIC DATA:  ALCU_EPS
+ $###########################################################################
+ $
+- PHASE ALCU_EPS % 2 1 1 > AlCu-epsilon >> 1 !
++$ MATCALC_DESCRIPTION: AlCu-epsilon
++$ MATCALC_PRIORITY: 1
++ PHASE ALCU_EPS % 2 1 1 !
+     CONSTITUENT ALCU_EPS  : AL%,CU,ZN : CU : !
+ PARAMETER G(ALCU_EPS,AL:CU;0) 273.00 -41000+5.25*T+GHSERAL#
+  +GHSERCU#; 6000.00  N
+@@ -5174,7 +5159,9 @@
+ $                   THERMODYNAMIC DATA:  ALCU_ETL 
+ $###########################################################################
+ $
+- PHASE ALCU_ETL % 2 1 1 > eta prime phase low T >> 2 !
++$ MATCALC_DESCRIPTION: eta prime phase low T
++$ MATCALC_PRIORITY: 2
++ PHASE ALCU_ETL % 2 1 1 !
+     CONSTITUENT ALCU_ETL  : AL%,CU : CU%,ZN : !
+ $PARAMETER G(ALCU_ETL,AL:CU;0)  273.00 -40560+3.14*T
+ $  +GHSERAL#+GHSERCU#; 6000.00  N
+@@ -5213,7 +5200,9 @@
+ $                   THERMODYNAMIC DATA:  ALCU_ETH
+ $###########################################################################
+ $
+- PHASE ALCU_ETH % 2 1 1 > eta phase high T >> 2 !
++$ MATCALC_DESCRIPTION: eta phase high T
++$ MATCALC_PRIORITY: 2
++ PHASE ALCU_ETH % 2 1 1 !
+     CONSTITUENT ALCU_ETH  : AL,CU : CU : !
+ PARAMETER G(ALCU_ETH,AL:CU;0)  273.00 -39586+2.44*T
+    +GHSERAL#+GHSERCU#; 6000.00  N
+@@ -5232,7 +5221,9 @@
+ $                   THERMODYNAMIC DATA:  AL9CU11_Z 
+ $###########################################################################
+ $
+- PHASE AL9CU11_Z % 2 0.439 0.561 > zeta phase >> 2 !
++$ MATCALC_DESCRIPTION: zeta phase
++$ MATCALC_PRIORITY: 2
++ PHASE AL9CU11_Z % 2 0.439 0.561 !
+     CONSTITUENT AL9CU11_Z : AL%,ZN : CU : !
+ PARAMETER G(AL9CU11_Z,AL:CU;0)  273.00 -21450+1.1*T+0.439*GHSERAL#
+  +0.561*GHSERCU#; 6000.00  N
+@@ -5268,7 +5259,9 @@
+ $                   THERMODYNAMIC DATA:  AL9CU11_ZP 
+ $###########################################################################
+ $
+- PHASE AL9CU11_ZP % 2 0.427 0.573 > zeta prime phase >> 2 !
++$ MATCALC_DESCRIPTION: zeta prime phase
++$ MATCALC_PRIORITY: 2
++ PHASE AL9CU11_ZP % 2 0.427 0.573 !
+     CONSTITUENT AL9CU11_ZP  : AL : CU : !
+ PARAMETER G(AL9CU11_ZP,AL:CU;0)  273.00 -21870+1.37*T+0.427*GHSERAL#
+  +0.573*GHSERCU#; 6000.00  N
+@@ -5278,7 +5271,8 @@
+ $                   THERMODYNAMIC DATA:  ALCUMG_V
+ $###########################################################################
+ $
+- PHASE ALCUMG_V  % 3  5  6  2 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALCUMG_V  % 3  5  6  2 !
+     CONSTITUENT ALCUMG_V  : AL : CU : MG :  !
+ PARAMETER G(ALCUMG_V,AL:CU:MG;0) 273.00 -274527.45+13.0*T
+    +5*GHSERAL#+6*GHSERCU#+2*GHSERMG#; 6000.00  N
+@@ -5288,7 +5282,9 @@
+ $                   THERMODYNAMIC DATA:  ALCUZN_T 
+ $###########################################################################
+ $
+- PHASE ALCUZN_T % 2 1 1 > metastable in Al-Cu >> 1 !
++$ MATCALC_DESCRIPTION: metastable in Al-Cu
++$ MATCALC_PRIORITY: 1
++ PHASE ALCUZN_T % 2 1 1 !
+     CONSTITUENT ALCUZN_T  : AL%,ZN  : CU%,VA : !
+ PARAMETER G(ALCUZN_T,AL:VA;0) 273.00 +12000-2.08420E+04+33.3*T
+  +GALBCC#; 6000.00  N
+@@ -5319,7 +5315,8 @@
+ $                   THERMODYNAMIC DATA:  AL2FE 
+ $###########################################################################
+ $
+- PHASE AL2FE % 2 0.6667 0.3333 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL2FE % 2 0.6667 0.3333 !
+     CONSTITUENT AL2FE  : AL%,SI : FE,MN,NI : !
+ PARAMETER G(AL2FE,AL:FE;0) 273.00 -33175.33+6.60367*T
+    +0.6667*GHSERAL#+0.3333*GHSERFE#; 6000.00  N
+@@ -5338,7 +5335,8 @@
+ $                   THERMODYNAMIC DATA:  AL5FE2 
+ $###########################################################################
+ $
+- PHASE AL5FE2 % 2 0.7143 0.2857 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL5FE2 % 2 0.7143 0.2857 !
+     CONSTITUENT AL5FE2  : AL%,SI : FE,MN,NI : !
+ PARAMETER G(AL5FE2,AL:FE;0) 273.00 -32607.14+6.99929*T
+    +0.7143*GHSERAL#+0.2857*GHSERFE#; 6000.00  N
+@@ -5362,7 +5360,8 @@
+ $                   THERMODYNAMIC DATA:  AL5FE4 
+ $###########################################################################
+ $
+- PHASE AL5FE4 % 1 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL5FE4 % 1 1 !
+     CONSTITUENT AL5FE4  : AL%,FE%,MN : !
+ PARAMETER G(AL5FE4,AL;0) 273.00 +12178.90-4.813*T+GHSERAL#; 6000.00  N
+ REF:31 !
+@@ -5383,7 +5382,8 @@
+ $                   THERMODYNAMIC DATA:  ALFENI_T2  
+ $###########################################################################
+ $
+- PHASE ALFENI_T2  % 2  0.7143 0.2857 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALFENI_T2  % 2  0.7143 0.2857 !
+     CONSTITUENT ALFENI_T2  : AL : FE,NI : !
+ PARAMETER G(ALFENI_T2,AL:FE;0) 273.00 -29400+4.9*T
+    +0.7143*GHSERAL#+.2857*GHSERFE#; 6000.00  N
+@@ -5401,7 +5401,8 @@
+ $                   THERMODYNAMIC DATA:  ALFENI_T3  
+ $###########################################################################
+ $
+- PHASE ALFENI_T3  % 3 0.71 0.05 0.24 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALFENI_T3  % 3 0.71 0.05 0.24 !
+     CONSTITUENT ALFENI_T3  : AL : FE : NI : !
+ PARAMETER G(ALFENI_T3,AL:FE:NI;0) 273.00 -41000+3*T
+    +0.71*GHSERAL#+0.05*GHSERFE#+0.24*GHSERNI#; 6000.00  N
+@@ -5411,7 +5412,8 @@
+ $                   THERMODYNAMIC DATA:  ALFESI_T1 
+ $###########################################################################
+ $
+- PHASE ALFESI_T1 % 2 0.625 0.375 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALFESI_T1 % 2 0.625 0.375 !
+     CONSTITUENT ALFESI_T1  : AL,SI : FE : !
+ PARAMETER G(ALFESI_T1,AL:FE;0) 273.00 -22698.4
+    +0.625*GHSERAL#+0.375*GHSERFE#; 6000.00  N
+@@ -5431,7 +5433,8 @@
+ $                   THERMODYNAMIC DATA:  ALFESI_T2 
+ $###########################################################################
+ $
+- PHASE ALFESI_T2 % 4 0.5    0.2    0.1    0.2 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALFESI_T2 % 4 0.5    0.2    0.1    0.2 !
+     CONSTITUENT ALFESI_T2  : AL : FE : SI : AL,SI : !
+ PARAMETER G(ALFESI_T2,AL:FE:SI:AL;0) 273.00 -27300+6.8*T
+    +0.7*GHSERAL#+0.2*GHSERFE#+0.1*GHSERSI#; 6000.00  N
+@@ -5444,7 +5447,8 @@
+ $                   THERMODYNAMIC DATA:  ALFESI_T3 
+ $###########################################################################
+ $
+- PHASE ALFESI_T3 % 3  0.55  0.25  0.20 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALFESI_T3 % 3  0.55  0.25  0.20 !
+     CONSTITUENT ALFESI_T3  : AL : FE : SI : !
+ PARAMETER G(ALFESI_T3,AL:FE:SI;0) 273.00 -24987.74-0.88568*T
+    +0.55*GHSERAL#+0.25*GHSERFE#+0.2*GHSERSI#; 6000.00  N
+@@ -5454,7 +5458,8 @@
+ $                   THERMODYNAMIC DATA:  ALFESI_T4 
+ $###########################################################################
+ $
+- PHASE ALFESI_T4 % 4 0.4166    0.1667    0.25    0.1667 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALFESI_T4 % 4 0.4166    0.1667    0.25    0.1667 !
+     CONSTITUENT ALFESI_T4  : AL : FE : SI : AL,SI : !
+ PARAMETER G(ALFESI_T4,AL:FE:SI:AL;0) 273.00 -18100
+    +0.5833*GHSERAL#+0.1667*GHSERFE#+0.25*GHSERSI#; 6000.00  N
+@@ -5467,8 +5472,9 @@
+ $                   THERMODYNAMIC DATA:  ALFESI_T5 
+ $###########################################################################
+ $
+- PHASE ALFESI_T5 %  4 0.66    0.19    0.05    0.1 > 
+-  hexagonal alpha-AlFeSi end-member >> 2 !
++$ MATCALC_DESCRIPTION: hexagonal alpha-AlFeSi end-member
++$ MATCALC_PRIORITY: 2
++ PHASE ALFESI_T5 %  4 0.66    0.19    0.05    0.1 !
+     CONSTITUENT ALFESI_T5  : AL : FE : SI : AL,SI : !
+ PARAMETER G(ALFESI_T5,AL:FE:SI:AL;0) 273.00 -27788+8.856*T+0.76*GHSERAL#
+    +0.19*GHSERFE#+0.05*GHSERSI#; 6000.00  N
+@@ -5481,7 +5487,8 @@
+ $                   THERMODYNAMIC DATA:  ALFESI_T7 
+ $###########################################################################
+ $
+- PHASE ALFESI_T7 %  2  0.75  0.25 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALFESI_T7 %  2  0.75  0.25 !
+     CONSTITUENT ALFESI_T7  : AL,SI : FE : !
+ PARAMETER G(ALFESI_T7,AL:FE;0) 273.00 -20798.1+0.75*GHSERAL#
+  +0.25*GHSERFE#; 6000.00  N
+@@ -5499,7 +5506,8 @@
+ $                   THERMODYNAMIC DATA:  ALFESI_T8 
+ $###########################################################################
+ $
+- PHASE ALFESI_T8 %  2  0.6667  0.3333 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALFESI_T8 %  2  0.6667  0.3333 !
+     CONSTITUENT ALFESI_T8  : AL,SI : FE : !
+ PARAMETER G(ALFESI_T8,AL:FE;0) 273.00 -110.7+0.6667*GHSERAL#
+  +0.3333*GHSERFE#; 6000.00  N
+@@ -5517,7 +5525,8 @@
+ $                   THERMODYNAMIC DATA:  ALFESI_T10 
+ $###########################################################################
+ $
+- PHASE ALFESI_T10 %  3  0.6  0.25  0.15 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALFESI_T10 %  3  0.6  0.25  0.15 !
+     CONSTITUENT ALFESI_T10  : AL : FE : SI : !
+ PARAMETER G(ALFESI_T10,AL:FE:SI;0) 273.00 -26248
+    +0.53427*T+0.6*GHSERAL#+0.25*GHSERFE#+0.15*GHSERSI#; 6000.00  N
+@@ -5527,7 +5536,8 @@
+ $                   THERMODYNAMIC DATA:  ALFESI_T11 
+ $###########################################################################
+ $
+- PHASE ALFESI_T11 %  3  0.65385  0.23077  0.11539 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALFESI_T11 %  3  0.65385  0.23077  0.11539 !
+     CONSTITUENT ALFESI_T11  : AL : FE : SI : !
+ PARAMETER G(ALFESI_T11,AL:FE:SI;0) 273.00 -24537+0.07542*T+0.65385*GHSERAL#
+    +0.23077*GHSERFE#+0.11539*GHSERSI#; 6000.00  N
+@@ -5537,7 +5547,9 @@
+ $                   THERMODYNAMIC DATA:  AL12MG2CR
+ $###########################################################################
+ $
+- PHASE AL12MG2CR % 3  12 2 1 > dispersoid in AA7xxx >> 2!
++$ MATCALC_DESCRIPTION: dispersoid in AA7xxx
++$ MATCALC_PRIORITY: 2
++ PHASE AL12MG2CR % 3  12 2 1 !
+     CONSTITUENT AL12MG2CR  : AL : MG,SI : CR : !
+ PARAMETER G(AL12MG2CR,AL:MG:CR;0) 273.00 12*GHSERAL#+2*GHSERMG#
+    +GHSERCR#-110000+5*T; 6000.00  N
+@@ -5559,7 +5571,8 @@
+ $                   THERMODYNAMIC DATA:  ALMGMN_T 
+ $###########################################################################
+ $
+- PHASE ALMGMN_T % 3 0.78261 0.130435 0.08696 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALMGMN_T % 3 0.78261 0.130435 0.08696 !
+     CONSTITUENT ALMGMN_T  : AL : MG : MN : !
+ PARAMETER G(ALMGMN_T,AL:MG:MN;0) 273.00 -8652.17
+    +0.78261*GHSERAL#+0.130435*GHSERMG#+0.086957*GHSERMN#; 6000.00  N
+@@ -5569,9 +5582,9 @@
+ $                   THERMODYNAMIC DATA:  AL4MN  
+ $###########################################################################
+ $
+- PHASE AL4MN  % 2 4 1 > 
+-Hexagonal 
+->> 2 !
++$ MATCALC_DESCRIPTION: Hexagonal
++$ MATCALC_PRIORITY: 2
++ PHASE AL4MN  % 2 4 1 !
+     CONSTITUENT AL4MN   : AL : FE,MN% : !
+ PARAMETER G(AL4MN,AL:FE;0) 273.00 -131445+50.0*T+4*GHSERAL#
+  +GHSERFE#; 6000.00  N
+@@ -5589,7 +5602,8 @@
+ $                   THERMODYNAMIC DATA:  AL8MN5_D810  
+ $###########################################################################
+ $
+- PHASE AL8MN5_D810  % 3 12 4 10 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL8MN5_D810  % 3 12 4 10 !
+     CONSTITUENT AL8MN5_D810  : AL%,SI : MN : AL,CU,FE,MN,ZN : !
+ PARAMETER G(AL8MN5_D810,AL:MN:AL;0) 273.00 -308671+56.6488*T+22*GHSERAL#
+    +4*GHSERMN#; 6000.00  N
+@@ -5633,7 +5647,8 @@
+ $                   THERMODYNAMIC DATA:  AL11MN4 
+ $###########################################################################
+ $
+- PHASE AL11MN4 % 2 11 4 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL11MN4 % 2 11 4 !
+     CONSTITUENT AL11MN4  : AL : FE,MN%,ZN : !
+ PARAMETER G(AL11MN4,AL:FE;0) 273.00 -354702+103.031*T+11*GHSERAL#
+    +4*GHSERFE#; 6000.00  N 
+@@ -5686,7 +5701,8 @@
+ $                   THERMODYNAMIC DATA:  AL3NI2
+ $###########################################################################
+ $                                                               
+- PHASE AL3NI2  %  3 3   2   1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL3NI2  %  3 3   2   1 !
+     CONSTITUENT AL3NI2  : AL : AL,FE,NI% : NI,VA% : !
+ PARAMETER G(AL3NI2,AL:AL:NI;0)  273.00 +5*GALBCC#+GNIBCC#
+    -39465.978+7.89525*T; 6000.00  N
+@@ -5725,7 +5741,8 @@
+ $                   THERMODYNAMIC DATA:  AL3NI5
+ $###########################################################################
+ $
+- PHASE AL3NI5  %  2 0.375  0.625 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL3NI5  %  2 0.375  0.625 !
+     CONSTITUENT AL3NI5  : AL : NI :  !
+ PARAMETER G(AL3NI5,AL:NI;0) 273.00 +0.375*GHSERAL#+0.625*GHSERNI#
+    -55507.7594+7.2648103*T; 6000.00  N
+@@ -5735,7 +5752,8 @@
+ $                   THERMODYNAMIC DATA:  ALM_D019
+ $###########################################################################
+ $
+- PHASE ALM_D019 % 2 3 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALM_D019 % 2 3 1 !
+     CONSTITUENT ALM_D019  : AL,CR,TI% : AL%,CR,TI : !
+ PARAMETER G(ALM_D019,AL:AL;0) 273.00 +4.0*GALHCP#; 6000.00  N
+ REF:31 !
+@@ -5789,7 +5807,8 @@
+ $                   THERMODYNAMIC DATA:  AL3M_D022 
+ $###########################################################################
+ $
+- PHASE AL3M_D022 % 2 3 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL3M_D022 % 2 3 1 !
+     CONSTITUENT AL3M_D022 : AL,TI : CR,TI : !
+ PARAMETER G(AL3M_D022,AL:CR;0) 273.00 -53000
+    +3*GHSERAL#+GHSERCR#; 6000.00  N
+@@ -5807,7 +5826,8 @@
+ $                   THERMODYNAMIC DATA:  ALSIZR_T1
+ $###########################################################################
+ $
+- PHASE ALSIZR_T1 % 2 0.75 0.25 > >> 2 !
++$ MATCALC_PRIORITY: 2
++ PHASE ALSIZR_T1 % 2 0.75 0.25 !
+     CONSTITUENT ALSIZR_T1 : AL,SI : ZR : !
+ PARAMETER G(ALSIZR_T1,AL:ZR;0) 273.00 -43506+10*T
+    +0.75*GHSERAL#+0.25*GHSERZR#; 6000.00  N
+@@ -5829,7 +5849,8 @@
+ $                   THERMODYNAMIC DATA:  ALSIZR_T2
+ $###########################################################################
+ $
+- PHASE ALSIZR_T2 % 2 0.5 0.5 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALSIZR_T2 % 2 0.5 0.5 !
+     CONSTITUENT ALSIZR_T2 : AL,SI : ZR : !
+ PARAMETER G(ALSIZR_T2,AL:ZR;0) 273.00 -43900+7.58*T
+    +0.5*GHSERAL#+0.5*GHSERZR#; 6000.00  N
+@@ -5852,7 +5873,8 @@
+ $                   THERMODYNAMIC DATA:  AL4SI5ZR3
+ $###########################################################################
+ $
+- PHASE AL4SI5ZR3 % 3 0.333 0.417 0.25 > >> 2 !
++$ MATCALC_PRIORITY: 2
++ PHASE AL4SI5ZR3 % 3 0.333 0.417 0.25 !
+     CONSTITUENT AL4SI5ZR3 : AL : SI : ZR : !
+ PARAMETER G(AL4SI5ZR3,AL:SI:ZR;0) 273.00 -55400+8*T
+    +0.333*GHSERAL#+0.417*GHSERSI#+0.25*GHSERZR#; 6000.00  N
+@@ -5863,7 +5885,8 @@
+ $###########################################################################
+ $
+  TYPE_DEFINITION I GES A_P_D ALTI MAGNETIC  -1.0    0.400 !
+- PHASE ALTI  %I  2 1 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALTI  %I  2 1 1 !
+     CONSTITUENT ALTI  : AL%,CR,TI : AL,CR%,TI% :  !
+ PARAMETER G(ALTI,AL:AL;0)  273.00 +2*GHSERAL#+4.0; 6000.00  N
+ REF:31 !
+@@ -5925,7 +5948,8 @@
+ $                   THERMODYNAMIC DATA:  AL2TI
+ $###########################################################################
+ $
+- PHASE AL2TI  %  2 2 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL2TI  %  2 2 1 !
+     CONSTITUENT AL2TI  : AL : TI :  !
+ PARAMETER G(AL2TI,AL:TI;0)  273.00 -121500+31.2*T+2*GHSERAL#
+  +GHSERTI#; 6000.00  N
+@@ -5935,7 +5959,8 @@
+ $                   THERMODYNAMIC DATA:  AL11TI5
+ $###########################################################################
+ $
+- PHASE AL11TI5  %  2 17 8 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL11TI5  %  2 17 8 !
+     CONSTITUENT AL11TI5  : AL : TI :  !
+ PARAMETER G(AL11TI5,AL:TI;0)  273.00 -971125+236.4*T+17*GHSERAL#
+  +8*GHSERTI#; 6000.00  N
+@@ -5967,7 +5992,8 @@
+ $                   THERMODYNAMIC DATA:  ALZR 
+ $###########################################################################
+ $
+- PHASE ALZR % 2 0.5 0.5 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALZR % 2 0.5 0.5 !
+     CONSTITUENT ALZR  : AL : ZR : !
+ PARAMETER G(ALZR,AL:ZR;0) 273.00 -44200+7.58*T+0.5*GHSERAL#
+  +0.5*GHSERZR#; 6000.00  N
+@@ -5977,7 +6003,8 @@
+ $                   THERMODYNAMIC DATA:  ALZR2
+ $###########################################################################
+ $
+- PHASE ALZR2 % 2 0.333  0.667 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALZR2 % 2 0.333  0.667 !
+     CONSTITUENT ALZR2  : AL : ZR : !
+ PARAMETER G(ALZR2,AL:ZR;0) 273.00 -33058+4.72*T+0.333*GHSERAL#
+  +0.667*GHSERZR#; 6000.00  N
+@@ -5987,7 +6014,8 @@
+ $                   THERMODYNAMIC DATA:  ALZR3
+ $###########################################################################
+ $
+- PHASE ALZR3 % 2 0.25  0.75 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ALZR3 % 2 0.25  0.75 !
+     CONSTITUENT ALZR3  : AL : ZR : !
+ PARAMETER G(ALZR3,AL:ZR;0) 273.00 -27090+5.05*T+0.25*GHSERAL#
+  +0.75*GHSERZR#; 6000.00  N
+@@ -5997,7 +6025,8 @@
+ $                   THERMODYNAMIC DATA:  AL2ZR 
+ $###########################################################################
+ $
+- PHASE AL2ZR % 2 0.667 0.333 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL2ZR % 2 0.667 0.333 !
+     CONSTITUENT AL2ZR  : AL : ZR : !
+ PARAMETER G(AL2ZR,AL:ZR;0)  273.00 -46126+8.15*T+0.667*GHSERAL#
+  +0.333*GHSERZR#; 6000.00  N
+@@ -6007,7 +6036,8 @@
+ $                   THERMODYNAMIC DATA:  AL2ZR3 
+ $###########################################################################
+ $
+- PHASE AL2ZR3 % 2 0.4  0.6 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL2ZR3 % 2 0.4  0.6 !
+     CONSTITUENT AL2ZR3  : AL : ZR : !
+ PARAMETER G(AL2ZR3,AL:ZR;0) 273.00 -39000+5.8*T+0.4*GHSERAL#
+  +0.6*GHSERZR#; 6000.00  N
+@@ -6017,7 +6047,8 @@
+ $                   THERMODYNAMIC DATA:  AL3ZR2 
+ $###########################################################################
+ $
+- PHASE AL3ZR2 % 2 0.6 0.4 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL3ZR2 % 2 0.6 0.4 !
+     CONSTITUENT AL3ZR2  : AL : ZR : !
+ PARAMETER G(AL3ZR2,AL:ZR;0) 273.00 -45400+7.5*T+0.6*GHSERAL#
+  +0.4*GHSERZR#; 6000.00  N
+@@ -6027,7 +6058,8 @@
+ $                   THERMODYNAMIC DATA:  AL3ZR4 
+ $###########################################################################
+ $
+- PHASE AL3ZR4 % 2 0.42857 0.57143 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL3ZR4 % 2 0.42857 0.57143 !
+     CONSTITUENT AL3ZR4  : AL : ZR : !
+ PARAMETER G(AL3ZR4,AL:ZR;0) 273.00 -42475+7.63*T+0.42857*GHSERAL#
+  +0.57143*GHSERZR#; 6000.00  N
+@@ -6037,7 +6069,8 @@
+ $                   THERMODYNAMIC DATA:  AL3ZR5 
+ $###########################################################################
+ $
+- PHASE AL3ZR5 % 2 0.375  0.625 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL3ZR5 % 2 0.375  0.625 !
+     CONSTITUENT AL3ZR5  : AL : ZR : !
+ PARAMETER G(AL3ZR5,AL:ZR;0) 273.00 -36248+5*T+0.375*GHSERAL#
+  +0.625*GHSERZR#; 6000.00  N
+@@ -6047,7 +6080,8 @@
+ $                   THERMODYNAMIC DATA:  AL4ZR5 
+ $###########################################################################
+ $
+- PHASE AL4ZR5 % 2 0.444  0.556 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE AL4ZR5 % 2 0.444  0.556 !
+     CONSTITUENT AL4ZR5  : AL : ZR : !
+ PARAMETER G(AL4ZR5,AL:ZR;0) 273.00 -40800+5.85*T+0.444*GHSERAL#
+  +0.556*GHSERZR#; 6000.00  N
+@@ -6057,9 +6091,9 @@
+ $                   THERMODYNAMIC DATA:  BETA_AL3MG2 
+ $###########################################################################
+ $
+- PHASE BETA_AL3MG2  % 2  89  140 > 
+-Cubic (Al,Zn)3Mg2 equilibrium phase, prototype: Al3Mg2.  
+->> 2 !
++$ MATCALC_DESCRIPTION: Cubic (Al,Zn)3Mg2 equilibrium phase, prototype: Al3Mg2.
++$ MATCALC_PRIORITY: 2
++ PHASE BETA_AL3MG2  % 2  89  140 !
+     CONSTITUENT BETA_AL3MG2  : MG : AL%,ZN : !
+ PARAMETER G(BETA_AL3MG2,MG:AL;0) 273.00 -246175.0-675.5500*T
+    +89*GHSERMG#+140*GHSERAL#; 6000.00  N
+@@ -6077,7 +6111,8 @@
+ $                   THERMODYNAMIC DATA:  CR3MN5
+ $###########################################################################
+ $
+- PHASE CR3MN5  % 2 3 5 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CR3MN5  % 2 3 5 !
+     CONSTITUENT CR3MN5  : CR : MN : !
+ PARAMETER G(CR3MN5,CR:MN;0) 273.00 -72550+21.1732*T+3*GHSERCR#
+  +5*GHSERMN#; 6000.00  N
+@@ -6087,7 +6122,8 @@
+ $                   THERMODYNAMIC DATA:  CR3SI
+ $###########################################################################
+ $
+- PHASE CR3SI  % 2 3 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CR3SI  % 2 3 1 !
+     CONSTITUENT CR3SI  : CR,SI : AL,CR,SI : !
+ PARAMETER G(CR3SI,CR:AL;0) 273.00 +GHSERCR#+GHSERAL#+2*GHSERCR#
+  -45279.2+6623.6; 6000.00  N
+@@ -6117,7 +6153,8 @@
+ $                   THERMODYNAMIC DATA:  CR5SI3
+ $###########################################################################
+ $
+- PHASE CR5SI3 % 2 5 3 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CR5SI3 % 2 5 3 !
+     CONSTITUENT CR5SI3  : CR : SI : !
+ PARAMETER G(CR5SI3,CR:SI;0) 273.00 -316433.0+1065.82816*T-182.578184*T*LN(T)
+    -23.919688E-3*T**2-2.31728E-06*T**3; 6000.00  N
+@@ -6127,7 +6164,8 @@
+ $                   THERMODYNAMIC DATA:  CRSI
+ $###########################################################################
+ $
+- PHASE CRSI  % 2 1 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CRSI  % 2 1 1 !
+     CONSTITUENT CRSI  : CR : SI : !
+ PARAMETER G(CRSI,CR:SI;0) 273.00 -78732.28+311.58392*T-51.62865*T*LN(T)
+    -4.47355E-03*T**2+391330*T**(-1); 6000.00  N
+@@ -6137,7 +6175,8 @@
+ $                   THERMODYNAMIC DATA:  CRSI2
+ $###########################################################################
+ $
+- PHASE CRSI2  % 2 1 2 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CRSI2  % 2 1 2 !
+     CONSTITUENT CRSI2  : CR,SI : CR,SI : !
+ PARAMETER G(CRSI2,CR:CR;0) 273.00 +10000.00-1.0*T+3.0*GHSERCR#; 6000.00  N
+ REF:31 !
+@@ -6166,7 +6205,8 @@
+ $                   THERMODYNAMIC DATA:  CRZN13
+ $###########################################################################
+ $
+- PHASE CRZN13  % 2 1 13 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CRZN13  % 2 1 13 !
+     CONSTITUENT CRZN13  : CR : ZN : !
+ PARAMETER G(CRZN13,CR:ZN;0) 273.00 -9800.0+1E-10*T+GHSERCR#
+  +13*GHSERZN#; 6000.00  N
+@@ -6176,7 +6216,8 @@
+ $                   THERMODYNAMIC DATA:  CRZN17
+ $###########################################################################
+ $
+- PHASE CRZN17  % 2 1 17 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CRZN17  % 2 1 17 !
+     CONSTITUENT CRZN17  : CR : ZN : !
+ PARAMETER G(CRZN17,CR:ZN;0) 273.00 -11700.0+1E-10*T+GHSERCR#
+  +17*GHSERZN#; 6000.00  N
+@@ -6186,7 +6227,8 @@
+ $                   THERMODYNAMIC DATA:  CUMGSI_S
+ $###########################################################################
+ $
+- PHASE CUMGSI_S % 3  16 6 7 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CUMGSI_S % 3  16 6 7 !
+     CONSTITUENT CUMGSI_S  : CU : MG : SI : !
+ PARAMETER G(CUMGSI_S,CU:MG:SI;0) 273.00 -559636+110.94*T
+    +16*GHSERCU#+6*GHSERMG#+7*GHSERSI#; 6000.00  N
+@@ -6196,7 +6238,8 @@
+ $                   THERMODYNAMIC DATA:  CUMGSI_T
+ $###########################################################################
+ $
+- PHASE CUMGSI_T % 3  3 2 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CUMGSI_T % 3  3 2 1 !
+     CONSTITUENT CUMGSI_T  : CU : MG : SI : !
+ PARAMETER G(CUMGSI_T,CU:MG:SI;0) 273.00 -141720+20.26*T
+    +3*GHSERCU#+2*GHSERMG#+GHSERSI#; 6000.00  N
+@@ -6206,7 +6249,8 @@
+ $                   THERMODYNAMIC DATA:  CU15SI4_E
+ $###########################################################################
+ $
+- PHASE CU15SI4_E  % 2 0.789474 0.210526 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CU15SI4_E  % 2 0.789474 0.210526 !
+     CONSTITUENT CU15SI4_E  : CU : AL,SI : !
+ PARAMETER G(CU15SI4_E,CU:SI;0) 273.00 +0.789474*GHSERCU#+0.210526*GHSERSI#
+    +1241-6.7191*T; 6000.00  N
+@@ -6219,7 +6263,8 @@
+ $                   THERMODYNAMIC DATA:  CU19SI6_ETA 
+ $###########################################################################
+ $
+- PHASE CU19SI6_ETA % 2 0.76 0.24 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CU19SI6_ETA % 2 0.76 0.24 !
+     CONSTITUENT CU19SI6_ETA  : CU : SI : !
+ PARAMETER G(CU19SI6_ETA,CU:SI;0)  273.00 +0.76*GHSERCU#+0.24*GHSERSI#
+    +1367.7-7.1976*T; 6000.00  N
+@@ -6229,7 +6274,8 @@
+ $                   THERMODYNAMIC DATA:  CU33SI7_D  
+ $###########################################################################
+ $
+- PHASE CU33SI7_D  % 2 0.825 0.175 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CU33SI7_D  % 2 0.825 0.175 !
+     CONSTITUENT CU33SI7_D  : CU : SI : !
+ PARAMETER G(CU33SI7_D,CU:SI;0) 273.00 +0.825*GHSERCU#+0.175*GHSERSI#
+  +1972.4-6.9664*T; 6000.00  N
+@@ -6239,7 +6285,8 @@
+ $                   THERMODYNAMIC DATA:  CU56SI11_G
+ $###########################################################################
+ $
+- PHASE CU56SI11_G % 2 0.8358 0.1642 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CU56SI11_G % 2 0.8358 0.1642 !
+     CONSTITUENT CU56SI11_G  : CU : SI : !
+ PARAMETER G(CU56SI11_G,CU:SI;0) 273.00 +10046.5-5.8747*T
+    +0.8358*GHSERCU#+0.1642*GHSERSI#; 6000.00  N
+@@ -6249,7 +6296,8 @@
+ $                   THERMODYNAMIC DATA:  CUZN_G
+ $###########################################################################
+ $
+- PHASE CUZN_G % 4 2 2 3 6 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CUZN_G % 4 2 2 3 6 !
+     CONSTITUENT CUZN_G  : CU%,ZN : CU,ZN% : CU : MG,ZN : !
+ PARAMETER G(CUZN_G,CU:CU:CU:MG;0) 273.00 -64720.63-51.34862*T
+    +7*GHSERCU#+6*GHSERMG#; 6000.00  N
+@@ -6307,7 +6355,8 @@
+ $                   THERMODYNAMIC DATA:  CUZR
+ $###########################################################################
+ $
+- PHASE CUZR % 2 1 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CUZR % 2 1 1 !
+     CONSTITUENT CUZR  : CU : ZR : !
+ PARAMETER G(CUZR,CU:ZR;0)  273.00 -20104.24-7.63196*T+GHSERCU#
+  +GHSERZR#; 6000.00  N
+@@ -6317,7 +6366,8 @@
+ $                   THERMODYNAMIC DATA:  CUZR2
+ $###########################################################################
+ $
+- PHASE CUZR2 % 2 1 2 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CUZR2 % 2 1 2 !
+     CONSTITUENT CUZR2  : CU : ZR : !
+ PARAMETER G(CUZR2,CU:ZR;0) 273.00 -43904.01+5.19051*T+GHSERCU#
+  +2*GHSERZR#; 6000.00  N
+@@ -6327,7 +6377,8 @@
+ $                   THERMODYNAMIC DATA:  CU5ZR
+ $###########################################################################
+ $
+- PHASE CU5ZR % 2 5 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CU5ZR % 2 5 1 !
+     CONSTITUENT CU5ZR  : CU : ZR : !
+ PARAMETER G(CU5ZR,CU:ZR;0) 273.00 -61794.0+5*GHSERCU#+GHSERZR#; 6000.00  N
+ REF:31 !
+@@ -6336,7 +6387,8 @@
+ $                   THERMODYNAMIC DATA:  CU8ZR3
+ $###########################################################################
+ $
+- PHASE CU8ZR3 % 2 8 3 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CU8ZR3 % 2 8 3 !
+     CONSTITUENT CU8ZR3  : CU : ZR : !
+ PARAMETER G(CU8ZR3,CU:ZR;0) 273.00 -1.480631E+05+8*GHSERCU#
+  +3*GHSERZR#; 6000.00  N 
+@@ -6346,7 +6398,8 @@
+ $                   THERMODYNAMIC DATA:  CU10ZR7
+ $###########################################################################
+ $
+- PHASE CU10ZR7 % 2 10 7 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CU10ZR7 % 2 10 7 !
+     CONSTITUENT CU10ZR7  : CU : ZR : !
+ PARAMETER G(CU10ZR7,CU:ZR;0) 273.00 -2.4175E+05+10*GHSERCU#
+  +7*GHSERZR#; 6000.00  N
+@@ -6356,7 +6409,8 @@
+ $                   THERMODYNAMIC DATA:  CU51ZR14 
+ $###########################################################################
+ $
+- PHASE CU51ZR14 % 2 51 14 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE CU51ZR14 % 2 51 14 !
+     CONSTITUENT CU51ZR14  : CU : ZR : !
+ PARAMETER G(CU51ZR14,CU:ZR;0) 273.00 -8.434127E+05+51*GHSERCU#
+  +14*GHSERZR#; 6000.00  N 
+@@ -6366,9 +6420,9 @@
+ $                   THERMODYNAMIC DATA:  E_AL30MG23
+ $###########################################################################
+ $
+- PHASE E_AL30MG23  %  2  23   30 > 
+-Epsilon equilibrium phase, prototype: Co5Cr2Mo3 
+->> 1 !
++$ MATCALC_DESCRIPTION: Epsilon equilibrium phase, prototype: Co5Cr2Mo3
++$ MATCALC_PRIORITY: 1
++ PHASE E_AL30MG23  %  2  23   30 !
+     CONSTITUENT E_AL30MG23  : MG : AL%,ZN :  !
+ PARAMETER G(E_AL30MG23,MG:AL;0) 273.00 -52565.4-173.1775*T
+    +23*GHSERMG#+30*GHSERAL#; 6000.00  N
+@@ -6381,7 +6435,8 @@
+ $                   THERMODYNAMIC DATA:  FESI
+ $###########################################################################
+ $
+- PHASE FESI % 2 0.5 0.5 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE FESI % 2 0.5 0.5 !
+     CONSTITUENT FESI  : FE : AL,SI% : !
+ PARAMETER G(FESI,FE:SI;0) 273.00 -36380.6+2.22*T+0.5*GHSERFE#
+  +0.5*GHSERSI#; 6000.00  N
+@@ -6399,7 +6454,8 @@
+ $                   THERMODYNAMIC DATA:  FESI2_H  
+ $###########################################################################
+ $
+- PHASE FESI2_H  % 2 3 7 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE FESI2_H  % 2 3 7 !
+     CONSTITUENT FESI2_H  : FE : AL,SI% : !
+ PARAMETER G(FESI2_H,FE:SI;0) 273.00 -196490.0-9.20*T+3.0*GHSERFE#
+    +7.0*GHSERSI#; 6000.00  N
+@@ -6412,7 +6468,8 @@
+ $                   THERMODYNAMIC DATA:  FESI2_L  
+ $###########################################################################
+ $
+- PHASE FESI2_L  % 2 0.3333 0.6667 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE FESI2_L  % 2 0.3333 0.6667 !
+     CONSTITUENT FESI2_L  : FE : AL,SI% : !
+ PARAMETER G(FESI2_L,FE:SI;0) 273.00 -27383+3.48*T+0.3333*GHSERFE#
+    +0.6667*GHSERSI#; 6000.00  N
+@@ -6425,7 +6482,8 @@
+ $                   THERMODYNAMIC DATA:  FE2SI
+ $###########################################################################
+ $
+- PHASE FE2SI % 2 2 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE FE2SI % 2 2 1 !
+      CONSTITUENT FE2SI  : FE : SI : !
+ PARAMETER G(FE2SI,FE:SI;0) 273.00 -71256.6-10.62*T+2*GHSERFE#
+  +GHSERSI#; 6000.00  N
+@@ -6435,7 +6493,8 @@
+ $                   THERMODYNAMIC DATA:  FE5SI3
+ $###########################################################################
+ $
+- PHASE FE5SI3 % 2 5 3 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE FE5SI3 % 2 5 3 !
+     CONSTITUENT FE5SI3  : FE : SI : !
+ PARAMETER G(FE5SI3,FE:SI;0) 273.00 -241144.0+2.16*T+5*GHSERFE#
+  +3*GHSERSI#; 6000.00  N
+@@ -6445,7 +6504,8 @@
+ $                   THERMODYNAMIC DATA:  FETI
+ $###########################################################################
+ $ 
+- PHASE FETI  % 2 1 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE FETI  % 2 1 1 !
+     CONSTITUENT FETI  : FE : TI : !
+ PARAMETER G(FETI,FE:TI;0) 273.00 -51584.05+238.686*T-44.858*T*LN(T)
+    -0.008493*T**2+100500*T**(-1); 6000.00  N
+@@ -6455,10 +6515,9 @@
+ $                   THERMODYNAMIC DATA:  G_AL12MG17
+ $###########################################################################
+ $
+- PHASE G_AL12MG17  %  3  10  24 24 > 
+-Gamma equilibrium phase, space group: I43m, prototype: Alpha-Mn. 
+-Precipitate in Al-Mg-Zn alloy 
+->> 2 !
++$ MATCALC_DESCRIPTION: Gamma equilibrium phase, space group: I43m, prototype: Alpha-Mn. Precipitate in Al-Mg-Zn alloy
++$ MATCALC_PRIORITY: 2
++ PHASE G_AL12MG17  %  3  10  24 24 !
+     CONSTITUENT G_AL12MG17  : MG : AL,MG%,ZN : AL%,MG,ZN : !
+ PARAMETER G(G_AL12MG17,MG:MG:MG;0) 273.00 +266939.2-174.638*T
+  +58*GHSERMG#; 6000.00  N
+@@ -6507,9 +6566,9 @@
+ $                   THERMODYNAMIC DATA:  LAVES_C15 
+ $###########################################################################
+ $
+- PHASE LAVES_C15 % 2 2 1 >
+-Complex Laves-phase from COST. 
+->> 1 !
++$ MATCALC_DESCRIPTION: Complex Laves-phase from COST.
++$ MATCALC_PRIORITY: 1
++ PHASE LAVES_C15 % 2 2 1 !
+     CONSTITUENT LAVES_C15  : AL,CU%,MG,SI,ZN% : AL,CU,MG,SI,ZN : !
+ PARAMETER G(LAVES_C15,AL:CU;0) 273.00 +15000+2*GHSERAL#+GHSERCU#; 6000.00  N 
+ REF:31 !
+@@ -6654,9 +6713,9 @@
+ $                   THERMODYNAMIC DATA:  LAVES_C36 
+ $###########################################################################
+ $
+- PHASE LAVES_C36 %  2 2 1 >
+-Complex Laves-phase from COST. 
+->> 1 !
++$ MATCALC_DESCRIPTION: Complex Laves-phase from COST.
++$ MATCALC_PRIORITY: 1
++ PHASE LAVES_C36 %  2 2 1 !
+     CONSTITUENT LAVES_C36  : AL,CU%,MG,ZN : AL,CU,MG%,ZN : !
+ PARAMETER G(LAVES_C36,AL:CU;0) 273.00 +15000+2*GHSERAL#+GHSERCU#; 6000.00  N
+ REF:31 !
+@@ -6759,9 +6818,9 @@
+ $                   THERMODYNAMIC DATA:  LC15_CU2MG
+ $###########################################################################
+ $
+- PHASE LC15_CU2MG % 2 0.6667 0.3333 > 
+-Cu2Mg Laves-phase. 
+->> 1 !
++$ MATCALC_DESCRIPTION: Cu2Mg Laves-phase.
++$ MATCALC_PRIORITY: 1
++ PHASE LC15_CU2MG % 2 0.6667 0.3333 !
+     CONSTITUENT LC15_CU2MG  : CU%,NI,ZN : MG : !
+ PARAMETER G(LC15_CU2MG,CU:MG;0) 273.00 +0.3333*GHSERMG#+0.6667*GHSERCU#
+  +GCU2MG#; 6000.00  N
+@@ -6794,9 +6853,9 @@
+ $                   THERMODYNAMIC DATA:  LC16_CUMG2
+ $###########################################################################
+ $
+- PHASE LC16_CUMG2 % 2 0.3333 0.6667 > 
+-Mg2Cu Laves-phase. 
+->> 1 !
++$ MATCALC_DESCRIPTION: Mg2Cu Laves-phase.
++$ MATCALC_PRIORITY: 1
++ PHASE LC16_CUMG2 % 2 0.3333 0.6667 !
+     CONSTITUENT LC16_CUMG2  : CU%,NI : MG : !
+ PARAMETER G(LC16_CUMG2,CU:MG;0) 273.00 +0.3333*GHSERCU#+0.6667*GHSERMG#
+  +GCUMG2#; 6000.00  N
+@@ -6809,9 +6868,9 @@
+ $                   THERMODYNAMIC DATA:  LC16_NIMG2
+ $###########################################################################
+ $
+- PHASE LC16_NIMG2 % 2 0.3333 0.6667 > 
+-Mg2Ni Laves-phase. 
+->> 1 !
++$ MATCALC_DESCRIPTION: Mg2Ni Laves-phase.
++$ MATCALC_PRIORITY: 1
++ PHASE LC16_NIMG2 % 2 0.3333 0.6667 !
+     CONSTITUENT LC16_NIMG2  : CU,NI% : MG : !
+ PARAMETER G(LC16_NIMG2,CU:MG;0) 273.00 +0.3333*GHSERCU#+0.6667*GHSERMG#
+  +GCUMG2#+1000; 6000.00  N
+@@ -6833,9 +6892,9 @@
+ $                   THERMODYNAMIC DATA:  LC36_NI2MG
+ $###########################################################################
+ $
+- PHASE LC36_NI2MG % 2 0.6667 0.3333 > 
+-Ni2Mg Laves-phase. 
+->> 1 !
++$ MATCALC_DESCRIPTION: Ni2Mg Laves-phase.
++$ MATCALC_PRIORITY: 1
++ PHASE LC36_NI2MG % 2 0.6667 0.3333 !
+     CONSTITUENT LC36_NI2MG  : CU,NI%,ZN : MG : !
+ PARAMETER G(LC36_NI2MG,NI:MG;0) 273.00 +0.3333*GHSERMG#+0.6667*GHSERNI#
+  +GNI2MG#; 6000.00  N
+@@ -6864,7 +6923,8 @@
+ $                   THERMODYNAMIC DATA:  MGALZN_PHI 
+ $###########################################################################
+ $
+- PHASE MGALZN_PHI  %  2  6  5 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE MGALZN_PHI  %  2  6  5 !
+     CONSTITUENT MGALZN_PHI  : MG : AL,ZN : !
+ PARAMETER G(MGALZN_PHI,MG:AL;0) 273.00 -15400-16.5*T+5*GHSERAL#
+  +6*GHSERMG#; 6000.00  N
+@@ -6879,7 +6939,8 @@
+ $                   THERMODYNAMIC DATA:  MGZN 
+ $###########################################################################
+ $
+- PHASE MGZN % 2 12 13 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE MGZN % 2 12 13 !
+     CONSTITUENT MGZN  : MG : AL,CU,ZN% : !
+ PARAMETER G(MGZN,MG:AL;0) 273.00 -10000+2.5*T+12*GHSERMG#
+  +13*GHSERAL#; 6000.00  N
+@@ -6899,7 +6960,8 @@
+ $                   THERMODYNAMIC DATA:  MG2ZN3 
+ $###########################################################################
+ $
+- PHASE MG2ZN3 % 2 2 3 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE MG2ZN3 % 2 2 3 !
+     CONSTITUENT MG2ZN3  : MG : AL,CU,ZN% : !
+ PARAMETER G(MG2ZN3,MG:AL;0) 273.00 +1000-0.2*T+2*GHSERMG#
+  +3*GHSERAL#; 6000.00  N
+@@ -6919,7 +6981,8 @@
+ $                   THERMODYNAMIC DATA:  MG2ZN11
+ $###########################################################################
+ $
+- PHASE MG2ZN11 % 2 2 11 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE MG2ZN11 % 2 2 11 !
+     CONSTITUENT MG2ZN11  : MG : AL,CU,ZN% : !
+ PARAMETER G(MG2ZN11,MG:AL;0) 273.00 +130000-26*T+2*GHSERMG#
+  +11*GHSERAL#; 6000.00  N
+@@ -6936,7 +6999,8 @@
+ $                   THERMODYNAMIC DATA:  MG7ZN3
+ $###########################################################################
+ $
+- PHASE MG7ZN3 % 2 51 20 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE MG7ZN3 % 2 51 20 !
+     CONSTITUENT MG7ZN3  : MG : ZN : !
+ PARAMETER G(MG7ZN3,MG:ZN;0) 273.00 -335741.54+35.5*T+51*GHSERMG#
+  +20*GHSERZN#; 6000.00  N
+@@ -6946,7 +7010,8 @@
+ $                   THERMODYNAMIC DATA:  MNSI
+ $###########################################################################
+ $
+- PHASE MNSI % 2 1 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE MNSI % 2 1 1 !
+     CONSTITUENT MNSI  : MN : SI : !
+ PARAMETER  G(MNSI,MN:SI;0)  273.00 -78135.144+308.2488*T-52.42121*T*LN(T)
+    -6.903355E-03*T**2+8.764429E+05*T**(-1); 6000.00  N
+@@ -6956,7 +7021,8 @@
+ $                   THERMODYNAMIC DATA:  MN3SI
+ $###########################################################################
+ $
+- PHASE MN3SI % 2 3 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE MN3SI % 2 3 1 !
+     CONSTITUENT MN3SI  : MN : SI : !
+ PARAMETER G(MN3SI,MN:SI;0)  273.00 -124189.87+782.4373*T-131.682*T*LN(T)
+    -7.770061E-03*T**2+1.6572E+06*T**(-1); 950.00  Y
+@@ -6968,7 +7034,8 @@
+ $                   THERMODYNAMIC DATA:  MN6SI
+ $###########################################################################
+ $
+- PHASE MN6SI % 2  17 3 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE MN6SI % 2  17 3 !
+     CONSTITUENT MN6SI  : MN : SI : !
+ PARAMETER G(MN6SI,MN:SI;0) 273.00 -250180.6+84.8444*T-2.850984E-02*T**2
+  -12.07755*T*LN(T)
+@@ -6982,7 +7049,8 @@
+ $                   THERMODYNAMIC DATA:  MN9SI2
+ $###########################################################################
+ $
+- PHASE MN9SI2 % 2 33 7 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE MN9SI2 % 2 33 7 !
+     CONSTITUENT MN9SI2  : MN : SI : !
+ PARAMETER G(MN9SI2,MN:SI;0) 273.00 -578208.4+381.294*T-56.86988*T*LN(T)
+    -50.0355E-3*T**2+1.4586E+06*T**(-1)+33*GHSERMN#+7*GHSERSI#; 1519.00  Y
+@@ -6994,7 +7062,8 @@
+ $                   THERMODYNAMIC DATA:  A_MNTI
+ $###########################################################################
+ $
+- PHASE A_MNTI % 2 1 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE A_MNTI % 2 1 1 !
+     CONSTITUENT A_MNTI  : MN : TI : !
+ PARAMETER G(A_MNTI,MN:TI;0) 273.00 -11478-4*T+GHSERMN#+GHSERTI#; 6000.00  N
+ REF:31 !
+@@ -7003,7 +7072,8 @@
+ $                   THERMODYNAMIC DATA:  B_MNTI
+ $###########################################################################
+ $
+- PHASE B_MNTI % 2 0.515 0.485 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE B_MNTI % 2 0.515 0.485 !
+     CONSTITUENT B_MNTI  : MN : TI : !
+ PARAMETER G(B_MNTI,MN:TI;0) 273.00 -5540-2.29*T+0.515*GHSERMN#
+    +0.485*GHSERTI#; 6000.00  N
+@@ -7013,7 +7083,8 @@
+ $                   THERMODYNAMIC DATA:  MN3TI
+ $###########################################################################
+ $
+- PHASE MN3TI % 2 3 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE MN3TI % 2 3 1 !
+     CONSTITUENT MN3TI  : MN : TI : !
+ PARAMETER G(MN3TI,MN:TI;0) 273.00 -18552-9.12*T+3*GHSERMN#
+    +GHSERTI#; 6000.00  N
+@@ -7023,7 +7094,8 @@
+ $                   THERMODYNAMIC DATA:  MN4TI
+ $###########################################################################
+ $
+- PHASE MN4TI % 2 0.815 0.185 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE MN4TI % 2 0.815 0.185 !
+     CONSTITUENT MN4TI  : MN : TI : !
+ PARAMETER G(MN4TI,MN:TI;0) 273.00 -2445-2.9*T+0.815*GHSERMN#
+    +0.185*GHSERTI#; 6000.00  N
+@@ -7033,7 +7105,8 @@
+ $                   THERMODYNAMIC DATA:  MN2ZR
+ $###########################################################################
+ $
+- PHASE MN2ZR % 2 2 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE MN2ZR % 2 2 1 !
+     CONSTITUENT MN2ZR  : MN,ZR : MN,ZR : !
+ PARAMETER G(MN2ZR,MN:MN;0) 273.00 -21345.840+390.17700*T-70.374600*T*LN(T)
+    -0.22043040E-01*T**2+209481.30*T**(-1); 1519.00  Y
+@@ -7070,9 +7143,9 @@
+ $                   THERMODYNAMIC DATA:  Q_ALCUMG  
+ $###########################################################################
+ $
+- PHASE Q_ALCUMG  % 3 7 3 6 > 
+-Ternary Al-Cu-Mg compound of Q-Phase, not observed as precipitate. 
+->> 1 !
++$ MATCALC_DESCRIPTION: Ternary Al-Cu-Mg compound of Q-Phase, not observed as precipitate.
++$ MATCALC_PRIORITY: 1
++ PHASE Q_ALCUMG  % 3 7 3 6 !
+     CONSTITUENT Q_ALCUMG  : AL : CU : MG :  !
+ PARAMETER G(Q_ALCUMG,AL:CU:MG;0)  273.00 -221500+18.46*T
+    +7*GHSERAL#+3*GHSERCU#+6*GHSERMG#; 6000.00  N
+@@ -7082,7 +7155,8 @@
+ $                   THERMODYNAMIC DATA:   SIGMA
+ $###########################################################################
+ $
+- PHASE SIGMA %  3 8   4   18 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE SIGMA %  3 8   4   18 !
+      CONSTITUENT SIGMA  : FE%,MN,NI:CR,TI:CR,FE,MN,NI,SI : !
+ PARAMETER G(SIGMA,FE:CR:CR;0) 273.00 +8*GFEFCC#+22*GHSERCR#
+  +92300-95.96*T; 6000.00  N
+@@ -7130,7 +7204,8 @@
+ $                   THERMODYNAMIC DATA:   H_SIGMA
+ $###########################################################################
+ $
+- PHASE H_SIGMA %  3 8   4   18 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE H_SIGMA %  3 8   4   18 !
+     CONSTITUENT H_SIGMA  : MN : CR : CR,MN : !
+ PARAMETER G(H_SIGMA,MN:CR:CR;0) 273.00 -192369+152.4742*T+8*GMNFCC#
+  +22*GHSERCR#; 6000.00  N
+@@ -7153,7 +7228,9 @@
+ $ than by Seifert et al. 1996) 
+ 
+ $ SI2TI 
+- PHASE SI2TI  %  2 2   1 > oF24 Fddd TiSi2 >> 2 !
++$ MATCALC_DESCRIPTION: oF24 Fddd TiSi2
++$ MATCALC_PRIORITY: 2
++ PHASE SI2TI  %  2 2   1 !
+  CONSTITUENT SI2TI  :AL,SI : TI :  !
+ $ PARAMETER G(SI2TI,SI:TI;0)  273.00 -156558.39+GHSERTI#
+ $  +2*GHSERSI#; 6000 N  !
+@@ -7172,28 +7249,34 @@
+ REF:pov24 !
+ 
+ $ SI3TI5  
+-  PHASE SI3TI5  %  2 3   5 > hP16 P63_mcm Mn5Si3 >> 1 !
++$ MATCALC_DESCRIPTION: hP16 P63_mcm Mn5Si3
++$ MATCALC_PRIORITY: 1
++  PHASE SI3TI5  %  2 3   5 !
+   CONSTITUENT SI3TI5  :SI : TI :  !
+ $PARAMETER G(SI3TI5,SI:TI;0)      298.15 -545691+13*T+3*GHSERSI#
+ $ +5*GHSERTI#; 6000 N  !
+ PARAMETER G(SI3TI5,SI:TI;0)      298.15 -545691+14*T+3*GHSERSI#
+  +5*GHSERTI#; 6000 N  
+-REF: pov24 !
++REF:pov24 !
+  
+ $ SI4TI5 
+- PHASE SI4TI5  %  2 0.444444   0.555556 > tP36 P41212 Si4Zr5 >> 1 !
++$ MATCALC_DESCRIPTION: tP36 P41212 Si4Zr5
++$ MATCALC_PRIORITY: 1
++ PHASE SI4TI5  %  2 0.444444   0.555556 !
+ CONSTITUENT SI4TI5  :SI : TI :  !
+ $PARAMETER G(SI4TI5,SI:TI;0) 273.00 -69100+1.8*T+0.444444*GHSERSI#
+ $ +0.555556*GHSERTI#; 6000 N  !
+ PARAMETER G(SI4TI5,SI:TI;0) 273.00 -69100+1.8*T+0.444444*GHSERSI#
+  +0.555556*GHSERTI#; 6000 N  
+-REF: pov24 !
++REF:pov24 !
+ $PARAMETER G(SI4TI5,SI:TI;0) 273.00 -711000+22.37355*T+4*GHSERSI#
+ $+5*GHSERTI#; 6000 N  
+ $REF:91 !
+ 
+ $ SITI  
+- PHASE SITI  %  2 1   1 > oP8 Pnma FeB >> 1 !
++$ MATCALC_DESCRIPTION: oP8 Pnma FeB
++$ MATCALC_PRIORITY: 1
++ PHASE SITI  %  2 1   1 !
+  CONSTITUENT SITI  :SI : TI :  !
+ $ PARAMETER G(SITI,SI:TI;0) 273.00 -126631.4+1.2*T+GHSERSI#
+ $  +GHSERTI#; 6000 N  !
+@@ -7202,22 +7285,25 @@
+ $REF:91 !  
+ PARAMETER G(SITI,SI:TI;0) 273.00 -135000+5.5*T+GHSERSI#
+   +GHSERTI#; 6000 N  
+-REF: pov24 !
++REF:pov24 !
+ 
+ $ SITI3  
+- PHASE SITI3  %  2 1   3 > tP30 P42_n PTi3 >> 1 !
++$ MATCALC_DESCRIPTION: tP30 P42_n PTi3
++$ MATCALC_PRIORITY: 1
++ PHASE SITI3  %  2 1   3 !
+  CONSTITUENT SITI3  :SI : TI :  !
+ $PARAMETER G(SITI3,SI:TI;0) 273.00 -191570+9.70856*T+GHSERSI#
+ $ +3*GHSERTI#; 6000 N  !
+ PARAMETER G(SITI3,SI:TI;0) 273.00 -191570+11.75*T+GHSERSI#
+   +3*GHSERTI#; 6000 N  
+-REF: Pov24 !
++REF:Pov24 !
+ $
+ $###########################################################################
+ $                   THERMODYNAMIC DATA:  A_SIZR
+ $###########################################################################
+ $
+- PHASE A_SIZR % 2 0.5 0.5 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE A_SIZR % 2 0.5 0.5 !
+    CONSTITUENT A_SIZR  : AL,SI% : ZR : !
+ PARAMETER G(A_SIZR,AL:ZR;0) 273.00 +0.5*GHSERAL#+0.5*GHSERZR#
+  -40000+10*T; 6000.00  N
+@@ -7239,7 +7325,8 @@
+ $                   THERMODYNAMIC DATA:  B_SIZR
+ $###########################################################################
+ $
+- PHASE B_SIZR % 2 1 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE B_SIZR % 2 1 1 !
+     CONSTITUENT B_SIZR  : SI : ZR : !
+ PARAMETER G(B_SIZR,SI:ZR;0) 273.00 -181200+255.26*T-45.18631*T*LN(T)
+    -0.004393865*T**2+5.49699E-11*T**3+148517.5*T**(-1); 6000.00  N
+@@ -7249,7 +7336,8 @@
+ $                   THERMODYNAMIC DATA:  SIZR2
+ $###########################################################################
+ $
+- PHASE SIZR2 % 2 0.333 0.667 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE SIZR2 % 2 0.333 0.667 !
+     CONSTITUENT SIZR2  : AL,SI% : ZR : !
+ PARAMETER G(SIZR2,AL:ZR;0) 273.00 +0.333*GHSERAL#+0.667*GHSERZR#
+  -30350+3*T; 6000.00  N
+@@ -7271,7 +7359,8 @@
+ $                   THERMODYNAMIC DATA:  SIZR3
+ $###########################################################################
+ $
+- PHASE SIZR3 % 2 1 3 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE SIZR3 % 2 1 3 !
+     CONSTITUENT SIZR3  : SI : ZR : !
+ PARAMETER G(SIZR3,SI:ZR;0) 273.00 -319950+478.25*T-82.328*T*LN(T)
+    -0.0263963*T**2+1.54326E-06*T**3-34700*T**(-1); 6000.00  N
+@@ -7281,7 +7370,8 @@
+ $                   THERMODYNAMIC DATA:  SI2ZR 
+ $###########################################################################
+ $
+- PHASE SI2ZR % 2 0.667 0.333 > >> 2 !
++$ MATCALC_PRIORITY: 2
++ PHASE SI2ZR % 2 0.667 0.333 !
+     CONSTITUENT SI2ZR  : AL,SI% : AL,ZR% : !
+ PARAMETER G(SI2ZR,AL:AL;0)  273.00 +GHSERAL#+1000; 6000.00  N
+ REF:pov14 !
+@@ -7306,7 +7396,8 @@
+ $                   THERMODYNAMIC DATA:  SI2ZR3 
+ $###########################################################################
+ $
+- PHASE SI2ZR3 % 2 2 3 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE SI2ZR3 % 2 2 3 !
+     CONSTITUENT SI2ZR3  : SI : ZR : !
+ PARAMETER G(SI2ZR3,SI:ZR;0) 273.00 -510000+845.5*T-140.103*T*LN(T)
+    -0.003701*T**2+1.028333E-07*T**3+1167755*T**(-1); 6000.00  N
+@@ -7316,7 +7407,8 @@
+ $                   THERMODYNAMIC DATA:  SI3ZR5 
+ $###########################################################################
+ $
+- PHASE SI3ZR5 % 2 0.375 0.625 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE SI3ZR5 % 2 0.375 0.625 !
+     CONSTITUENT SI3ZR5  : AL%,SI : ZR : !
+ PARAMETER G(SI3ZR5,AL:ZR;0) 273.00 +0.375*GHSERAL#+0.625*GHSERZR#
+  -31000+2*T; 6000.00  N
+@@ -7339,7 +7431,8 @@
+ $                   THERMODYNAMIC DATA:  SI4ZR5_A
+ $###########################################################################
+ $
+- PHASE SI4ZR5_A % 2 0.444 0.556 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE SI4ZR5_A % 2 0.444 0.556 !
+     CONSTITUENT SI4ZR5_A  : AL,SI% : ZR : !
+ PARAMETER G(SI4ZR5_A,AL:ZR;0) 273.00 +0.444*GHSERAL#+0.556*GHSERZR#
+  -30000+10*T; 6000.00  N
+@@ -7357,7 +7450,8 @@
+ $                   THERMODYNAMIC DATA:  SI4ZR5_B
+ $###########################################################################
+ $
+- PHASE SI4ZR5_B % 2 4 5 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE SI4ZR5_B % 2 4 5 !
+     CONSTITUENT SI4ZR5_B  : SI : ZR : !
+ PARAMETER G(SI4ZR5_B,SI:ZR;0) 273.00 -900000+1430.25*T-240.256*T*LN(T)
+    -0.0109481*T**2+6.591183E-07*T**3+2006425*T**(-1); 6000.00  N
+@@ -7367,9 +7461,9 @@
+ $                   THERMODYNAMIC DATA:  TIALSI_TAU
+ $###########################################################################
+ $
+- PHASE TIALSI_TAU  %  2 2 1 > 
+-orthorhombic. 
+->> 3 !
++$ MATCALC_DESCRIPTION: orthorhombic.
++$ MATCALC_PRIORITY: 3
++ PHASE TIALSI_TAU  %  2 2 1 !
+     CONSTITUENT TIALSI_TAU  : AL,SI : TI :  !
+ PARAMETER G(TIALSI_TAU,AL:TI;0)  273.00 -110000+35*T
+  +2*GHSERAL#+GHSERTI#; 6000.00  N
+@@ -7386,9 +7480,9 @@
+ $                   THERMODYNAMIC DATA:  TAU1 - TI17AL5SI14
+ $###########################################################################
+ $
+- PHASE TI17AL5SI14  % 3 0.472  0.139  0.39 > 
+-orthorhombic. 
+->> 3 !
++$ MATCALC_DESCRIPTION: orthorhombic.
++$ MATCALC_PRIORITY: 3
++ PHASE TI17AL5SI14  % 3 0.472  0.139  0.39 !
+     CONSTITUENT TI17AL5SI14  : TI : AL : SI : !
+ PARAMETER G(TI17AL5SI14,TI:AL:SI;0)  273.00 -80000+18*T
+  +0.472*GHSERTI#+0.139*GHSERAL#+0.39*GHSERTI#; 6000.00  N
+@@ -7398,7 +7492,8 @@
+ $                   THERMODYNAMIC DATA:  ZR_O
+ $###########################################################################
+ $
+- PHASE ZR_O % 1 1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE ZR_O % 1 1 !
+     CONSTITUENT ZR_O  : ZR : !
+ PARAMETER G(ZR_O,ZR;0) 273.00 -8878.082+144.432234*T-26.8556*T*LN(T)
+    -2.799446E-3*T**2+38376*T**(-1); 2128.00  Y

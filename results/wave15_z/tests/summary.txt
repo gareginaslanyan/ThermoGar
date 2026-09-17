@@ -1,0 +1,5 @@
+test_precipitation_bl35 free=2.12 exit=0 seconds=43 :: 11 passed, 1 warning in 41.02s
+test_backend_calculations free=2.32 exit=0 seconds=466 :: 43 passed, 14 deselected, 4 warnings in 464.13s (0:07:44)
+test_precipitation_grid free=2.29 exit=0 seconds=165 :: 32 passed, 13 warnings in 162.15s (0:02:42)
+test_ui_g free=2.3 exit=0 seconds=246 :: 29 passed, 3 deselected, 2 warnings in 243.16s (0:04:03)
+test_wave15_z free=2.35 exit=0 seconds=26 :: 15 passed, 2 warnings in 23.77s

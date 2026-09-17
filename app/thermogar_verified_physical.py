@@ -21,6 +21,10 @@ PHYSICAL_FEATURE_IDS = (
 )
 PARSER_REVISION = "pycalphad-0.11.2"
 PDB_PARSER_REVISION = "thermogar-physical-pdb-1"
+# Отдельная ревизия разбора без поправок проекта (галочка BL-14): кэш разбора
+# лизы ключуется ревизией, и разбор с поправками не должен выдаться за разбор
+# без них.
+PDB_PARSER_REVISION_OVERRIDES_OFF = "thermogar-physical-pdb-1-overrides-off"
 ADAPTER_ID = "thermogar.verified-physical"
 ADAPTER_REVISION = "1"
 BACKEND_ID = "pycalphad-equilibrium-physical"
@@ -171,6 +175,13 @@ def _default_tdb_parser(source: object) -> object:
 
 def _default_pdb_parser(data: bytes) -> physical.PhysicalDensityDatabase:
     return physical.PhysicalDensityDatabase.from_verified_bytes(data)
+
+
+def _overrides_off_pdb_parser(data: bytes) -> physical.PhysicalDensityDatabase:
+    return physical.PhysicalDensityDatabase.from_verified_bytes(
+        data,
+        overrides=physical.OVERRIDES_OFF_BY_USER,
+    )
 
 
 def _database_masses(database: object, components: Sequence[str]) -> dict[str, float]:
@@ -552,8 +563,15 @@ def execute_verified_physical(
     backend: Callable[[object, physical.PhysicalDensityDatabase, PhysicalCall], Mapping[str, object]] = _default_backend,
     clock: Callable[[], object] = _system_utc,
     packages: Sequence[Mapping[str, str]] = (),
+    physical_overrides: bool = True,
 ) -> VerifiedPhysicalResult:
-    """Execute one B4B1 request only through its live verified capability."""
+    """Execute one B4B1 request only through its live verified capability.
+
+    ``physical_overrides=False`` — галочка раздела «Свойства» снята: PDB
+    разбирается без поправок проекта, и результат говорит об этом первой
+    строкой ``warnings``. ``True`` — штатный путь, где решает переменная
+    окружения ``THERMOGAR_PHYSICAL_OVERRIDES``.
+    """
 
     if type(context) is not verified_loaders.BoundDatabaseContext:
         _fail(verified_loaders.ReasonCode.BINDING_IDENTITY_MISMATCH, "Physical adapter requires a bound context.")
@@ -579,10 +597,16 @@ def execute_verified_physical(
     started_at = lease.identity.acquired_at_utc
     physical_database: physical.PhysicalDensityDatabase
     try:
-        physical_database = lease.parse_physical_dataset(
-            _default_pdb_parser,
-            PDB_PARSER_REVISION,
-        )
+        if physical_overrides:
+            physical_database = lease.parse_physical_dataset(
+                _default_pdb_parser,
+                PDB_PARSER_REVISION,
+            )
+        else:
+            physical_database = lease.parse_physical_dataset(
+                _overrides_off_pdb_parser,
+                PDB_PARSER_REVISION_OVERRIDES_OFF,
+            )
     except verified_loaders.VerifiedLoaderError:
         raise
     except Exception as error:

@@ -1,0 +1,45 @@
+.FFF..                                                                      [100%]
+================================== FAILURES ===================================
+_________________________ test_python_loop_times_out __________________________
+Timeout (>2.0s) from pytest-timeout: тест снят без остановки файла (tools/conftest.py, BL-17)
+
+@pytest.mark.timeout(2)
+    def test_python_loop_times_out():
+        deadline = time.time() + 30
+        while time.time() < deadline:
+>           sum(range(1000))
+E           tools_conftest.TestTimeout
+
+results\wave15_o\timeout_check\test_timeout_check.py:18: TestTimeout
+---------------------------- Captured stdout call -----------------------------
++ Timeout (>2.0s): results/wave15_o/timeout_check/test_timeout_check.py::test_python_loop_times_out — тест снят, файл продолжается +
+______________ test_swallowing_except_exception_still_times_out _______________
+Timeout (>2.0s) from pytest-timeout: тест снят без остановки файла (tools/conftest.py, BL-17)
+
+@pytest.mark.timeout(2)
+    def test_swallowing_except_exception_still_times_out():
+        deadline = time.time() + 30
+        while time.time() < deadline:
+            try:
+>               sum(range(1000))
+E               tools_conftest.TestTimeout
+
+results\wave15_o\timeout_check\test_timeout_check.py:26: TestTimeout
+---------------------------- Captured stdout call -----------------------------
++ Timeout (>2.0s): results/wave15_o/timeout_check/test_timeout_check.py::test_swallowing_except_exception_still_times_out — тест снят, файл продолжается +
+__________________ test_sleep_in_c_is_taken_after_it_returns __________________
+Timeout (>2.0s) from pytest-timeout: тест снят без остановки файла (tools/conftest.py, BL-17)
+
+@pytest.mark.timeout(2)
+    def test_sleep_in_c_is_taken_after_it_returns():
+>       time.sleep(5)
+E       tools_conftest.TestTimeout
+
+results\wave15_o\timeout_check\test_timeout_check.py:33: TestTimeout
+---------------------------- Captured stdout call -----------------------------
++ Timeout (>2.0s): results/wave15_o/timeout_check/test_timeout_check.py::test_sleep_in_c_is_taken_after_it_returns — тест снят, файл продолжается +
+=========================== short test summary info ===========================
+FAILED results/wave15_o/timeout_check/test_timeout_check.py::test_python_loop_times_out
+FAILED results/wave15_o/timeout_check/test_timeout_check.py::test_swallowing_except_exception_still_times_out
+FAILED results/wave15_o/timeout_check/test_timeout_check.py::test_sleep_in_c_is_taken_after_it_returns
+3 failed, 3 passed in 9.33s

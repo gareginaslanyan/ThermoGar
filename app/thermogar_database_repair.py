@@ -29,6 +29,28 @@ _REPAIR_FLAG = "_thermogar_mobility_defaults_repaired"
 WILDCARD = "*"
 
 
+def _plural(count: int, one: str, few: str, many: str) -> str:
+    """«1 место», «2 места», «11 мест» — счётная форма русского числительного."""
+
+    number = abs(int(count))
+    if number % 100 in range(11, 15):
+        return f"{count} {many}"
+    tail = number % 10
+    if tail == 1:
+        return f"{count} {one}"
+    if tail in (2, 3, 4):
+        return f"{count} {few}"
+    return f"{count} {many}"
+
+
+def _places(count: int) -> str:
+    return _plural(count, "место", "места", "мест")
+
+
+def _defaults(count: int) -> str:
+    return _plural(count, "умолчание", "умолчания", "умолчаний")
+
+
 @dataclass(frozen=True)
 class MobilityRepairReport:
     """Что именно убрано из таблицы параметров."""
@@ -37,9 +59,12 @@ class MobilityRepairReport:
     materialised: int = 0
     kept_as_only_source: int = 0
     kept_as_different_expression: int = 0
+    reviewed_by_human: int = 0
     removed_keys: tuple[tuple[str, str, str, int], ...] = field(default=())
     kept_keys: tuple[tuple[str, str, str, int], ...] = field(default=())
     suspicious_keys: tuple[tuple[str, str, str, int], ...] = field(default=())
+    decided_keys: tuple[tuple[str, str, str, int], ...] = field(default=())
+    decisions: tuple["SuspiciousKeyDecision", ...] = field(default=())
     database_label: str = ""
     already_repaired: bool = False
 
@@ -57,13 +82,27 @@ class MobilityRepairReport:
             f"развёрнуто в явные {self.materialised}"
         )
         if self.kept_as_different_expression:
+            # Раньше здесь стояло «оставлено без изменений N мест». Это неверно
+            # описывало происходящее: вырожденная строка в этих местах тоже
+            # снимается и разворачивается в явные конечные члены, меняется
+            # только причина в отчёте — доказательства дубля нет. Разбор —
+            # `tasks/WAVE15_B_REPORT.md`, пункт 2.2; правка — волна 15-В.
             line += (
-                f"; оставлено без изменений {self.kept_as_different_expression} "
-                "мест, где выражения различаются"
+                "; развёрнуто без доказательства дубля "
+                f"{_places(self.kept_as_different_expression)}, где выражения "
+                "различаются"
+            )
+        if self.reviewed_by_human:
+            identifiers = ", ".join(
+                sorted({item.identifier for item in self.decisions})
+            )
+            line += (
+                "; по принятому решению развёрнуто "
+                f"{_places(self.reviewed_by_human)} ({identifiers})"
             )
         if self.kept_as_only_source:
             line += (
-                f"; {self.kept_as_only_source} умолчаний оставлены как "
+                f"; {_defaults(self.kept_as_only_source)} оставлено как "
                 "единственный источник подвижности"
             )
         return line
@@ -133,9 +172,153 @@ def _sublattice_count(database: Any, phase_name: str) -> int:
     return len(phase.constituents)
 
 
+@dataclass(frozen=True)
+class SuspiciousKeyDecision:
+    """Отметка «умолчание и явная строка различаются», снятая человеком.
+
+    Поля повторяют ``RecordOverride``: что именно решено, почему, откуда и
+    какой волной. Отличие в том, что правки записи здесь нет вовсе — таблица
+    параметров остаётся той же, меняется только причина в отчёте. Поэтому
+    решение ничего не считает и не может сдвинуть ни одного числа.
+
+    Адресность обеспечивается не именем базы (оно приходит из разных путей
+    загрузки и бывает пустым), а отпечатком самого места: ключ, полный набор
+    составляющих явных строк этого ключа и конечный член, строки которого в
+    базе нет. На другой базе или на исправленной версии этой же базы отпечаток
+    не совпадёт, и отметка останется на месте.
+    """
+
+    identifier: str
+    phase_name: str
+    parameter_type: str
+    diffusing_species: str
+    order: int
+    explicit_constituents: tuple[tuple[tuple[str, ...], ...], ...]
+    absent_constituents: tuple[tuple[str, ...], ...]
+    reason: str
+    source: str
+    wave: str
+    user_message: str
+
+    @property
+    def key(self) -> tuple[str, str, str, int]:
+        return (
+            self.phase_name,
+            self.parameter_type,
+            self.diffusing_species,
+            int(self.order),
+        )
+
+
+# BL-34. У ключа FCC_A1 / MQ / AL / порядок 0 умолчание MQ(FCC_A1&AL,*) и явная
+# строка MQ(FCC_A1&AL,AL:*) дают разные выражения, поэтому дедупликация не
+# может доказать дубль и отмечает место как подозрительное. Разбор волны 15-Б
+# показал, что дубля тут и не должно быть: умолчание описывает алюминий в
+# никеле, явная строка — алюминий в алюминии. Это разные величины, символьно
+# совпасть они не могут ни при каком качестве базы. Решение мастера по отчёту
+# 15-Б: верно первое прочтение, то есть то, которое загрузчик и выполняет —
+# умолчание разворачивается в непокрытые конечные члены, включая NI.
+AL_FCC_DEFAULT_IS_IMPURITY_IN_NI = SuspiciousKeyDecision(
+    identifier="BL-34",
+    phase_name="FCC_A1",
+    parameter_type="MQ",
+    diffusing_species="AL",
+    order=0,
+    explicit_constituents=(
+        (("AL",), ("*",)),
+        (("AL", "CR"), ("*",)),
+        (("AL", "NI"), ("*",)),
+        (("AL", "TI"), ("*",)),
+        (("CO",), ("*",)),
+        (("CR",), ("*",)),
+        (("CR", "NI"), ("*",)),
+        (("FE",), ("*",)),
+        (("NI", "TI"), ("*",)),
+    ),
+    absent_constituents=(("NI",), ("*",)),
+    reason=(
+        "умолчание и явная строка описывают разные конечные члены, а не дубль: "
+        "над умолчанием MQ(FCC_A1&AL,*) стоит авторский комментарий базы "
+        "«Default value: Impurity diffusion of AL in Ni», строки "
+        "MQ(FCC_A1&AL,NI:*) в базе нет вовсе, а явная строка MQ(FCC_A1&AL,AL:*) "
+        "с Q = 142 кДж/моль и D0 = 1,71e-4 м²/с — это алюминий в алюминии. "
+        "Первоисточник базы (Engström и Ågren 1996, приложение, раздел "
+        "«Mobility of Al») даёт обе величины порознь и с разными измерениями: "
+        "ΔG(Al в Al) = -142000 + R*T*ln(1,71e-4) со ссылкой на самодиффузию в "
+        "чистом алюминии, ΔG(Al в Ni) = -284000 + R*T*ln(7,5e-4) со ссылкой на "
+        "диффузию алюминия в чистом никеле. То есть выражение строки-умолчания "
+        "и есть аттестованный конечный член «алюминий в никеле». Развёртывание "
+        "умолчания в непокрытые конечные члены, включая NI, и есть верное "
+        "прочтение"
+    ),
+    source=(
+        "Первоисточники, добытые и разобранные мастером (добавка к заданию "
+        "15-В; позиции 1 и 5 запроса S-6 закрыты ими): "
+        "A. Engström, J. Ågren, Z. Metallkd. 87 (1996) 92-97, "
+        "DOI 10.1515/ijmr-1996-870205, приложение, раздел «Mobility of Al» — "
+        "ΔG(Al в Al) = -142000 + R*T*ln(1,71e-4) и "
+        "ΔG(Al в Ni) = -284000 + R*T*ln(7,5e-4), каждое со своим измерением; "
+        "это Ref:12 базы, которой помечены обе спорные строки. "
+        "C. E. Campbell, W. J. Boettinger, U. R. Kattner, Acta Mater. 50 (2002) "
+        "775-792, DOI 10.1016/S1359-6454(01)00383-4, таблица 2 — те же "
+        "параметры в обозначениях DICTRA, где адресация однозначна: "
+        "MQ(FCC,Al:VA;0) = -142000 - 72,1*T это «Al в Al», "
+        "MQ(FCC,Ni:VA;0) = -284000 - 59,8*T это «Al в Ni»; те же числа в другой "
+        "записи, R*ln(1,71e-4) = -72,1187 и R*ln(7,5e-4) = -59,8265 при "
+        "R = 8,3145. "
+        "Внутри проекта: комментарий базы "
+        "databases/original/ni/mc_ni_v2012.ddb:89 («Default value: Impurity "
+        "diffusion of AL in Ni»), сохранённый конвертером и в рабочем файле "
+        "databases/converted/mc_ni_v2036_with_mobility.garcalc.tdb:11571; "
+        "отсутствие строки MQ(FCC_A1&AL,NI:*) в обоих файлах; расчёт пункта 3 "
+        "отчёта tasks/WAVE15_B_REPORT.md: второе прочтение даёт алюминию "
+        "коэффициент диффузии в 1,8e7 раза больше самодиффузии никеля в той же "
+        "решётке при 600 °C по той же базе, что для замещающего элемента с "
+        "вакансионным механизмом невозможно"
+    ),
+    wave="15-В",
+    user_message=(
+        "Подвижность алюминия в FCC_A1: строка-умолчание MQ(FCC_A1&AL,*) "
+        "(Q = 284 кДж/моль, D0 = 7,5e-4 м²/с) читается как «алюминий в никеле» "
+        "и разворачивается в конечные члены, своей строки не имеющие. Решение "
+        "принято по разбору BL-34; расчёт от этого не меняется."
+    ),
+)
+
+SUSPICIOUS_KEY_DECISIONS: tuple[SuspiciousKeyDecision, ...] = (
+    AL_FCC_DEFAULT_IS_IMPURITY_IN_NI,
+)
+
+
+def _decision_for(
+    key: tuple[str, str, str, int],
+    counterparts: Iterable[Any],
+    decisions: Iterable[SuspiciousKeyDecision],
+) -> "SuspiciousKeyDecision | None":
+    """Решение, снимающее отметку с этого места, если отпечаток совпал.
+
+    Совпасть обязано всё: ключ, полный набор составляющих явных строк и
+    отсутствие среди них того конечного члена, из-за которого и возник спор.
+    """
+
+    present = sorted(
+        _constituent_names(record.get("constituent_array")) for record in counterparts
+    )
+    for decision in decisions:
+        if decision.key != key:
+            continue
+        if present != sorted(decision.explicit_constituents):
+            continue
+        if decision.absent_constituents in present:
+            continue
+        return decision
+    return None
+
+
 def repair_mobility_defaults(
     database: Any,
     database_label: str = "",
+    decisions: Iterable[SuspiciousKeyDecision] = SUSPICIOUS_KEY_DECISIONS,
 ) -> MobilityRepairReport:
     """Убрать умолчания подвижности, дублирующие явную строку того же элемента.
 
@@ -148,8 +331,14 @@ def repair_mobility_defaults(
     Совпадение выражений — признак того, что умолчание и явная строка
     описывают одно и то же, и суммирование их даёт квадрат подвижности. Если
     выражения различаются, это уже не дубль: автор базы мог иметь в виду разные
-    вклады. Тогда ничего не отбрасывается, ключ попадает в ``suspicious_keys``
-    и в строку лога, а решение остаётся человеку.
+    вклады. Тогда вырожденная строка всё равно разворачивается по непокрытым
+    составляющим — именно так её понимает Thermo-Calc, — но ключ попадает в
+    ``suspicious_keys`` и в строку лога, а решение остаётся человеку.
+
+    Места, по которым решение уже принято и записано в ``decisions``, уходят не
+    в ``suspicious_keys``, а в ``decided_keys``: поведение то же, но человек
+    больше не спрашивается. Отпечаток решения проверяется по самой базе
+    (``_decision_for``), так что на другой базе отметка сохраняется.
 
     Если явной строки нет вовсе, умолчание — единственный источник подвижности
     этого элемента, и оно сохраняется: без него элемент остался бы вовсе без
@@ -193,6 +382,9 @@ def repair_mobility_defaults(
     removed_keys: list[tuple[str, str, str, int]] = []
     kept_keys: list[tuple[str, str, str, int]] = []
     suspicious_keys: list[tuple[str, str, str, int]] = []
+    decided_keys: list[tuple[str, str, str, int]] = []
+    applied_decisions: list[SuspiciousKeyDecision] = []
+    decisions = tuple(decisions)
     for key, records in sorted(degenerate.items()):
         phase_name, _parameter_type, _species, _order = key
         phase = database.phases.get(phase_name)
@@ -244,8 +436,14 @@ def repair_mobility_defaults(
             # Выражения различаются — это не дубль. Строка всё равно
             # перераспределяется по «непокрытым» составляющим, потому что
             # именно так её понимает Thermo-Calc, но место отмечается как
-            # подозрительное и уходит в лог.
-            suspicious_keys.append(key)
+            # подозрительное и уходит в лог — если по нему нет принятого
+            # решения (``SUSPICIOUS_KEY_DECISIONS``).
+            decision = _decision_for(key, counterparts, decisions)
+            if decision is None:
+                suspicious_keys.append(key)
+            else:
+                decided_keys.append(key)
+                applied_decisions.append(decision)
         else:
             kept_keys.append(key)
 
@@ -260,9 +458,12 @@ def repair_mobility_defaults(
         materialised=len(added),
         kept_as_only_source=len(kept_keys),
         kept_as_different_expression=len(suspicious_keys),
+        reviewed_by_human=len(decided_keys),
         removed_keys=tuple(removed_keys),
         kept_keys=tuple(kept_keys),
         suspicious_keys=tuple(suspicious_keys),
+        decided_keys=tuple(decided_keys),
+        decisions=tuple(applied_decisions),
         database_label=database_label,
     )
 
@@ -699,6 +900,11 @@ def override_warnings(
 
 # Версия логики правок загрузки. Входит в ключ кэша разобранных баз: без этого
 # пользователь со старым кэшем получил бы прежнее поведение. 4 — правка BL-20.
+#
+# Волна 15-В версию НЕ поднимала. Снятие отметки BL-34 и правка текста строки
+# лога не меняют ни одной записи разобранной базы: кэш хранит саму базу, а не
+# отчёт дедупликации, и старый кэш даёт ровно те же числа. Поднять версию
+# значило бы заставить всех пользователей разобрать базы заново без причины.
 MOBILITY_DEDUP_VERSION = 4
 
 _LAST_REPORTS: dict[str, MobilityRepairReport] = {}
@@ -718,8 +924,15 @@ def repair_database(database: Any, database_label: str = "") -> dict[str, Any]:
         _log(mobility.log_line())
         for key in mobility.suspicious_keys:
             _log(
-                "  подозрительно: умолчание и явная строка различаются — "
+                "  подозрительно: умолчание и явная строка различаются, "
+                "доказательства дубля нет — "
                 f"{key[0]} / {key[1]} / {key[2]} / порядок {key[3]}"
+            )
+        for key, decision in zip(mobility.decided_keys, mobility.decisions):
+            _log(
+                f"  решение принято ({decision.identifier}, волна "
+                f"{decision.wave}): {key[0]} / {key[1]} / {key[2]} / порядок "
+                f"{key[3]} — {decision.reason}"
             )
     return {
         "mobility_defaults": mobility,

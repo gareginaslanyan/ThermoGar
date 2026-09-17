@@ -1,0 +1,22 @@
+[
+ {
+  "note": "",
+  "origin": "measured",
+  "phase": "FCC_A1",
+  "poisson": 0.25,
+  "reference_temperature_c": 25.0,
+  "source": "условное значение для проверки весов VRH",
+  "volume_fraction": 0.9601310534017993,
+  "young_gpa": 100.0
+ },
+ {
+  "note": "",
+  "origin": "measured",
+  "phase": "M7C3",
+  "poisson": 0.25,
+  "reference_temperature_c": 25.0,
+  "source": "условное значение для проверки весов VRH",
+  "volume_fraction": 0.03986894659820067,
+  "young_gpa": 300.0
+ }
+]

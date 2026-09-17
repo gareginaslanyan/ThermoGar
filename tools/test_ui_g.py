@@ -486,17 +486,35 @@ def test_kwn_matrix_offers_the_disordered_half(
     )
 
 
-def test_kwn_reports_a_too_long_composition_without_a_traceback() -> None:
-    """The shipped Fe composition has eight solutes; KWN accepts four."""
+# The former shipped Fe composition: eight solutes. Up to wave 14-Б the KWN
+# section accepted four and refused it; since BL-21 it accepts ten.
+FE_EIGHT_SOLUTES = "C=0.20, CR=11.5, NI=0.7, MN=0.7, SI=0.3, MO=0.6, W=0.9, V=0.225"
 
-    app = start_app(
-        "fe",
-        composition="C=0.20, CR=11.5, NI=0.7, MN=0.7, SI=0.3, MO=0.6, W=0.9, V=0.225",
-    )
+
+def test_kwn_reports_a_too_long_composition_without_a_traceback() -> None:
+    """Eleven solutes are above the measured limit of ten (BL-21, wave 14-Б).
+
+    NB, TI and AL are a synthetic load on top of the eight-solute steel, not
+    a steel grade.
+    """
+
+    app = start_app("fe", composition=FE_EIGHT_SOLUTES + ", NB=0.05, TI=0.02, AL=0.02")
     assert_no_traceback(app)
     messages = "\n".join(element.value for element in app.error)
-    assert "не более четырёх добавок" in messages
+    assert "не более 10 добавок" in messages
+    assert "в составе 11" in messages
+    assert "предел измеренного, а не физический" in messages
     assert "боковой панели" in captions(app)
+    assert "предел измеренного, а не физический" in captions(app)
+
+
+def test_kwn_accepts_the_eight_solute_steel_since_bl21() -> None:
+    """The eight-solute steel is no longer refused by the solute limit."""
+
+    app = start_app("fe", composition=FE_EIGHT_SOLUTES)
+    assert_no_traceback(app)
+    messages = "\n".join(element.value for element in app.error)
+    assert "добавок одновременно" not in messages, messages
 
 
 # --------------------------------------------------------------------------- #

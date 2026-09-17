@@ -106,6 +106,18 @@ KWN_ADAPTER_IMPLEMENTATION_REVISION = "legacy-15.2-r1"
 # и не является программным ограничением.
 FE_KWN_PUBLICATION_STATUS = "NOT_ASSESSED"
 
+# BL-21. Наибольшее число добавок, на котором расчёт выделений измерен
+# (волны 14-А и 14-Б: сборка, время шага, баланс масс на 2…10 добавках).
+# Это предел измеренного, а не физический: выше 10 добавок не проверялось.
+KWN_MAX_SOLUTES = 10
+# До этого числа добавок расчёт шёл и до 14-Б; сверх него — предупреждение о
+# времени: по замеру 14-А каждая добавка удлиняет шаг решателя примерно на 15 %.
+KWN_SOLUTES_WITHOUT_TIME_WARNING = 4
+KWN_LONG_COMPOSITION_WARNING = (
+    "В составе {count} добавок. Расчёт идёт в этой же вкладке и не отменяется; "
+    "каждая добавка удлиняет его примерно на 15 %."
+)
+
 
 @dataclass
 class PrecipitationResult:
@@ -121,8 +133,116 @@ class PrecipitationResult:
     figures: dict[str, plt.Figure]
     npz: bytes
     provenance: bytes
-    # Сообщения о правках базы, касающихся элементов расчёта (BL-20).
+    # Сообщения о правках базы, касающихся элементов расчёта (BL-20), и
+    # предупреждение о времени на длинном составе (BL-21).
     warnings: list[str] = field(default_factory=list)
+    # BL-35. Текст отказа, если расчёт остановлен до конца выдержки из-за
+    # недопустимого состава матрицы; пустая строка — расчёт дошёл до конца.
+    stop_note: str = ""
+
+
+# BL-35. Одна фраза о причине отказа — общая для остановки по составу и для
+# перехваченного деления на ноль в pycalphad.
+KWN_COMPOSITION_STOP_CAUSE = (
+    "Причина: при движущей силе по базе зарождение практически безбарьерное, "
+    "и выделение вычерпывает добавки из матрицы быстрее, чем модель это "
+    "выдерживает; см. docs/LIMITS_OF_APPLICABILITY.md."
+)
+
+
+def _matrix_composition_violation(
+    composition: Any, solutes: list[str], balance: str, initial: Any
+) -> tuple[str, float] | None:
+    """Первый элемент матрицы, нарушивший баланс масс, и его мольная доля.
+
+    Нарушение — доля любого элемента, включая основу, вне [0; 1] или
+    нечисловая, либо добавка, которой в исходном составе было больше нуля,
+    дошла до нуля. Порога нет: это баланс масс, а не настройка.
+    """
+
+    x = np.asarray(composition, float).ravel()
+    values = list(zip(solutes, x.tolist())) + [(balance, 1.0 - float(np.sum(x)))]
+    for element, value in values:
+        if not np.isfinite(value) or value < 0.0 or value > 1.0:
+            return element, float(value)
+    for element, value, start in zip(solutes, x.tolist(), np.asarray(initial, float).ravel()):
+        if start > 0.0 and value <= 0.0:
+            return element, float(value)
+    return None
+
+
+class _MatrixCompositionStop:
+    """Условие остановки kawin по составу матрицы (BL-35).
+
+    ``KWNBase.postProcess`` после каждого принятого шага дописывает шаг в
+    ``model.data`` и вызывает у условия ``testCondition(model)`` и
+    ``isSatisfied()``; ``reset()`` вызывает ``KWNBase.reset``. Условие только
+    читает последний записанный состав и расчёт не меняет.
+    """
+
+    def __init__(self, solutes: list[str], balance: str, initial: Any) -> None:
+        self._solutes = list(solutes)
+        self._balance = balance
+        self._initial = np.asarray(initial, float)
+        self.reset()
+
+    def reset(self) -> None:
+        self._isSatisfied = False
+        self._satisfiedTime = -1
+        self.element: str | None = None
+        self.value: float | None = None
+
+    def testCondition(self, model: Any) -> None:
+        if self._isSatisfied:
+            return
+        n = int(model.data.n)
+        found = _matrix_composition_violation(
+            model.data.composition[n], self._solutes, self._balance, self._initial
+        )
+        if found is not None:
+            self._isSatisfied = True
+            self._satisfiedTime = float(model.data.time[n])
+            self.element, self.value = found
+
+    def isSatisfied(self) -> bool:
+        return self._isSatisfied
+
+    def satisfiedTime(self) -> float:
+        return self._satisfiedTime
+
+
+def _raised_in_pycalphad(error: BaseException) -> bool:
+    trace = error.__traceback__
+    while trace is not None:
+        if "pycalphad" in trace.tb_frame.f_code.co_filename.replace("\\", "/"):
+            return True
+        trace = trace.tb_next
+    return False
+
+
+def _time_text(time_s: float) -> str:
+    return f"{time_s:.4g} с модельного времени ({time_s/3600:.4g} ч)"
+
+
+def _composition_stop_note(time_s: float, element: str, value: float) -> str:
+    return (
+        f"Расчёт остановлен на {_time_text(time_s)}: доля {element} в матрице "
+        f"стала {100*value:.4g} ат. %, баланс масс нарушен. Показана часть "
+        f"расчёта до остановки. {KWN_COMPOSITION_STOP_CAUSE}"
+    )
+
+
+def _solver_failure_note(time_s: float, composition: Any, solutes: list[str], balance: str) -> str:
+    x = np.asarray(composition, float).ravel()
+    parts = [f"{element} {100*value:.4g}" for element, value in zip(solutes, x.tolist())]
+    parts.append(f"{balance} {100*(1.0 - float(np.sum(x))):.4g}")
+    return (
+        f"Расчёт прерван после {_time_text(time_s)}: на следующем шаге pycalphad "
+        "не смог посчитать локальное равновесие для состава матрицы, "
+        "полученного из баланса масс (деление на ноль). Последний посчитанный "
+        f"состав матрицы, ат. %: {', '.join(parts)}. Показана часть "
+        f"расчёта до обрыва. {KWN_COMPOSITION_STOP_CAUSE}"
+    )
 
 
 def _pkg(name: str) -> str:
@@ -185,8 +305,12 @@ def _composition_vectors(
     solutes = sorted(entered)
     if not solutes:
         raise ValueError("Укажите хотя бы одну добавку.")
-    if len(solutes) > 4:
-        raise ValueError("Research KWN mode допускает не более четырёх добавок одновременно.")
+    if len(solutes) > KWN_MAX_SOLUTES:
+        raise ValueError(
+            f"Расчёт выделений KWN принимает не более {KWN_MAX_SOLUTES} добавок "
+            f"одновременно, в составе {len(solutes)}. Это предел измеренного, а не "
+            f"физический: больше {KWN_MAX_SOLUTES} добавок расчёт не проверялся."
+        )
     elements = [balance] + solutes
     percentages = np.array([100 - total] + [entered[e] for e in solutes], float)
     masses = _atomic_masses(db, elements)
@@ -468,6 +592,7 @@ def _quality(
     cmin_nm: float | None = None,
     cmax_nm: float | None = None,
     bins: int | None = None,
+    stop_note: str = "",
 ) -> pd.DataFrame:
     checks: list[dict[str, str]] = []
     def add(name: str, ok: bool, note: str) -> None:
@@ -483,7 +608,10 @@ def _quality(
     add("Объёмная доля 0–1", bool(np.all((fraction >= -1e-10) & (fraction <= 1+1e-8))), "Физический диапазон доли.")
     add("Радиус неотрицателен", bool(np.all(radius >= -1e-20)), "Средний радиус неотрицателен.")
     add("Плотность неотрицательна", bool(np.all(density >= -1e-6)), "Количество частиц неотрицательно.")
-    add("Состав матрицы допустим", bool(composition.shape[1] == solute_count and np.all(np.isfinite(composition)) and np.all((composition >= -1e-8) & (composition <= 1+1e-8))), "Проверка независимых компонентов.")
+    if stop_note:
+        add("Состав матрицы допустим", False, stop_note)
+    else:
+        add("Состав матрицы допустим", bool(composition.shape[1] == solute_count and np.all(np.isfinite(composition)) and np.all((composition >= -1e-8) & (composition <= 1+1e-8))), "Проверка независимых компонентов.")
     # BL-22. kawin обрезает долю единицей и после этого перестаёт пересчитывать
     # состав матрицы (KWNEuler: volFrac = min(..., 1), при сумме долей 1 состав
     # не обновляется). Доля 100 % — след зародышей, записанных в класс шире их
@@ -526,8 +654,11 @@ def _nucleus_estimates(
     model: Any,
     precipitate_phase: str,
     temperatures_k: list[float],
-) -> list[tuple[float, float, float]]:
+) -> list[tuple[float, float, float, float]]:
     """Критический радиус и радиус зародыша на первом шаге, нм, по температурам.
+
+    Кортеж: температура, K; критический радиус kawin, нм (после зажима снизу
+    ``Rmin``); радиус зародыша, нм; критический радиус до зажима, нм (BL-32).
 
     Считается теми же функциями kawin, что и в самом расчёте
     (``KWNBase._calcNucleationRate``), по начальному составу матрицы.
@@ -551,7 +682,7 @@ def _nucleus_estimates(
     p = model.phaseIndex(precipitate_phase)
     parameters = model.precipitates[p]
     composition = np.squeeze(model.data.composition[0])
-    estimates: list[tuple[float, float, float]] = []
+    estimates: list[tuple[float, float, float, float]] = []
     for temperature_k in sorted({float(value) for value in temperatures_k}):
         _chemical, volume_dg, _beta = nucleation_functions.volumetricDrivingForce(
             model.therm, composition, temperature_k, parameters,
@@ -562,12 +693,104 @@ def _nucleus_estimates(
             continue
         rcrit, _gcrit = nucleation_functions.nucleationBarrier(volume_dg, parameters)
         rnuc = nucleation_functions.nucleationRadius(temperature_k, rcrit, parameters)
-        estimates.append((temperature_k, 1e9*float(rcrit), 1e9*float(rnuc)))
+        # Радиус до зажима — теми же выражениями, что ``nucleationBarrier``
+        # берёт в своих двух ветках до ``max(..., Rmin)``.
+        if parameters.nucleation.isGrainBoundaryNucleation:
+            free_rcrit = parameters.nucleation.Rcrit(volume_dg)
+        else:
+            free_rcrit = (
+                2*parameters.shapeFactor.description.thermoFactor(1)
+                * parameters.gamma / volume_dg
+            )
+        estimates.append((
+            temperature_k, 1e9*float(rcrit), 1e9*float(rnuc),
+            1e9*float(np.squeeze(free_rcrit)),
+        ))
     return estimates
 
 
+# BL-32. Отношение u = Rmin / r*, начиная с которого расчёт не пускается.
+#
+# Ветка kawin для границ, рёбер и углов зёрен считает барьер полным выражением
+# ΔG(R) = R²·(A − c·ΔGv·R), A = b·γ − a·γ_gb (``NucleationBarrierParameters.Gcrit``),
+# подставляя в него зажатый радиус R = Rmin. Максимум ΔG(R) — при
+# r* = 2A/(3c·ΔGv), G* = ΔG(r*). В долях максимума, u = R/r*:
+#     ΔG(R)/G* = 3u² − 2u³ = u²·(3 − 2u),
+# ноль при 3 − 2u = 0, отсюда порог ниже. При u ≥ 3/2 барьер kawin
+# неположителен, а ``nucleationRate`` берёт exp(−Gcrit/kT) при любом
+# Gcrit ≠ 0, так что отрицательный барьер входит в скорость как exp(+|G|/kT),
+# и скорость зарождения расходится. Здесь порог выведен.
+#
+# Ветка kawin для объёма и дислокаций считает барьер как (4π/3)·γ·Rcrit², и при
+# зажиме он равен u²·G* — положителен при любом u (14-В). Здесь порог
+# ЭМПИРИЧЕСКИЙ: на пяти случаях 14-А (u = 2,01…2,43) расчёт не сходился, на
+# умолчании Ni-раздела (u = 1,12) сошёлся (14-Б, 14-В); механизм зависания не
+# установлен (BL-33), граница лежит где-то между 1,12 и 2,01 и взята той же,
+# что у ветки границ зёрен, по аналогии.
+CRITICAL_RADIUS_REFUSAL_RATIO = 3.0 / 2.0
+
+
+def _check_critical_radius_floor(
+    estimates: list[tuple[float, float, float, float]],
+    radius_floor_nm: float | None,
+    grain_boundary_nucleation: bool,
+) -> list[str]:
+    """BL-32: критический радиус до зажима против нижнего предела kawin ``Rmin``.
+
+    kawin берёт критический радиус как ``max(r*, Rmin)``. По наибольшему по
+    температурам профиля u = Rmin / r*:
+
+    * u ≥ ``CRITICAL_RADIUS_REFUSAL_RATIO`` — отказ ``ValueError``; обоснование
+      и текст разные для границ зёрен и для объёма/дислокаций (см. комментарий
+      к порогу);
+    * 1 < u < порога — возвращается предупреждение для ``warnings``;
+    * u ≤ 1 — зажима нет, пустой список.
+
+    ``grain_boundary_nucleation`` — ``nucleation.isGrainBoundaryNucleation``
+    параметров выделения kawin.
+    """
+
+    if not estimates or radius_floor_nm is None:
+        return []
+    floor_nm = float(radius_floor_nm)
+
+    def ratio(item: tuple[float, ...]) -> float:
+        free_nm = float(item[3])
+        return floor_nm/free_nm if free_nm > 0 else float("inf")
+
+    worst = max(estimates, key=ratio)
+    u = ratio(worst)
+    temperature_c = worst[0] - 273.15
+    free_nm = float(worst[3])
+    radius_text = (
+        f"Критический радиус зародыша {free_nm:.3g} нм (оценка при {temperature_c:.1f} °C "
+        f"по начальному составу) меньше предела модели {floor_nm:.3g} нм"
+        if free_nm > 0 else
+        f"Критический радиус зародыша (оценка при {temperature_c:.1f} °C по начальному "
+        f"составу) не положителен и меньше предела модели {floor_nm:.3g} нм"
+    )
+    if u >= CRITICAL_RADIUS_REFUSAL_RATIO:
+        if grain_boundary_nucleation:
+            raise ValueError(
+                f"{radius_text} более чем в полтора раза. При таком радиусе барьер "
+                "зарождения на границах зёрен обращается в ноль, и скорость зарождения "
+                "расходится. Поднимите межфазную энергию либо температуру."
+            )
+        raise ValueError(
+            f"{radius_text} более чем в полтора раза. На таких входах расчёт в наших "
+            "опытах не сходился. Поднимите межфазную энергию либо температуру."
+        )
+    if u > 1.0:
+        return [
+            f"{radius_text}, и kawin считает зарождение от предела. Скорость "
+            "зарождения на начальной стадии поэтому не соответствует классической для "
+            "этой движущей силы, и начало выделения на графиках может быть искажено."
+        ]
+    return []
+
+
 def _check_size_grid(
-    estimates: list[tuple[float, float, float]],
+    estimates: list[tuple[float, ...]],
     cmin_nm: float,
     cmax_nm: float,
     bins: int,
@@ -587,7 +810,8 @@ def _check_size_grid(
 
     if not estimates:
         return
-    temperature_k, _rcrit_nm, rnuc_nm = min(estimates, key=lambda item: item[2])
+    lowest_nucleus = min(estimates, key=lambda item: item[2])
+    temperature_k, rnuc_nm = lowest_nucleus[0], lowest_nucleus[2]
     if rnuc_nm < float(cmin_nm):
         raise ValueError(
             f"Сетка размеров не принимает зародыши: радиус зародыша {rnuc_nm:.3g} нм "
@@ -598,7 +822,8 @@ def _check_size_grid(
             f"{rnuc_nm:.3g} нм."
         )
     width_nm = _size_class_width_nm(cmin_nm, cmax_nm, bins)
-    temperature_k, rcrit_nm, _rnuc_nm = min(estimates, key=lambda item: item[1])
+    lowest_radius = min(estimates, key=lambda item: item[1])
+    temperature_k, rcrit_nm = lowest_radius[0], lowest_radius[1]
     if width_nm >= rcrit_nm:
         needed_bins = int(np.floor((float(cmax_nm) - float(cmin_nm)) / rcrit_nm)) + 1
         raise ValueError(
@@ -610,6 +835,37 @@ def _check_size_grid(
             "максимальный радиус» или возьмите больше классов: при этом диапазоне "
             f"нужно не меньше {needed_bins}."
         )
+
+
+def _check_nucleus_above_grid(
+    estimates: list[tuple[float, ...]],
+    cmax_nm: float,
+) -> list[str]:
+    """BL-26: зародыш крупнее начального ``cMax`` — предупреждение, не отказ.
+
+    kawin кладёт такой зародыш в последний класс (индекс -1) и достраивает
+    сетку вверх, пока последний класс заполнен (13-Ф). Итоговые числа почти не
+    меняются, искажена стадия зарождения. Берётся наибольший радиус зародыша по
+    температурам режима: при нагреве зародыш крупнее, а сетка к этому шагу
+    может быть ещё не достроена. Парной проверки после расчёта нет: ``Rnuc``
+    растёт по мере обеднения матрицы вместе с сеткой, и такая проверка
+    срабатывала бы на годной сетке (решение мастера 13-Ф2).
+    """
+
+    if not estimates:
+        return []
+    largest_nucleus = max(estimates, key=lambda item: item[2])
+    temperature_k, rnuc_nm = largest_nucleus[0], largest_nucleus[2]
+    if rnuc_nm <= float(cmax_nm):
+        return []
+    return [
+        f"Радиус зародыша {rnuc_nm:.3g} нм (оценка при {temperature_k - 273.15:.1f} °C) "
+        f"больше начального максимального радиуса сетки {float(cmax_nm):.3g} нм, поэтому "
+        "первые зародыши записываются мельче своего размера, пока kawin не достроит "
+        "сетку. Итоговые доля, радиус и число частиц от этого почти не меняются, но "
+        "начало зарождения на графиках искажено: доля и радиус занижены, число частиц "
+        f"завышено. Задайте «Начальный максимальный радиус» больше {rnuc_nm:.3g} нм."
+    ]
 
 
 def _summary(time_h: np.ndarray, fraction: np.ndarray, radius_nm: np.ndarray, density: np.ndarray, nuc_rate: np.ndarray) -> pd.DataFrame:
@@ -857,14 +1113,48 @@ def run_precipitation(
             precipitate_phase,
             [float(item["temperature_c"]) + 273.15 for item in profile],
         )
+        # Предел и ветка барьера берутся у самого kawin — у параметров
+        # выделения той же модели.
+        estimate_precipitate = estimate_model.precipitates[
+            estimate_model.phaseIndex(precipitate_phase)
+        ]
+        radius_floor_nm = 1e9*float(estimate_precipitate.Rmin)
+        grain_boundary_nucleation = bool(
+            estimate_precipitate.nucleation.isGrainBoundaryNucleation
+        )
     except Exception:
         # Оценка не удалась — решение остаётся за проверками после расчёта.
         nucleus_estimates = []
+        radius_floor_nm = None
+        grain_boundary_nucleation = False
+    # Радиус до зажима — первым: при зажиме оценка сетки считается от предела.
+    radius_warnings = _check_critical_radius_floor(
+        nucleus_estimates, radius_floor_nm, grain_boundary_nucleation
+    )
     _check_size_grid(nucleus_estimates, cmin_nm, cmax_nm, int(bins))
+    grid_warnings = _check_nucleus_above_grid(nucleus_estimates, cmax_nm)
     model.setPSDrecording(False)
     if hasattr(model, "cacheCalculations"):
         model.cacheCalculations(True)
-    model.solve(final_time, verbose=False)
+    # BL-35. Баланс масс может вывести состав матрицы за границы: условие
+    # останавливает расчёт после такого шага, а деление на ноль внутри
+    # pycalphad, случившееся раньше проверки, превращается в тот же отказ.
+    composition_stop = _MatrixCompositionStop(solutes, balance, x_at[1:])
+    model.addStoppingCondition(composition_stop)
+    stop_note = ""
+    try:
+        model.solve(final_time, verbose=False)
+    except ZeroDivisionError as error:
+        if not _raised_in_pycalphad(error):
+            raise
+        last = int(model.data.n)
+        stop_note = _solver_failure_note(
+            float(model.data.time[last]), model.data.composition[last], solutes, balance
+        )
+    if composition_stop.isSatisfied():
+        stop_note = _composition_stop_note(
+            composition_stop.satisfiedTime(), composition_stop.element, composition_stop.value
+        )
 
     data = model.data
     p = model.phaseIndex(precipitate_phase)
@@ -905,7 +1195,7 @@ def run_precipitation(
         "Радиус класса, нм": 1e9*np.asarray(pbm.PSDsize, float),
         "Число частиц в классе, 1/м³": np.asarray(pbm.PSD, float),
     })
-    quality = _quality(data, p, len(solutes), cmin_nm, cmax_nm, int(bins))
+    quality = _quality(data, p, len(solutes), cmin_nm, cmax_nm, int(bins), stop_note)
     summary = _summary(time_h, fraction, radius_nm, density, nuc_rate)
     settings_rows = [
         ("База", database_label), ("Файл базы", str(database_path)),
@@ -980,7 +1270,11 @@ def run_precipitation(
         interface_composition=interface_table, psd=psd, quality=quality,
         figures=figures, npz=buffer.getvalue(),
         provenance=json.dumps(provenance, ensure_ascii=False, indent=2, default=str).encode("utf-8-sig"),
-        warnings=list(database_warnings),
+        warnings=list(database_warnings) + radius_warnings + grid_warnings + (
+            [KWN_LONG_COMPOSITION_WARNING.format(count=len(solutes))]
+            if len(solutes) > KWN_SOLUTES_WITHOUT_TIME_WARNING else []
+        ),
+        stop_note=stop_note,
     )
 
 
@@ -1072,7 +1366,9 @@ def render_precipitation_section(
         st.error(str(error))
         st.caption(
             "Состав раздела берётся из поля «Добавки» в боковой панели. "
-            "KWN-модель считает не более четырёх добавок одновременно: "
+            f"KWN-модель принимает не более {KWN_MAX_SOLUTES} добавок одновременно. "
+            "Это предел измеренного, а не физический: больше "
+            f"{KWN_MAX_SOLUTES} добавок расчёт не проверялся. Если добавок больше, "
             "оставьте в составе только элементы, определяющие выделение "
             "(например, C и CR для карбида M23C6 в стали)."
         )
@@ -1317,6 +1613,9 @@ def render_precipitation_section(
         return
     for warning in getattr(result, "warnings", ()) or ():
         st.warning(warning)
+    # BL-35. Текст отказа — и над вкладками, и строкой в таблице проверок.
+    if getattr(result, "stop_note", ""):
+        st.warning(result.stop_note)
     if (result.quality["Статус"] == "пройдена").all():
         st.success("Внутренние численные проверки пройдены.")
     else:

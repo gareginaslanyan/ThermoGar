@@ -1,0 +1,69 @@
+== diff_mc_al_v2037.thermogar.patch
+  lines: +521 -426 changed(min per run) 357
+  comment_only: runs 1, -0 +4
+  disabled_commands: runs 7, -20 +32
+  syntax: runs 200, -406 +485
+  active lines disabled (kept verbatim as comments): 21
+  runs with numeric-token differences: 0
+== diff_mc_al_v2037_with_mobility.thermogar.patch
+  lines: +1145 -0 changed(min per run) 0
+  comment_only: runs 1, -0 +634
+  disabled_commands: runs 0, -0 +0
+  syntax: runs 1, -0 +511
+  active lines disabled (kept verbatim as comments): 0
+  runs with numeric-token differences: 0
+== diff_mc_fe_v2062.thermogar.patch
+  lines: +503 -428 changed(min per run) 369
+  comment_only: runs 1, -0 +5
+  disabled_commands: runs 9, -72 +106
+  syntax: runs 151, -356 +392
+  active lines disabled (kept verbatim as comments): 79
+  runs with numeric-token differences: 7
+    old line 7764 / new line 7787: removed {'6000.00.00': 1} added {'6000.00': 1}
+      - +4*GHSERCR#+18*GHSERFE#; 6000.00.00  N
+      + +4*GHSERCR#+18*GHSERFE#; 6000.00  N
+    old line 7767 / new line 7790: removed {'6000.00.00': 1} added {'6000.00': 1}
+      - +4*GHSERCR#+18*GMNBCC#; 6000.00.00  N
+      + +4*GHSERCR#+18*GMNBCC#; 6000.00  N
+    old line 8232 / new line 8261: removed {'273': 1} added {}
+      - PARAMETER G(PDMN_B2,MN:PD;0) 273.00 273 +46000-23*T
+      + PARAMETER G(PDMN_B2,MN:PD;0) 273.00 +46000-23*T
+    old line 8234 / new line 8263: removed {'6000.00': 1} added {}
+      - -5*T*LN(T)+0.5*GHSERPD#; 6000.00  N ; 6000.00  N
+      + -5*T*LN(T)+0.5*GHSERPD#; 6000.00 N
+    old line 8236 / new line 8265: removed {'273': 1} added {}
+      - PARAMETER G(PDMN_B2,PD:MN;0) 273.00 273 +46000-23*T
+      + PARAMETER G(PDMN_B2,PD:MN;0) 273.00 +46000-23*T
+    old line 8238 / new line 8267: removed {'6000.00': 1} added {}
+      - -5*T*LN(T)+0.5*GHSERMN#+0.5*GHSERPD#; 6000.00  N ; 6000.00  N
+      + -5*T*LN(T)+0.5*GHSERMN#+0.5*GHSERPD#; 6000.00 N
+    old line 11305 / new line 11342: removed {'1': 1} added {}
+      - CONSTITUENT MNB4  : MN : B :  > >> 1 !
+      + CONSTITUENT MNB4  : MN : B : !
+== diff_mc_fe_v2062_with_mobility.thermogar.patch
+  lines: +2781 -1 changed(min per run) 1
+  comment_only: runs 1, -1 +1622
+  disabled_commands: runs 0, -0 +0
+  syntax: runs 1, -0 +1159
+  active lines disabled (kept verbatim as comments): 0
+  runs with numeric-token differences: 0
+== diff_mc_ni_v2036.garcalc.patch
+  lines: +349 -278 changed(min per run) 248
+  comment_only: runs 1, -0 +4
+  disabled_commands: runs 10, -47 +68
+  syntax: runs 106, -231 +277
+  active lines disabled (kept verbatim as comments): 50
+  runs with numeric-token differences: 2
+    old line 7676 / new line 7702: removed {'6000.00.00': 1} added {'6000.00': 1}
+      - +4*GHSERCR#+18*GHSERFE#; 6000.00.00  N
+      + +4*GHSERCR#+18*GHSERFE#; 6000.00  N
+    old line 7679 / new line 7705: removed {'6000.00.00': 1} added {'6000.00': 1}
+      - +4*GHSERCR#+18*GMNBCC#; 6000.00.00  N
+      + +4*GHSERCR#+18*GMNBCC#; 6000.00  N
+== diff_mc_ni_v2036_with_mobility.garcalc.patch
+  lines: +1751 -0 changed(min per run) 0
+  comment_only: runs 1, -0 +1035
+  disabled_commands: runs 0, -0 +0
+  syntax: runs 1, -0 +716
+  active lines disabled (kept verbatim as comments): 0
+  runs with numeric-token differences: 0

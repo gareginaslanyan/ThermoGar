@@ -1,0 +1,67 @@
+F.....                                                                   [100%]
+================================== FAILURES ===================================
+__________________________ test_startup_is_clean[ni] __________________________
+Timeout (>2.0s) from pytest-timeout: тест снят без остановки файла (tools/conftest.py, BL-17)
+
+database_key = 'ni'
+
+    @pytest.mark.parametrize("database_key", DATABASES)
+    def test_startup_is_clean(database_key: str) -> None:
+        """Первый рендер: без исключений и без ложного BINDING_STALE."""
+    
+>       session = start(database_key)
+                  ^^^^^^^^^^^^^^^^^^^
+
+tools\test_ui_f.py:289: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\test_ui_f.py:179: in start
+    app_test.run()
+..\ThermoGar\.venv-windows\Lib\site-packages\streamlit\testing\v1\app_test.py:463: in run
+    return self._tree.run(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\ThermoGar\.venv-windows\Lib\site-packages\streamlit\testing\v1\element_tree.py:2531: in run
+    return self._runner._run(widget_states, timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\ThermoGar\.venv-windows\Lib\site-packages\streamlit\testing\v1\app_test.py:407: in _run
+    self._tree = script_runner.run(
+..\ThermoGar\.venv-windows\Lib\site-packages\streamlit\testing\v1\local_script_runner.py:158: in run
+    require_widgets_deltas(self, timeout)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+runner = LocalScriptRunner(forward_msg_queue=<streamlit.runtime.forward_msg_queue.ForwardMsgQueue object at 0x00000224E972CA50>...age_config_changed {
+  title: "ThermoGar"
+  favicon: "emoji:🌡️"
+  layout: WIDE
+  initial_sidebar_state: COLLAPSED
+}
+}])
+timeout = 1800
+
+    def require_widgets_deltas(runner: LocalScriptRunner, timeout: float = 3) -> None:
+        """Wait for the given ScriptRunner to emit a completion event. If the timeout
+        is reached, the runner will be shutdown and an error will be thrown.
+        """
+    
+        t0 = time.time()
+        while time.time() - t0 < timeout:
+>           time.sleep(0.001)
+E           conftest.TestTimeout
+
+..\ThermoGar\.venv-windows\Lib\site-packages\streamlit\testing\v1\local_script_runner.py:195: TestTimeout
+---------------------------- Captured stdout call -----------------------------
++ Timeout (>2.0s): tools/test_ui_f.py::test_startup_is_clean[ni] — тест снят, файл продолжается +
+---------------------------- Captured stderr call -----------------------------
+2026-09-16 17:51:11.073 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-16 17:51:11.073 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-16 17:51:11.074 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-16 17:51:11.074 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-16 17:51:11.074 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+=========================== short test summary info ===========================
+FAILED tools/test_ui_f.py::test_startup_is_clean[ni] - Timeout (>2.0s) from p...
+1 failed, 5 passed, 53 deselected in 55.26s

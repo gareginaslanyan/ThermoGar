@@ -1,0 +1,1374 @@
+--- databases/original/ni/mc_ni_v2036.tdb
++++ databases/converted/mc_ni_v2036.garcalc.tdb
+@@ -1,3 +1,7 @@
++$ GARCALC_CONVERSION
++$ Source file is preserved separately and remains authoritative.
++$ MatCalc-only metadata disabled below is retained as comments.
++$ Conversion target: pycalphad-compatible thermodynamic TDB.
+ 	
+ 
+ $**************************************************************************
+@@ -164,83 +168,109 @@
+ $***************************************************************************
+ $
+ $ Defines Ni as reference element
+-REFERENCE_ELEMENT NI !
++$ GARCALC_DISABLED: reference_element_disabled
++$REFERENCE_ELEMENT NI !
+ $
+-ATTACH_CONTRIBUTION BCC_B2  BCC_A2 ORDER_DISORDER !
+-ADD_COMPOSITION_SET BCC_B2 :NI:AL: !
+-ADD_COMPOSITION_SET BCC_B2 :NI:FE: !
++$ GARCALC_DISABLED: MatCalc ATTACH_CONTRIBUTION
++$ATTACH_CONTRIBUTION BCC_B2  BCC_A2 ORDER_DISORDER !
++TYPE_DEFINITION X GES AMEND_PHASE_DESCRIPTION BCC_B2 DIS_PART BCC_A2 !
++TYPE_DEFINITION % SEQ * !
++$ GARCALC_DISABLED: composition_sets_disabled
++$ADD_COMPOSITION_SET BCC_B2 :NI:AL: !
++$ GARCALC_DISABLED: composition_sets_disabled
++$ADD_COMPOSITION_SET BCC_B2 :NI:FE: !
+ $
+-ADD_COMPOSITION_SET NIAL :TI:NI: !
++$ GARCALC_DISABLED: composition_sets_disabled
++$ADD_COMPOSITION_SET NIAL :TI:NI: !
+ $
+ $ if phase FCC_A1 is selected, add composition set for carbonitrides ...
+-ADD_COMPOSITION_SET FCC_A1 :TI,NB,V:C,N: !
++$ GARCALC_DISABLED: composition_sets_disabled
++$ADD_COMPOSITION_SET FCC_A1 :TI,NB,V:C,N: !
+ $ if phase FCC_A1 is selected, add composition set for Cu-precipitates ...
+-ADD_COMPOSITION_SET FCC_A1 :CU:VA: !
++$ GARCALC_DISABLED: composition_sets_disabled
++$ADD_COMPOSITION_SET FCC_A1 :CU:VA: !
+ $
+ $ simple carbide/nitride phases derived from parent are defined 
+ $ by MatCalc syntax (5.44.0.008) 
+ $ CREATE_NEW_PHASE parent_phase_name c :El1,El2,...:El3,El4,...: new_name
+ 
+ $ if phase HCP_A3 is selected, add composition set for carbides and nitrides
+-ADD_COMPOSITION_SET HCP_A3 :CR:N: !
+-ADD_COMPOSITION_SET HCP_A3 :MO:C: !
+-ADD_COMPOSITION_SET HCP_A3 :CR,V:C: !
++$ GARCALC_DISABLED: composition_sets_disabled
++$ADD_COMPOSITION_SET HCP_A3 :CR:N: !
++$ GARCALC_DISABLED: composition_sets_disabled
++$ADD_COMPOSITION_SET HCP_A3 :MO:C: !
++$ GARCALC_DISABLED: composition_sets_disabled
++$ADD_COMPOSITION_SET HCP_A3 :CR,V:C: !
+ 
+ $ if Mu-Phase is selected, add composition set for W-rich compound
+-ADD_COMPOSITION_SET MU_PHASE :CO,NI:W:CR,MO: !
++$ GARCALC_DISABLED: composition_sets_disabled
++$ADD_COMPOSITION_SET MU_PHASE :CO,NI:W:CR,MO: !
+ $
+ $ ##############################################################
+ $           Enthalpies of vacancy formation - FCC_A1
+ $ ##############################################################
+ $
+ $ default is Ni
+-PARAMETER HMVA(FCC_A1,*;0)
+- 273.00 +170000; 6000.00  N
+-REF:151 !
++$ GARCALC_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(FCC_A1,*;0)
++$ 273.00 +170000; 6000.00  N
++$REF:151 !
+ 
+-PARAMETER HMVA(FCC_A1,AL:*;0)
+- 273.00 +64200; 6000.00  N
+-REF:pov10 !
+-PARAMETER HMVA(FCC_A1,CU:*;0)
+- 273.00 +125000; 6000.00  N
+-REF:pov10 !
+-PARAMETER HMVA(FCC_A1,FE:*;0)
+- 273.00 +175000; 6000.00  N
+-REF:pov12 !
+-PARAMETER HMVA(FCC_A1,NI:*;0)
+- 273.00 +170000; 6000.00  N
+-REF:pov10 !
++$ GARCALC_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(FCC_A1,AL:*;0)
++$ 273.00 +64200; 6000.00  N
++$REF:pov10 !
++$ GARCALC_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(FCC_A1,CU:*;0)
++$ 273.00 +125000; 6000.00  N
++$REF:pov10 !
++$ GARCALC_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(FCC_A1,FE:*;0)
++$ 273.00 +175000; 6000.00  N
++$REF:pov12 !
++$ GARCALC_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(FCC_A1,NI:*;0)
++$ 273.00 +170000; 6000.00  N
++$REF:pov10 !
+ $
+ $ ##############################################################
+ $           Enthalpies of vacancy formation - BCC_A2
+ $ ##############################################################
+ $
+ $ default is Fe 
+-PARAMETER HMVA(BCC_A2,*;0)
+- 273.00 +163000; 6000.00  N
+-REF:pov10 !
++$ GARCALC_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(BCC_A2,*;0)
++$ 273.00 +163000; 6000.00  N
++$REF:pov10 !
+ 
+-PARAMETER HMVA(BCC_A2,CR:*;0)
+- 273.00 +203000; 6000.00  N
+-REF:pov10 !
+-PARAMETER HMVA(BCC_A2,FE:*;0)
+- 273.00 +163000; 6000.00  N
+-REF:pov10 !
+-PARAMETER HMVA(BCC_A2,MN:*;0)
+- 273.00 +101000; 6000.00  N
+-REF:pov10 !
+-PARAMETER HMVA(BCC_A2,MO:*;0)
+- 273.00 +286000; 6000.00  N
+-REF:pov10 !
+-PARAMETER HMVA(BCC_A2,NB:*;0)
+- 273.00 +290000; 6000.00  N
+-REF:pov10 !
+-PARAMETER HMVA(BCC_A2,V:*;0)
+- 273.00 +204000; 6000.00  N
+-REF:pov10 !
+-PARAMETER HMVA(BCC_A2,W:*;0)
+- 273.00 +378000; 6000.00  N
+-REF:pov10 !
++$ GARCALC_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(BCC_A2,CR:*;0)
++$ 273.00 +203000; 6000.00  N
++$REF:pov10 !
++$ GARCALC_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(BCC_A2,FE:*;0)
++$ 273.00 +163000; 6000.00  N
++$REF:pov10 !
++$ GARCALC_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(BCC_A2,MN:*;0)
++$ 273.00 +101000; 6000.00  N
++$REF:pov10 !
++$ GARCALC_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(BCC_A2,MO:*;0)
++$ 273.00 +286000; 6000.00  N
++$REF:pov10 !
++$ GARCALC_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(BCC_A2,NB:*;0)
++$ 273.00 +290000; 6000.00  N
++$REF:pov10 !
++$ GARCALC_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(BCC_A2,V:*;0)
++$ 273.00 +204000; 6000.00  N
++$REF:pov10 !
++$ GARCALC_DISABLED: unsupported HMVA parameter retained as comments
++$PARAMETER HMVA(BCC_A2,W:*;0)
++$ 273.00 +378000; 6000.00  N
++$REF:pov10 !
+ $
+ $***************************************************************************
+ $
+@@ -816,7 +846,8 @@
+ $                   THERMODYNAMIC PARAMETERS: LIQUID
+ $###########################################################################
+ $
+- PHASE LIQUID % 1  1.0 > >> 6 !
++$ MATCALC_PRIORITY: 6
++ PHASE LIQUID % 1  1.0 !
+     CONSTITUENT LIQUID :AL,B,C,CO,CR,CU,FE,HF,LA,MN,MO,N,NB,NI%,
+     S,SI,TI,V,W,Y,ZR : !
+ $-------------------------------------------------------------------
+@@ -2039,13 +2070,9 @@
+ $###########################################################################
+ $
+  TYPE_DEFINITION ' GES A_P_D FCC_A1 MAGNETIC  -3.0    0.28 !
+- PHASE FCC_A1  %'  2 1   1 > 
+-Face-centered cubic phase with Va on interstitial sublattice; 
+-V- and/or W-rich MC carbo-nitride phase is denoted "fcc_A1#01" 
+-in the MatCalc databases, with C and N on substitutional sublattice. 
+-MC carbo-nitride composition sets can be defined by the User. 
+-Typically MC is precipitating on grain boundaries. 
+->> 6 !
++$ MATCALC_DESCRIPTION: Face-centered cubic phase with Va on interstitial sublattice; V- and/or W-rich MC carbo-nitride phase is denoted "fcc_A1#01" in the MatCalc databases, with C and N on substitutional sublattice. MC carbo-nitride composition sets can be defined by the User. Typically MC is precipitating on grain boundaries.
++$ MATCALC_PRIORITY: 6
++ PHASE FCC_A1  %'  2 1   1 !
+     CONSTITUENT FCC_A1  : AL,CO,CR,CU,FE,HF,LA,MN,MO,NB,NI%,S,SI,
+     TI,V,W,Y,ZR : B,C,N,O,VA% :  !
+ $-------------------------------------------------------------------
+@@ -3104,9 +3131,9 @@
+ $###########################################################################
+ $
+  TYPE_DEFINITION & GES A_P_D BCC_A2 MAGNETIC  -1.0    0.4 !
+- PHASE BCC_A2  %&  2 1   3 > 
+-Body-centered cubic phase. 
+->> 1 !
++$ MATCALC_DESCRIPTION: Body-centered cubic phase.
++$ MATCALC_PRIORITY: 1
++ PHASE BCC_A2  %&X  2 1   3 !
+     CONSTITUENT BCC_A2  :AL,CO,CR,CU,FE%,HF,LA,MN,MO,NB,NI,S,SI,TI,
+     V,W,Y,ZR : B,C,N,O,VA% :  !
+ $-------------------------------------------------------------------
+@@ -3415,9 +3442,9 @@
+ PARAMETER L(BCC_A2,CR,W:VA;1) 273.00 -1320; 6000.00  N
+ REF:138 !
+ PARAMETER L(BCC_A2,CR,Y:VA;0) 273.00 +69000; 6000.00  N
+-REF:205  !
++REF:205 !
+ PARAMETER L(BCC_A2,CR,Y:VA;1) 273.00 -14000; 6000.00  N
+-REF:205  !
++REF:205 !
+ PARAMETER L(BCC_A2,CU,FE:VA;0) 273.00 +40146.22-4.91*T; 6000.00  N
+ REF:80 !
+ PARAMETER L(BCC_A2,CU,MN:VA;0) 273.00 +18366.034-16.2210*T; 6000.00  N
+@@ -3959,11 +3986,9 @@
+ $###########################################################################
+ $
+  TYPE_DEFINITION ) GES A_P_D HCP_A3 MAGNETIC  -3.0    0.28 !
+- PHASE HCP_A3  %)  2 1   0.5 > 
+-Hexagonal close-packed. M2C, denoted "hcp#01" in the MatCalc databases, 
+-with C on interstitial sites and Mo as mayor constituent. 
+-Cr and V can dissolve with significant quantities in M2C.
+->> 2 !
++$ MATCALC_DESCRIPTION: Hexagonal close-packed. M2C, denoted "hcp#01" in the MatCalc databases, with C on interstitial sites and Mo as mayor constituent. Cr and V can dissolve with significant quantities in M2C.
++$ MATCALC_PRIORITY: 2
++ PHASE HCP_A3  %)  2 1   0.5 !
+     CONSTITUENT HCP_A3  :AL,CO%,CR,CU,FE,HF,MN,MO,NB,NI,SI,TI%,
+     V,W,Y,ZR : B,C,N,O,VA% :  !
+ $-------------------------------------------------------------------
+@@ -4221,7 +4246,7 @@
+ PARAMETER L(HCP_A3,CR,W:VA;1) 273.00 -1320; 6000.00  N
+ REF:138 !
+ PARAMETER L(HCP_A3,CR,Y:VA;0) 273.00 +63000; 6000.00  N
+-REF:205  !
++REF:205 !
+ PARAMETER L(HCP_A3,CU,FE:VA;0) 273.00 +48885.74-11.51*T; 6000.00  N
+ REF:pov09 !
+ PARAMETER L(HCP_A3,CU,FE:VA;1) 273.00 +12687.16-8.01*T; 6000.00  N
+@@ -4538,9 +4563,9 @@
+ $###########################################################################
+ $
+  TYPE_DEFINITION } GES A_P_D ALPHA_MN MAGNETIC  -3.0    0.28 !
+- PHASE ALPHA_MN %} 2 1 1 > 
+-Body-centered cubic Manganese modification. 
+->> 0 !
++$ MATCALC_DESCRIPTION: Body-centered cubic Manganese modification.
++$ MATCALC_PRIORITY: 0
++ PHASE ALPHA_MN %} 2 1 1 !
+ $
+     CONSTITUENT ALPHA_MN : AL,CO,CR,CU,FE,MN%,MO,NI,SI,V : C,N,VA% : !
+ $ Metallic endmember compounds 
+@@ -4656,9 +4681,9 @@
+ $                   THERMODYNAMIC PARAMETERS: BETA_MN
+ $###########################################################################
+ $
+- PHASE BETA_MN % 2 1 1 > 
+-Simple cubic Manganese modification between 1000 K and 1370 K. 
+->> 0 !
++$ MATCALC_DESCRIPTION: Simple cubic Manganese modification between 1000 K and 1370 K.
++$ MATCALC_PRIORITY: 0
++ PHASE BETA_MN % 2 1 1 !
+     CONSTITUENT BETA_MN : AL,CO,CR,CU,FE,MN%,MO,NI,SI,TI,V : C,N,VA% : !
+ $ metallic endmember compounds
+ PARAMETER G(BETA_MN,AL:VA;0) 273.00 +10920.44-4.8116*T+GHSERAL#; 6000.00  N
+@@ -4785,9 +4810,9 @@
+ $                   THERMODYNAMIC PARAMETERS: BETA_RHOMBO_B
+ $###########################################################################
+ $
+- PHASE BETA_RHOMBO_B % 1   1 > 
+-Rhombohedral Boron. 
+->> 0 !
++$ MATCALC_DESCRIPTION: Rhombohedral Boron.
++$ MATCALC_PRIORITY: 0
++ PHASE BETA_RHOMBO_B % 1   1 !
+     CONSTITUENT BETA_RHOMBO_B  : B%,NB,SI,TI : !
+ PARAMETER G(BETA_RHOMBO_B,B;0) 273.00 +GHSERBB#; 6000.00  N
+ REF:0 !
+@@ -4804,7 +4829,8 @@
+ $                   THERMODYNAMIC PARAMETERS: DIAMOND_A4
+ $###########################################################################
+ $
+- PHASE DIAMOND_A4 % 1   1 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE DIAMOND_A4 % 1   1 !
+     CONSTITUENT DIAMOND_A4  : AL,B,C,SI%,TI :  !
+ PARAMETER G(DIAMOND_A4,AL;0) 273.00 +10000+15*T+GHSERAL#; 6000.00  N
+ REF:pov14 !
+@@ -4838,9 +4864,9 @@
+ $                   THERMODYNAMIC PARAMETERS: GRAPHITE  
+ $###########################################################################
+ $
+- PHASE GRAPHITE  %  1  1 > 
+-Stable hexagonal Carbon phase. 
+->> 1 !
++$ MATCALC_DESCRIPTION: Stable hexagonal Carbon phase.
++$ MATCALC_PRIORITY: 1
++ PHASE GRAPHITE  %  1  1 !
+     CONSTITUENT GRAPHITE  : B,C% :  !
+ PARAMETER G(GRAPHITE,C;0) 273.00 +GHSERCC#; 6000.00  N
+ REF:0 !
+@@ -4853,10 +4879,9 @@
+ $                   THERMODYNAMIC DATA: BCC_B2
+ $###########################################################################
+ $
+- PHASE BCC_B2 %  3 0.5 0.5   3 >
+-Bcc_base ordered NiTi Matrix phase in shape memory alloys. 
+-2 substitutional sublattices split model used. 
+->> 3 !
++$ MATCALC_DESCRIPTION: Bcc_base ordered NiTi Matrix phase in shape memory alloys. 2 substitutional sublattices split model used.
++$ MATCALC_PRIORITY: 3
++ PHASE BCC_B2 %X  3 0.5 0.5   3 !
+     CONSTITUENT BCC_B2  : FE,NI%,SI,TI : FE,NI,SI,TI% : VA : !
+ PARAMETER G(BCC_B2,NI:NI:VA;0) 273.00 +1E-8; 6000.00  N
+ REF:91 !
+@@ -4933,10 +4958,9 @@
+ $                   THERMODYNAMIC PARAMETERS: CHI_A12
+ $###########################################################################
+ $
+- PHASE CHI_A12 %  4 24   10   24   2 > 
+-Alpha-Mn structure closely related to topologically close-packed sigma, 
+-Mu, and R-Phase. Unit cell contains 58 atoms plus interstitials (carbon).  
+->> 1 !
++$ MATCALC_DESCRIPTION: Alpha-Mn structure closely related to topologically close-packed sigma, Mu, and R-Phase. Unit cell contains 58 atoms plus interstitials (carbon).
++$ MATCALC_PRIORITY: 1
++ PHASE CHI_A12 %  4 24   10   24   2 !
+    CONSTITUENT CHI_A12 : CO,FE : CO,CR,MO%,W : CO,CR%,FE,MO,NI,
+    W : C,VA% :  !
+ PARAMETER G(CHI_A12,CO:CO:CO:VA;0) 273.00 +24*GCOFCC#+10*GCOBCC#
+@@ -5070,7 +5094,8 @@
+ $###########################################################################
+ $
+ $ Intermetallic compound (epsilon)
+- PHASE CO3MO %  2 3   1 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE CO3MO %  2 3   1 !
+     CONSTITUENT CO3MO : CO : MO :  !
+ PARAMETER G(CO3MO,CO:MO;0) 273.00 -47009.6+20.816*T+3*GHSERCO#
+  +GHSERMO#; 6000.00  N
+@@ -5081,7 +5106,8 @@
+ $###########################################################################
+ $
+ $ Intermetallic compound 
+- PHASE CO3V %  2 3   1 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE CO3V %  2 3   1 !
+     CONSTITUENT CO3V : CO : V :  !
+ PARAMETER G(CO3V,CO:V;0) 273.00 -58957.034+14.368*T+3*GHSERCO#
+  +GHSERVV#; 6000.00  N
+@@ -5092,7 +5118,8 @@
+ $###########################################################################
+ $
+ $ Intermetallic compound 
+- PHASE COV3 %  2 1   3 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE COV3 %  2 1   3 !
+     CONSTITUENT COV3  : CO : V :  !
+ PARAMETER G(COV3,CO:V;0) 273.00 -33074.458+3*GHSERVV#+GHSERCO#; 6000.00  N
+ REF:134 !
+@@ -5101,9 +5128,9 @@
+ $                   THERMODYNAMIC PARAMETERS: CR3MN5
+ $###########################################################################
+ $
+- PHASE CR3MN5 % 2 3 5 > 
+-Also called "alpha prime Phase" 
+->> 0 !
++$ MATCALC_DESCRIPTION: Also called "alpha prime Phase"
++$ MATCALC_PRIORITY: 0
++ PHASE CR3MN5 % 2 3 5 !
+     CONSTITUENT CR3MN5  : CR : MN : !
+ PARAMETER G(CR3MN5,CR:MN;0) 273.00 +3*GHSERCR#+5*GHSERMN#-72550
+  +21.1732*T; 6000.00  N
+@@ -5113,7 +5140,9 @@
+ $                   THERMODYNAMIC PARAMETERS: DELTA
+ $###########################################################################
+ $
+- PHASE DELTA % 2 1 3 > Orthorhombic Ni3Nb-base, D0a structure >> 5 !
++$ MATCALC_DESCRIPTION: Orthorhombic Ni3Nb-base, D0a structure
++$ MATCALC_PRIORITY: 5
++ PHASE DELTA % 2 1 3 !
+     CONST DELTA : AL,CO,CR,FE,MO,NB,NI,TI : AL,CO,CR,FE,MO,
+     NB,NI,TI : !
+ PARAMETER G(DELTA,AL:AL;0) 273.00 +4*GHSERAL#+20000; 6000.00  N
+@@ -5310,7 +5339,9 @@
+ $                   THERMODYNAMIC PARAMETERS: D_NIMO
+ $###########################################################################
+ $
+- PHASE D_NIMO % 3 24 20 12 > Ni-Mo delta >> 0 !
++$ MATCALC_DESCRIPTION: Ni-Mo delta
++$ MATCALC_PRIORITY: 0
++ PHASE D_NIMO % 3 24 20 12 !
+     CONSTITUENT D_NIMO : NI : MO,NI : MO : !
+ PARAMETER G(D_NIMO,NI:MO:MO;0) 273.00 +24*GHSERNI#+20*GHSERMO#+12*GHSERMO#
+    -169981+1154.981*T-155.484*T*LN(T); 6000.00  N
+@@ -5327,7 +5358,8 @@
+ $                   THERMODYNAMIC PARAMETERS: FE17Y2
+ $###########################################################################
+ $
+- PHASE FE17Y2 %  2 17   2 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE FE17Y2 %  2 17   2 !
+     CONSTITUENT FE17Y2  : FE : Y :  !
+ PARAMETER G(FE17Y2,FE:Y;0) 273.00 +17*GHSERFE#+2*GHSERYY#
+   -6380-1.9*T; 6000.00  N
+@@ -5337,10 +5369,9 @@
+ $                  THERMODYNAMIC PARAMETERS: GAMMA_DP
+ $###########################################################################
+ $
+- PHASE GAMMA_DP % 2 1 3 > 
+-Gamma double-prime; metastable body-centered tetragonal Ni3Nb-type phase.
+-Important precipitate in Ni-base superalloy 718 
+->> 5 !
++$ MATCALC_DESCRIPTION: Gamma double-prime; metastable body-centered tetragonal Ni3Nb-type phase. Important precipitate in Ni-base superalloy 718
++$ MATCALC_PRIORITY: 5
++ PHASE GAMMA_DP % 2 1 3 !
+     CONST GAMMA_DP : AL,CR,FE,MO,NB%,NI,TI : CO,FE,NB,NI% : !
+ PARAMETER G(GAMMA_DP,FE:FE;0) 273.00 +4*GHSERFE#+20000; 6000.00  N
+ REF:153 !
+@@ -5425,10 +5456,9 @@
+ $                   THERMODYNAMIC PARAMETERS: GAMMA_PRIME
+ $###########################################################################
+ $
+- PHASE GAMMA_PRIME % 2 0.25 0.75 > 
+-Cubic Ni3Al-type, L12-structure; simplified description 
+-as solid solution phase consisting of two substitutional sublattices 
+->> 6 !
++$ MATCALC_DESCRIPTION: Cubic Ni3Al-type, L12-structure; simplified description as solid solution phase consisting of two substitutional sublattices
++$ MATCALC_PRIORITY: 6
++ PHASE GAMMA_PRIME % 2 0.25 0.75 !
+     CONST GAMMA_PRIME : AL%,CO,CR,FE,HF,MO,NB%,NI,SI,TI%,W,ZR : AL,
+     CO,CR,FE,HF,MO,NB,NI%,SI,TI,W,ZR : !
+ PARAMETER G(GAMMA_PRIME,AL:AL;0) 273.00 +GHSERAL#+5000; 6000.00  N
+@@ -6018,9 +6048,9 @@
+ $                   THERMODYNAMIC PARAMETERS: G_PHASE
+ $###########################################################################
+ $
+- PHASE G_PHASE  %  3 16   6 7 > 
+-Silicide precipitate in some Nb-Si-containing Ni-base superalloys
+->> 3 !
++$ MATCALC_DESCRIPTION: Silicide precipitate in some Nb-Si-containing Ni-base superalloys
++$ MATCALC_PRIORITY: 3
++ PHASE G_PHASE  %  3 16   6 7 !
+   CONSTITUENT G_PHASE :CO,NI% : CR,FE,MN,NB%,TI : SI :  !
+ PARAMETER G(G_PHASE,NI:CR:SI;0) 273.00 +16*GHSERNI#+6*GHSERCR#+7*GHSERSI#
+  -1600000+400*T; 6000.00  N
+@@ -6057,10 +6087,9 @@
+ $                   THERMODYNAMIC PARAMETERS: LAV_C14
+ $###########################################################################
+ $
+- PHASE LAV_C14  %  3 1   1.5 0.5 > 
+-can form as topologically close-packed 
+-structure in superalloys; affecting brittleness. 
+->> 4 !
++$ MATCALC_DESCRIPTION: can form as topologically close-packed structure in superalloys; affecting brittleness.
++$ MATCALC_PRIORITY: 4
++ PHASE LAV_C14  %  3 1   1.5 0.5 !
+   CONSTITUENT LAV_C14 :FE,NI,TI : FE,NI,TI : FE,NI,TI :  !
+ PARAMETER G(LAV_C14,FE:FE:FE;0) 273.00 +3*GHSERFE#+15000; 6000.00  N
+ REF:pov10 !
+@@ -6170,11 +6199,9 @@
+ $                   THERMODYNAMIC PARAMETERS: LAVES
+ $###########################################################################
+ $
+- PHASE LAVES  %  2 2   1 > 
+-can form as topologically close-packed 
+-structure in superalloys; affecting brittleness.
+-Preliminary description. 
+->> 4 !
++$ MATCALC_DESCRIPTION: can form as topologically close-packed structure in superalloys; affecting brittleness. Preliminary description.
++$ MATCALC_PRIORITY: 4
++ PHASE LAVES  %  2 2   1 !
+   CONSTITUENT LAVES :CO,CR,FE,MN,MO,NB,NI%,SI,TI,W : CO,CR,FE,MN,MO,NB%,
+   NI,SI,TI,W :  !
+ PARAMETER G(LAVES,CO:CO;0) 273.00 +3*GHSERCO#+15000; 6000.00  N
+@@ -6732,10 +6759,9 @@
+ $                   THERMODYNAMIC PARAMETERS: MU_PHASE
+ $###########################################################################
+ $
+- PHASE MU_PHASE  %  3 7   2   4 > 
+-can form as topologically close-packed 
+-structure in superalloys; affecting brittleness. 
+->> 4 !
++$ MATCALC_DESCRIPTION: can form as topologically close-packed structure in superalloys; affecting brittleness.
++$ MATCALC_PRIORITY: 4
++ PHASE MU_PHASE  %  3 7   2   4 !
+     CONSTITUENT MU_PHASE :CO,CR,FE,MN,MO,NB,NI%,SI:MO%,NB,W: 
+  AL,CO,CR,FE,MO,NB,NI,SI,W:  !
+ $[Model IV, Ref:77) used for Mo-Co subsystem
+@@ -7064,9 +7090,9 @@
+ $###########################################################################
+ $
+  TYPE_DEFINITION B GES A_P_D NIAL MAGNETIC  -1.0    0.4 !
+- PHASE NIAL %B  3 0.5 0.5   3 > NiAl-base B2-Phase, modeled 
+-with simple 2-substitutional sublattices model.  
+->> 2 !
++$ MATCALC_DESCRIPTION: NiAl-base B2-Phase, modeled with simple 2-substitutional sublattices model.
++$ MATCALC_PRIORITY: 2
++ PHASE NIAL %B  3 0.5 0.5   3 !
+     CONSTITUENT NIAL  : AL,CO,CR,NI%,TI :
+                         AL%,CO,CR,NI,TI : VA : !
+ PARAMETER G(NIAL,AL:AL:VA;0) 273.00 +0.5*GHSERAL#+0.5*GHSERAL#
+@@ -7178,8 +7204,9 @@
+ $                   THERMODYNAMIC PARAMETERS: NI2CR
+ $###########################################################################
+ $
+- PHASE NI2CR %  2 1 2 > precipitate in high Mo- and Cr-containing 
+- Ni-superalloys >> 3 !
++$ MATCALC_DESCRIPTION: precipitate in high Mo- and Cr-containing Ni-superalloys
++$ MATCALC_PRIORITY: 3
++ PHASE NI2CR %  2 1 2 !
+     CONSTITUENT NI2CR  : CR%,FE,MO,W : MO,NI%,W : !
+ PARAMETER G(NI2CR,CR:MO;0) 273.00 +GHSERCR#+2*GHSERMO#
+  -10000+135*T; 6000.00  N
+@@ -7214,7 +7241,8 @@
+ $                   THERMODYNAMIC PARAMETERS: NI5HF
+ $###########################################################################
+ $
+- PHASE NI5HF %  2 0.83333 0.16667 > >> 2 !
++$ MATCALC_PRIORITY: 2
++ PHASE NI5HF %  2 0.83333 0.16667 !
+     CONSTITUENT NI5HF  : NI : HF : !
+ PARAMETER G(NI5HF,NI:HF;0) 273.00 +0.83333*GHSERNI#+0.16667*GHSERHF#
+  -38702+6.496*T; 6000.00  N
+@@ -7224,7 +7252,8 @@
+ $                   THERMODYNAMIC PARAMETERS: NI7HF2
+ $###########################################################################
+ $
+- PHASE NI7HF2 %  2 0.778 0.222 > >> 2 !
++$ MATCALC_PRIORITY: 2
++ PHASE NI7HF2 %  2 0.778 0.222 !
+     CONSTITUENT NI7HF2  : NI : HF : !
+ PARAMETER G(NI7HF2,NI:HF;0) 273.00 +0.778*GHSERNI#+0.222*GHSERHF#
+  -43526+3.788*T; 6000.00  N
+@@ -7234,7 +7263,9 @@
+ $                   THERMODYNAMIC PARAMETERS: ETA
+ $###########################################################################
+ $
+- PHASE ETA % 2 3 1 > Hexagonal Ni3Ti-type, D024 structure. >> 3 !
++$ MATCALC_DESCRIPTION: Hexagonal Ni3Ti-type, D024 structure.
++$ MATCALC_PRIORITY: 3
++ PHASE ETA % 2 3 1 !
+     CONSTITUENT ETA : AL,CO,CR,FE,NB,NI%,TI : AL,CO,CR,FE,NB,NI,TI : !
+ PARAMETER G(ETA,AL:AL;0) 273.00 +4*GHSERAL#+1000; 6000.00  N
+ REF:pov15 !
+@@ -7396,8 +7427,9 @@
+ $                   THERMODYNAMIC PARAMETERS: NITI2
+ $###########################################################################
+ $
+- PHASE NITI2 % 2 2 1 > Cubic, importance as precipitate in 
+-high Ni-Ti alloys >> 2 !
++$ MATCALC_DESCRIPTION: Cubic, importance as precipitate in high Ni-Ti alloys
++$ MATCALC_PRIORITY: 2
++ PHASE NITI2 % 2 2 1 !
+     CONSTITUENT NITI2 : FE,NI,TI% : FE,NI%,TI : !
+ PARAMETER G(NITI2,NI:FE;0) 273.00 +2*GHSERNI#+GHSERFE#+3*DGLAV#; 6000.00  N
+ REF:152 !
+@@ -7438,7 +7470,8 @@
+ $                   THERMODYNAMIC PARAMETERS: NI5Y
+ $###########################################################################
+ $
+- PHASE NI5Y  %  2 5   1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE NI5Y  %  2 5   1 !
+     CONSTITUENT NI5Y  :NI : Y :  !
+ PARAMETER G(NI5Y,NI:Y;0) 273.00 +5*GHSERNI#+GHSERYY#
+  -186706+31.187*T; 6000.00  N 
+@@ -7448,11 +7481,9 @@
+ $                   THERMODYNAMIC PARAMETERS: P_PHASE
+ $###########################################################################
+ $
+- PHASE P_PHASE  %  3 24   20   12 > 
+-closely related to Sigma.
+-Can form as topologically close-packed 
+-structure in superalloys; affecting brittleness. 
+->> 3 !
++$ MATCALC_DESCRIPTION: closely related to Sigma. Can form as topologically close-packed structure in superalloys; affecting brittleness.
++$ MATCALC_PRIORITY: 3
++ PHASE P_PHASE  %  3 24   20   12 !
+     CONSTITUENT P_PHASE : CO,CR,NI : CO,CR,W : MO,W :  !
+ PARAMETER G(P_PHASE,CO:CR:MO;0) 273.00 +24*GHSERCO#+20*GHSERCR#
+    +12*GHSERMO#-250000; 6000.00  N
+@@ -7489,11 +7520,9 @@
+ $                   THERMODYNAMIC PARAMETERS: R_PHASE
+ $###########################################################################
+ $
+- PHASE R_PHASE  %  3 27   14   12 > 
+-closely related to Sigma and Mu-phase.
+-Can form as topologically close-packed 
+-structure in superalloys; affecting brittleness. 
+->> 3 !
++$ MATCALC_DESCRIPTION: closely related to Sigma and Mu-phase. Can form as topologically close-packed structure in superalloys; affecting brittleness.
++$ MATCALC_PRIORITY: 3
++ PHASE R_PHASE  %  3 27   14   12 !
+     CONSTITUENT R_PHASE  : CO,CR,FE,MN,NI : MN,MO,W : 
+  CO,CR,FE,MN,MO :  !
+ PARAMETER G(R_PHASE,CO:W:CR;0) 273.00 +27*GCOFCC#+14*GHSERWW#
+@@ -7586,12 +7615,9 @@
+ $                   THERMODYNAMIC PARAMETERS: SIGMA
+ $###########################################################################
+ $
+- PHASE SIGMA %  3 8   4   18 > 
+-Intermetallic transition elements compound with broad solid solubility range. 
+-Tetragonal with five non-equivalent sites. 
+-A simplified 3-sublattice description is used.  
+-Hard and brittle topologically close-packed (TCP) precipitates. 
+->> 4 !
++$ MATCALC_DESCRIPTION: Intermetallic transition elements compound with broad solid solubility range. Tetragonal with five non-equivalent sites. A simplified 3-sublattice description is used. Hard and brittle topologically close-packed (TCP) precipitates.
++$ MATCALC_PRIORITY: 4
++ PHASE SIGMA %  3 8   4   18 !
+     CONSTITUENT SIGMA : CO,FE,MN,NI,TI:CR,MO,V,W:
+  CO,CR,FE,MN,MO,NI%,SI,V,W :!
+ PARAMETER G(SIGMA,CO:CR:CO;0) 273.00 +17077-30.518*T+8*GCOFCC#
+@@ -7673,10 +7699,10 @@
+  +92300-95.96*T; 6000.00  N
+ REF:62 !
+ PARAMETER G(SIGMA,FE:CR:FE;0) 273.00 +117300-95.96*T+8*GFEFCC#
+-   +4*GHSERCR#+18*GHSERFE#; 6000.00.00  N
++   +4*GHSERCR#+18*GHSERFE#; 6000.00  N
+ REF:62 !
+ PARAMETER G(SIGMA,FE:CR:MN;0) 273.00 -83639.5+18.26*T+8*GFEFCC#
+-   +4*GHSERCR#+18*GMNBCC#; 6000.00.00  N
++   +4*GHSERCR#+18*GMNBCC#; 6000.00  N
+ REF:22 !
+ PARAMETER G(SIGMA,FE:CR:MO;0) 273.00 +8*GFEFCC#+4*GHSERCR#
+    +18*GHSERMO#+312580-260*T; 6000.00  N
+@@ -7937,11 +7963,9 @@
+ $###########################################################################
+ $
+  TYPE_DEFINITION M GES A_P_D CEMENTITE MAGNETIC  -3.0    0.28 !
+- PHASE CEMENTITE  %M  2 3   1 > 
+-(Fe,M)C3; orthorhombic. Unit cell consists of four formula units.
+-In particular Cr and Mn can dissolve into cementite
+-in large quantities. W, V, Mo with limited solubilities. 
+->> 1 !
++$ MATCALC_DESCRIPTION: (Fe,M)C3; orthorhombic. Unit cell consists of four formula units. In particular Cr and Mn can dissolve into cementite in large quantities. W, V, Mo with limited solubilities.
++$ MATCALC_PRIORITY: 1
++ PHASE CEMENTITE  %M  2 3   1 !
+     CONSTITUENT CEMENTITE  : AL,CO,CR,CU,FE%,MN,MO,NB,NI,
+     SI,V,W : B,C%,N :  !
+ PARAMETER G(CEMENTITE,AL:C;0) 273.00 +3*GHSERAL#+GHSERCC#
+@@ -8036,7 +8060,8 @@
+ $                   THERMODYNAMIC PARAMETERS: CR2VC2
+ $###########################################################################
+ $
+- PHASE CR2VC2 %  3 2   1   2 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE CR2VC2 %  3 2   1   2 !
+     CONSTITUENT CR2VC2  : CR : V : C :  !
+ PARAMETER G(CR2VC2,CR:V:C;0) 273.00 +2*GHSERCR#+GHSERVV#+2*GHSERCC#
+    -105987-38.2069*T; 6000.00  N
+@@ -8046,9 +8071,9 @@
+ $                   THERMODYNAMIC PARAMETERS: KSI_CARBIDE
+ $###########################################################################
+ $
+- PHASE KSI_CARBIDE  %  2 3   1 > 
+-Mo-Cr-Fe carbide. 
+->> 0 !
++$ MATCALC_DESCRIPTION: Mo-Cr-Fe carbide.
++$ MATCALC_PRIORITY: 0
++ PHASE KSI_CARBIDE  %  2 3   1 !
+     CONSTITUENT KSI_CARBIDE  : CR,FE,MO% : C :  !
+ PARAMETER G(KSI_CARBIDE,CR:C;0) 273.00 +3*GHSERCR#+GHSERCC#
+    +114060-47.2519*T; 6000.00  N
+@@ -8070,9 +8095,9 @@
+ $                   THERMODYNAMIC PARAMETERS:   M3C2
+ $###########################################################################
+ $
+- PHASE M3C2  %  2 3   2 > 
+-Cr-rich carbide. 
+->> 0 !
++$ MATCALC_DESCRIPTION: Cr-rich carbide.
++$ MATCALC_PRIORITY: 0
++ PHASE M3C2  %  2 3   2 !
+     CONSTITUENT M3C2  : CR,MO,V : C :  !
+ PARAMETER G(M3C2,CR:C;0) 273.00 +GCRM3C2#; 6000.00  N
+ REF:68 !
+@@ -8091,10 +8116,9 @@
+ $                   THERMODYNAMIC PARAMETERS: M6C
+ $###########################################################################
+ $
+-PHASE M6C  %  4  2   2   2   1 > 
+-Mo,W-rich carbide, can contain significant amounts 
+-of Cr and V. Has a large unit cell. 
+->> 3 !
++$ MATCALC_DESCRIPTION: Mo,W-rich carbide, can contain significant amounts of Cr and V. Has a large unit cell.
++$ MATCALC_PRIORITY: 3
++PHASE M6C  %  4  2   2   2   1 !
+     CONSTITUENT M6C  : CO,FE,NI : MO,W : CO,CR,FE,MO,NI,SI,V,W : C :  !
+ PARAMETER G(M6C,CO:MO:CO:C;0) 273.00 +4*GHSERCO#+2*GHSERMO#
+    +GHSERCC#-10000-75*T; 6000.00  N
+@@ -8254,10 +8278,9 @@
+ $                   THERMODYNAMIC PARAMETERS: M6C_WY 
+ $###########################################################################
+ $
+-PHASE M6C_WY  %  4  3 2 1 1 >
+-M6C with physically correct sites according to
+-Wyckoff positions.
+->> 3 !
++$ MATCALC_DESCRIPTION: M6C with physically correct sites according to Wyckoff positions.
++$ MATCALC_PRIORITY: 3
++PHASE M6C_WY  %  4  3 2 1 1 !
+     CONSTITUENT M6C_WY  : CO,CR,MO,TI : CO,CR,MO,NI%,TI :
+   CO,MO,NI,TI : C : !
+ PARAMETER G(M6C_WY,CR:CR:CO:C;0) 273.00 +5*GHSERCR#
+@@ -8452,10 +8475,9 @@
+ $                   THERMODYNAMIC PARAMETERS: M7C3
+ $###########################################################################
+ $
+- PHASE M7C3  %  2 7   3 > 
+-Trigonal Cr-rich carbide with a large crystallographic unit cell. 
+-In particular Fe- and Mn-solubilities. 
+->> 3 !
++$ MATCALC_DESCRIPTION: Trigonal Cr-rich carbide with a large crystallographic unit cell. In particular Fe- and Mn-solubilities.
++$ MATCALC_PRIORITY: 3
++ PHASE M7C3  %  2 7   3 !
+     CONSTITUENT M7C3  : CO,CR%,FE,MN,MO,NI,SI,V,W : C :  !
+ PARAMETER G(M7C3,CO:C;0) 273.00 +75000+50*T+7*GHSERCO#
+  +3*GHSERCC#; 6000.00  N
+@@ -8514,9 +8536,9 @@
+ $###########################################################################
+ $
+ $M12C (Co6W6C)
+- PHASE M12C %  3 6   6   1 > 
+-Co-W-rich carbide. 
+->> 0 !
++$ MATCALC_DESCRIPTION: Co-W-rich carbide.
++$ MATCALC_PRIORITY: 0
++ PHASE M12C %  3 6   6   1 !
+     CONSTITUENT M12C  : CO : W : C :  !
+ PARAMETER G(M12C,CO:W:C;0) 273.00 -82698-23.4348*T+6*GHSERCO#
+    +6*GHSERWW#+GHSERCC#; 6000.00  N
+@@ -8526,10 +8548,9 @@
+ $                   THERMODYNAMIC PARAMETERS: M23C6 
+ $###########################################################################
+ $
+- PHASE M23C6  %  3 20   3   6 > 
+-Face-centered cubic Cr-rich carbide, can contain significant amounts
+-of W, Mo, V, Ni. Has a large crystallographic unit cell. 
+->> 3 !
++$ MATCALC_DESCRIPTION: Face-centered cubic Cr-rich carbide, can contain significant amounts of W, Mo, V, Ni. Has a large crystallographic unit cell.
++$ MATCALC_PRIORITY: 3
++ PHASE M23C6  %  3 20   3   6 !
+     CONSTITUENT M23C6  : CO,CR%,FE,MN,NI,TI,V : CO,CR,FE,MN,MO,NI,
+     TI,V,W : B,C% :  !
+ PARAMETER G(M23C6,CO:CO:B;0) 273.00 +23*GHSERCO#+6*GHSERBB#; 6000.00  N
+@@ -9052,11 +9073,9 @@
+ $                   THERMODYNAMIC PARAMETERS: M23C6_WY 
+ $###########################################################################
+ $
+- PHASE M23C6_WY  %  5 1  2  8  12  6 > 
+-Face-centered cubic Cr-rich carbide. 
+-Has a large crystallographic unit cell. 
+-With correct structural formular (according Wyckoff) 
+->> 3 !
++$ MATCALC_DESCRIPTION: Face-centered cubic Cr-rich carbide. Has a large crystallographic unit cell. With correct structural formular (according Wyckoff)
++$ MATCALC_PRIORITY: 3
++ PHASE M23C6_WY  %  5 1  2  8  12  6 !
+     CONSTITUENT M23C6_WY  : MO,CR : MO,CR : CR : CO,CR,NI,TI : B,C :  !
+     
+ PARAMETER G(M23C6_WY,MO:MO:CR:CR:C;0) 273.00 +3*GHSERMO#+8*GHSERCR#
+@@ -9252,7 +9271,8 @@
+ $                   THERMODYNAMIC PARAMETERS: V3C2
+ $###########################################################################
+ $
+- PHASE V3C2 %  2 3   2 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE V3C2 %  2 3   2 !
+     CONSTITUENT V3C2  : V : C :  !
+ PARAMETER G(V3C2,V:C;0) 273.00 -260341+16.897*T+3*GHSERVV#
+  +2*GHSERCC#; 6000.00  N
+@@ -9262,7 +9282,8 @@
+ $                   THERMODYNAMIC PARAMETERS: WC
+ $###########################################################################
+ $
+- PHASE WC  %  2 1   1 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE WC  %  2 1   1 !
+     CONSTITUENT WC  : W : C : !
+ PARAMETER G(WC,W:C;0) 273.00 -58192+287.16*T-46.48*T*LN(T)-0.0021435*T**2
+      -9.2217E-8*T**3+590500*T**(-1); 6000.00  N
+@@ -9272,9 +9293,9 @@
+ $                   THERMODYNAMIC PARAMETERS: ALN
+ $###########################################################################
+ $
+- PHASE ALN  %  2 1   1 > 
+-AlN phase description based on assessed solubility product. 
+->> 1 !
++$ MATCALC_DESCRIPTION: AlN phase description based on assessed solubility product.
++$ MATCALC_PRIORITY: 1
++ PHASE ALN  %  2 1   1 !
+     CONSTITUENT ALN  : AL : N :  !
+ PARAMETER G(ALN,AL:N;0) 273.00 -262982+63*T+GHSERAL#+GHSERNN#; 6000.00  N
+ REF:KozeRad2008 !
+@@ -9283,9 +9304,9 @@
+ $                   THERMODYNAMIC PARAMETERS: ALN_EQU
+ $###########################################################################
+ $
+- PHASE ALN_EQU  %  2 1   1 > 
+-New phase description based on calorimetric data.
+->> 4  !
++$ MATCALC_DESCRIPTION: New phase description based on calorimetric data.
++$ MATCALC_PRIORITY: 4
++ PHASE ALN_EQU  %  2 1   1 !
+     CONSTITUENT ALN_EQU  : AL : N :  !
+ PARAMETER G(ALN_EQU,AL:N;0) 273.00 -325000+290*T-46.94867*T*LN(T)
+  -0.00189068*T**(+2)
+@@ -9296,9 +9317,9 @@
+ $                   THERMODYNAMIC PARAMETERS: BN_HP4
+ $###########################################################################
+ $
+- PHASE BN_HP4 % 2 1   1 >
+-Hexagonal Boron Nitride, graphite-type structure. 
+->> 3 !
++$ MATCALC_DESCRIPTION: Hexagonal Boron Nitride, graphite-type structure.
++$ MATCALC_PRIORITY: 3
++ PHASE BN_HP4 % 2 1   1 !
+    CONSTITUENT BN_HP4  : B : N :  !
+ PARAMETER G(BN_HP4,B:N;0) 273.00 -250600.0+91.281942*T+GHSERBB#
+  +GHSERNN#; 6000.00  N
+@@ -9308,7 +9329,8 @@
+ $                   THERMODYNAMIC PARAMETERS: FE4N
+ $###########################################################################
+ $
+- PHASE FE4N  %  2 4   1 > >> 0 ! 
++$ MATCALC_PRIORITY: 0
++ PHASE FE4N  %  2 4   1 ! 
+     CONSTITUENT FE4N  : CR,FE%,MN,NI : N :  !
+ PARAMETER G(FE4N,CR:N;0) 273.00 -135240+717.87*T-127.18*T*LN(T)
+  -0.002899*T**2
+@@ -9330,7 +9352,8 @@
+ $                   THERMODYNAMIC PARAMETERS: MN6N4
+ $###########################################################################
+ $
+- PHASE MN6N4  %  2 6   4 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE MN6N4  %  2 6   4 !
+     CONSTITUENT MN6N4  : MN : N :  !
+ PARAMETER G(MN6N4,MN:N;0) 273.00 -465614+1428.332*T-251.337*T*LN(T)
+    +1027898*T**(-1); 6000.00  N
+@@ -9340,7 +9363,8 @@
+ $                   THERMODYNAMIC PARAMETERS: MN6N5
+ $###########################################################################
+ $
+- PHASE MN6N5  %  2 6   5 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE MN6N5  %  2 6   5 !
+     CONSTITUENT MN6N5  : MN : N :  !
+ PARAMETER G(MN6N5,MN:N;0) 273.00 -546880+1591.607*T-276.668*T*LN(T)
+    +1297983*T**(-1); 6000.00  N
+@@ -9353,9 +9377,9 @@
+ $------------------------------------------------------------------------
+ $ newer Z-phase assessment by Hilmar Danielsen from 2006-11-01
+ $------------------------------------------------------------------------
+- PHASE ZET %  3 1   1   1 > 
+-Cr-Fe-Nb-V-Mo nitride. 
+->> 1 ! 
++$ MATCALC_DESCRIPTION: Cr-Fe-Nb-V-Mo nitride.
++$ MATCALC_PRIORITY: 1
++ PHASE ZET %  3 1   1   1 ! 
+     CONSTITUENT ZET  : CR%,FE : NB%,MO,V% : N%,VA :  !
+ PARAMETER G(ZET,CR:MO:N;0) 273.00 +GHSERCR#+GHSERMO#+GHSERNN#; 6000.00  N
+ REF:71 !
+@@ -9403,7 +9427,9 @@
+ $                   THERMODYNAMIC PARAMETERS: CRB   
+ $###########################################################################
+ $
+- PHASE CRB  %  2 0.5   0.5 > relevance in bracing filler alloy >> 3 !
++$ MATCALC_DESCRIPTION: relevance in bracing filler alloy
++$ MATCALC_PRIORITY: 3
++ PHASE CRB  %  2 0.5   0.5 !
+     CONSTITUENT CRB  : CR%,FE,NI : B% :  !
+ PARAMETER G(CRB,CR:B;0) 273.00 +0.5*GHSERCR#+0.5*GHSERBB#
+    -55000+9*T+0.1*T*LN(T)+2E-4*T**2; 6000.00  N
+@@ -9431,9 +9457,9 @@
+ $                   THERMODYNAMIC PARAMETERS: CR2B   
+ $###########################################################################
+ $
+- PHASE CR2B  %  2 0.666667   0.333333 > 
+-Orthorhombic. 
+->> 2 !
++$ MATCALC_DESCRIPTION: Orthorhombic.
++$ MATCALC_PRIORITY: 2
++ PHASE CR2B  %  2 0.666667   0.333333 !
+     CONSTITUENT CR2B  : CR%,FE : B :  !
+ PARAMETER G(CR2B,CR:B;0) 273.00 +0.6666667*GHSERCR#+0.3333333*GHSERBB#
+    -37550+2.53*T+0.1*T*LN(T)+6E-4*T**2; 6000.00  N
+@@ -9452,7 +9478,8 @@
+ $                   THERMODYNAMIC PARAMETERS: CR5B3
+ $###########################################################################
+ $
+- PHASE CR5B3  %  2 0.625   0.375 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE CR5B3  %  2 0.625   0.375 !
+     CONSTITUENT CR5B3  : CR : B :  !
+ PARAMETER G(CR5B3,CR:B;0) 273.00 +0.625*GHSERCR#+0.375*GHSERBB#
+    -41950+0.65*T+0.5*T*LN(T)+5E-4*T**2; 6000.00  N
+@@ -9463,7 +9490,8 @@
+ $###########################################################################
+ $
+  TYPE_DEFINITION ^ GES A_P_D FEB MAGNETIC  -3.0    0.28 !
+- PHASE FEB  %^  2 0.5   0.5 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE FEB  %^  2 0.5   0.5 !
+     CONSTITUENT FEB  : CR,FE%,NI : B%:  !
+ PARAMETER G(FEB,FE:B;0) 273.00 -33000+6.35*T
+    +0.5*GHSERFE#+0.5*GHSERBB#; 6000.00  N
+@@ -9492,7 +9520,8 @@
+ $                   THERMODYNAMIC PARAMETERS: FENBB
+ $###########################################################################
+ $ 
+- PHASE FENBB  %  3 1  1  1 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE FENBB  %  3 1  1  1 !
+     CONSTITUENT FENBB  : FE :NB :B :  !
+ PARAMETER G(FENBB,FE:NB:B;0) 273.00 +GHSERBB#+GHSERFE#+GHSERNB#
+    -157500-6*T; 6000.00  N
+@@ -9502,7 +9531,8 @@
+ $                   THERMODYNAMIC PARAMETERS: FE3NB3B4
+ $###########################################################################
+ $ 
+- PHASE FE3NB3B4  %  3 3  3  4 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE FE3NB3B4  %  3 3  3  4 !
+     CONSTITUENT FE3NB3B4  : FE :NB :B :  !
+ PARAMETER G(FE3NB3B4,FE:NB:B;0) 273.00 +4*GHSERBB#+3*GHSERFE#+3*GHSERNB#
+    -580000+10*T; 6000.00  N
+@@ -9513,9 +9543,9 @@
+ $###########################################################################
+ $
+  TYPE_DEFINITION A GES A_P_D M2B MAGNETIC  -3.0    0.28 !
+- PHASE M2B  %A  2 0.666667   0.333333 > 
+-Tetragonal. 
+->> 3 !
++$ MATCALC_DESCRIPTION: Tetragonal.
++$ MATCALC_PRIORITY: 3
++ PHASE M2B  %A  2 0.666667   0.333333 !
+     CONSTITUENT M2B  : CO,CR,FE,MO,NI%,W : B :  !
+ PARAMETER G(M2B,CO:B;0) 273.00 +0.6666667*GHSERCO#+0.3333333*GHSERBB#
+    -28564+5.077*T; 6000.00  N
+@@ -9559,7 +9589,8 @@
+ $                   THERMODYNAMIC PARAMETERS: MOB
+ $###########################################################################
+ $
+- PHASE MOB  %  2 0.5   0.5 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE MOB  %  2 0.5   0.5 !
+     CONSTITUENT MOB  : MO : B :  !
+ PARAMETER G(MOB,MO:B;0) 273.00 +0.5*GHSERMO#+0.5*GHSERBB#
+  -52017+0.21*T; 6000.00  N
+@@ -9569,7 +9600,8 @@
+ $                   THERMODYNAMIC PARAMETERS: MOB2
+ $###########################################################################
+ $
+- PHASE MOB2  %  2 1   2 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE MOB2  %  2 1   2 !
+     CONSTITUENT MOB2  : MO : B%,VA :  !
+ PARAMETER G(MOB2,MO:B;0) 273.00 +2*GHSERBB#+GHSERMO#
+  -123803-1.25*T; 6000.00  N
+@@ -9581,7 +9613,8 @@
+ $                   THERMODYNAMIC PARAMETERS: NBB
+ $###########################################################################
+ $
+- PHASE NBB  %  2 1   1 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE NBB  %  2 1   1 !
+     CONSTITUENT NBB  : NB : B%,NB :  !
+ PARAMETER G(NBB,NB:B;0) 273.00 +GHSERNB#+GHSERBB#-157380
+    -21.8*T+3.381*T*LN(T)-1.953E-4*T**2; 6000.00  N
+@@ -9593,7 +9626,8 @@
+ $                   THERMODYNAMIC PARAMETERS: NB3B2
+ $###########################################################################
+ $
+- PHASE NB3B2  %  2 3   2 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE NB3B2  %  2 3   2 !
+     CONSTITUENT NB3B2  : FE,NB% : B :  !
+ PARAMETER G(NB3B2,NB:B;0) 273.00 +3*GHSERNB#+2*GHSERBB#-372301
+    -53.233*T+11.662*T*LN(T)-2.276E-3*T**2; 6000.00  N
+@@ -9610,7 +9644,8 @@
+ $                   THERMODYNAMIC PARAMETERS: NB5B6
+ $###########################################################################
+ $
+- PHASE NB5B6  %  2 5   6 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE NB5B6  %  2 5   6 !
+     CONSTITUENT NB5B6  : NB : B :  !
+ PARAMETER G(NB5B6,NB:B;0) 273.00 +5*GHSERNB#+6*GHSERBB#-886400
+    -87.40*T+13.75*T*LN(T)+8.756E-4*T**2; 6000.00  N
+@@ -9620,7 +9655,8 @@
+ $                   THERMODYNAMIC PARAMETERS: TIB
+ $###########################################################################
+ $
+- PHASE TIB  %  2 1   1 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE TIB  %  2 1   1 !
+     CONSTITUENT TIB  : TI : B%,TI :  !
+ PARAMETER G(TIB,TI:B;0) 273.00 +GHSERBB#+GHSERTI#-165000-67.317*T+9.5*T*LN(T)
+    -5e-4*T**2; 6000.00  N
+@@ -9639,7 +9675,8 @@
+ $ slight change of configurational entropy.
+ $ simplified model without Va on first sublattice 
+ $
+- PHASE TIB2  %  2 1   2 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE TIB2  %  2 1   2 !
+     CONSTITUENT TIB2  : B,CR%,MO,TI% : B%,CR,TI,VA :  !
+ PARAMETER G(TIB2,B:B;0) 273.00 +89628+3*GHSERBB#; 6000.00  N
+ REF:117 !
+@@ -9683,7 +9720,8 @@
+ $                   THERMODYNAMIC PARAMETERS: TI3B4
+ $###########################################################################
+ $ 
+- PHASE TI3B4  %  2 3   4 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE TI3B4  %  2 3   4 !
+     CONSTITUENT TI3B4  : CR,NB,TI% : B :  !
+ PARAMETER G(TI3B4,CR:B;0) 273.00 -357000+18.2*T+3.5*T*LN(T)+0.0021*T**2
+    +4*GHSERBB#+3*GHSERCR#; 6000.00  N
+@@ -9699,9 +9737,9 @@
+ $                   THERMODYNAMIC PARAMETERS: A_CHALC
+ $###########################################################################
+ $
+- PHASE A_CHALC %  2 2   1 > 
+-Hexagonal close-packed Cu2S, A-chalcosite. 
+->> 0 !
++$ MATCALC_DESCRIPTION: Hexagonal close-packed Cu2S, A-chalcosite.
++$ MATCALC_PRIORITY: 0
++ PHASE A_CHALC %  2 2   1 !
+     CONSTITUENT A_CHALC  : CU : S :  !
+ PARAMETER G(A_CHALC,CU:S;0) 273.00 +2*GHSERCU#+GHSERSS#
+    -78474.5-83.8534*T+7.2618*T*LN(T); 6000.00  N
+@@ -9711,7 +9749,8 @@
+ $                   THERMODYNAMIC PARAMETERS: ANILITE
+ $###########################################################################
+ $
+- PHASE ANILITE %  2 1.75   1 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE ANILITE %  2 1.75   1 !
+     CONSTITUENT ANILITE  : CU : S :  !
+ PARAMETER G(ANILITE,CU:S;0) 273.00 +1.75*GHSERCU#+GHSERSS#
+    -76000.8-22.78185*T; 6000.00  N
+@@ -9721,9 +9760,9 @@
+ $                   THERMODYNAMIC PARAMETERS: B_CHALC
+ $###########################################################################
+ $
+- PHASE B_CHALC %  2 2   1 > 
+-Cu2S, B-chalcosite. 
+->> 0 !
++$ MATCALC_DESCRIPTION: Cu2S, B-chalcosite.
++$ MATCALC_PRIORITY: 0
++ PHASE B_CHALC %  2 2   1 !
+     CONSTITUENT B_CHALC  : CU : S :  !
+ PARAMETER G(B_CHALC,CU:S;0) 273.00 +2*GHSERCU#+GHSERSS#
+    -79412-56.4306*T+3.0602*T*LN(T); 6000.00  N
+@@ -9733,7 +9772,8 @@
+ $                   THERMODYNAMIC PARAMETERS: COVELLITE
+ $###########################################################################
+ $
+- PHASE COVELLITE %  2 1   1 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE COVELLITE %  2 1   1 !
+     CONSTITUENT COVELLITE  : CU : S :  !
+ PARAMETER G(COVELLITE,CU:S;0) 273.00 +GHSERCU#+GHSERSS#
+    -52804.7-6.6291*T; 6000.00  N
+@@ -9743,9 +9783,9 @@
+ $                   THERMODYNAMIC PARAMETERS: CU2S
+ $###########################################################################
+ $
+- PHASE CU2S %  3 2 1 1 > 
+-Fcc-structured.
+->> 1 !
++$ MATCALC_DESCRIPTION: Fcc-structured.
++$ MATCALC_PRIORITY: 1
++ PHASE CU2S %  3 2 1 1 !
+     CONSTITUENT CU2S  : CU%,FE : S : S,VA% :  !
+ PARAMETER G(CU2S,CU:S:VA;0) 273.00 +GDIG#; 6000.00  N
+ REF:82 !
+@@ -9777,9 +9817,9 @@
+ $                   THERMODYNAMIC PARAMETERS: DIGENITE
+ $###########################################################################
+ $
+- PHASE DIGENITE %  3 2   1   1 > 
+-Use for equilibrium calculation only. 
+->> 1 !
++$ MATCALC_DESCRIPTION: Use for equilibrium calculation only.
++$ MATCALC_PRIORITY: 1
++ PHASE DIGENITE %  3 2   1   1 !
+     CONSTITUENT DIGENITE  : CU%,FE%,VA : CU,VA% : S :  !
+ PARAMETER G(DIGENITE,CU:CU:S;0) 273.00 +3*GHSERCU#+GHSERSS#
+  -49.382*T; 6000.00  N
+@@ -9810,9 +9850,9 @@
+ $                   THERMODYNAMIC PARAMETERS: DISULF
+ $###########################################################################
+ $
+- PHASE DISULF %  2 1   2 > 
+-Pyrite, FeS2. 
+->> 0 !
++$ MATCALC_DESCRIPTION: Pyrite, FeS2.
++$ MATCALC_PRIORITY: 0
++ PHASE DISULF %  2 1   2 !
+     CONSTITUENT DISULF  : FE : S :  !
+ PARAMETER G(DISULF,FE:S;0) 273.00 +GHSERFE#+2*GHSERSS#
+    -177763+48.567*T; 6000.00  N
+@@ -9822,7 +9862,8 @@
+ $                   THERMODYNAMIC PARAMETERS: DJURLEITE
+ $###########################################################################
+ $
+- PHASE DJURLEITE %  2 1.93   1 > >> 0 !
++$ MATCALC_PRIORITY: 0
++ PHASE DJURLEITE %  2 1.93   1 !
+     CONSTITUENT DJURLEITE  : CU : S :  !
+ PARAMETER G(DJURLEITE,CU:S;0) 273.00 +1.93*GHSERCU#+GHSERSS#
+    -79718.6-30.97899*T; 6000.00  N
+@@ -9832,9 +9873,9 @@
+ $                   THERMODYNAMIC PARAMETERS: FC_MONO
+ $###########################################################################
+ $
+-PHASE FC_MONO %  1   1 > 
+-Monoclinic sulfur (high T) 
+->> 0 !
++$ MATCALC_DESCRIPTION: Monoclinic sulfur (high T)
++$ MATCALC_PRIORITY: 0
++PHASE FC_MONO %  1   1 !
+ CONSTITUENT FC_MONO  : S :  !
+ PARAMETER G(FC_MONO,S;0) 273.00 +GHSERSS#+188.29+2.8932*T
+  -0.57614*T*LN(T); 6000.00  N
+@@ -9844,9 +9885,9 @@
+ $                   THERMODYNAMIC PARAMETERS: FC_ORTHO
+ $###########################################################################
+ $
+- PHASE FC_ORTHO %  1   1 > 
+-Orthorhombic Sulfur (low T). 
+->> 0 !
++$ MATCALC_DESCRIPTION: Orthorhombic Sulfur (low T).
++$ MATCALC_PRIORITY: 0
++ PHASE FC_ORTHO %  1   1 !
+     CONSTITUENT FC_ORTHO  : S :  !
+ PARAMETER G(FC_ORTHO,S;0) 273.00 +GHSERSS#; 6000.00  N
+ REF:0 !
+@@ -9855,9 +9896,9 @@
+ $                   THERMODYNAMIC PARAMETERS: FES_P
+ $###########################################################################
+ $
+- PHASE FES_P %  2 1   1 > 
+-Fe-rich Fe,Mn-sulfide. 
+->> 0 !
++$ MATCALC_DESCRIPTION: Fe-rich Fe,Mn-sulfide.
++$ MATCALC_PRIORITY: 0
++ PHASE FES_P %  2 1   1 !
+     CONSTITUENT FES_P  : FE%,MN : S :  !
+ PARAMETER G(FES_P,FE:S;0) 273.00 -71292-201.349*T+24.2116*T*LN(T)
+    -0.003402*T**2+GHSERFE#+GHSERSS#; 6000.00  N
+@@ -9874,7 +9915,8 @@
+ $                   THERMODYNAMIC PARAMETERS: MNS_Q
+ $###########################################################################
+ $
+- PHASE MNS_Q %  2 1   1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE MNS_Q %  2 1   1 !
+     CONSTITUENT MNS_Q  : CU,FE,MN% : S :  !
+ PARAMETER G(MNS_Q,CU:S;0) 273.00 +GHSERCU#+GHSERSS#; 6000.00  N
+ REF:pov09 !
+@@ -9901,10 +9943,9 @@
+ $                   THERMODYNAMIC PARAMETERS: PYRR
+ $###########################################################################
+ $
+- PHASE PYRR %  2 1   1 > 
+-(Cu,Fe)S pyrrhotite, hexagonal close-packed, 
+-for thermodynamic equilibrium calculations only. 
+->> 0 !
++$ MATCALC_DESCRIPTION: (Cu,Fe)S pyrrhotite, hexagonal close-packed, for thermodynamic equilibrium calculations only.
++$ MATCALC_PRIORITY: 0
++ PHASE PYRR %  2 1   1 !
+     CONSTITUENT PYRR  : CU,FE,VA : S :  !
+ PARAMETER G(PYRR,CU:S;0) 273.00 +GHSERCU#+GHSERSS#; 6000.00  N 
+ REF:82 !
+@@ -9925,7 +9966,8 @@
+ $                   THERMODYNAMIC PARAMETERS: TIS
+ $###########################################################################
+ $
+- PHASE TIS %  2 1   1 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE TIS %  2 1   1 !
+     CONSTITUENT TIS  : TI : S :  !
+ PARAMETER G(TIS,TI:S;0) 273.00 +GHSERTI#+GHSERSS#
+    -87724-125.24*T; 6000.00  N
+@@ -9935,7 +9977,8 @@
+ $                   THERMODYNAMIC PARAMETERS: TI4C2S2
+ $###########################################################################
+ $
+- PHASE TI4C2S2 %  3 4   2   2 > >> 2 !
++$ MATCALC_PRIORITY: 2
++ PHASE TI4C2S2 %  3 4   2   2 !
+     CONSTITUENT TI4C2S2  : TI : C : S :  !
+ PARAMETER G(TI4C2S2,TI:C:S;0) 273.00 +4*GHSERTI#+2*GHSERCC#+2*GHSERSS#
+   -449804-348*T; 6000.00  N
+@@ -9950,7 +9993,9 @@
+ $###########################################################################
+ $
+  TYPE_DEFINITION ( GES A_P_D CORUND MAGNETIC  -3.0    0.28 !
+- PHASE CORUND  %(  2 2   3 > corund-structured (Al,Cr,Fe)2O3 >> 2 !
++$ MATCALC_DESCRIPTION: corund-structured (Al,Cr,Fe)2O3
++$ MATCALC_PRIORITY: 2
++ PHASE CORUND  %(  2 2   3 !
+    CONSTITUENT CORUND  :AL%,CR%,FE,NI : O :  !
+ PARAMETER G(CORUND,AL:O;0) 273.00 +GAL2O3#; 6000.00  N 
+ REF:200 !
+@@ -9988,7 +10033,9 @@
+ $                   THERMODYNAMIC PARAMETERS: HALITE
+ $###########################################################################
+ $
+- PHASE HALITE  %  2 1   1 > halite-structured (Cr,Fe,Ni)O >> 2 !
++$ MATCALC_DESCRIPTION: halite-structured (Cr,Fe,Ni)O
++$ MATCALC_PRIORITY: 2
++ PHASE HALITE  %  2 1   1 !
+    CONSTITUENT HALITE  :AL,CR,FE%,NI% : O :  !
+ PARAMETER G(HALITE,AL:O;0) 273.00 0.33333*GAL2O3#
+ +0.33333*GHSERAL#+200000; 6000.00  N 
+@@ -10020,19 +10067,24 @@
+ $                   THERMODYNAMIC PARAMETERS: HF-OXIDES
+ $###########################################################################
+ $
+- PHASE HF1O2_M  %  2 0.33333  0.66667  > monoclinic, 
+-strengthening dispersoid >> 2 !
++$ MATCALC_DESCRIPTION: monoclinic, strengthening dispersoid
++$ MATCALC_PRIORITY: 2
++ PHASE HF1O2_M  %  2 0.33333  0.66667 !
+     CONSTITUENT HF1O2_M  :HF : O:  !
+ PARAMETER G(HF1O2_M,HF:O;0) 273.00 +0.333333*GHF1O2_S#; 6000.00  N 
+   REF:195 !
+ $
+- PHASE HF1O2_T  %  2 0.33333  0.66667  > tetragonal >> 1 !
++$ MATCALC_DESCRIPTION: tetragonal
++$ MATCALC_PRIORITY: 1
++ PHASE HF1O2_T  %  2 0.33333  0.66667 !
+     CONSTITUENT HF1O2_T  :HF : O:  !
+ PARAMETER G(HF1O2_T,HF:O;0) 273.00 +0.333333*GHF1O2_S#
+  +2736-1.333333*T; 6000.00  N
+ REF:195 !
+ $
+- PHASE HF1O2_C  %  2 0.33333  0.66667  > cubic >> 1 !
++$ MATCALC_DESCRIPTION: cubic
++$ MATCALC_PRIORITY: 1
++ PHASE HF1O2_C  %  2 0.33333  0.66667 !
+     CONSTITUENT HF1O2_C  :HF : O:  !
+ PARAMETER G(HF1O2_C,HF:O;0) 273.00 +0.333333*GHF1O2_S#
+  +6473.3333-2.66667*T; 6000.00  N
+@@ -10042,17 +10094,23 @@
+ $                   THERMODYNAMIC PARAMETERS: LA-OXIDES
+ $###########################################################################
+ $
+- PHASE LA2O3_A  %  2 2   3 > hexagonal, strengthening dispersoid >> 2 !
++$ MATCALC_DESCRIPTION: hexagonal, strengthening dispersoid
++$ MATCALC_PRIORITY: 2
++ PHASE LA2O3_A  %  2 2   3 !
+     CONSTITUENT LA2O3_A  :LA : O :  !
+ PARAMETER G(LA2O3_A,LA:O;0) 273.00 +GLA2O3D#; 6000.00 N 
+ REF:204 !
+ $
+- PHASE LA2O3_H  %  2 2   3 > ordered hexagonal >> 1 !
++$ MATCALC_DESCRIPTION: ordered hexagonal
++$ MATCALC_PRIORITY: 1
++ PHASE LA2O3_H  %  2 2   3 !
+     CONSTITUENT LA2O3_H  :LA : O :  !
+ PARAMETER G(LA2O3_H,LA:O;0) 273.00 +GLA2O3H#; 6000.00 N 
+ REF:204 !
+ $
+- PHASE LA2O3_C  %  2 2   3 > cubic >> 1 !
++$ MATCALC_DESCRIPTION: cubic
++$ MATCALC_PRIORITY: 1
++ PHASE LA2O3_C  %  2 2   3 !
+     CONSTITUENT LA2O3_C  :LA : O :  !
+ PARAMETER G(LA2O3_C,LA:O;0) 273.00 +GLA2O3X#; 6000.00 N 
+ REF:204 !
+@@ -10061,7 +10119,9 @@
+ $                   THERMODYNAMIC PARAMETERS: SIO2
+ $###########################################################################
+ $
+- PHASE SIO2  %  2 1   2 > Low Quartz >> 2 !
++$ MATCALC_DESCRIPTION: Low Quartz
++$ MATCALC_PRIORITY: 2
++ PHASE SIO2  %  2 1   2 !
+     CONSTITUENT SIO2  :SI : O :  !
+ PARAMETER G(SIO2,SI:O;0) 273.00 +GSIO2#; 6000.00  N 
+ REF:201 !
+@@ -10070,7 +10130,8 @@
+ $                   THERMODYNAMIC PARAMETERS: SPINEL
+ $###########################################################################
+ $
+- PHASE SPINEL  %  3 1   2 4 > >> 2 !
++$ MATCALC_PRIORITY: 2
++ PHASE SPINEL  %  3 1   2 4 !
+     CONSTITUENT SPINEL  :AL,CR,FE%,NI% : AL,CR%,FE,NI : O :  !
+ PARAMETER G(SPINEL,CR:FE:O;0) 273.00 +GHSERCR#+2*GHSERFE#+4*GHSEROO#
+  -1200000+350*T-10*T*LN(T); 6000.00  N 
+@@ -10131,14 +10192,16 @@
+ $                   THERMODYNAMIC PARAMETERS: TI-OXIDES
+ $###########################################################################
+ $
+- PHASE TIO2  %  2 1   2 > Note: fully oxidized compound 
+-without oxygen vacancies >> 1 !
++$ MATCALC_DESCRIPTION: Note: fully oxidized compound without oxygen vacancies
++$ MATCALC_PRIORITY: 1
++ PHASE TIO2  %  2 1   2 !
+     CONSTITUENT TIO2  :TI : O :  !
+ PARAMETER G(TIO2,TI:O;0) 273.00 -976986.6+484.74037*T-77.76175*T*LN(T)
+   -67156800*T**(-2)+1683920*T**(-1); 6000.00  N 
+ REF:202 !
+ $
+- PHASE TI2O3  %  2 2   3 > >> 1 !
++$ MATCALC_PRIORITY: 1
++ PHASE TI2O3  %  2 2   3 !
+     CONSTITUENT TI2O3  :TI : O :  !
+ PARAMETER G(TI2O3,TI:O;0) 273.00 +GTI2O3#; 6000.00  N 
+ REF:202 !
+@@ -10147,7 +10210,9 @@
+ $                   THERMODYNAMIC PARAMETERS: TRIDYMITE
+ $###########################################################################
+ $
+- PHASE TRID  %  2 1   2 > Tridymite >> 0 !
++$ MATCALC_DESCRIPTION: Tridymite
++$ MATCALC_PRIORITY: 0
++ PHASE TRID  %  2 1   2 !
+     CONSTITUENT TRID  :SI : O :  !
+ PARAMETER G(TRID,SI:O;0) 273.00 +GTRID#; 6000.00  N 
+ REF:201 !
+@@ -10156,21 +10221,25 @@
+ $                   THERMODYNAMIC PARAMETERS: Y-OXIDES
+ $###########################################################################
+ $
+- PHASE Y2O3_C  %  2 2   3 > cubic Yttrium oxide, 
+-strengthening dispersoid >> 2 !
++$ MATCALC_DESCRIPTION: cubic Yttrium oxide, strengthening dispersoid
++$ MATCALC_PRIORITY: 2
++ PHASE Y2O3_C  %  2 2   3 !
+     CONSTITUENT Y2O3_C  :Y : O :  !
+ PARAMETER G(Y2O3_C,Y:O;0) 273.00 +GY2O3C#; 6000.00  N 
+ REF:211 !
+ $
+- PHASE Y2O3_H  %  2 2   3 > hexagonal Yttrium oxide, 
+-strengthening dispersoid >> 2 !
++$ MATCALC_DESCRIPTION: hexagonal Yttrium oxide, strengthening dispersoid
++$ MATCALC_PRIORITY: 2
++ PHASE Y2O3_H  %  2 2   3 !
+     CONSTITUENT Y2O3_H  :Y : O :  !
+ PARAMETER G(Y2O3_H,Y:O;0) 273.00 +GY2O3H#; 6000.00  N 
+ REF:211 !
+ $
+ 
+ $
+- PHASE O1_GAS % 1  1.0 > for thermodynamic properties calculations only >> 0 !
++$ MATCALC_DESCRIPTION: for thermodynamic properties calculations only
++$ MATCALC_PRIORITY: 0
++ PHASE O1_GAS % 1  1.0 !
+     CONSTITUENT O1_GAS :O : !
+ PARAMETER G(O1_GAS,O;0)
+  273.00 GHSEROO#; 6000.00  N
+@@ -10183,6 +10252,8 @@
+ $
+ $*****************************************************************************
+ $
++LIST_OF_REFERENCES
++NUMBER SOURCE
+ A00201-0    unary               A.T. Dinsdale, 
+                                   SGTE Data of pure elements, 
+                                   CALPHAD, Vol. 15, No. 4, pp 317-425, 1991.

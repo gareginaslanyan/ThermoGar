@@ -1,0 +1,15 @@
+THERMOGAR SWR — PHYSICAL DATABASE SOFTWARE REGRESSION
+File: C:\Users\gareg\Desktop\ThermoGar-w14a\databases\physical\original\physical_data_v103.pdb
+SHA-256: 4cf81c992b57263c50b370ea47eb0d5bb4f622cf23c18479bab54267762f20bd
+Functions: 101
+DP parameters: 121
+Direct phase models: ALN, BCC_A2, CEMENTITE, CU_S, DIAMOND_A4, FCC_A1, HCP_A3, LAVES_PHASE, LIQUID, M23C6, M3C2, M6C, M7C3
+
+        Проверка      Фаза  Плотность, кг/м³  Покрытие, %  Ожидалось около, кг/м³   Статус Примечание
+         Al, FCC    FCC_A1       2697.931635        100.0                 2698.15 пройдена           
+         Fe, BCC    BCC_A2       7876.155356        100.0                 7874.00 пройдена           
+         Ni, FCC    FCC_A1       8909.452336        100.0                 8914.00 пройдена           
+Al, liquid model    LIQUID       2697.981801        100.0                     NaN пройдена           
+            Fe3C CEMENTITE       7684.582667        100.0                 7685.00 пройдена           
+
+RESULT: PASSED

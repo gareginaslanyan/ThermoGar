@@ -1,0 +1,21 @@
+{
+ "operation": "property_elastic_prepare",
+ "phase_rows": [
+  {
+   "molar_volume_cm3": 7.204931763171776,
+   "mole_fraction": 0.9393875508715968,
+   "phase": "FCC_A1",
+   "volume_fraction": 0.9446174615426822,
+   "volume_source": "direct"
+  },
+  {
+   "molar_volume_cm3": 6.546809865339488,
+   "mole_fraction": 0.060612449133682855,
+   "phase": "WC",
+   "volume_fraction": 0.05538253845731778,
+   "volume_source": "mixture"
+  }
+ ],
+ "physical_pdb_sha256": "4cf81c992b57263c50b370ea47eb0d5bb4f622cf23c18479bab54267762f20bd",
+ "tdb_sha256": "236ec4d9b0540de04e4e6305faa208672f31fbdf45b2ae84e92f80bd98053612"
+}

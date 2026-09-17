@@ -1,0 +1,1 @@
+{"job": "scenario__thermogar_fe_database_test.py", "entry_gib": 5.0, "abort_gib": 1.0, "free_at_start_gib": 6.08, "waited_s": 15, "exit": 0, "last_line": "Reports: C:\\Users\\gareg\\Desktop\\ThermoGar-w14a\\results\\validation\\stage13_2", "seconds": 196.8, "peak_tree_gib": 2.69, "min_free_gib": 3.71, "aborted_low_memory": false}

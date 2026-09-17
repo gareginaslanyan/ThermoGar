@@ -1,0 +1,13 @@
+2026-09-16 19:26:00.460 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-16 19:26:00.460 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-16 19:26:00.460 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-16 19:26:00.460 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-16 19:26:00.460 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-16 19:26:00.460 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+Traceback (most recent call last):
+  File "C:\Users\gareg\Desktop\ThermoGar-w15d\results\wave15_f\scripts\elastic_run.py", line 100, in <module>
+    at.button(key="b4b2_elastic_vrh_calculate").click().run()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\streamlit\testing\v1\element_tree.py", line 284, in __call__
+    raise KeyError(key)
+KeyError: 'b4b2_elastic_vrh_calculate'
