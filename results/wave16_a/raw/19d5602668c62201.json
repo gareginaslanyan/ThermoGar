@@ -1,0 +1,161 @@
+{
+ "job": {
+  "marka": "316L",
+  "baza": "mc_fe_2062_bez_patcha",
+  "metod": "ThermoGar",
+  "nabor": "polnyj",
+  "c15": true,
+  "porogi": [
+   1e-06
+  ],
+  "pdens": 50,
+  "tier": 1,
+  "polnyj_tyazhelyj": true,
+  "alias": "57bcf0dfec356c51",
+  "id": "19d5602668c62201"
+ },
+ "status": "ok",
+ "stroki": [
+  {
+   "porog": 1e-06,
+   "T_liq_K": 1701.6265625,
+   "likvidus_s": 91.11284459999297,
+   "likvidus_ravnovesij": 9,
+   "T_sol_bisekciya_K": 1689.274267578125,
+   "fazy_pod_bisekciej": [
+    "BCC_B2",
+    "FCC_A1"
+   ],
+   "bisekciya_vilka_C": [
+    1416.09375,
+    1420.0
+   ],
+   "bisekciya_s": 81.27233439999691,
+   "bisekciya_ravnovesij": 7,
+   "kriterij_solidusa": "scheil: LIQUID нет в eq.Phase (порог решателя pycalphad)",
+   "T_sol_K": 1689.24375,
+   "fazy_pod_solidusom": [
+    "BCC_A2",
+    "FCC_A1"
+   ]
+  }
+ ],
+ "components": [
+  "C",
+  "CR",
+  "FE",
+  "MO",
+  "N",
+  "NI",
+  "VA"
+ ],
+ "fazy_v_nabore": [
+  "ALN_EQU",
+  "ALPHA_MN",
+  "BCC_B2",
+  "BCC_DISL",
+  "BETA_MN",
+  "C15_LAVES",
+  "CEMENTITE",
+  "CHI_A12",
+  "EPS_CARB",
+  "ETA",
+  "ETA_CARB",
+  "FCC_A1",
+  "FE24C10",
+  "FE4N",
+  "GAMMA_PRIME",
+  "HCP_A3",
+  "H_BCC",
+  "KSI_CARBIDE",
+  "KSI_FE5C2",
+  "LAVES_PHASE",
+  "LIQUID",
+  "M23C6",
+  "M3C2",
+  "M6C",
+  "M7C3",
+  "MNNI",
+  "MNNI2",
+  "MOB2",
+  "MOC_ETA",
+  "MU_PHASE",
+  "MU_PHASE_I",
+  "NITI2",
+  "PDFE_L12",
+  "PDMN_B2",
+  "PDMN_P",
+  "PI_PHASE",
+  "R_PHASE",
+  "SIGMA",
+  "TIB2",
+  "WC",
+  "ZET"
+ ],
+ "c15_v_nabore": true,
+ "snyato_detektorom_pary": [],
+ "snyato_rezhimom_stali": [
+  "DIAMOND_A4",
+  "GRAPHITE"
+ ],
+ "T_start_K": 1773.15,
+ "zyorno": 0,
+ "scheil_converged": true,
+ "scheil_tochek": 10,
+ "scheil_hvost": [
+  [
+   1480.0,
+   1.0
+  ],
+  [
+   1470.0,
+   1.0
+  ],
+  [
+   1460.0,
+   1.0
+  ],
+  [
+   1450.0,
+   1.0
+  ],
+  [
+   1440.0,
+   1.0
+  ],
+  [
+   1430.0,
+   1.0
+  ],
+  [
+   1420.0,
+   0.22265181373898768
+  ],
+  [
+   1416.0938,
+   1.0085265955694922e-11
+  ]
+ ],
+ "scheil_dolya_tverdogo_v_konce": 0.9999999999899147,
+ "scheil_oshibka": "",
+ "vremya": {
+  "razbor_bazy_s": 0.20680100000754464,
+  "start_s": 10.463530799999717,
+  "scheil_s": 15.88723089999985,
+  "ravnovesij_vsego": 16,
+  "vsego_s": 202.21602310000162
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 9.877830505371094,
+   "pik_MiB": 2081.234375,
+   "min_svobodno_GiB": 7.84661865234375,
+   "snyat": false,
+   "kod": 0,
+   "sekund": 202.8392896999867,
+   "pdens": 50,
+   "porog_vhoda_GiB": 5.0
+  }
+ ],
+ "pdens_fakt": 50
+}

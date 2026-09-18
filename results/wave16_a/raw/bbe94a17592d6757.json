@@ -1,0 +1,49 @@
+{
+ "job": {
+  "marka": "HAYNES Waspaloy",
+  "baza": "mc_ni_2036",
+  "metod": "Lilit-skript",
+  "nabor": "sloj",
+  "c15": null,
+  "porogi": [
+   1e-06
+  ],
+  "pdens": null,
+  "tier": 1,
+  "polnyj_tyazhelyj": false,
+  "id": "bbe94a17592d6757"
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 10.8009033203125,
+   "pik_MiB": 10819.5859375,
+   "min_svobodno_GiB": 0.24602127075195312,
+   "snyat": true,
+   "svobodno_pri_snyatii_GiB": 0.24602127075195312,
+   "kod": 15,
+   "sekund": 192.8515070000003,
+   "porog_vhoda_GiB": 3.0
+  }
+ ],
+ "komanda": [
+  "D:\\Pets\\ThermoGar\\.venv-windows\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-W",
+  "default",
+  "D:\\Pets\\ThermoGar\\tasks\\lilith_16A\\metod_solidus_lilit.py",
+  "--csv",
+  "D:\\Pets\\ThermoGar\\results\\wave16_a\\raw\\bbe94a17592d6757_lilit\\marka.csv",
+  "--tdb",
+  "mc_ni=D:\\Pets\\ThermoGar\\databases\\converted\\mc_ni_v2036.garcalc.tdb",
+  "--porog",
+  "1e-06",
+  "--nabor",
+  "sloj",
+  "--bez-granic",
+  "--vyvod",
+  "D:\\Pets\\ThermoGar\\results\\wave16_a\\raw\\bbe94a17592d6757_lilit\\vyvod.csv"
+ ],
+ "log": "D:\\Pets\\ThermoGar\\tasks\\lilith_16A\\metod_solidus_lilit.py:105: ResourceWarning: unclosed file <_io.TextIOWrapper name='D:\\\\Pets\\\\ThermoGar\\\\results\\\\wave16_a\\\\raw\\\\bbe94a17592d6757_lilit\\\\marka.csv' mode='r' encoding='utf-8'>\n  stroki = [r for r in csv.DictReader(open(a.csv, encoding=\"utf-8\", newline=\"\"))\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n",
+ "status": "snyat_po_pamyati_lilit"
+}

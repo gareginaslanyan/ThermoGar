@@ -1,0 +1,70 @@
+{
+ "job": {
+  "marka": "В96ц1оч",
+  "baza": "mc_al_2037",
+  "metod": "Lilit-skript",
+  "nabor": "sloj",
+  "c15": null,
+  "porogi": [
+   0.0001
+  ],
+  "pdens": null,
+  "tier": 2,
+  "polnyj_tyazhelyj": false,
+  "id": "910ffb62bff338f5"
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 7.771747589111328,
+   "pik_MiB": 4391.875,
+   "min_svobodno_GiB": 4.414051055908203,
+   "snyat": false,
+   "kod": 0,
+   "sekund": 193.32053260000248,
+   "porog_vhoda_GiB": 3.0
+  }
+ ],
+ "komanda": [
+  "D:\\Pets\\ThermoGar\\.venv-windows\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-W",
+  "default",
+  "D:\\Pets\\ThermoGar\\tasks\\lilith_16A\\metod_solidus_lilit.py",
+  "--csv",
+  "D:\\Pets\\ThermoGar\\results\\wave16_a\\raw\\910ffb62bff338f5_lilit\\marka.csv",
+  "--tdb",
+  "mc_al=D:\\Pets\\ThermoGar\\databases\\converted\\al\\mc_al_v2037.thermogar.tdb",
+  "--porog",
+  "0.0001",
+  "--nabor",
+  "sloj",
+  "--bez-granic",
+  "--vyvod",
+  "D:\\Pets\\ThermoGar\\results\\wave16_a\\raw\\910ffb62bff338f5_lilit\\vyvod.csv"
+ ],
+ "log": "D:\\Pets\\ThermoGar\\tasks\\lilith_16A\\metod_solidus_lilit.py:105: ResourceWarning: unclosed file <_io.TextIOWrapper name='D:\\\\Pets\\\\ThermoGar\\\\results\\\\wave16_a\\\\raw\\\\910ffb62bff338f5_lilit\\\\marka.csv' mode='r' encoding='utf-8'>\n  stroki = [r for r in csv.DictReader(open(a.csv, encoding=\"utf-8\", newline=\"\"))\nResourceWarning: Enable tracemalloc to get the object allocation traceback\npycalphad 0.11.2; слой D:\\Pets\\ThermoGar\\tasks\\lilith_16A\\calphad_layer\n  8602c130f8fdbbfe96ab94d23dbd2b6c533262574e1d4225bafd37c1ff644877  __init__.py\n  5667aede8f58830d69e8ea325a5da9012014cfbc2e08bbf183aac732a2c1dbbd  atomic_masses.py\n  b0700efcdd03f0228b0f61ab873a025f8f58fcba969202dbd2213fda49666bb5  granicy.py\n  b44afb82bc564cb4aedb7a290c87dd84168e2d6c51f375015f37cb2134a18757  pochinka.py\n  52b76dd6327b70058cc00c419802b34dff28a813f4d7baa99055f54f4cc5bfa6  raschet.py\n  14e97cee515efc633b0b3f575d41751a4964045d8a983763f9f2c1c5223deb05  manifest.json\nпорог NP(LIQUID) 0.0001; набор sloj; пределы шапки ВЫКЛ; режим счёт\nбаза mc_al: D:\\Pets\\ThermoGar\\databases\\converted\\al\\mc_al_v2037.thermogar.tdb sha256 f02bda0e42ff0733e4b647cbc904643a46c46fc996c57383815ade032a750c45\nВ96ц1оч                          mc_al      187.1 с  780.9 / 898.4 K; к заморозке +0.0 / +0.0 K\n",
+ "stroki": [
+  {
+   "marka": "В96ц1оч",
+   "klyuch_zamorozki": "-|В96ц1оч",
+   "baza": "mc_al",
+   "sha256_tdb": "f02bda0e42ff0733e4b647cbc904643a46c46fc996c57383815ade032a750c45",
+   "porog": "0.0001",
+   "nabor": "sloj",
+   "pdens": "200",
+   "vremya_s": "187.1",
+   "T_sol_zamorozka_K": "780.9",
+   "T_liq_zamorozka_K": "898.4",
+   "T_sol_K": "780.9",
+   "T_liq_K": "898.4",
+   "polnyj_nabor_ponadobilsya": "False",
+   "nabor_faz": "LIQUID FCC_A1 HCP_A3 BCC_A2 SI_DIAMOND_A4 MG2SI_B ALCUMN_T1 S_PHASE",
+   "fazy_pod_solidusom": "ALCUMN_T1 FCC_A1 MG2SI_B S_PHASE",
+   "zamechaniya": "фаза SI2TI исключена из расчёта: Семейство Ti-Si базы v2037, исключено целиком и ОКОНЧАТЕЛЬНО — решение владельца 04. | фаза SITI исключена из расчёта: Семейство Ti-Si базы v2037, исключено целиком и ОКОНЧАТЕЛЬНО — решение владельца 04. | фаза TI17AL5SI14 исключена из расчёта: Семейство Ti-Si базы v2037, исключено целиком и ОКОНЧАТЕЛЬНО — решение владельца 04. | фаза TIALSI_TAU исключена из расчёта: Семейство Ti-Si базы v2037, исключено целиком и ОКОНЧАТЕЛЬНО — решение владельца 04. | сторож движущей силы: проверено 200 из 200 пар «фаза-температура» (2 точки, 100 исключённых фаз); минимум 210 Дж/моль у GP_MAT | по требованию сторожа в набор добавлены фазы: ALCUMN_T1, S_PHASE",
+   "dT_sol_K": "0.0",
+   "dT_liq_K": "0.0"
+  }
+ ],
+ "status": "ok"
+}

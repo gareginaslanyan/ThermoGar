@@ -1,0 +1,118 @@
+{
+ "job": {
+  "marka": "INCONEL 600",
+  "baza": "mc_ni_2036",
+  "metod": "ThermoGar-povtor",
+  "nabor": "polnyj",
+  "c15": false,
+  "porogi": [
+   1e-06
+  ],
+  "pdens": 50,
+  "seed": 1,
+  "tolko_scheil": true,
+  "tier": 9,
+  "polnyj_tyazhelyj": true,
+  "id": "2430093344ce4b1b"
+ },
+ "status": "ok",
+ "stroki": [
+  {
+   "porog": 1e-06,
+   "T_sol_K": 1698.30625,
+   "fazy_pod_solidusom": [
+    "FCC_A1"
+   ],
+   "kriterij_solidusa": "scheil: LIQUID нет в eq.Phase (порог решателя pycalphad)"
+  }
+ ],
+ "components": [
+  "CR",
+  "FE",
+  "NI",
+  "VA"
+ ],
+ "fazy_v_nabore": [
+  "ALPHA_MN",
+  "BCC_B2",
+  "BETA_MN",
+  "CHI_A12",
+  "DELTA",
+  "ETA",
+  "FCC_A1",
+  "GAMMA_DP",
+  "GAMMA_PRIME",
+  "HCP_A3",
+  "LAVES",
+  "LAV_C14",
+  "LIQUID",
+  "NI2CR",
+  "NIAL",
+  "NITI2",
+  "SIGMA",
+  "TIB2"
+ ],
+ "c15_v_nabore": false,
+ "snyato_detektorom_pary": [],
+ "snyato_rezhimom_stali": [],
+ "T_start_K": 2073.15,
+ "zyorno": 1,
+ "scheil_converged": true,
+ "scheil_tochek": 39,
+ "scheil_hvost": [
+  [
+   1490.0,
+   1.0
+  ],
+  [
+   1480.0,
+   1.0
+  ],
+  [
+   1470.0,
+   1.0
+  ],
+  [
+   1460.0,
+   1.0
+  ],
+  [
+   1450.0,
+   1.0
+  ],
+  [
+   1440.0,
+   1.0
+  ],
+  [
+   1430.0,
+   1.0
+  ],
+  [
+   1425.1562,
+   2.220446049250313e-16
+  ]
+ ],
+ "scheil_dolya_tverdogo_v_konce": 0.9999999999999998,
+ "scheil_oshibka": "",
+ "vremya": {
+  "razbor_bazy_s": 0.1575924999997369,
+  "start_s": 1.758320900000399,
+  "scheil_s": 2.559003100001064,
+  "ravnovesij_vsego": 0,
+  "vsego_s": 7.230380400000286
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 10.974281311035156,
+   "pik_MiB": 621.98828125,
+   "min_svobodno_GiB": 10.359630584716797,
+   "snyat": false,
+   "kod": 0,
+   "sekund": 7.652955400000792,
+   "pdens": 50,
+   "porog_vhoda_GiB": 5.0
+  }
+ ],
+ "pdens_fakt": 50
+}

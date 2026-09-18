@@ -1,0 +1,64 @@
+{
+ "job": {
+  "marka": "17-4 PH",
+  "baza": "mc_fe_2062_bez_patcha",
+  "metod": "Lilit-skript",
+  "nabor": "sloj",
+  "c15": null,
+  "porogi": [
+   1e-09
+  ],
+  "pdens": null,
+  "tier": 1,
+  "polnyj_tyazhelyj": false,
+  "id": "fcff91132b7d662a"
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 8.15640640258789,
+   "pik_MiB": 5489.703125,
+   "min_svobodno_GiB": 4.931499481201172,
+   "snyat": false,
+   "kod": 0,
+   "sekund": 120.30954719999863,
+   "porog_vhoda_GiB": 3.0
+  }
+ ],
+ "komanda": [
+  "D:\\Pets\\ThermoGar\\.venv-windows\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-W",
+  "default",
+  "D:\\Pets\\ThermoGar\\tasks\\lilith_16A\\metod_solidus_lilit.py",
+  "--csv",
+  "D:\\Pets\\ThermoGar\\results\\wave16_a\\raw\\fcff91132b7d662a_lilit\\marka.csv",
+  "--tdb",
+  "mc_fe=D:\\Pets\\ThermoGar\\databases\\diagnostic\\fe\\mc_fe_v2062_unpatched.thermogar.tdb",
+  "--porog",
+  "1e-09",
+  "--nabor",
+  "sloj",
+  "--bez-granic",
+  "--vyvod",
+  "D:\\Pets\\ThermoGar\\results\\wave16_a\\raw\\fcff91132b7d662a_lilit\\vyvod.csv"
+ ],
+ "log": "D:\\Pets\\ThermoGar\\tasks\\lilith_16A\\metod_solidus_lilit.py:105: ResourceWarning: unclosed file <_io.TextIOWrapper name='D:\\\\Pets\\\\ThermoGar\\\\results\\\\wave16_a\\\\raw\\\\fcff91132b7d662a_lilit\\\\marka.csv' mode='r' encoding='utf-8'>\n  stroki = [r for r in csv.DictReader(open(a.csv, encoding=\"utf-8\", newline=\"\"))\nResourceWarning: Enable tracemalloc to get the object allocation traceback\npycalphad 0.11.2; слой D:\\Pets\\ThermoGar\\tasks\\lilith_16A\\calphad_layer\n  8602c130f8fdbbfe96ab94d23dbd2b6c533262574e1d4225bafd37c1ff644877  __init__.py\n  5667aede8f58830d69e8ea325a5da9012014cfbc2e08bbf183aac732a2c1dbbd  atomic_masses.py\n  b0700efcdd03f0228b0f61ab873a025f8f58fcba969202dbd2213fda49666bb5  granicy.py\n  b44afb82bc564cb4aedb7a290c87dd84168e2d6c51f375015f37cb2134a18757  pochinka.py\n  52b76dd6327b70058cc00c419802b34dff28a813f4d7baa99055f54f4cc5bfa6  raschet.py\n  14e97cee515efc633b0b3f575d41751a4964045d8a983763f9f2c1c5223deb05  manifest.json\nпорог NP(LIQUID) 1e-09; набор sloj; пределы шапки ВЫКЛ; режим счёт\nбаза mc_fe: D:\\Pets\\ThermoGar\\databases\\diagnostic\\fe\\mc_fe_v2062_unpatched.thermogar.tdb sha256 99b5cd56a52b857521122e93f61baf3caed120d1a37e562902ee6aa12f10692c\n17-4 PH                          mc_fe      111.2 с  ОТКАЗ ne_najden_interval\n",
+ "stroki": [
+  {
+   "marka": "17-4 PH",
+   "klyuch_zamorozki": "",
+   "baza": "mc_fe",
+   "sha256_tdb": "99b5cd56a52b857521122e93f61baf3caed120d1a37e562902ee6aa12f10692c",
+   "porog": "1e-09",
+   "nabor": "sloj",
+   "pdens": "200",
+   "vremya_s": "111.2",
+   "T_sol_zamorozka_K": "1677.15",
+   "T_liq_zamorozka_K": "1713.15",
+   "otkaz": "ne_najden_interval",
+   "prichina": "после добавления фазы C15_LAVES по требованию сторожа интервал плавления в области базы не найден"
+  }
+ ],
+ "status": "ok"
+}

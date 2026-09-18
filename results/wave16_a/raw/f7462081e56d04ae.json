@@ -1,0 +1,127 @@
+{
+ "job": {
+  "marka": "INCONEL 600",
+  "baza": "mc_ni_2036",
+  "metod": "ThermoGar",
+  "nabor": "bystryj",
+  "c15": false,
+  "porogi": [
+   1e-06
+  ],
+  "pdens": 50,
+  "tier": 1,
+  "polnyj_tyazhelyj": false,
+  "alias": "1dde990e9047f2a6",
+  "id": "f7462081e56d04ae"
+ },
+ "status": "ok",
+ "stroki": [
+  {
+   "porog": 1e-06,
+   "T_liq_K": 1700.538916015625,
+   "likvidus_s": 16.46503490000032,
+   "likvidus_ravnovesij": 8,
+   "T_sol_bisekciya_K": 1698.3411354064942,
+   "fazy_pod_bisekciej": [
+    "FCC_A1"
+   ],
+   "bisekciya_vilka_C": [
+    1425.15625,
+    1427.388916015625
+   ],
+   "bisekciya_s": 13.457437999997637,
+   "bisekciya_ravnovesij": 6,
+   "kriterij_solidusa": "scheil: LIQUID нет в eq.Phase (порог решателя pycalphad)",
+   "T_sol_K": 1698.30625,
+   "fazy_pod_solidusom": [
+    "FCC_A1"
+   ]
+  }
+ ],
+ "components": [
+  "CR",
+  "FE",
+  "NI",
+  "VA"
+ ],
+ "fazy_v_nabore": [
+  "BCC_B2",
+  "CHI_A12",
+  "DELTA",
+  "ETA",
+  "FCC_A1",
+  "GAMMA_DP",
+  "GAMMA_PRIME",
+  "HCP_A3",
+  "LAVES",
+  "LAV_C14",
+  "LIQUID",
+  "NI2CR",
+  "NIAL",
+  "SIGMA",
+  "TIB2"
+ ],
+ "c15_v_nabore": false,
+ "snyato_detektorom_pary": [],
+ "snyato_rezhimom_stali": [],
+ "T_start_K": 2073.15,
+ "zyorno": 0,
+ "scheil_converged": true,
+ "scheil_tochek": 39,
+ "scheil_hvost": [
+  [
+   1490.0,
+   1.0
+  ],
+  [
+   1480.0,
+   1.0
+  ],
+  [
+   1470.0,
+   1.0
+  ],
+  [
+   1460.0,
+   1.0
+  ],
+  [
+   1450.0,
+   1.0
+  ],
+  [
+   1440.0,
+   1.0
+  ],
+  [
+   1430.0,
+   1.0
+  ],
+  [
+   1425.1562,
+   2.220446049250313e-16
+  ]
+ ],
+ "scheil_dolya_tverdogo_v_konce": 0.9999999999999998,
+ "scheil_oshibka": "",
+ "vremya": {
+  "razbor_bazy_s": 0.204522400003043,
+  "start_s": 2.058894199995848,
+  "scheil_s": 2.920773099998769,
+  "ravnovesij_vsego": 14,
+  "vsego_s": 38.35598290000053
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 7.8044891357421875,
+   "pik_MiB": 1393.21875,
+   "min_svobodno_GiB": 6.4329071044921875,
+   "snyat": false,
+   "kod": 0,
+   "sekund": 38.859090099998866,
+   "pdens": 50,
+   "porog_vhoda_GiB": 3.0
+  }
+ ],
+ "pdens_fakt": 50
+}

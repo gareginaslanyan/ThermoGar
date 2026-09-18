@@ -937,6 +937,9 @@ def command_rerun_lilit(args) -> None:
         second = RAW / f"{job['id']}_z2.json"
         if not first.is_file() or second.is_file():
             continue
+        if args.only_marki and job["marka"] not in {
+                m.strip() for m in args.only_marki.split(";") if m.strip()}:
+            continue
         if json.loads(first.read_text("utf-8")).get("status") == "snyat_po_pamyati_lilit":
             todo.append(job)
     log(f"второй заход: заданий {len(todo)}; аварийный порог {abort_gib:.1f} ГиБ, "
@@ -1018,6 +1021,7 @@ def main() -> None:
     rerun.add_argument("--abort-gib", type=float, default=None,
                        help="аварийный порог сторожа, ГиБ; по умолчанию E1_ABORT_FREE_GIB")
     rerun.add_argument("--min-free-gib", type=float, default=9.0)
+    rerun.add_argument("--only-marki", default="", help="через ;")
     sub.add_parser("plan")
     sub.add_parser("env")
     args = parser.parse_args()

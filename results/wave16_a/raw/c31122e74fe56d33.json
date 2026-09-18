@@ -1,0 +1,143 @@
+{
+ "job": {
+  "marka": "AlSi7Mg0.6",
+  "baza": "mc_al_2037",
+  "metod": "ThermoGar",
+  "nabor": "bystryj",
+  "c15": false,
+  "porogi": [
+   1e-06
+  ],
+  "pdens": 50,
+  "tier": 1,
+  "polnyj_tyazhelyj": false,
+  "alias": "ddc8b0e2702c5cd1",
+  "id": "c31122e74fe56d33"
+ },
+ "status": "ok",
+ "stroki": [
+  {
+   "porog": 1e-06,
+   "T_liq_K": 888.6578125000001,
+   "likvidus_s": 63.310470199998235,
+   "likvidus_ravnovesij": 8,
+   "T_sol_bisekciya_K": 835.4583496093751,
+   "fazy_pod_bisekciej": [
+    "GP_MAT",
+    "SI_DIAMOND_A4"
+   ],
+   "bisekciya_vilka_C": [
+    562.2656250000001,
+    565.0000000000001
+   ],
+   "bisekciya_s": 64.78397800000675,
+   "bisekciya_ravnovesij": 7,
+   "kriterij_solidusa": "scheil: LIQUID нет в eq.Phase (порог решателя pycalphad)",
+   "T_sol_K": 835.4156250000001,
+   "fazy_pod_solidusom": [
+    "GP_MAT",
+    "SI_DIAMOND_A4"
+   ]
+  }
+ ],
+ "components": [
+  "AL",
+  "MG",
+  "SI",
+  "TI",
+  "VA"
+ ],
+ "fazy_v_nabore": [
+  "AL2CU3_D",
+  "AL3MG",
+  "AL3M_D022",
+  "AL3NI2",
+  "AL3SC",
+  "AL3TI_H",
+  "AL3TI_L",
+  "ALCUZN_T",
+  "BCC_A2",
+  "BETA_AL3MG2",
+  "CL_FCC",
+  "CL_MGX",
+  "E_AL30MG23",
+  "GP_MAT",
+  "G_AL12MG17",
+  "HCP_A3",
+  "LAVES_C15",
+  "LAVES_C36",
+  "LC14_ZN2MG",
+  "LIQUID",
+  "MG2SI_B",
+  "MG2ZN11",
+  "MG2ZN3",
+  "MGALCUZN_T",
+  "MGALZN_PHI",
+  "MGZN",
+  "SI_DIAMOND_A4",
+  "THETA_AL2CU"
+ ],
+ "c15_v_nabore": false,
+ "snyato_detektorom_pary": [],
+ "snyato_rezhimom_stali": [],
+ "T_start_K": 1123.15,
+ "zyorno": 0,
+ "scheil_converged": true,
+ "scheil_tochek": 59,
+ "scheil_hvost": [
+  [
+   595.0,
+   0.6755258834946516
+  ],
+  [
+   590.0,
+   0.6226928736254653
+  ],
+  [
+   585.0,
+   0.5765061055371727
+  ],
+  [
+   580.0,
+   0.5357774901379895
+  ],
+  [
+   575.0,
+   0.49957364865189324
+  ],
+  [
+   570.0,
+   0.20043762271259902
+  ],
+  [
+   565.0,
+   0.03972238644717474
+  ],
+  [
+   562.2656,
+   -8.593725731032009e-11
+  ]
+ ],
+ "scheil_dolya_tverdogo_v_konce": 1.0000000000859373,
+ "scheil_oshibka": "",
+ "vremya": {
+  "razbor_bazy_s": 0.13316530000884086,
+  "start_s": 3.1816880000114907,
+  "scheil_s": 21.900323400011985,
+  "ravnovesij_vsego": 15,
+  "vsego_s": 156.57651709999482
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 9.750991821289062,
+   "pik_MiB": 1778.2109375,
+   "min_svobodno_GiB": 8.008438110351562,
+   "snyat": false,
+   "kod": 0,
+   "sekund": 157.12178739999945,
+   "pdens": 50,
+   "porog_vhoda_GiB": 3.0
+  }
+ ],
+ "pdens_fakt": 50
+}

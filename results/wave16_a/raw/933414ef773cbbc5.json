@@ -1,0 +1,131 @@
+{
+ "job": {
+  "marka": "INCONEL X-750 (Special Metals)",
+  "baza": "mc_ni_2036",
+  "metod": "ThermoGar",
+  "nabor": "bystryj",
+  "c15": false,
+  "porogi": [
+   1e-06
+  ],
+  "pdens": 50,
+  "tier": 1,
+  "polnyj_tyazhelyj": false,
+  "alias": "0be60e120c39c020",
+  "id": "933414ef773cbbc5"
+ },
+ "status": "ok",
+ "stroki": [
+  {
+   "porog": 1e-06,
+   "T_liq_K": 1654.9078125,
+   "likvidus_s": 42.535018099999434,
+   "likvidus_ravnovesij": 9,
+   "T_sol_bisekciya_K": 1621.362890625,
+   "fazy_pod_bisekciej": [
+    "FCC_A1"
+   ],
+   "bisekciya_vilka_C": [
+    1348.125,
+    1350.0
+   ],
+   "bisekciya_s": 38.21815830000014,
+   "bisekciya_ravnovesij": 7,
+   "kriterij_solidusa": "scheil: LIQUID нет в eq.Phase (порог решателя pycalphad)",
+   "T_sol_K": 1621.275,
+   "fazy_pod_solidusom": [
+    "FCC_A1"
+   ]
+  }
+ ],
+ "components": [
+  "AL",
+  "CR",
+  "FE",
+  "NB",
+  "NI",
+  "TI",
+  "VA"
+ ],
+ "fazy_v_nabore": [
+  "BCC_B2",
+  "CHI_A12",
+  "DELTA",
+  "ETA",
+  "FCC_A1",
+  "GAMMA_DP",
+  "GAMMA_PRIME",
+  "HCP_A3",
+  "LAVES",
+  "LAV_C14",
+  "LIQUID",
+  "MU_PHASE",
+  "NI2CR",
+  "NIAL",
+  "SIGMA",
+  "TIB2"
+ ],
+ "c15_v_nabore": false,
+ "snyato_detektorom_pary": [],
+ "snyato_rezhimom_stali": [],
+ "T_start_K": 2073.15,
+ "zyorno": 0,
+ "scheil_converged": true,
+ "scheil_tochek": 47,
+ "scheil_hvost": [
+  [
+   1410.0,
+   1.0
+  ],
+  [
+   1400.0,
+   1.0
+  ],
+  [
+   1390.0,
+   1.0
+  ],
+  [
+   1380.0,
+   0.9162208565528609
+  ],
+  [
+   1370.0,
+   0.5344352262926058
+  ],
+  [
+   1360.0,
+   0.25305799660419004
+  ],
+  [
+   1350.0,
+   0.03444752610134849
+  ],
+  [
+   1348.125,
+   4.3076653355456074e-11
+  ]
+ ],
+ "scheil_dolya_tverdogo_v_konce": 0.9999999999569233,
+ "scheil_oshibka": "",
+ "vremya": {
+  "razbor_bazy_s": 0.15462160000060976,
+  "start_s": 5.287321000000702,
+  "scheil_s": 20.193847900000037,
+  "ravnovesij_vsego": 16,
+  "vsego_s": 109.14903340000001
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 10.480998992919922,
+   "pik_MiB": 2422.125,
+   "min_svobodno_GiB": 8.131755828857422,
+   "snyat": false,
+   "kod": 0,
+   "sekund": 109.71416940000017,
+   "pdens": 50,
+   "porog_vhoda_GiB": 3.0
+  }
+ ],
+ "pdens_fakt": 50
+}

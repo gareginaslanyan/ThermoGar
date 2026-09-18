@@ -1,0 +1,240 @@
+{
+ "job": {
+  "marka": "RS320",
+  "baza": "mc_al_2037",
+  "metod": "ThermoGar",
+  "nabor": "polnyj",
+  "c15": false,
+  "porogi": [
+   1e-06,
+   0.0001
+  ],
+  "pdens": 50,
+  "tier": 1,
+  "polnyj_tyazhelyj": false,
+  "id": "6508283c53235820"
+ },
+ "status": "ok",
+ "stroki": [
+  {
+   "porog": 1e-06,
+   "T_liq_K": 880.5328125000001,
+   "likvidus_s": 136.97881649999908,
+   "likvidus_ravnovesij": 8,
+   "T_sol_bisekciya_K": 838.1378692626954,
+   "fazy_pod_bisekciej": [
+    "AL8FEMNSI2",
+    "ALFESI_T6",
+    "GP_MAT",
+    "PI_ALFEMGSI",
+    "SI_DIAMOND_A4"
+   ],
+   "bisekciya_vilka_C": [
+    562.8906250000001,
+    605.0000000000001
+   ],
+   "bisekciya_s": 262.85147660000075,
+   "bisekciya_ravnovesij": 14,
+   "kriterij_solidusa": "scheil: LIQUID нет в eq.Phase (порог решателя pycalphad)",
+   "T_sol_K": 876.0406250000001,
+   "fazy_pod_solidusom": []
+  },
+  {
+   "porog": 0.0001,
+   "T_liq_K": 880.5328125000001,
+   "likvidus_s": 5.740000051446259e-05,
+   "likvidus_ravnovesij": 0,
+   "T_sol_bisekciya_K": 838.1378692626954,
+   "fazy_pod_bisekciej": [
+    "AL8FEMNSI2",
+    "ALFESI_T6",
+    "GP_MAT",
+    "PI_ALFEMGSI",
+    "SI_DIAMOND_A4"
+   ],
+   "bisekciya_vilka_C": [
+    562.8906250000001,
+    605.0000000000001
+   ],
+   "bisekciya_s": 17.13232159999461,
+   "bisekciya_ravnovesij": 0,
+   "kriterij_solidusa": "бисекция: доля жидкости ≤ 0.0001",
+   "T_sol_K": 838.1378692626954,
+   "fazy_pod_solidusom": [
+    "AL8FEMNSI2",
+    "ALFESI_T6",
+    "GP_MAT",
+    "PI_ALFEMGSI",
+    "SI_DIAMOND_A4"
+   ]
+  }
+ ],
+ "components": [
+  "AL",
+  "FE",
+  "MG",
+  "MN",
+  "SI",
+  "VA"
+ ],
+ "fazy_v_nabore": [
+  "AL11CR2",
+  "AL11MN4",
+  "AL12MN",
+  "AL13CR2",
+  "AL13FE4",
+  "AL18CR2MG3",
+  "AL2CU3_D",
+  "AL2FE",
+  "AL3MG",
+  "AL3NI",
+  "AL3NI2",
+  "AL3SC",
+  "AL3TI_H",
+  "AL3TI_L",
+  "AL3ZR",
+  "AL4CR",
+  "AL4MN",
+  "AL5FE2",
+  "AL5FE4",
+  "AL6MN",
+  "AL8FEMNSI2",
+  "AL8MN5_D810",
+  "ALCR",
+  "ALCR2",
+  "ALCRCU_TAU",
+  "ALCRFEMNSI_A",
+  "ALCUZN_T",
+  "ALFEMNSI_B",
+  "ALFENI_T1",
+  "ALFENI_T2",
+  "ALFESI_T1",
+  "ALFESI_T10",
+  "ALFESI_T11",
+  "ALFESI_T2",
+  "ALFESI_T3",
+  "ALFESI_T4",
+  "ALFESI_T5",
+  "ALFESI_T6",
+  "ALFESI_T7",
+  "ALFESI_T8",
+  "ALMGMN_T",
+  "ALM_D019",
+  "ALTI",
+  "AL_B_DP",
+  "BCC_A2",
+  "BETA_AL3MG2",
+  "B_PRIME_H",
+  "B_PRIME_L",
+  "CBCC_A12",
+  "CL_CUMG0",
+  "CL_CUMG1",
+  "CL_FCC",
+  "CL_MGX",
+  "CL_SPL",
+  "CR3SI",
+  "CRSI2",
+  "CUB_A13",
+  "E_AL30MG23",
+  "FCCAL",
+  "FCCMG",
+  "FCCSI",
+  "FE2SI",
+  "FE5SI3",
+  "FESI",
+  "FESI2_H",
+  "FESI2_L",
+  "GP_MAT",
+  "G_AL12MG17",
+  "HCP_A3",
+  "HCP_ZN",
+  "LAVES_C15",
+  "LAVES_C36",
+  "LC14_ZN2MG",
+  "LIQUID",
+  "MG2SI_B",
+  "MG2ZN11",
+  "MG2ZN3",
+  "MG5SI6_B_DP",
+  "MGALCUZN_T",
+  "MGALZN_PHI",
+  "MGSI_B_P",
+  "MGZN",
+  "MN2ZR",
+  "MN3SI",
+  "MN6SI",
+  "MN9SI2",
+  "MNSI",
+  "PI_ALFEMGSI",
+  "PRE_B_DP",
+  "SI2ZR",
+  "SI_DIAMOND_A4",
+  "THETA_AL2CU",
+  "TH_DP_GPB",
+  "U1_PHASE",
+  "U2_PHASE"
+ ],
+ "c15_v_nabore": false,
+ "snyato_detektorom_pary": [],
+ "snyato_rezhimom_stali": [],
+ "T_start_K": 1123.15,
+ "zyorno": 0,
+ "scheil_converged": false,
+ "scheil_tochek": 51,
+ "scheil_hvost": [
+  [
+   635.0,
+   1.0
+  ],
+  [
+   630.0,
+   1.0
+  ],
+  [
+   625.0,
+   1.0
+  ],
+  [
+   620.0,
+   1.0
+  ],
+  [
+   615.0,
+   1.0
+  ],
+  [
+   610.0,
+   1.0
+  ],
+  [
+   605.0,
+   0.9534212218439142
+  ],
+  [
+   602.8906,
+   1.0
+  ]
+ ],
+ "scheil_dolya_tverdogo_v_konce": 0.0,
+ "scheil_oshibka": "",
+ "vremya": {
+  "razbor_bazy_s": 0.1264824999962002,
+  "start_s": 9.309717200005252,
+  "scheil_s": 41.02641220000078,
+  "ravnovesij_vsego": 22,
+  "vsego_s": 470.72768799999903
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 7.585807800292969,
+   "pik_MiB": 2161.5078125,
+   "min_svobodno_GiB": 5.601009368896484,
+   "snyat": false,
+   "kod": 0,
+   "sekund": 471.32617830000527,
+   "pdens": 50,
+   "porog_vhoda_GiB": 3.0
+  }
+ ],
+ "pdens_fakt": 50
+}

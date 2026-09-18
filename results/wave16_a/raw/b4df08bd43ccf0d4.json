@@ -1,0 +1,201 @@
+{
+ "job": {
+  "marka": "АД00",
+  "baza": "mc_al_2037",
+  "metod": "ThermoGar",
+  "nabor": "polnyj",
+  "c15": false,
+  "porogi": [
+   1e-06,
+   0.0001
+  ],
+  "pdens": 50,
+  "tier": 1,
+  "polnyj_tyazhelyj": false,
+  "id": "b4df08bd43ccf0d4"
+ },
+ "status": "ok",
+ "stroki": [
+  {
+   "porog": 1e-06,
+   "T_liq_K": 932.4859375000001,
+   "likvidus_s": 49.91627230000449,
+   "likvidus_ravnovesij": 8,
+   "T_sol_bisekciya_K": 921.2273925781251,
+   "fazy_pod_bisekciej": [
+    "AL13FE4",
+    "GP_MAT"
+   ],
+   "bisekciya_vilka_C": [
+    648.0468750000001,
+    650.0000000000001
+   ],
+   "bisekciya_s": 50.91298629999801,
+   "bisekciya_ravnovesij": 7,
+   "kriterij_solidusa": "scheil: LIQUID нет в eq.Phase (порог решателя pycalphad)",
+   "T_sol_K": 921.1968750000001,
+   "fazy_pod_solidusom": [
+    "AL13FE4",
+    "GP_MAT"
+   ]
+  },
+  {
+   "porog": 0.0001,
+   "T_liq_K": 932.4859375000001,
+   "likvidus_s": 5.539999983739108e-05,
+   "likvidus_ravnovesij": 0,
+   "T_sol_bisekciya_K": 921.2273925781251,
+   "fazy_pod_bisekciej": [
+    "AL13FE4",
+    "GP_MAT"
+   ],
+   "bisekciya_vilka_C": [
+    648.0468750000001,
+    650.0000000000001
+   ],
+   "bisekciya_s": 6.3549792999983765,
+   "bisekciya_ravnovesij": 0,
+   "kriterij_solidusa": "бисекция: доля жидкости ≤ 0.0001",
+   "T_sol_K": 921.2273925781251,
+   "fazy_pod_solidusom": [
+    "AL13FE4",
+    "GP_MAT"
+   ]
+  }
+ ],
+ "components": [
+  "AL",
+  "FE",
+  "SI",
+  "VA"
+ ],
+ "fazy_v_nabore": [
+  "AL11CR2",
+  "AL11MN4",
+  "AL12MN",
+  "AL13CR2",
+  "AL13FE4",
+  "AL2CU3_D",
+  "AL2FE",
+  "AL3MG",
+  "AL3NI",
+  "AL3NI2",
+  "AL3TI_H",
+  "AL3TI_L",
+  "AL3ZR",
+  "AL4CR",
+  "AL4MN",
+  "AL5FE2",
+  "AL5FE4",
+  "AL6MN",
+  "ALCR",
+  "ALCR2",
+  "ALCRCU_TAU",
+  "ALCRFEMNSI_A",
+  "ALCUZN_T",
+  "ALFEMNSI_B",
+  "ALFENI_T1",
+  "ALFENI_T2",
+  "ALFESI_T1",
+  "ALFESI_T10",
+  "ALFESI_T11",
+  "ALFESI_T2",
+  "ALFESI_T3",
+  "ALFESI_T4",
+  "ALFESI_T5",
+  "ALFESI_T6",
+  "ALFESI_T7",
+  "ALFESI_T8",
+  "ALM_D019",
+  "ALTI",
+  "BCC_A2",
+  "CBCC_A12",
+  "CL_FCC",
+  "CL_MGX",
+  "CL_SPL",
+  "CR3SI",
+  "CRSI2",
+  "CUB_A13",
+  "FCCAL",
+  "FCCSI",
+  "FE2SI",
+  "FE5SI3",
+  "FESI",
+  "FESI2_H",
+  "FESI2_L",
+  "GP_MAT",
+  "HCP_A3",
+  "HCP_ZN",
+  "LAVES_C15",
+  "LAVES_C36",
+  "LC14_ZN2MG",
+  "LIQUID",
+  "SI2ZR",
+  "SI_DIAMOND_A4",
+  "THETA_AL2CU",
+  "TH_DP_GPB"
+ ],
+ "c15_v_nabore": false,
+ "snyato_detektorom_pary": [],
+ "snyato_rezhimom_stali": [],
+ "T_start_K": 1123.15,
+ "zyorno": 0,
+ "scheil_converged": true,
+ "scheil_tochek": 42,
+ "scheil_hvost": [
+  [
+   680.0,
+   1.0
+  ],
+  [
+   675.0,
+   1.0
+  ],
+  [
+   670.0,
+   1.0
+  ],
+  [
+   665.0,
+   1.0
+  ],
+  [
+   660.0,
+   1.0
+  ],
+  [
+   655.0,
+   0.13285294772601686
+  ],
+  [
+   650.0,
+   0.045796082748132405
+  ],
+  [
+   648.0469,
+   1.7852386235972517e-13
+  ]
+ ],
+ "scheil_dolya_tverdogo_v_konce": 0.9999999999998215,
+ "scheil_oshibka": "",
+ "vremya": {
+  "razbor_bazy_s": 0.1298567999911029,
+  "start_s": 5.197505100004491,
+  "scheil_s": 12.322081899998011,
+  "ravnovesij_vsego": 15,
+  "vsego_s": 128.1525449000037
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 8.767440795898438,
+   "pik_MiB": 1475.92578125,
+   "min_svobodno_GiB": 7.3206634521484375,
+   "snyat": false,
+   "kod": 0,
+   "sekund": 128.70824690000154,
+   "pdens": 50,
+   "porog_vhoda_GiB": 3.0
+  }
+ ],
+ "pdens_fakt": 50
+}
