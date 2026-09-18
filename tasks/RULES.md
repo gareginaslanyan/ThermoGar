@@ -120,6 +120,10 @@
 * Окружение тестов ставится по `tools/requirements_tests.txt` поверх
   `requirements_thermogar.txt` (заведено 17-В, причина — 17-Б п. 6).
 
+* Регрессия и смоук — только с папкой данных вне MSIX-контейнера Claude Desktop
+  (`THERMOGAR_STATE_ROOT` или терминал из обычного PowerShell): `secure_io` отказывает
+  на виртуализованном `%LOCALAPPDATA%` — 17-Г.
+
 ## Чего не делаем
 
 * Не трогаем установленную программу и `%LOCALAPPDATA%\ThermoGar`.
