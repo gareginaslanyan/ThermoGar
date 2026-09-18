@@ -1,0 +1,50 @@
+Traceback (most recent call last):
+  File "C:\Users\gareg\Desktop\ThermoGar-w15d\results\wave15_d\scripts\trace_750_95.py", line 23, in traced
+    return original(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\GenericModel.py", line 322, in solve
+    solver.solve(self.initialTime, X0, self.finalTime, verbose, vIt)
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\solver\Solver.py", line 196, in solve
+    X0, stop = self.postProcess(currTime, X0)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\precipitation\KWNBase.py", line 366, in postProcess
+    self._calculateDependentTerms(t, x)
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\precipitation\KWNBase.py", line 333, in _calculateDependentTerms
+    self._currY = self._calcNucleationRate(t, x, self._currY)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\precipitation\KWNBase.py", line 435, in _calcNucleationRate
+    beta = nucfuncs.betaMulti(self.therm, xComp, T, Rcrit, self.matrix, precParams, self.removeCache, searchDir=self._precBetaTemp[p])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\precipitation\NucleationRate.py", line 120, in betaMulti
+    beta[indices] = np.array([therm.impingementFactor(xi, Ti, precPhase=precipitate.phase, removeCache=removeCache, searchDir=searchDir) for xi, Ti in zip(x[indices], T[indices])])
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\precipitation\NucleationRate.py", line 120, in <listcomp>
+    beta[indices] = np.array([therm.impingementFactor(xi, Ti, precPhase=precipitate.phase, removeCache=removeCache, searchDir=searchDir) for xi, Ti in zip(x[indices], T[indices])])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\thermo\MultiTherm.py", line 448, in impingementFactor
+    curv_results = self.curvatureFactor(x, T, precPhase, removeCache, searchDir)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\thermo\MultiTherm.py", line 326, in curvatureFactor
+    eq_results = self._getCompositionSetsEq(x, T, precPhase, self._compset_cache_curvature)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\thermo\Thermodynamics.py", line 1006, in _getCompositionSetsEq
+    chemical_potentials, cs_matrix, cs_precip, miscibility_gap = _update_composition_sets(cached_composition_sets[precPhase])
+                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\thermo\Thermodynamics.py", line 994, in _update_composition_sets
+    result, composition_sets = local_equilibrium(self.db, self.elements, phases, cond,
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\thermo\LocalEquilibrium.py", line 86, in local_equilibrium
+    result = solver.solve(composition_sets, cur_conds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\pycalphad\core\solver.py", line 168, in solve
+    converged = spec.run_loop(state, 1000)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pycalphad/core/minimizer.pyx", line 394, in pycalphad.core.minimizer.SystemSpecification.run_loop
+  File "pycalphad/core/minimizer.pyx", line 404, in pycalphad.core.minimizer.SystemSpecification.run_loop
+  File "pycalphad/core/minimizer.pyx", line 838, in pycalphad.core.minimizer.solve_state
+  File "pycalphad/core/minimizer.pyx", line 689, in pycalphad.core.minimizer.construct_equilibrium_system
+  File "pycalphad/core/minimizer.pyx", line 268, in pycalphad.core.minimizer.fill_equilibrium_system
+  File "pycalphad/core/minimizer.pyx", line 145, in pycalphad.core.minimizer.write_row_fixed_mole_fraction
+ZeroDivisionError: float division
+
+состав матрицы шага, на котором упал pycalphad (не записан в data), мольные доли: AL 2.82384, CR 0, MO 0, NB 8.69296, NI 34.6218, TI 3.08713; основа -48.2257; t = 19.2105 с; доля выделения 0.996184

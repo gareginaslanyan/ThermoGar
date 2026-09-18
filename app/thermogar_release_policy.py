@@ -20,10 +20,10 @@ from typing import Final
 APP_NAME: Final = "ThermoGar"
 APP_LINEAGE: Final = "SWR"
 APP_GATE: Final = "-"
-APP_STAGE: Final = "0.4.1"
-APP_VERSION: Final = "0.4.1"
+APP_STAGE: Final = "0.4.2"
+APP_VERSION: Final = "0.4.2"
 RELEASE_CLASS: Final = (
-    "Исследовательское ПО — экспериментальная валидация не проводилась"
+    "Исследовательское ПО — сверка с измеренным проведена на трёх случаях, доли фаз — оценка, а не измерение"
 )
 SOFTWARE_RELEASE_STATUS: Final = "RESEARCH_SOFTWARE"
 SCIENTIFIC_MATERIAL_STATUS: Final = "EXPERIMENTAL_QUALIFICATION_NOT_PERFORMED"
@@ -224,6 +224,46 @@ def phase_mode_note(
     if phase_mode == PHASE_MODE_FAST:
         return f"Набор фаз: быстрый ({int(fast_count)} из {int(all_count)})"
     return f"Набор фаз: все фазы базы ({int(all_count)})"
+
+
+# Сколько имён выпавших фаз называет само предупреждение быстрого набора.
+# Полный перечень уходит в раскрывающийся блок под ним (BL-8).
+DROPPED_PHASES_SHOWN: Final = 5
+
+
+def dropped_phases_warning(dropped: Sequence[str]) -> str:
+    """Предупреждение о совместимых фазах, которых нет в быстром наборе.
+
+    Называет число фаз и не больше ``DROPPED_PHASES_SHOWN`` имён; если фаз
+    больше, дописывает, сколько осталось, и отсылает к раскрывающемуся блоку.
+    """
+
+    names = list(dropped)
+    listed = ", ".join(names[:DROPPED_PHASES_SHOWN])
+    hidden = len(names) - DROPPED_PHASES_SHOWN
+    if hidden > 0:
+        listed += f" и ещё {hidden}"
+    text = (
+        "Быстрый набор не рассматривает часть фаз, совместимых с составом, — "
+        f"всего {len(names)}: {listed}. Если какая-то из них устойчива на "
+        "вашем составе, быстрый режим её не покажет — сверьтесь в режиме "
+        "«все фазы базы»."
+    )
+    if hidden > 0:
+        text += " Полный перечень — в блоке ниже."
+    return text
+
+
+def dropped_phases_expander_label(count: int) -> str:
+    """Заголовок раскрывающегося блока с полным перечнем выпавших фаз."""
+
+    return f"Все фазы вне быстрого набора ({int(count)})"
+
+
+def dropped_phases_full_list(dropped: Sequence[str]) -> str:
+    """Полный перечень выпавших фаз для раскрывающегося блока."""
+
+    return ", ".join(dropped)
 
 
 PHYSICAL_DATABASE_RELATIVE_PATH: Final = (

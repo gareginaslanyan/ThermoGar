@@ -1,0 +1,16 @@
+tools/test_backend_calculations.py::test_binary_diagram[ni]
+tools/test_backend_calculations.py::test_isopleth_diagram[ni]
+tools/test_backend_calculations.py::test_ternary_section[ni]
+tools/test_backend_calculations.py::test_phase_fraction_map[ni]
+tools/test_backend_calculations.py::test_binary_diagram[al]
+tools/test_backend_calculations.py::test_isopleth_diagram[al]
+tools/test_backend_calculations.py::test_ternary_section[al]
+tools/test_backend_calculations.py::test_phase_fraction_map[al]
+tools/test_backend_calculations.py::test_binary_diagram[fe]
+tools/test_backend_calculations.py::test_isopleth_diagram[fe]
+tools/test_backend_calculations.py::test_ternary_section[fe]
+tools/test_backend_calculations.py::test_phase_fraction_map[fe]
+tools/test_backend_calculations.py::test_kwn_module[fe]
+tools/test_backend_calculations.py::test_kwn_direct_kawin[fe]
+
+14/57 tests collected (43 deselected) in 2.17s

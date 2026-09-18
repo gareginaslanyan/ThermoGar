@@ -1,0 +1,36 @@
+{"file": "test_backend_calculations.py", "exit": 0, "last_line": "14/57 tests collected (43 deselected) in 2.17s"}
+{"file": "test_database_repair.py", "exit": 5, "last_line": "no tests collected (44 deselected) in 2.24s"}
+{"file": "test_density.py", "exit": 5, "last_line": "no tests collected (66 deselected) in 2.35s"}
+{"file": "test_density_thermal_expansion.py", "exit": 0, "last_line": "2/12 tests collected (10 deselected) in 0.12s"}
+{"file": "test_dropped_phases_text.py", "exit": 5, "last_line": "no tests collected (2 deselected) in 0.03s"}
+{"file": "test_liquidus_bisection.py", "exit": 0, "last_line": "2 tests collected in 0.11s"}
+{"file": "test_parallel_engine.py", "exit": 5, "last_line": "no tests collected (15 deselected) in 0.09s"}
+{"file": "test_parallel_integration.py", "exit": 5, "last_line": "no tests collected (6 deselected) in 2.58s"}
+{"file": "test_phase_presets.py", "exit": 0, "last_line": "6/21 tests collected (15 deselected) in 2.17s"}
+{"file": "test_phase_presets_control.py", "exit": 0, "last_line": "1 test collected in 2.19s"}
+{"file": "test_physical_overrides_toggle.py", "exit": 5, "last_line": "no tests collected (11 deselected) in 0.52s"}
+{"file": "test_precipitation_bl35.py", "exit": 5, "last_line": "no tests collected (11 deselected) in 2.57s"}
+{"file": "test_precipitation_grid.py", "exit": 5, "last_line": "no tests collected (32 deselected) in 2.65s"}
+{"file": "test_ui_f.py", "exit": 0, "last_line": "21/59 tests collected (38 deselected) in 0.85s"}
+{"file": "test_ui_g.py", "exit": 0, "last_line": "3/32 tests collected (29 deselected) in 2.94s"}
+{"file": "test_ui_h.py", "exit": 0, "last_line": "2/26 tests collected (24 deselected) in 0.91s"}
+{"file": "test_wave15_z.py", "exit": 5, "last_line": "no tests collected (15 deselected) in 2.62s"}
+{"file": "thermogar_active_state_io_test.py", "exit": 5, "last_line": "no tests collected (5 deselected) in 2.98s"}
+{"file": "thermogar_converter_patch_test.py", "exit": 5, "last_line": "no tests collected in 0.03s"}
+{"file": "thermogar_db_cache_test.py", "exit": 5, "last_line": "no tests collected (10 deselected) in 0.06s"}
+{"file": "thermogar_diffusion_test.py", "exit": 5, "last_line": "no tests collected in 0.55s"}
+{"file": "thermogar_fe_database_test.py", "exit": 5, "last_line": "no tests collected in 2.12s"}
+{"file": "thermogar_fe_internal_smoke_test.py", "exit": 5, "last_line": "no tests collected (15 deselected) in 0.14s"}
+{"file": "thermogar_paths_test.py", "exit": 5, "last_line": "no tests collected (6 deselected) in 0.06s"}
+{"file": "thermogar_physical_test.py", "exit": 5, "last_line": "no tests collected in 0.03s"}
+{"file": "thermogar_precipitation_test.py", "exit": 5, "last_line": "no tests collected in 0.03s"}
+{"file": "thermogar_properties_test.py", "exit": 5, "last_line": "no tests collected in 0.10s"}
+{"file": "thermogar_restricted_fe_core_test.py", "exit": 5, "last_line": "no tests collected (15 deselected) in 2.67s"}
+{"file": "thermogar_secure_io_test.py", "exit": 5, "last_line": "no tests collected (19 deselected) in 0.07s"}
+{"file": "thermogar_self_test.py", "exit": 5, "last_line": "no tests collected in 2.25s"}
+{"file": "thermogar_state_migration_test.py", "exit": 5, "last_line": "no tests collected (6 deselected) in 0.07s"}
+{"file": "thermogar_verified_equilibrium_test.py", "exit": 5, "last_line": "no tests collected (16 deselected) in 0.89s"}
+{"file": "thermogar_verified_loaders_test.py", "exit": 5, "last_line": "no tests collected (18 deselected) in 0.08s"}
+{"file": "thermogar_verified_physical_test.py", "exit": 5, "last_line": "no tests collected (24 deselected) in 0.57s"}
+{"file": "thermogar_verified_properties_test.py", "exit": 5, "last_line": "no tests collected (39 deselected) in 3.07s"}
+{"file": "thermogar_verified_state_test.py", "exit": 5, "last_line": "no tests collected (24 deselected) in 0.11s"}

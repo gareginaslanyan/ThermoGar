@@ -26,6 +26,7 @@ from thermogar_secure_io import (
 )
 from thermogar_verified_artifact import duplicate_reject_json
 import thermogar_verified_loaders as verified_loaders
+import thermogar_verified_physical as verified_physical
 
 
 PROPERTY_FEATURE_IDS = (
@@ -88,6 +89,10 @@ ADAPTER_ID = "thermogar.verified-properties"
 ADAPTER_REVISION = "1"
 PARSER_REVISION = "pycalphad-0.11.2"
 PDB_PARSER_REVISION = "thermogar-physical-pdb-1"
+# Разбор PDB без поправок проекта (галочка BL-14). Значение совпадает с
+# thermogar_verified_physical: кэш разбора лизы ключуется ревизией, и разбор
+# без поправок не должен выдаться за разбор с ними.
+PDB_PARSER_REVISION_OVERRIDES_OFF = "thermogar-physical-pdb-1-overrides-off"
 MAX_LIBRARY_BYTES = 8_388_608
 MAX_LIBRARY_ENTRIES = 512
 C15_PHASE = "C15_LAVES"
@@ -132,6 +137,7 @@ class _PreparedWitness:
     tdb_sha256: str
     physical_pdb_sha256: str
     phase_rows: tuple[tuple[str, float], ...]
+    mole_rows: tuple[tuple[str, float], ...]
     witness_digest: str
 
 
@@ -348,11 +354,127 @@ def _default_pdb_parser(data: bytes) -> physical.PhysicalDensityDatabase:
     return physical.PhysicalDensityDatabase.from_verified_bytes(data)
 
 
+def _overrides_off_pdb_parser(data: bytes) -> physical.PhysicalDensityDatabase:
+    return physical.PhysicalDensityDatabase.from_verified_bytes(
+        data,
+        overrides=physical.OVERRIDES_OFF_BY_USER,
+    )
+
+
+# Откуда взят молярный объём фазы для весов VRH (BL-38).
+VOLUME_SOURCE_DIRECT = "direct"
+VOLUME_SOURCE_INHERITED = "inherited"
+VOLUME_SOURCE_MIXTURE = "mixture"
+VOLUME_SOURCE_MIXTURE_FALLBACK = "mixture_fallback"
+VOLUME_SOURCES = (
+    VOLUME_SOURCE_DIRECT,
+    VOLUME_SOURCE_INHERITED,
+    VOLUME_SOURCE_MIXTURE,
+    VOLUME_SOURCE_MIXTURE_FALLBACK,
+)
+_VOLUME_SOURCE_BY_STATUS = {
+    "прямая модель": VOLUME_SOURCE_DIRECT,
+    "оценка по правилу смеси": VOLUME_SOURCE_MIXTURE,
+}
+VOLUME_WEIGHT_NOTES = {
+    VOLUME_SOURCE_INHERITED: (
+        "Объёмные доли фаз {names} посчитаны по плотности связанной фазы "
+        "физической базы; это оценка."
+    ),
+    VOLUME_SOURCE_MIXTURE: (
+        "Объёмные доли фаз {names} посчитаны по плотности, оценённой по "
+        "правилу смеси из плотностей элементов (погрешность до 10 %): своей "
+        "модели плотности у них в физической базе нет."
+    ),
+    VOLUME_SOURCE_MIXTURE_FALLBACK: (
+        "Покрытие физической базой неполное: плотность фаз {names} по их "
+        "модели не получена, и их объёмные доли посчитаны по оценке смеси "
+        "из плотностей элементов (погрешность до 10 %)."
+    ),
+}
+
+
+def _mixture_molar_volumes_cm3(
+    database: object,
+    physical_database: physical.PhysicalDensityDatabase,
+    result: object,
+    components: Sequence[str],
+    temperature_k: float,
+    names: Sequence[str],
+    phase_names: Sequence[str],
+    phase_amounts: Sequence[float],
+    notes: list[str],
+) -> dict[str, float]:
+    """Молярный объём фаз по правилу смеси из плотностей элементов.
+
+    Запасной путь для фаз, у которых модель в физической базе есть, но
+    плотность по ней не получилась. Оценка та же, что у расчёта плотности
+    для фаз без модели: ``estimate_density_by_mixture`` по составу вершины.
+    В ``notes`` дописываются тексты о моделях плотности элементов (BL-39).
+    """
+
+    import numpy as np
+
+    real = [str(name).upper() for name in components if str(name).upper() != "VA"]
+    phase_x = {
+        name: np.asarray(result.X.sel(component=name).values, dtype=float).ravel()
+        for name in real
+    }
+    volumes: dict[str, float] = {}
+    for phase in names:
+        amount_total = 0.0
+        volume_total = 0.0
+        for index, (raw_name, raw_amount) in enumerate(zip(phase_names, phase_amounts)):
+            amount = float(raw_amount)
+            if str(raw_name) != phase or not math.isfinite(amount) or amount <= 1e-12:
+                continue
+            composition = physical._normalized_phase_composition(phase_x, index)
+            molar_mass = physical._average_molar_mass_kg_mol(database, composition)
+            density, _coverage, _notes = physical_database.estimate_density_by_mixture(
+                composition,
+                temperature_k,
+                physical._refstate_masses(database, composition),
+            )
+            missing = physical_database.mixture_missing_elements(composition, temperature_k)
+            if missing:
+                # BL-39: плотности элемента в базе нет — объём фазы не выдумывается.
+                _fail(
+                    verified_loaders.ReasonCode.DATA_UNAVAILABLE,
+                    physical.mixture_unavailable_message(phase, missing),
+                )
+            if density is None or not math.isfinite(density) or density <= 0.0:
+                _fail(
+                    verified_loaders.ReasonCode.DATA_UNAVAILABLE,
+                    f"Объём фазы {phase} не получен ни по физической базе, ни по "
+                    "правилу смеси: объёмные доли фаз для VRH посчитать нельзя.",
+                )
+            amount_total += amount
+            volume_total += amount * molar_mass / density
+            for note in physical_database.mixture_element_notes(composition, temperature_k):
+                if note not in notes:
+                    notes.append(note)
+        if amount_total <= 0.0 or volume_total <= 0.0:
+            _fail(
+                verified_loaders.ReasonCode.DATA_UNAVAILABLE,
+                f"Объём фазы {phase} не получен: объёмные доли фаз для VRH "
+                "посчитать нельзя.",
+            )
+        volumes[phase] = volume_total / amount_total * 1e6
+    return volumes
+
+
 def _default_backend(
     database: object,
-    _physical_database: physical.PhysicalDensityDatabase,
+    physical_database: physical.PhysicalDensityDatabase,
     call: PropertyPrepareCall,
-) -> Mapping[str, float]:
+) -> Mapping[str, Any]:
+    """Мольные доли фаз и их молярные объёмы в одной точке равновесия.
+
+    Молярный объём (см³ на моль атомов) даёт тот же механизм, что считает
+    плотность, — ``calculate_physical_properties`` на этом же равновесии и
+    этой же разобранной физической базе (с поправками проекта или без них).
+    """
+
     import numpy as np
     from pycalphad import equilibrium, variables as v
 
@@ -384,7 +506,53 @@ def _default_backend(
             _fail(verified_loaders.ReasonCode.RESULT_INVALID, "Backend returned an invalid phase fraction.")
         if value > 1e-12:
             aggregated[name] = aggregated.get(name, 0.0) + value
-    return aggregated
+    density = physical.calculate_physical_properties(
+        database,
+        result,
+        list(call.components),
+        call.temperature_k,
+        physical_database,
+    )
+    volumes: dict[str, float] = {}
+    sources: dict[str, str] = {}
+    for record in density.phase_table.to_dict(orient="records"):
+        name = str(record["Фаза"])
+        molar_volume = record.get("Молярный объём, см³/моль атомов")
+        if name not in aggregated or molar_volume is None:
+            continue
+        molar_volume = float(molar_volume)
+        if not math.isfinite(molar_volume) or molar_volume <= 0.0:
+            continue
+        volumes[name] = molar_volume
+        sources[name] = _VOLUME_SOURCE_BY_STATUS.get(
+            str(record["Статус данных"]),
+            VOLUME_SOURCE_INHERITED,
+        )
+    notes = [str(text) for text in density.element_density_notes]
+    uncovered = [name for name in aggregated if name not in volumes]
+    if uncovered:
+        fallback = _mixture_molar_volumes_cm3(
+            database,
+            physical_database,
+            result,
+            call.components,
+            call.temperature_k,
+            uncovered,
+            names,
+            fractions,
+            notes,
+        )
+        for name in uncovered:
+            volumes[name] = fallback[name]
+            sources[name] = VOLUME_SOURCE_MIXTURE_FALLBACK
+    backend = {
+        "mole_fractions": aggregated,
+        "molar_volumes_cm3": volumes,
+        "volume_sources": sources,
+    }
+    if notes:
+        backend["volume_notes"] = notes
+    return backend
 
 
 def _phase_identity(
@@ -418,6 +586,88 @@ def _phase_identity(
     if not matches:
         _fail(verified_loaders.ReasonCode.PHASE_POLICY_MISMATCH, "Live phase identity differs from request evidence.")
     return request.effective_phases
+
+
+PREPARE_BACKEND_FIELDS = ("molar_volumes_cm3", "mole_fractions", "volume_sources")
+# Необязательное поле: тексты о моделях плотности элементов в правиле смеси
+# (BL-39). Бэкенд кладёт его, только когда тексты есть.
+PREPARE_BACKEND_NOTES_FIELD = "volume_notes"
+
+
+@dataclass(frozen=True, slots=True)
+class _PreparedPhase:
+    phase: str
+    mole_fraction: float
+    molar_volume_cm3: float
+    volume_fraction: float
+    volume_source: str
+
+
+def _validate_prepare_backend(
+    value: object,
+    phases: tuple[str, ...],
+) -> tuple[_PreparedPhase, ...]:
+    """Проверить ответ бэкенда и перевести мольные доли фаз в объёмные.
+
+    ``φᵢ = xᵢ·Vm,ᵢ / Σⱼ xⱼ·Vm,ⱼ`` — правило смеси Voigt–Reuss–Hill требует
+    объёмных долей (BL-38).
+    """
+
+    if type(value) is not dict or tuple(
+        sorted(key for key in value if key != PREPARE_BACKEND_NOTES_FIELD)
+    ) != PREPARE_BACKEND_FIELDS:
+        _fail(verified_loaders.ReasonCode.RESULT_INVALID, "Prepare backend returned an unexpected shape.")
+    mole_rows = _validate_phase_projection(value["mole_fractions"], phases)
+    volumes = value["molar_volumes_cm3"]
+    sources = value["volume_sources"]
+    names = sorted(name for name, _fraction in mole_rows)
+    if type(volumes) is not dict or sorted(volumes) != names:
+        _fail(verified_loaders.ReasonCode.RESULT_INVALID, "Prepare backend molar volumes do not match the phases.")
+    if type(sources) is not dict or sorted(sources) != names:
+        _fail(verified_loaders.ReasonCode.RESULT_INVALID, "Prepare backend volume sources do not match the phases.")
+    products: list[float] = []
+    for name, fraction in mole_rows:
+        molar_volume = volumes[name]
+        if type(molar_volume) is not float or not math.isfinite(molar_volume) or molar_volume <= 0.0:
+            _fail(verified_loaders.ReasonCode.RESULT_INVALID, "Prepare backend molar volume type/domain is invalid.")
+        if sources[name] not in VOLUME_SOURCES:
+            _fail(verified_loaders.ReasonCode.RESULT_INVALID, "Prepare backend volume source is invalid.")
+        products.append(fraction * molar_volume)
+    total = math.fsum(products)
+    if not math.isfinite(total) or total <= 0.0:
+        _fail(verified_loaders.ReasonCode.RESULT_INVALID, "Phase volume total is not positive.")
+    return tuple(
+        _PreparedPhase(
+            phase=name,
+            mole_fraction=fraction,
+            molar_volume_cm3=volumes[name],
+            volume_fraction=product / total,
+            volume_source=sources[name],
+        )
+        for (name, fraction), product in zip(mole_rows, products)
+    )
+
+
+def _validate_prepare_notes(value: Mapping[str, Any]) -> list[str]:
+    """Тексты бэкенда о моделях плотности элементов (BL-39), если они есть."""
+
+    notes = value.get(PREPARE_BACKEND_NOTES_FIELD, [])
+    if type(notes) is not list or any(type(item) is not str or not item for item in notes):
+        _fail(verified_loaders.ReasonCode.RESULT_INVALID, "Prepare backend volume notes are invalid.")
+    return list(notes)
+
+
+def _volume_weight_warnings(prepared: Sequence[_PreparedPhase]) -> list[str]:
+    notes: list[str] = []
+    for source in (
+        VOLUME_SOURCE_MIXTURE_FALLBACK,
+        VOLUME_SOURCE_MIXTURE,
+        VOLUME_SOURCE_INHERITED,
+    ):
+        names = [row.phase for row in prepared if row.volume_source == source]
+        if names:
+            notes.append(VOLUME_WEIGHT_NOTES[source].format(names=", ".join(names)))
+    return notes
 
 
 def _validate_phase_projection(
@@ -640,11 +890,13 @@ def property_library_prefill(
     witness = _prepared_witness(context, prepared_witness_digest)
     library, raw_digest, _raw = _read_library(paths)
     rows: list[dict[str, Any]] = []
+    moles = dict(witness.mole_rows)
     for phase, fraction in witness.phase_rows:
         stored = library["entries"].get(f"{context.database_key}::{phase}")
         if stored is None:
             row = {
                 "phase": phase,
+                "mole_fraction": moles[phase],
                 "volume_fraction": fraction,
                 "young_gpa": None,
                 "poisson": None,
@@ -657,6 +909,7 @@ def property_library_prefill(
             normalized = properties._verified_prefill_entry(stored)
             row = {
                 "phase": phase,
+                "mole_fraction": moles[phase],
                 "volume_fraction": fraction,
                 "young_gpa": normalized["young_gpa"],
                 "poisson": normalized["poisson"],
@@ -884,11 +1137,18 @@ def execute_verified_properties(
     *,
     paths: ThermoGarPaths,
     tdb_parser: Callable[[object], object] = _default_tdb_parser,
-    backend: Callable[[object, physical.PhysicalDensityDatabase, PropertyPrepareCall], Mapping[str, float]] = _default_backend,
+    backend: Callable[[object, physical.PhysicalDensityDatabase, PropertyPrepareCall], Mapping[str, Any]] = _default_backend,
     clock: Callable[[], object] = _system_clock,
     packages: Sequence[Mapping[str, str]] = (),
+    physical_overrides: bool = True,
 ) -> VerifiedPropertiesResult:
-    """Execute one B4B2 feature through the matching live verified lease."""
+    """Execute one B4B2 feature through the matching live verified lease.
+
+    ``physical_overrides=False`` — галочка раздела «Свойства» снята: PDB для
+    объёмных долей фаз разбирается без поправок проекта, и первая строка
+    ``warnings`` подготовки говорит об этом. ``True`` — штатный путь, где
+    решает переменная окружения ``THERMOGAR_PHYSICAL_OVERRIDES``.
+    """
 
     context, feature_request, lease = _context_request_lease(context, feature_request, lease)
     if type(paths) is not ThermoGarPaths:
@@ -897,7 +1157,13 @@ def execute_verified_properties(
     if feature_request.feature_id == "property_elastic_prepare":
         inputs = _prepare_inputs_from_request(feature_request)
         try:
-            physical_database = lease.parse_physical_dataset(_default_pdb_parser, PDB_PARSER_REVISION)
+            if physical_overrides:
+                physical_database = lease.parse_physical_dataset(_default_pdb_parser, PDB_PARSER_REVISION)
+            else:
+                physical_database = lease.parse_physical_dataset(
+                    _overrides_off_pdb_parser,
+                    PDB_PARSER_REVISION_OVERRIDES_OFF,
+                )
         except verified_loaders.VerifiedLoaderError:
             raise
         except Exception as error:
@@ -908,13 +1174,25 @@ def execute_verified_properties(
             raise
         except Exception as error:
             _fail(verified_loaders.ReasonCode.PACKAGE_UNAVAILABLE, f"TDB parse failed: {type(error).__name__}.")
-        phases = _phase_identity(context, feature_request, database)
+        policy_phases = _phase_identity(context, feature_request, database)
         atomic = _atomic_fractions(database, inputs)
+        components = tuple(name for name, _value in atomic) + ("VA",)
+        # Набор фаз политики (все фазы базы) идёт в pycalphad через тот же
+        # структурный детектор, что и плотность (11N-2): иначе на никелевой
+        # базе с углеродом Model пары BCC_B2/BCC_A2 не строится и одна фаза
+        # уносит всю подготовку (BL-40).
+        phases, removed = verified_physical.buildable_phases(database, components, policy_phases)
+        if not phases:
+            _fail(
+                verified_loaders.ReasonCode.INPUT_INVALID,
+                "На выбранном наборе элементов не осталось допустимых фаз: "
+                + verified_physical.excluded_phases_note(removed),
+            )
         call = PropertyPrepareCall(
             temperature_k=float(inputs["temperatures_k"][0]),
             pressure_pa=float(inputs["pressure_pa"]),
             balance=inputs["balance"],
-            components=tuple(name for name, _value in atomic) + ("VA",),
+            components=components,
             atomic_fractions=atomic,
             phases=phases,
         )
@@ -924,15 +1202,33 @@ def execute_verified_properties(
             raise
         except Exception as error:
             _fail(verified_loaders.ReasonCode.BACKEND_FAILED, type(error).__name__)
-        phase_rows = _validate_phase_projection(raw, phases)
+        prepared = _validate_prepare_backend(raw, phases)
+        phase_rows = tuple((row.phase, row.volume_fraction) for row in prepared)
+        mole_rows = tuple((row.phase, row.mole_fraction) for row in prepared)
+        # Как у плотности: тексты о поправках проекта к физической базе идут
+        # первыми (при снятой галочке — отметка «выключены пользователем»),
+        # за ними — снятые детектором фазы, тем же текстом, что у плотности.
+        warnings = [str(text) for text in (getattr(physical_database, "override_notes", ()) or ())]
+        excluded_note = verified_physical.excluded_phases_note(removed)
+        if excluded_note:
+            warnings.append(excluded_note)
+        warnings.extend(_volume_weight_warnings(prepared))
+        warnings.extend(_validate_prepare_notes(raw))
         projection = {
             "operation": "property_elastic_prepare",
             "phase_rows": [
-                {"phase": phase, "volume_fraction": fraction}
-                for phase, fraction in phase_rows
+                {
+                    "phase": row.phase,
+                    "mole_fraction": row.mole_fraction,
+                    "molar_volume_cm3": row.molar_volume_cm3,
+                    "volume_fraction": row.volume_fraction,
+                    "volume_source": row.volume_source,
+                }
+                for row in prepared
             ],
             "physical_pdb_sha256": context.physical_pdb.sha256,
             "tdb_sha256": context.tdb.sha256,
+            "warnings": warnings,
         }
         safe, receipt, envelope = _make_result(
             context,
@@ -953,12 +1249,14 @@ def execute_verified_properties(
             "tdb_sha256": context.tdb.sha256,
             "physical_pdb_sha256": context.physical_pdb.sha256,
             "phase_rows": [[phase, fraction] for phase, fraction in phase_rows],
+            "mole_rows": [[phase, fraction] for phase, fraction in mole_rows],
         }
         witness_digest = verified_loaders.canonical_digest(witness_payload)
         _PREPARED_WITNESSES[witness_digest] = _PreparedWitness(
             phase_rows=phase_rows,
+            mole_rows=mole_rows,
             witness_digest=witness_digest,
-            **{key: witness_payload[key] for key in witness_payload if key != "phase_rows"},
+            **{key: witness_payload[key] for key in witness_payload if key not in {"phase_rows", "mole_rows"}},
         )
         return VerifiedPropertiesResult(safe, receipt, envelope, prepared_witness_digest=witness_digest)
 

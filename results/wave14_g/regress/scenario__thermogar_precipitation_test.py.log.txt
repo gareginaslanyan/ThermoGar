@@ -1,0 +1,29 @@
+C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\precipitation\NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+2026-09-15 14:14:20.197 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-15 14:14:20.197 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-15 14:14:20.324 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-15 14:14:20.324 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-15 14:14:20.483 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-15 14:14:20.483 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-15 14:14:20.627 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-15 14:14:20.627 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-15 14:14:20.675 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-15 14:14:20.675 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+THERMOGAR SWR — KWN SOFTWARE REGRESSION
+Project: C:\Users\gareg\Desktop\ThermoGar-w14a
+Python: 3.11.9 AMD64
+pycalphad: 0.11.2
+kawin: 0.5.0
+IMPORT RESULT: PASSED
+API: MatrixParameters PrecipitateParameters PrecipitateModel TemperatureParameters MulticomponentThermodynamics
+DATABASE RESULT: PASSED — фаз 99
+PASS: kinetics rows
+PASS: quality rows
+PASS: all quality passed
+PASS: PSD rows
+PASS: NPZ nonempty
+PASS: provenance nonempty
+Final time, s: 1.0
+Final volume fraction, %: 6.599577401641879
+RESULT: PASSED

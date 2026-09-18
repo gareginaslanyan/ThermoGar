@@ -20,7 +20,7 @@ Inherited phases are clearly marked as estimates.
 from __future__ import annotations
 
 from collections import defaultdict
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from functools import lru_cache
 from itertools import product
 from pathlib import Path
@@ -185,6 +185,9 @@ class PhysicalCalculationResult:
     warnings: list[str]
     physical_database_sha256: str
     physical_database_version: str
+    # BL-39: тексты о моделях плотности элементов, взятых в правиле смеси
+    # (они же стоят в ``warnings``); нужны подготовке весов VRH.
+    element_density_notes: list[str] = field(default_factory=list)
 
 
 class _SafeExpression:
@@ -381,6 +384,34 @@ class _AutoOverrides:
 AUTO_OVERRIDES = _AutoOverrides()
 
 
+class _OverridesOffByUser:
+    """Метка «пользователь выключил поправки галочкой в интерфейсе» (BL-14).
+
+    Считается ровно как ``overrides=None``, но запоминает, какие правки были
+    бы применены штатным путём, чтобы результат назвал их выключенными.
+    Переменная окружения сильнее: при ``THERMOGAR_PHYSICAL_OVERRIDES=off``
+    выключать нечего, и отметки нет.
+    """
+
+    __slots__ = ()
+
+    def __repr__(self) -> str:  # pragma: no cover - диагностика
+        return "OVERRIDES_OFF_BY_USER"
+
+
+OVERRIDES_OFF_BY_USER = _OverridesOffByUser()
+
+# Текст для пользователя, когда поправки выключены галочкой раздела «Свойства».
+# Стоит там же, где текст применённой поправки: первым в warnings результата.
+OVERRIDES_OFF_BY_USER_NOTE = (
+    "Поправки проекта ThermoGar к физической базе выключены пользователем: "
+    "плотность посчитана строго по данным physical_data_v103.pdb. "
+    "Не применены: {names}. У сплавов с хромом плотность при нагреве выходит "
+    "ниже, чем с поправкой, — до 1 % при 700 °C и до 2 % при 1300 °C. "
+    "Подробности: docs/DATABASES.md, раздел «Поправки проекта к физической базе»."
+)
+
+
 class PhysicalDensityDatabase:
     """Parsed MatCalc physical_data.pdb density model."""
 
@@ -433,6 +464,11 @@ class PhysicalDensityDatabase:
     def _resolve_overrides(self, overrides: Any) -> PhysicalOverrideSet | None:
         if overrides is None:
             return None
+        if isinstance(overrides, _OverridesOffByUser):
+            automatic = self._resolve_overrides(AUTO_OVERRIDES)
+            if automatic is not None and automatic.enabled:
+                self.suppressed_overrides = automatic.filled
+            return None
         if isinstance(overrides, PhysicalOverrideSet):
             return overrides
         if isinstance(overrides, (str, Path)):
@@ -454,6 +490,7 @@ class PhysicalDensityDatabase:
         Выключенный файл не применяется целиком.
         """
 
+        self.suppressed_overrides: tuple[DensityOverride, ...] = ()
         self.overrides: PhysicalOverrideSet | None = self._resolve_overrides(overrides)
         self.applied_overrides: tuple[DensityOverride, ...] = ()
         self.pending_overrides: tuple[DensityOverride, ...] = ()
@@ -498,8 +535,20 @@ class PhysicalDensityDatabase:
 
     @property
     def override_notes(self) -> list[str]:
-        """Тексты для пользователя обо всех применённых правках."""
+        """Тексты для пользователя обо всех применённых правках.
 
+        Если правки выключены пользователем, вместо них — одна строка о том,
+        что именно не применено.
+        """
+
+        if self.suppressed_overrides and not self.applied_overrides:
+            return [
+                OVERRIDES_OFF_BY_USER_NOTE.format(
+                    names=", ".join(
+                        entry.name for entry in self.suppressed_overrides
+                    )
+                )
+            ]
         return [
             entry.user_message
             or (
@@ -583,27 +632,87 @@ class PhysicalDensityDatabase:
         )
 
     # Фазы, из которых берётся плотность чистого элемента для оценки по правилу
-    # смеси. Порядок — по убыванию распространённости структуры; берётся первая,
-    # где у элемента есть собственный конечный член.
-    ELEMENT_DENSITY_PHASES = ("FCC_A1", "BCC_A2", "HCP_A3", "LIQUID")
+    # смеси. Сначала твёрдые матрицы, затем прочие фазы с однокомпонентной
+    # записью элемента (например DIAMOND_A4), жидкость — последней; берётся
+    # первая, где у элемента есть собственный конечный член.
+    ELEMENT_DENSITY_PHASES = ("FCC_A1", "BCC_A2", "HCP_A3")
+    ELEMENT_DENSITY_LAST_PHASE = "LIQUID"
 
-    def element_density(
+    # Структура в имени D0-функции элемента и суффикс его DT-функции:
+    # D0HCP_SC + DTSCHCP.
+    _D0_STRUCTURE_TO_DT = {"FCC": "FCC", "BCC": "BCC", "HCP": "HCP", "DIAM": "DIAM"}
+
+    def _own_element_parameters(
+        self,
+        phase: str,
+        element: str,
+    ) -> list[DensityParameter]:
+        """Явные DP-записи чистого элемента в фазе, выраженные через его D0.
+
+        Годится только запись, где элемент стоит в первой подрешётке, остальные
+        подрешётки — вакансия или тот же элемент, и выражение ссылается на
+        D0-функцию самого элемента. Запись-умолчание ``DP(фаза,*)`` сюда не
+        попадает: в этой базе она задаёт плотность железа, и подставлять её
+        вместо плотности элемента нельзя (BL-39). По той же причине
+        отбрасываются явные записи через чужую D0, например
+        ``DP(DIAMOND_A4,B) = D0BCC_FE+…`` и ``DP(LIQUID,N) = D0DIAM_C+…``.
+        """
+
+        own_d0 = re.compile(rf"\bD0[A-Z]+_{re.escape(element)}\b")
+        parameters = self.parameters_by_phase.get(phase, [])
+        n_sublattices = _phase_sublattice_count(phase, parameters)
+        selected: list[DensityParameter] = []
+        for parameter in parameters:
+            array = parameter.constituent_array
+            if parameter.is_interaction or len(array) != n_sublattices:
+                continue
+            if array[0] != (element,):
+                continue
+            if any(group not in {("VA",), (element,)} for group in array[1:]):
+                continue
+            if not own_d0.search(parameter.expression.upper()):
+                continue
+            selected.append(parameter)
+        return selected
+
+    def element_density_model(
         self,
         element: str,
         temperature_k: float,
-    ) -> float | None:
-        """Плотность чистого элемента по любой доступной модели PDB."""
+    ) -> tuple[float, str, str] | None:
+        """Плотность чистого элемента и откуда она взята.
+
+        Возвращает ``(плотность, вид, модель)`` или ``None``, если в физической
+        базе плотности элемента нет ни в каком виде. Вид:
+
+        * ``matrix`` — собственная запись элемента в FCC_A1;
+        * ``phase`` — собственная запись элемента в другой фазе базы;
+        * ``function`` — только D0-функция элемента (плюс его DT-функция, если
+          она есть в базе).
+
+        Плотность другого элемента (матрицы) вместо искомого не подставляется
+        ни при каких условиях (BL-39).
+        """
 
         element = str(element).upper()
         if element in {"VA", ""}:
             return None
-        for phase in self.ELEMENT_DENSITY_PHASES:
-            if phase not in self.phases:
-                continue
-            for second in ({"VA": 1.0}, {element: 1.0}, {}):
-                site_fractions = [{element: 1.0}]
-                if second:
-                    site_fractions.append(second)
+        others = sorted(
+            phase
+            for phase in self.phases
+            if phase not in self.ELEMENT_DENSITY_PHASES
+            and phase != self.ELEMENT_DENSITY_LAST_PHASE
+        )
+        order = [
+            *self.ELEMENT_DENSITY_PHASES,
+            *others,
+            self.ELEMENT_DENSITY_LAST_PHASE,
+        ]
+        for phase in order:
+            for parameter in self._own_element_parameters(phase, element):
+                site_fractions = [
+                    {group[0]: 1.0} for group in parameter.constituent_array
+                ]
                 try:
                     value, coverage, _warnings = self.density_from_site_fractions(
                         phase, site_fractions, temperature_k
@@ -611,13 +720,90 @@ class PhysicalDensityDatabase:
                 except Exception:
                     continue
                 if value is not None and coverage > 0.999 and value > 0.0:
-                    return float(value)
+                    array = ":".join(
+                        ",".join(group) for group in parameter.constituent_array
+                    )
+                    kind = "matrix" if phase == "FCC_A1" else "phase"
+                    return float(value), kind, f"DP({phase},{array})"
+
+        # Записей нет — остаётся D0-функция элемента (плотность при 298,15 K).
+        pattern = re.compile(rf"D0([A-Z]+)_{re.escape(element)}")
+        for name in sorted(self.functions):
+            match = pattern.fullmatch(name)
+            if match is None:
+                continue
+            dt_suffix = self._D0_STRUCTURE_TO_DT.get(match.group(1))
+            dt_name = f"DT{element}{dt_suffix}" if dt_suffix else None
+            try:
+                value = self.function_value(name, temperature_k)
+                label = name
+                if dt_name and dt_name in self.functions:
+                    value += self.function_value(dt_name, temperature_k)
+                    label = f"{name}+{dt_name}"
+            except Exception:
+                continue
+            if math.isfinite(value) and value > 0.0:
+                return float(value), "function", label
         return None
+
+    def element_density(
+        self,
+        element: str,
+        temperature_k: float,
+    ) -> float | None:
+        """Плотность чистого элемента по модели PDB этого элемента."""
+
+        model = self.element_density_model(element, temperature_k)
+        return None if model is None else model[0]
+
+    def element_density_note(
+        self,
+        element: str,
+        temperature_k: float,
+    ) -> str | None:
+        """Текст для пользователя: по какой модели взята плотность элемента.
+
+        Для собственной записи элемента в FCC_A1 текста нет — это основной
+        путь правила смеси. Для элемента без плотности в базе — тоже ``None``:
+        об этом говорит :func:`mixture_unavailable_message`.
+        """
+
+        element = str(element).upper()
+        model = self.element_density_model(element, temperature_k)
+        if model is None:
+            return None
+        _value, kind, label = model
+        if kind == "matrix":
+            return None
+        if element == "C" and label.startswith("DP(DIAMOND_A4,"):
+            return (
+                "Объём углерода — по алмазной модели базы "
+                f"({label}); для графита это завышение плотности."
+            )
+        if kind == "phase":
+            return (
+                f"Плотность элемента {element} в правиле смеси взята по "
+                f"модели {label} физической базы."
+            )
+        if "+" in label:
+            return (
+                f"Плотность элемента {element} в правиле смеси взята по "
+                f"функциям {label} физической базы: модели фазы для него в "
+                "базе нет."
+            )
+        return (
+            f"Плотность элемента {element} в правиле смеси взята по функции "
+            f"{label} физической базы — это плотность при 298,15 K; теплового "
+            "расширения этого элемента в базе нет, и при других температурах "
+            "оно не учтено; при рабочих температурах ошибка объёма может "
+            "превышать 10 %."
+        )
 
     def estimate_density_by_mixture(
         self,
         composition: Mapping[str, float],
         temperature_k: float,
+        atomic_masses: Mapping[str, float] | None = None,
     ) -> tuple[float | None, float, list[str]]:
         """Плотность фазы по правилу смеси из плотностей элементов.
 
@@ -626,25 +812,33 @@ class PhysicalDensityDatabase:
         — она не знает ни структуры фазы, ни объёмного эффекта образования, —
         и вызывающая сторона обязана пометить результат как оценочный.
 
+        Если плотности или массы хотя бы одного элемента фазы нет, оценки нет:
+        объём такой фазы не выдумывается (BL-39). ``atomic_masses`` — массы из
+        термодинамической базы для элементов, которых нет в
+        ``_ATOMIC_MASSES``.
+
         Возвращает ``(плотность, покрытие по массе, предупреждения)``.
         """
 
         masses: dict[str, float] = {}
+        unknown: list[str] = []
         for element, fraction in composition.items():
             name = str(element).upper()
             if name in {"VA", ""} or not np.isfinite(fraction) or fraction <= 0.0:
                 continue
             atomic_mass = _ATOMIC_MASSES.get(name)
+            if not atomic_mass and atomic_masses:
+                atomic_mass = atomic_masses.get(name)
             if not atomic_mass:
+                unknown.append(name)
                 continue
-            masses[name] = float(fraction) * atomic_mass
+            masses[name] = float(fraction) * float(atomic_mass)
         total_mass = sum(masses.values())
         if total_mass <= 0.0:
             return None, 0.0, ["Состав фазы пуст: оценка невозможна."]
 
         volume = 0.0
         covered_mass = 0.0
-        unknown: list[str] = []
         for element, mass in masses.items():
             density = self.element_density(element, temperature_k)
             if density is None or density <= 0.0:
@@ -659,9 +853,48 @@ class PhysicalDensityDatabase:
             warnings.append(
                 "Нет плотности элементов: " + ", ".join(sorted(unknown))
             )
+            return None, coverage, warnings
         if volume <= 0.0 or coverage < 0.9:
             return None, coverage, warnings
         return covered_mass / volume, coverage, warnings
+
+    def mixture_missing_elements(
+        self,
+        composition: Mapping[str, float],
+        temperature_k: float,
+    ) -> list[str]:
+        """Элементы фазы, плотности которых в физической базе нет."""
+
+        return sorted(
+            {
+                str(element).upper()
+                for element, fraction in composition.items()
+                if str(element).upper() not in {"VA", ""}
+                and np.isfinite(fraction)
+                and fraction > 0.0
+                and self.element_density(element, temperature_k) is None
+            }
+        )
+
+    def mixture_element_notes(
+        self,
+        composition: Mapping[str, float],
+        temperature_k: float,
+    ) -> list[str]:
+        """Тексты о моделях плотности элементов фазы, кроме основного пути."""
+
+        notes: list[str] = []
+        for element in sorted(
+            str(name).upper()
+            for name, fraction in composition.items()
+            if str(name).upper() not in {"VA", ""}
+            and np.isfinite(fraction)
+            and fraction > 0.0
+        ):
+            note = self.element_density_note(element, temperature_k)
+            if note and note not in notes:
+                notes.append(note)
+        return notes
 
     def resolve_phase(self, thermodynamic_db: Any, phase_name: str) -> PhaseModelResolution:
         phase_name = str(phase_name).upper()
@@ -936,6 +1169,44 @@ class PhysicalDensityDatabase:
         return pd.DataFrame(rows)
 
 
+MIXTURE_UNAVAILABLE_TEMPLATE = (
+    "Объём фазы {phase} не оценён: в физической базе нет плотности "
+    "{noun} {elements}."
+)
+
+
+def mixture_unavailable_message(phase: str, elements: Iterable[str]) -> str:
+    """Текст о фазе, выпавшей из покрытия: плотности элемента в базе нет."""
+
+    names = sorted({str(element).upper() for element in elements})
+    return MIXTURE_UNAVAILABLE_TEMPLATE.format(
+        phase=phase,
+        noun="элемента" if len(names) == 1 else "элементов",
+        elements=", ".join(names),
+    )
+
+
+def _refstate_masses(
+    thermodynamic_db: Any,
+    composition: Mapping[str, float],
+) -> dict[str, float]:
+    """Атомные массы из термодинамической базы для элементов вне ``_ATOMIC_MASSES``."""
+
+    refstates = getattr(thermodynamic_db, "refstates", None) or {}
+    masses: dict[str, float] = {}
+    for element in composition:
+        name = str(element).upper()
+        if name in _ATOMIC_MASSES:
+            continue
+        try:
+            mass = float(refstates[name]["mass"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if math.isfinite(mass) and mass > 0.0:
+            masses[name] = mass
+    return masses
+
+
 def calculate_physical_properties(
     thermodynamic_db: Any,
     equilibrium_result: Any,
@@ -998,6 +1269,10 @@ def calculate_physical_properties(
     estimated_phase_amount = 0.0
     covered_mass = 0.0
     covered_volume = 0.0
+    # BL-39: какие модели плотности элементов взяты в правиле смеси и какие
+    # фазы выпали, потому что плотности элемента в базе нет.
+    element_notes: list[str] = []
+    unavailable_notes: list[str] = []
 
     for index, (phase_name, phase_amount) in enumerate(
         zip(phase_names, phase_amounts)
@@ -1044,12 +1319,27 @@ def calculate_physical_properties(
             # плотность сплава не выдавалась вовсе. Берём оценку по правилу
             # смеси и помечаем её как оценочную.
             estimate, estimate_coverage, estimate_warnings = (
-                physical_db.estimate_density_by_mixture(composition, temperature_k)
+                physical_db.estimate_density_by_mixture(
+                    composition,
+                    temperature_k,
+                    _refstate_masses(thermodynamic_db, composition),
+                )
             )
             for warning in estimate_warnings:
                 aggregate["warnings"].add(warning)
             if estimate is None or estimate <= 0.0:
+                missing_elements = physical_db.mixture_missing_elements(
+                    composition, temperature_k
+                )
+                if missing_elements:
+                    unavailable_notes.append(
+                        mixture_unavailable_message(phase_name, missing_elements)
+                    )
                 continue
+            for note in physical_db.mixture_element_notes(
+                composition, temperature_k
+            ):
+                element_notes.append(note)
             aggregate["qualities"].add("mixture")
             aggregate["notes"].add(
                 "Плотность оценена по правилу смеси из плотностей элементов; "
@@ -1303,11 +1593,17 @@ def calculate_physical_properties(
                 + " оценена по правилу смеси; погрешность до 10 %. "
                 f"Суммарная мольная доля таких фаз {estimated_share:.2f} %."
             )
+    for note in element_notes:
+        if note not in warnings:
+            warnings.append(note)
     if not missing_table.empty:
         warnings.append(
             "Для части равновесных фаз нет физической модели; общая плотность "
             "сплава и полные объёмные доли не выводятся."
         )
+    for note in unavailable_notes:
+        if note not in warnings:
+            warnings.append(note)
     if inherited_phase_amount > 1e-8:
         warnings.append(
             "Для упорядоченных или структурно родственных фаз использованы "
@@ -1335,6 +1631,7 @@ def calculate_physical_properties(
         warnings=warnings,
         physical_database_sha256=physical_db.sha256,
         physical_database_version=PHYSICAL_DATABASE_VERSION,
+        element_density_notes=list(dict.fromkeys(element_notes)),
     )
 
 

@@ -1,0 +1,15 @@
+{
+ "operation": "property_elastic_prepare",
+ "phase_rows": [
+  {
+   "phase": "FCC_A1",
+   "volume_fraction": 0.950053616013433
+  },
+  {
+   "phase": "M23C6",
+   "volume_fraction": 0.04994638407717935
+  }
+ ],
+ "physical_pdb_sha256": "4cf81c992b57263c50b370ea47eb0d5bb4f622cf23c18479bab54267762f20bd",
+ "tdb_sha256": "236ec4d9b0540de04e4e6305faa208672f31fbdf45b2ae84e92f80bd98053612"
+}

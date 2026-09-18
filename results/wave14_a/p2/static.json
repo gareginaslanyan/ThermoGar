@@ -1,0 +1,485 @@
+{
+ "база": "mc_ni_v2036_with_mobility.garcalc.tdb",
+ "элементы базы": [
+  "AL",
+  "B",
+  "C",
+  "CO",
+  "CR",
+  "CU",
+  "FE",
+  "HF",
+  "LA",
+  "MN",
+  "MO",
+  "N",
+  "NB",
+  "NI",
+  "O",
+  "S",
+  "SI",
+  "TI",
+  "V",
+  "VA",
+  "W",
+  "Y",
+  "ZR"
+ ],
+ "FCC_A1: диффундирующие элементы (_phase_mobility_coverage)": [
+  "AL",
+  "B",
+  "C",
+  "CO",
+  "CR",
+  "CU",
+  "FE",
+  "HF",
+  "LA",
+  "MN",
+  "MO",
+  "N",
+  "NB",
+  "NI",
+  "O",
+  "S",
+  "SI",
+  "TI",
+  "V",
+  "W",
+  "Y",
+  "ZR"
+ ],
+ "элементы 718 без подвижности FCC_A1": [],
+ "подвижности FCC_A1 по элементам 718": {
+  "NI": {
+   "строк MQ/MF/DQ/DF": 34,
+   "строки": [
+    "MQ(FCC_A1&NI,AL:*;0) = Piecewise((-145900.0 - 64.2605740672816*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,CO:*;0) = Piecewise((-270348.0 - 87.3*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,CR:*;0) = Piecewise((-235000.0 - 82.0*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,FE:*;0) = Piecewise((-286000.0 - 86.0*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,HF:*;0) = Piecewise((-286182.0 - 84.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,MO:*;0) = Piecewise((-286000.0 - 86.0*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,NI:*;0) = Piecewise((-287000.0 - 69.8*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,SI:*;0) = Piecewise((-123900.0 - 85.3081210769402*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,TI:*;0) = Piecewise((-287000.0 - 69.8*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,W:*;0) = Piecewise((-628250.0 - 63.5657483036725*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,AL,CR:*;0) = Piecewise((-211000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,AL,NI:*;0) = Piecewise((-113000.0 + 65.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,AL,TI:*;0) = Piecewise((-211000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,CO,NI:*;0) = Piecewise((7866.0 + 7.65*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,CR,FE:*;0) = Piecewise((-119000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,CR,NI:*;0) = Piecewise((-81000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,FE,NI:*;0) = Piecewise((124000.0 - 51.4*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,FE,NI:*;1) = Piecewise((-300000.0 + 213.0*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,NI,TI:*;0) = Piecewise((-81000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,NI,W:*;0) = Piecewise((175736.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,CO,FE,NI:*;0) = Piecewise((-185730.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,CO,FE,NI:*;1) = Piecewise((-6610.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,CO,FE,NI:*;2) = Piecewise((-38480.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,CR,FE,NI:*;0) = Piecewise((1840000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,CR,FE,NI:*;1) = Piecewise((670000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,CR,FE,NI:*;2) = Piecewise((-1120000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,CU:*;0) = Piecewise((-287000.0 - 69.8*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,LA:*;0) = Piecewise((-287000.0 - 69.8*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,MN:*;0) = Piecewise((-287000.0 - 69.8*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,NB:*;0) = Piecewise((-287000.0 - 69.8*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,S:*;0) = Piecewise((-287000.0 - 69.8*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,V:*;0) = Piecewise((-287000.0 - 69.8*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,Y:*;0) = Piecewise((-287000.0 - 69.8*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NI,ZR:*;0) = Piecewise((-287000.0 - 69.8*T, And(T < 6000.0, 273.0 <= T)), (0, True))"
+   ]
+  },
+  "FE": {
+   "строк MQ/MF/DQ/DF": 29,
+   "строки": [
+    "MQ(FCC_A1&FE,AL:*;0) = Piecewise((-214000.0 - 8.44845546787161*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,CO:*;0) = Piecewise((-253301.0 - 97.97*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,CR:*;0) = Piecewise((-235000.0 - 82.0*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,FE:*;0) = Piecewise((-1.0*QFE_FCC + 8.3145*T*log(D0FE_FCC), And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,NI:*;0) = Piecewise((-287000.0 - 67.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,CO,FE:*;0) = Piecewise((-63300.0 + 48.68*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,CR,FE:*;0) = Piecewise((15900.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,CR,NI:*;0) = Piecewise((-77500.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,FE,NI:*;0) = Piecewise((-115000.0 + 104.0*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,FE,NI:*;1) = Piecewise((78800.0 - 73.3*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,CO,FE,NI:*;0) = Piecewise((8688.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,CO,FE,NI:*;1) = Piecewise((514100.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,CO,FE,NI:*;2) = Piecewise((-265830.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,CR,FE,NI:*;0) = Piecewise((-740000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,CR,FE,NI:*;1) = Piecewise((-540000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,CR,FE,NI:*;2) = Piecewise((750000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,CU:*;0) = Piecewise((-287000.0 - 67.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,HF:*;0) = Piecewise((-287000.0 - 67.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,LA:*;0) = Piecewise((-287000.0 - 67.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,MN:*;0) = Piecewise((-287000.0 - 67.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,MO:*;0) = Piecewise((-287000.0 - 67.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,NB:*;0) = Piecewise((-287000.0 - 67.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,S:*;0) = Piecewise((-287000.0 - 67.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,SI:*;0) = Piecewise((-287000.0 - 67.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,TI:*;0) = Piecewise((-287000.0 - 67.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,V:*;0) = Piecewise((-287000.0 - 67.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,W:*;0) = Piecewise((-287000.0 - 67.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,Y:*;0) = Piecewise((-287000.0 - 67.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&FE,ZR:*;0) = Piecewise((-287000.0 - 67.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))"
+   ]
+  },
+  "CR": {
+   "строк MQ/MF/DQ/DF": 26,
+   "строки": [
+    "MQ(FCC_A1&CR,AL:*;0) = Piecewise((-261700.0 - 3.71065411480399*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,CO:*;0) = Piecewise((-253301.0 - 97.97*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,CU:*;0) = Piecewise((-195000.0 - 85.62*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,CR:*;0) = Piecewise((-235000.0 - 82.0*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,FE:*;0) = Piecewise((-286000.0 - 71.9*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,NI:*;0) = Piecewise((-287000.0 - 64.4*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,AL,CR:*;0) = Piecewise((487000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,AL,NI:*;0) = Piecewise((-118000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,CR,FE:*;0) = Piecewise((-105000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,CR,NI:*;0) = Piecewise((-68000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,FE,NI:*;0) = Piecewise((16100.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,CR,FE,NI:*;0) = Piecewise((310000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,CR,FE,NI:*;1) = Piecewise((320000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,CR,FE,NI:*;2) = Piecewise((120000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,HF:*;0) = Piecewise((-287000.0 - 64.4*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,LA:*;0) = Piecewise((-287000.0 - 64.4*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,MN:*;0) = Piecewise((-287000.0 - 64.4*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,MO:*;0) = Piecewise((-287000.0 - 64.4*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,NB:*;0) = Piecewise((-287000.0 - 64.4*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,S:*;0) = Piecewise((-287000.0 - 64.4*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,SI:*;0) = Piecewise((-287000.0 - 64.4*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,TI:*;0) = Piecewise((-287000.0 - 64.4*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,V:*;0) = Piecewise((-287000.0 - 64.4*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,W:*;0) = Piecewise((-287000.0 - 64.4*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,Y:*;0) = Piecewise((-287000.0 - 64.4*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&CR,ZR:*;0) = Piecewise((-287000.0 - 64.4*T, And(T < 6000.0, 273.0 <= T)), (0, True))"
+   ]
+  },
+  "NB": {
+   "строк MQ/MF/DQ/DF": 18,
+   "строки": [
+    "MQ(FCC_A1&NB,NB:*;0) = Piecewise((-350000.0 - 76.579375022796*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,FE:*;0) = Piecewise((-1.0*QFE_FCC + 8.3145*T*log(6.0*D0FE_FCC), And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,AL:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,CO:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,CR:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,CU:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,HF:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,LA:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,MN:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,MO:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,NI:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,S:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,SI:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,TI:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,V:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,W:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,Y:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&NB,ZR:*;0) = Piecewise((-215000.0 - 109.105890301428*T, And(T < 6000.0, 273.0 <= T)), (0, True))"
+   ]
+  },
+  "MO": {
+   "строк MQ/MF/DQ/DF": 18,
+   "строки": [
+    "MQ(FCC_A1&MO,CO:*;0) = Piecewise((-256943.0 - 94.1661478813591*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,FE:*;0) = Piecewise((-1.0*QFE_FCC + 8.3145*T*log(3.0*D0FE_FCC), And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,MO:*;0) = Piecewise((-254975.0 - 81.5047118349729*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,NI:*;0) = Piecewise((-267585.0 - 79.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,AL:*;0) = Piecewise((-267585.0 - 79.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,CR:*;0) = Piecewise((-267585.0 - 79.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,CU:*;0) = Piecewise((-267585.0 - 79.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,HF:*;0) = Piecewise((-267585.0 - 79.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,LA:*;0) = Piecewise((-267585.0 - 79.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,MN:*;0) = Piecewise((-267585.0 - 79.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,NB:*;0) = Piecewise((-267585.0 - 79.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,S:*;0) = Piecewise((-267585.0 - 79.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,SI:*;0) = Piecewise((-267585.0 - 79.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,TI:*;0) = Piecewise((-267585.0 - 79.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,V:*;0) = Piecewise((-267585.0 - 79.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,W:*;0) = Piecewise((-267585.0 - 79.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,Y:*;0) = Piecewise((-267585.0 - 79.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&MO,ZR:*;0) = Piecewise((-267585.0 - 79.5*T, And(T < 6000.0, 273.0 <= T)), (0, True))"
+   ]
+  },
+  "TI": {
+   "строк MQ/MF/DQ/DF": 21,
+   "строки": [
+    "MQ(FCC_A1&TI,AL:*;0) = Piecewise((-260000.0 - 18.2025724017139*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,FE:*;0) = Piecewise((-1.0*QFE_FCC + 8.3145*T*log(4.0*D0FE_FCC), And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,TI:*;0) = Piecewise((-256900.0 - 77.8*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,AL,NI:*;0) = Piecewise((-175000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,AL,TI:*;0) = Piecewise((275000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,NI,TI:*;0) = Piecewise((-68000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,CO:*;0) = Piecewise((-256900.0 - 77.8333919394942*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,CR:*;0) = Piecewise((-256900.0 - 77.8333919394942*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,CU:*;0) = Piecewise((-256900.0 - 77.8333919394942*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,HF:*;0) = Piecewise((-256900.0 - 77.8333919394942*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,LA:*;0) = Piecewise((-256900.0 - 77.8333919394942*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,MN:*;0) = Piecewise((-256900.0 - 77.8333919394942*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,MO:*;0) = Piecewise((-256900.0 - 77.8333919394942*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,NB:*;0) = Piecewise((-256900.0 - 77.8333919394942*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,NI:*;0) = Piecewise((-256900.0 - 77.8333919394942*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,S:*;0) = Piecewise((-256900.0 - 77.8333919394942*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,SI:*;0) = Piecewise((-256900.0 - 77.8333919394942*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,V:*;0) = Piecewise((-256900.0 - 77.8333919394942*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,W:*;0) = Piecewise((-256900.0 - 77.8333919394942*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,Y:*;0) = Piecewise((-256900.0 - 77.8333919394942*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&TI,ZR:*;0) = Piecewise((-256900.0 - 77.8333919394942*T, And(T < 6000.0, 273.0 <= T)), (0, True))"
+   ]
+  },
+  "AL": {
+   "строк MQ/MF/DQ/DF": 23,
+   "строки": [
+    "MQ(FCC_A1&AL,AL:*;0) = Piecewise((-142000.0 - 72.1187008936526*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,CO:*;0) = Piecewise((-286000.0 - 66.1632773212412*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,CR:*;0) = Piecewise((-235000.0 - 82.0*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,FE:*;0) = Piecewise((-1.0*QFE_FCC + 8.3145*T*log(5.0*D0FE_FCC), And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,AL,CR:*;0) = Piecewise((335000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,AL,NI:*;0) = Piecewise((-41300.0 - 91.2*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,AL,TI:*;0) = Piecewise((335000.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,CR,NI:*;0) = Piecewise((-53200.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,NI,TI:*;0) = Piecewise((-53200.0, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,CU:*;0) = Piecewise((-284000.0 - 59.8264638584973*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,HF:*;0) = Piecewise((-284000.0 - 59.8264638584973*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,LA:*;0) = Piecewise((-284000.0 - 59.8264638584973*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,MN:*;0) = Piecewise((-284000.0 - 59.8264638584973*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,MO:*;0) = Piecewise((-284000.0 - 59.8264638584973*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,NB:*;0) = Piecewise((-284000.0 - 59.8264638584973*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,NI:*;0) = Piecewise((-284000.0 - 59.8264638584973*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,S:*;0) = Piecewise((-284000.0 - 59.8264638584973*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,SI:*;0) = Piecewise((-284000.0 - 59.8264638584973*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,TI:*;0) = Piecewise((-284000.0 - 59.8264638584973*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,V:*;0) = Piecewise((-284000.0 - 59.8264638584973*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,W:*;0) = Piecewise((-284000.0 - 59.8264638584973*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,Y:*;0) = Piecewise((-284000.0 - 59.8264638584973*T, And(T < 6000.0, 273.0 <= T)), (0, True))",
+    "MQ(FCC_A1&AL,ZR:*;0) = Piecewise((-284000.0 - 59.8264638584973*T, And(T < 6000.0, 273.0 <= T)), (0, True))"
+   ]
+  }
+ },
+ "сообщения о правках базы для 718": [
+  "Подвижность ниобия в FCC_A1: в базе записано LN(1,00E-4) с десятичной запятой, ThermoGar читает это как ln(1.00E-4). Правка сделана поверх разобранной базы, байты файла не менялись; число взято из той же строки, первоисточник строки (pov10) не опубликован и не сверен."
+ ],
+ "_matrix_candidates на элементах 718": [
+  "FCC_A1"
+ ],
+ "фазы": {
+  "GAMMA_DP": {
+   "есть в базе": true,
+   "подрешётки": [
+    1.0,
+    3.0
+   ],
+   "конституенты": [
+    [
+     "AL",
+     "CR",
+     "FE",
+     "MO",
+     "NB",
+     "NI",
+     "TI"
+    ],
+    [
+     "CO",
+     "FE",
+     "NB",
+     "NI"
+    ]
+   ],
+   "model_hints": {}
+  },
+  "DELTA": {
+   "есть в базе": true,
+   "подрешётки": [
+    1.0,
+    3.0
+   ],
+   "конституенты": [
+    [
+     "AL",
+     "CO",
+     "CR",
+     "FE",
+     "MO",
+     "NB",
+     "NI",
+     "TI"
+    ],
+    [
+     "AL",
+     "CO",
+     "CR",
+     "FE",
+     "MO",
+     "NB",
+     "NI",
+     "TI"
+    ]
+   ],
+   "model_hints": {}
+  },
+  "GAMMA_PRIME": {
+   "есть в базе": true,
+   "подрешётки": [
+    0.25,
+    0.75
+   ],
+   "конституенты": [
+    [
+     "AL",
+     "CO",
+     "CR",
+     "FE",
+     "HF",
+     "MO",
+     "NB",
+     "NI",
+     "SI",
+     "TI",
+     "W",
+     "ZR"
+    ],
+    [
+     "AL",
+     "CO",
+     "CR",
+     "FE",
+     "HF",
+     "MO",
+     "NB",
+     "NI",
+     "SI",
+     "TI",
+     "W",
+     "ZR"
+    ]
+   ],
+   "model_hints": {}
+  }
+ },
+ "лестница": {
+  "2": {
+   "состав, масс. %": "CR=19, NB=5.1",
+   "элементы": [
+    "NI",
+    "CR",
+    "NB"
+   ],
+   "мольные доли": [
+    0.7547147360868891,
+    0.21324989663182026,
+    0.0320353672812906
+   ],
+   "кандидаты в матрицу (_matrix_candidates)": [
+    "FCC_A1"
+   ],
+   "GAMMA_DP совместима": true,
+   "DELTA совместима": true,
+   "GAMMA_PRIME совместима": true
+  },
+  "3": {
+   "состав, масс. %": "CR=19, NB=5.1, TI=0.9",
+   "элементы": [
+    "NI",
+    "CR",
+    "NB",
+    "TI"
+   ],
+   "мольные доли": [
+    0.7442617815105982,
+    0.21281989773066726,
+    0.03197077089486059,
+    0.010947549863873937
+   ],
+   "кандидаты в матрицу (_matrix_candidates)": [
+    "FCC_A1"
+   ],
+   "GAMMA_DP совместима": true,
+   "DELTA совместима": true,
+   "GAMMA_PRIME совместима": true
+  },
+  "4": {
+   "состав, масс. %": "CR=19, NB=5.1, TI=0.9, AL=0.5",
+   "элементы": [
+    "NI",
+    "AL",
+    "CR",
+    "NB",
+    "TI"
+   ],
+   "мольные доли": [
+    0.735014170313802,
+    0.010730175349794598,
+    0.2115861394238957,
+    0.03178543012275223,
+    0.010884084789755522
+   ],
+   "кандидаты в матрицу (_matrix_candidates)": [
+    "FCC_A1"
+   ],
+   "GAMMA_DP совместима": true,
+   "DELTA совместима": true,
+   "GAMMA_PRIME совместима": true
+  },
+  "5": {
+   "состав, масс. %": "CR=19, NB=5.1, TI=0.9, AL=0.5, FE=18",
+   "элементы": [
+    "NI",
+    "AL",
+    "CR",
+    "FE",
+    "NB",
+    "TI"
+   ],
+   "мольные доли": [
+    0.5524326270245973,
+    0.010634039093064889,
+    0.209690448183352,
+    0.18495566532561072,
+    0.03150065078122883,
+    0.01078656959214639
+   ],
+   "кандидаты в матрицу (_matrix_candidates)": [
+    "FCC_A1"
+   ],
+   "GAMMA_DP совместима": true,
+   "DELTA совместима": true,
+   "GAMMA_PRIME совместима": true
+  },
+  "6": {
+   "состав, масс. %": "CR=19, NB=5.1, TI=0.9, AL=0.5, FE=18, MO=3",
+   "элементы": [
+    "NI",
+    "AL",
+    "CR",
+    "FE",
+    "MO",
+    "NB",
+    "TI"
+   ],
+   "мольные доли": [
+    0.5291260418752424,
+    0.010756543418951181,
+    0.21210608600212294,
+    0.18708635799104784,
+    0.018150600782999876,
+    0.03186353885744914,
+    0.010910831072186768
+   ],
+   "кандидаты в матрицу (_matrix_candidates)": [
+    "FCC_A1"
+   ],
+   "GAMMA_DP совместима": true,
+   "DELTA совместима": true,
+   "GAMMA_PRIME совместима": true
+  }
+ },
+ "штатная _composition_vectors на 5 добавках": "ValueError: Research KWN mode допускает не более четырёх добавок одновременно.",
+ "с": 5.2,
+ "память": {
+  "rss_gib": 0.2003,
+  "peak_wset_gib": 0.2006,
+  "private_gib": 0.8604,
+  "peak_pagefile_gib": 0.8609
+ }
+}

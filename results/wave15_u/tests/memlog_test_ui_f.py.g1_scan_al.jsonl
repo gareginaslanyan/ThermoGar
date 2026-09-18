@@ -1,0 +1,1 @@
+{"test": "tools/test_ui_f.py::test_density_temperature_scan[al]", "seconds": 43.0, "rss_before_gib": 0.106, "rss_after_gib": 0.262, "growth_gib": 0.155, "peak_tree_gib": 2.583, "peak_wset_process_gib": 0.275, "open_figures": 0, "pool_workers": null}

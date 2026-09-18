@@ -1,0 +1,21 @@
+THERMOGAR SWR — PROPERTIES SOFTWARE REGRESSION
+App: C:\Users\gareg\Desktop\ThermoGar-w14a\app
+
+PASS: E→K: 166.6666667
+PASS: E→G: 76.92307692
+PASS: K/G→E: 200
+PASS: K/G→nu: 0.3
+PASS: K_Voigt: 150
+PASS: K_Reuss: 133.3333333
+PASS: K_Hill: 141.6666667
+PASS: G_Voigt: 75
+PASS: G_Reuss: 66.66666667
+PASS: G_Hill: 70.83333333
+PASS: VRH table order
+PASS: Hall–Petch educational example: 156.5247584
+PASS: Taylor educational example: 57.5949425
+PASS: Educational strengthening total: 264.1197009
+PASS: strengthening provenance retained
+PASS: elastic library round-trip
+
+RESULT: PASSED

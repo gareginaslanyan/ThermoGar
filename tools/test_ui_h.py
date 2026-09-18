@@ -185,9 +185,9 @@ def labelled(elements, label):
 # (app/thermogar_precipitation.py, another task's file) puts its own input
 # messages on the page. They are not projects-and-data failures.
 FOREIGN_ERRORS = (
-    # thermogar_precipitation.py:181
-    "Research KWN mode допускает не более четырёх добавок одновременно.",
-    # thermogar_precipitation.py:818
+    # The "at most four solutes" refusal was removed from this list in wave
+    # 14-Б (BL-21): the limit is 10 now, and no composition here is that long.
+    # thermogar_precipitation.py, render_precipitation_section
     "Нет матричной фазы с полным набором мобильностей для состава.",
 )
 

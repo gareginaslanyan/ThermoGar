@@ -1024,3 +1024,240 @@ def test_physical_database_fixtures_are_per_test(
 
     physical_db.functions.clear()
     assert not physical_db.functions
+
+
+# --------------------------------------------------------------------------- #
+# 15-Ш (BL-39). Плотность элемента в правиле смеси — плотность самого элемента
+# --------------------------------------------------------------------------- #
+
+T_BL39 = 1073.15
+
+# Элементы трёх баз, у которых до 15-Ш правило смеси брало запись-умолчание
+# DP(FCC_A1,*), то есть плотность железа.
+BL39_SUBSTITUTED = (
+    "B", "C", "H", "HF", "LA", "N", "O", "P", "PD", "TA", "Y", "ZN", "ZR",
+)
+# Из них плотности нет в физической базе ни в каком виде.
+BL39_ABSENT = ("H", "HF", "N", "O", "Y")
+
+
+def _fe_matrix_density(physical_database: PhysicalDensityDatabase) -> float:
+    value, _coverage, _warnings = physical_database.density_from_site_fractions(
+        "FCC_A1", [{"FE": 1.0}, {"VA": 1.0}], T_BL39
+    )
+    assert value is not None
+    return float(value)
+
+
+def _mass_percent_to_mole(
+    database: Any,
+    mass_pct: dict[str, float],
+    balance: str,
+) -> dict[str, float]:
+    masses = {
+        name: float(database.refstates[name]["mass"])
+        for name in (*mass_pct, balance)
+    }
+    moles = {name: value / masses[name] for name, value in mass_pct.items()}
+    moles[balance] = (100.0 - sum(mass_pct.values())) / masses[balance]
+    total = sum(moles.values())
+    return {name: value / total for name, value in moles.items() if name != balance}
+
+
+@pytest.mark.parametrize("element", BL39_SUBSTITUTED)
+def test_element_density_is_not_the_iron_matrix(
+    physical_db_plain: PhysicalDensityDatabase,
+    element: str,
+) -> None:
+    """Ни один элемент не получает плотность железа из записи-умолчания."""
+
+    iron = _fe_matrix_density(physical_db_plain)
+    value = physical_db_plain.element_density(element, T_BL39)
+    if element in BL39_ABSENT:
+        assert value is None, f"{element}: плотность {value} взята не из базы"
+    else:
+        assert value is not None
+        assert abs(value - iron) > 100.0, f"{element}: {value} — это плотность железа"
+
+
+def test_carbon_density_is_the_diamond_model_of_the_base(
+    physical_db_plain: PhysicalDensityDatabase,
+) -> None:
+    """Углерод — по DP(DIAMOND_A4,C) = D0DIAM_C + DTCDIAM, с отметкой для графита."""
+
+    expected = physical_db_plain.function_value(
+        "D0DIAM_C", T_BL39
+    ) + physical_db_plain.function_value("DTCDIAM", T_BL39)
+    value = physical_db_plain.element_density("C", T_BL39)
+    assert value == pytest.approx(expected, rel=1.0e-12)
+    assert 3000.0 < value < 4000.0
+    note = physical_db_plain.element_density_note("C", T_BL39)
+    assert note is not None and "алмазной модели" in note and "графита" in note
+
+
+def test_element_density_ignores_foreign_d0_records(
+    physical_db_plain: PhysicalDensityDatabase,
+) -> None:
+    """DP(DIAMOND_A4,B) задан через D0BCC_FE — бор берёт свою D0TETR_B."""
+
+    assert physical_db_plain.element_density("B", T_BL39) == pytest.approx(
+        physical_db_plain.function_value("D0TETR_B", T_BL39), rel=1.0e-12
+    )
+    note = physical_db_plain.element_density_note("B", T_BL39)
+    assert note is not None and "D0TETR_B" in note and "298,15 K" in note
+    # Азот: единственная запись DP(LIQUID,N) — это плотность алмаза.
+    assert physical_db_plain.element_density("N", T_BL39) is None
+
+
+@pytest.mark.parametrize("element", ("B", "LA", "P", "PD", "TA"))
+def test_function_only_element_note_warns_about_volume_error(
+    physical_db_plain: PhysicalDensityDatabase,
+    element: str,
+) -> None:
+    """Элемент только с D0 при 298,15 K: текст предупреждает об ошибке объёма (15-Э)."""
+
+    note = physical_db_plain.element_density_note(element, T_BL39)
+    assert note is not None
+    assert note.startswith(f"Плотность элемента {element} в правиле смеси взята по функции D0")
+    assert note.endswith(
+        "при рабочих температурах ошибка объёма может превышать 10 %."
+    )
+
+
+@pytest.mark.parametrize("element", ("NI", "CR", "FE", "AL", "MO", "SI", "S"))
+def test_matrix_elements_keep_their_fcc_record(
+    physical_db_plain: PhysicalDensityDatabase,
+    element: str,
+) -> None:
+    """Для элементов со своей записью FCC_A1 значение прежнее, отметки нет."""
+
+    value, _coverage, _warnings = physical_db_plain.density_from_site_fractions(
+        "FCC_A1", [{element: 1.0}, {"VA": 1.0}], T_BL39
+    )
+    assert physical_db_plain.element_density(element, T_BL39) == value
+    assert physical_db_plain.element_density_note(element, T_BL39) is None
+
+
+def test_graphite_volume_in_fe_1c_uses_carbon_density(
+    physical_db_plain: PhysicalDensityDatabase,
+) -> None:
+    """Fe-1C масс. %, 800 °C: объём графита — по плотности углерода, не железа."""
+
+    database = _database(FE_TDB)
+    components = ["FE", "C", "VA"]
+    mole = _mass_percent_to_mole(database, {"C": 1.0}, "FE")
+    result = calculate_physical_properties(
+        database,
+        _solve(database, components, ["FCC_A1", "GRAPHITE"], mole, T_BL39),
+        ["FE", "C"],
+        T_BL39,
+        physical_db_plain,
+    )
+    rows = {row["Фаза"]: row for row in result.phase_table.to_dict("records")}
+    assert "GRAPHITE" in rows, rows
+    graphite = rows["GRAPHITE"]
+    carbon = physical_db_plain.element_density("C", T_BL39)
+    mass = float(database.refstates["C"]["mass"])
+    assert graphite["Статус данных"] == "оценка по правилу смеси"
+    assert graphite["Плотность фазы, кг/м³"] == pytest.approx(carbon, rel=1.0e-9)
+    assert graphite["Молярный объём, см³/моль атомов"] == pytest.approx(
+        mass / carbon * 1000.0, rel=1.0e-3
+    )
+    # Объёмная доля — из мольных долей и молярных объёмов обеих фаз; прежняя
+    # плотность железа давала графиту Vm 1,557 см³/моль и φ 0,139 %.
+    products = {
+        name: row["Мольная доля, %"] * row["Молярный объём, см³/моль атомов"]
+        for name, row in rows.items()
+    }
+    assert graphite["Объёмная доля, %"] == pytest.approx(
+        100.0 * products["GRAPHITE"] / sum(products.values()), rel=1.0e-9
+    )
+    assert graphite["Молярный объём, см³/моль атомов"] > 3.0
+    assert graphite["Объёмная доля, %"] > 0.25
+    assert result.mole_coverage_pct == pytest.approx(100.0)
+    assert any("алмазной модели" in text for text in result.warnings)
+    assert any("алмазной модели" in text for text in result.element_density_notes)
+
+
+def _ni_y_result(physical_database: PhysicalDensityDatabase) -> tuple[Any, Any]:
+    database = _database(FE_TDB)
+    components = ["NI", "Y", "VA"]
+    equilibrium_result = _solve(
+        database, components, ["FCC_A1", "NI5Y"], {"Y": 0.05}, T_BL39
+    )
+    return database, equilibrium_result
+
+
+def test_phase_without_element_density_drops_out_of_coverage(
+    physical_db_plain: PhysicalDensityDatabase,
+) -> None:
+    """Иттрия в физической базе нет: Ni5Y не покрыт, плотность сплава не выдаётся."""
+
+    database, equilibrium_result = _ni_y_result(physical_db_plain)
+    result = calculate_physical_properties(
+        database, equilibrium_result, ["NI", "Y"], T_BL39, physical_db_plain
+    )
+    phases = set(result.phase_table["Фаза"])
+    assert "NI5Y" in phases, phases
+    assert result.mole_coverage_pct < 99.0
+    assert result.mass_coverage_pct < 99.0
+    assert result.alloy_density_kg_m3 is None
+    assert "NI5Y" in set(result.missing_table["Фаза"])
+    assert (
+        "Объём фазы NI5Y не оценён: в физической базе нет плотности элемента Y."
+        in result.warnings
+    )
+
+
+def test_vrh_volumes_refuse_a_phase_without_element_density(
+    physical_db_plain: PhysicalDensityDatabase,
+) -> None:
+    """Для весов VRH такая фаза — DATA_UNAVAILABLE с тем же текстом."""
+
+    import thermogar_verified_loaders as verified_loaders
+    import thermogar_verified_properties as verified_properties
+
+    database, equilibrium_result = _ni_y_result(physical_db_plain)
+    names = np.asarray(equilibrium_result.Phase.values, dtype=str).ravel()
+    amounts = np.asarray(equilibrium_result.NP.values, dtype=float).ravel()
+    with pytest.raises(verified_loaders.VerifiedLoaderError) as caught:
+        verified_properties._mixture_molar_volumes_cm3(
+            database,
+            physical_db_plain,
+            equilibrium_result,
+            ["NI", "Y", "VA"],
+            T_BL39,
+            ["NI5Y"],
+            names,
+            amounts,
+            [],
+        )
+    assert caught.value.reason_code is verified_loaders.ReasonCode.DATA_UNAVAILABLE
+    assert "Объём фазы NI5Y не оценён: в физической базе нет плотности элемента Y." in str(
+        caught.value
+    )
+
+
+def test_vrh_prepare_accepts_element_notes_and_rejects_bad_ones() -> None:
+    """Необязательное поле volume_notes: список строк или отказ RESULT_INVALID."""
+
+    import thermogar_verified_loaders as verified_loaders
+    import thermogar_verified_properties as verified_properties
+
+    backend = {
+        "mole_fractions": {"FCC_A1": 0.9, "GRAPHITE": 0.1},
+        "molar_volumes_cm3": {"FCC_A1": 7.0, "GRAPHITE": 3.5},
+        "volume_sources": {"FCC_A1": "direct", "GRAPHITE": "mixture"},
+    }
+    phases = ("FCC_A1", "GRAPHITE")
+    assert verified_properties._validate_prepare_notes(backend) == []
+    with_notes = dict(backend, volume_notes=["текст"])
+    rows = verified_properties._validate_prepare_backend(with_notes, phases)
+    assert [row.phase for row in rows] == list(phases)
+    assert verified_properties._validate_prepare_notes(with_notes) == ["текст"]
+    for bad in ("текст", [1], [""]):
+        with pytest.raises(verified_loaders.VerifiedLoaderError) as caught:
+            verified_properties._validate_prepare_notes(dict(backend, volume_notes=bad))
+        assert caught.value.reason_code is verified_loaders.ReasonCode.RESULT_INVALID
+    with pytest.raises(verified_loaders.VerifiedLoaderError):
+        verified_properties._validate_prepare_backend(dict(backend, extra=[]), phases)

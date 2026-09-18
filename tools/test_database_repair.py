@@ -925,3 +925,78 @@ def test_release_binding_of_kwn_applies_nb_override() -> None:
         "ni", path, RELEASE_DATABASE_LABELS["ni"]
     )
     assert [item.identifier for item in repair.applied_overrides(database)] == ["BL-20"]
+
+
+def test_bl34_decision_clears_only_the_aluminium_mark() -> None:
+    """BL-34: отметка снята с FCC_A1/MQ/AL и только с неё.
+
+    Решение мастера по отчёту 15-Б: умолчание ``MQ(FCC_A1&AL,*)`` описывает
+    алюминий в никеле, явная строка ``MQ(FCC_A1&AL,AL:*)`` — алюминий в
+    алюминии, дублем они быть не могут. Остальные десять отметок ``mc_ni``
+    и отметки баз Al и Fe остаются на месте.
+    """
+
+    key = ("FCC_A1", "MQ", "AL", 0)
+    report = repair.repair_mobility_defaults(_fresh("ni"), database_label="ni")
+    assert key in report.decided_keys
+    assert key not in report.suspicious_keys
+    assert report.reviewed_by_human == 1
+    assert [item.identifier for item in report.decisions] == ["BL-34"]
+    assert report.kept_as_different_expression == len(report.suspicious_keys)
+    assert ("FCC_A1", "MQ", "NB", 0) in report.suspicious_keys, (
+        "Соседние отметки того же ключа-типа сняты быть не должны"
+    )
+
+    for name in ("al", "fe"):
+        other = repair.repair_mobility_defaults(_fresh(name), database_label=name)
+        assert other.decided_keys == (), f"{name}: решение BL-34 сработало не на своей базе"
+        assert other.reviewed_by_human == 0
+
+
+def test_bl34_decision_does_not_touch_the_parameter_table() -> None:
+    """Снятие отметки не меняет ни одной записи разобранной базы.
+
+    Решение — запись в отчёте, а не правка данных: таблица параметров после
+    дедупликации с решением и без него обязана совпадать построчно. Это и есть
+    причина, по которой ``MOBILITY_DEDUP_VERSION`` волной 15-В не поднималась.
+    """
+
+    def dump(decisions: tuple) -> list[str]:
+        database = _fresh("ni")
+        repair.repair_mobility_defaults(database, database_label="ni", decisions=decisions)
+        table = database._parameters.table(database._parameters.default_table_name)
+        rows = [
+            "|".join(
+                [
+                    str(record.get("phase_name")),
+                    str(record.get("parameter_type")),
+                    str(getattr(record.get("diffusing_species"), "name", "")),
+                    repr(
+                        tuple(
+                            tuple(str(getattr(s, "name", s)) for s in sub)
+                            for sub in record.get("constituent_array")
+                        )
+                    ),
+                    str(record.get("parameter_order")),
+                    str(record.get("parameter")),
+                ]
+            )
+            for record in table.all()
+        ]
+        return sorted(rows)
+
+    assert dump(repair.SUSPICIOUS_KEY_DECISIONS) == dump(())
+
+
+def test_dedup_log_line_names_the_expansion_not_a_no_op() -> None:
+    """Строка лога говорит, что места развёрнуты, а не оставлены без изменений.
+
+    В этих местах вырожденная строка снимается и разворачивается в явные
+    конечные члены; формулировка «оставлено без изменений» описывала это
+    неверно (``tasks/WAVE15_B_REPORT.md``, пункт 2.2).
+    """
+
+    line = repair.repair_mobility_defaults(_fresh("ni"), database_label="ni").log_line()
+    assert "оставлено без изменений" not in line
+    assert "развёрнуто без доказательства дубля 10 мест" in line
+    assert "по принятому решению развёрнуто 1 место (BL-34)" in line

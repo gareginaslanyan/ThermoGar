@@ -1,0 +1,1275 @@
+....FFFFF.FF...............F.                                            [100%]
+================================== FAILURES ===================================
+_______________________ test_diffusion_single_phase[ni] _______________________
+
+database_key = 'ni'
+
+    @pytest.mark.parametrize("database_key", DB_KEYS)
+    def test_diffusion_single_phase(database_key: str) -> None:
+        app = start_app(database_key)
+        set_diffusion_inputs(app, database_key, "kin_single")
+        phase = DIFFUSION_COUPLE[database_key][5][0]
+        app.session_state[f"kin_single_phase_{database_key}"] = phase
+        app.run()
+    
+        widget(app, "button", f"kin_single_run_{database_key}").click().run()
+>       assert_no_traceback(app)
+
+tools\test_ui_g.py:254: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+app = AppTest(
+    _script_path='D:\\Pets\\ThermoGar\\app\\ThermoGar_app.py',
+    default_timeout=1800,
+    session_state={$...лементы'
+                )
+            }
+        ),
+        2: SpecialBlock(
+            type='event'
+        )
+    }
+)
+
+    def assert_no_traceback(app: AppTest) -> None:
+>       assert not app.exception, [element.message for element in app.exception]
+E       AssertionError: ['Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoGar']
+E       assert not ElementList(_list=[Exception(message='Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoG...e_io.py", line 240, in _win_open_handle\n    raise SecureIOError(f"Windows handle escaped canonical path: {path}")'])])
+E        +  where ElementList(_list=[Exception(message='Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoG...e_io.py", line 240, in _win_open_handle\n    raise SecureIOError(f"Windows handle escaped canonical path: {path}")'])]) = AppTest(\n    _script_path='D:\\Pets\\ThermoGar\\app\\ThermoGar_app.py',\n    default_timeout=1800,\n    session_state={$...лементы'\n                )\n            }\n        ),\n        2: SpecialBlock(\n            type='event'\n        )\n    }\n).exception
+
+tools\test_ui_g.py:137: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-18 00:45:08.010 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:08.010 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:08.010 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:08.010 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:08.010 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:09.324 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:09.324 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:09.324 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:09.324 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:09.325 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:09.325 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:09.325 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:09.325 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:10.500 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:18.347 Uncaught app execution
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1476, in render_kinetics_section
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1407, in record_calculation_history
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1378, in record_history
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 136, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 837, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 11246, in <module>
+    render_kinetics_section(
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1495, in render_kinetics_section
+    render_error(error, context="однофазная диффузионная пара")
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 246, in render_friendly_error
+    _render_friendly_error(error, context=context, paths=THERMOGAR_PATHS)
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 1391, in render_friendly_error
+    render_user_error(
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 400, in render_user_error
+    error_id, payload = _write_error_log(
+                        ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 381, in _write_error_log
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ERROR    streamlit.error_util:error_util.py:112 Uncaught app execution
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1476, in render_kinetics_section
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1407, in record_calculation_history
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1378, in record_history
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 136, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 837, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 11246, in <module>
+    render_kinetics_section(
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1495, in render_kinetics_section
+    render_error(error, context="однофазная диффузионная пара")
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 246, in render_friendly_error
+    _render_friendly_error(error, context=context, paths=THERMOGAR_PATHS)
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 1391, in render_friendly_error
+    render_user_error(
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 400, in render_user_error
+    error_id, payload = _write_error_log(
+                        ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 381, in _write_error_log
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+_______________________ test_diffusion_single_phase[al] _______________________
+
+database_key = 'al'
+
+    @pytest.mark.parametrize("database_key", DB_KEYS)
+    def test_diffusion_single_phase(database_key: str) -> None:
+        app = start_app(database_key)
+        set_diffusion_inputs(app, database_key, "kin_single")
+        phase = DIFFUSION_COUPLE[database_key][5][0]
+        app.session_state[f"kin_single_phase_{database_key}"] = phase
+        app.run()
+    
+        widget(app, "button", f"kin_single_run_{database_key}").click().run()
+>       assert_no_traceback(app)
+
+tools\test_ui_g.py:254: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+app = AppTest(
+    _script_path='D:\\Pets\\ThermoGar\\app\\ThermoGar_app.py',
+    default_timeout=1800,
+    session_state={$...лементы'
+                )
+            }
+        ),
+        2: SpecialBlock(
+            type='event'
+        )
+    }
+)
+
+    def assert_no_traceback(app: AppTest) -> None:
+>       assert not app.exception, [element.message for element in app.exception]
+E       AssertionError: ['Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoGar']
+E       assert not ElementList(_list=[Exception(message='Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoG...e_io.py", line 240, in _win_open_handle\n    raise SecureIOError(f"Windows handle escaped canonical path: {path}")'])])
+E        +  where ElementList(_list=[Exception(message='Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoG...e_io.py", line 240, in _win_open_handle\n    raise SecureIOError(f"Windows handle escaped canonical path: {path}")'])]) = AppTest(\n    _script_path='D:\\Pets\\ThermoGar\\app\\ThermoGar_app.py',\n    default_timeout=1800,\n    session_state={$...лементы'\n                )\n            }\n        ),\n        2: SpecialBlock(\n            type='event'\n        )\n    }\n).exception
+
+tools\test_ui_g.py:137: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-18 00:45:18.462 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:18.462 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:18.462 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:18.462 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:18.462 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:19.780 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:19.780 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:19.780 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:19.780 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:19.780 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:19.780 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:19.780 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:19.780 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:20.733 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:26.015 Uncaught app execution
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1476, in render_kinetics_section
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1407, in record_calculation_history
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1378, in record_history
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 136, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 837, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 11246, in <module>
+    render_kinetics_section(
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1495, in render_kinetics_section
+    render_error(error, context="однофазная диффузионная пара")
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 246, in render_friendly_error
+    _render_friendly_error(error, context=context, paths=THERMOGAR_PATHS)
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 1391, in render_friendly_error
+    render_user_error(
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 400, in render_user_error
+    error_id, payload = _write_error_log(
+                        ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 381, in _write_error_log
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ERROR    streamlit.error_util:error_util.py:112 Uncaught app execution
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1476, in render_kinetics_section
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1407, in record_calculation_history
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1378, in record_history
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 136, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 837, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 11246, in <module>
+    render_kinetics_section(
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1495, in render_kinetics_section
+    render_error(error, context="однофазная диффузионная пара")
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 246, in render_friendly_error
+    _render_friendly_error(error, context=context, paths=THERMOGAR_PATHS)
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 1391, in render_friendly_error
+    render_user_error(
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 400, in render_user_error
+    error_id, payload = _write_error_log(
+                        ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 381, in _write_error_log
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+_______________________ test_diffusion_single_phase[fe] _______________________
+
+database_key = 'fe'
+
+    @pytest.mark.parametrize("database_key", DB_KEYS)
+    def test_diffusion_single_phase(database_key: str) -> None:
+        app = start_app(database_key)
+        set_diffusion_inputs(app, database_key, "kin_single")
+        phase = DIFFUSION_COUPLE[database_key][5][0]
+        app.session_state[f"kin_single_phase_{database_key}"] = phase
+        app.run()
+    
+        widget(app, "button", f"kin_single_run_{database_key}").click().run()
+>       assert_no_traceback(app)
+
+tools\test_ui_g.py:254: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+app = AppTest(
+    _script_path='D:\\Pets\\ThermoGar\\app\\ThermoGar_app.py',
+    default_timeout=1800,
+    session_state={$...лементы'
+                )
+            }
+        ),
+        2: SpecialBlock(
+            type='event'
+        )
+    }
+)
+
+    def assert_no_traceback(app: AppTest) -> None:
+>       assert not app.exception, [element.message for element in app.exception]
+E       AssertionError: ['Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoGar']
+E       assert not ElementList(_list=[Exception(message='Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoG...e_io.py", line 240, in _win_open_handle\n    raise SecureIOError(f"Windows handle escaped canonical path: {path}")'])])
+E        +  where ElementList(_list=[Exception(message='Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoG...e_io.py", line 240, in _win_open_handle\n    raise SecureIOError(f"Windows handle escaped canonical path: {path}")'])]) = AppTest(\n    _script_path='D:\\Pets\\ThermoGar\\app\\ThermoGar_app.py',\n    default_timeout=1800,\n    session_state={$...лементы'\n                )\n            }\n        ),\n        2: SpecialBlock(\n            type='event'\n        )\n    }\n).exception
+
+tools\test_ui_g.py:137: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-18 00:45:26.149 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:26.150 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:26.150 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:26.150 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:26.150 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:27.737 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:27.737 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:27.737 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:27.737 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:27.737 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:27.737 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:27.737 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:27.737 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:29.109 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:37.411 Uncaught app execution
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1476, in render_kinetics_section
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1407, in record_calculation_history
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1378, in record_history
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 136, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 837, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 11246, in <module>
+    render_kinetics_section(
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1495, in render_kinetics_section
+    render_error(error, context="однофазная диффузионная пара")
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 246, in render_friendly_error
+    _render_friendly_error(error, context=context, paths=THERMOGAR_PATHS)
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 1391, in render_friendly_error
+    render_user_error(
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 400, in render_user_error
+    error_id, payload = _write_error_log(
+                        ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 381, in _write_error_log
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ERROR    streamlit.error_util:error_util.py:112 Uncaught app execution
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1476, in render_kinetics_section
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1407, in record_calculation_history
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1378, in record_history
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 136, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 837, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 11246, in <module>
+    render_kinetics_section(
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1495, in render_kinetics_section
+    render_error(error, context="однофазная диффузионная пара")
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 246, in render_friendly_error
+    _render_friendly_error(error, context=context, paths=THERMOGAR_PATHS)
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 1391, in render_friendly_error
+    render_user_error(
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 400, in render_user_error
+    error_id, payload = _write_error_log(
+                        ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 381, in _write_error_log
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+______________________ test_diffusion_homogenization[ni] ______________________
+
+database_key = 'ni'
+
+    @pytest.mark.parametrize("database_key", ("ni", "fe"))
+    def test_diffusion_homogenization(database_key: str) -> None:
+        app = start_app(database_key)
+        set_diffusion_inputs(app, database_key, "kin_hom")
+        phases = list(DIFFUSION_COUPLE[database_key][5][:2])
+        app.session_state[f"kin_hom_phases_{database_key}"] = phases
+        app.run()
+    
+        widget(app, "button", f"kin_hom_run_{database_key}").click().run()
+>       assert_no_traceback(app)
+
+tools\test_ui_g.py:299: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+app = AppTest(
+    _script_path='D:\\Pets\\ThermoGar\\app\\ThermoGar_app.py',
+    default_timeout=1800,
+    session_state={$...лементы'
+                )
+            }
+        ),
+        2: SpecialBlock(
+            type='event'
+        )
+    }
+)
+
+    def assert_no_traceback(app: AppTest) -> None:
+>       assert not app.exception, [element.message for element in app.exception]
+E       AssertionError: ['Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoGar']
+E       assert not ElementList(_list=[Exception(message='Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoG...e_io.py", line 240, in _win_open_handle\n    raise SecureIOError(f"Windows handle escaped canonical path: {path}")'])])
+E        +  where ElementList(_list=[Exception(message='Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoG...e_io.py", line 240, in _win_open_handle\n    raise SecureIOError(f"Windows handle escaped canonical path: {path}")'])]) = AppTest(\n    _script_path='D:\\Pets\\ThermoGar\\app\\ThermoGar_app.py',\n    default_timeout=1800,\n    session_state={$...лементы'\n                )\n            }\n        ),\n        2: SpecialBlock(\n            type='event'\n        )\n    }\n).exception
+
+tools\test_ui_g.py:137: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-18 00:45:37.546 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:37.546 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:37.546 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:37.546 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:37.546 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:38.956 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:38.956 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:38.956 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:38.956 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:38.956 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:38.956 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:38.956 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:38.956 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:40.092 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:47.329 Uncaught app execution
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1630, in render_kinetics_section
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1407, in record_calculation_history
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1378, in record_history
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 136, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 837, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 11246, in <module>
+    render_kinetics_section(
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1651, in render_kinetics_section
+    render_error(error, context="многофазная гомогенизация")
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 246, in render_friendly_error
+    _render_friendly_error(error, context=context, paths=THERMOGAR_PATHS)
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 1391, in render_friendly_error
+    render_user_error(
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 400, in render_user_error
+    error_id, payload = _write_error_log(
+                        ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 381, in _write_error_log
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ERROR    streamlit.error_util:error_util.py:112 Uncaught app execution
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1630, in render_kinetics_section
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1407, in record_calculation_history
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1378, in record_history
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 136, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 837, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 11246, in <module>
+    render_kinetics_section(
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1651, in render_kinetics_section
+    render_error(error, context="многофазная гомогенизация")
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 246, in render_friendly_error
+    _render_friendly_error(error, context=context, paths=THERMOGAR_PATHS)
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 1391, in render_friendly_error
+    render_user_error(
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 400, in render_user_error
+    error_id, payload = _write_error_log(
+                        ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 381, in _write_error_log
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+______________________ test_diffusion_homogenization[fe] ______________________
+
+database_key = 'fe'
+
+    @pytest.mark.parametrize("database_key", ("ni", "fe"))
+    def test_diffusion_homogenization(database_key: str) -> None:
+        app = start_app(database_key)
+        set_diffusion_inputs(app, database_key, "kin_hom")
+        phases = list(DIFFUSION_COUPLE[database_key][5][:2])
+        app.session_state[f"kin_hom_phases_{database_key}"] = phases
+        app.run()
+    
+        widget(app, "button", f"kin_hom_run_{database_key}").click().run()
+>       assert_no_traceback(app)
+
+tools\test_ui_g.py:299: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+app = AppTest(
+    _script_path='D:\\Pets\\ThermoGar\\app\\ThermoGar_app.py',
+    default_timeout=1800,
+    session_state={$...лементы'
+                )
+            }
+        ),
+        2: SpecialBlock(
+            type='event'
+        )
+    }
+)
+
+    def assert_no_traceback(app: AppTest) -> None:
+>       assert not app.exception, [element.message for element in app.exception]
+E       AssertionError: ['Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoGar']
+E       assert not ElementList(_list=[Exception(message='Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoG...e_io.py", line 240, in _win_open_handle\n    raise SecureIOError(f"Windows handle escaped canonical path: {path}")'])])
+E        +  where ElementList(_list=[Exception(message='Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoG...e_io.py", line 240, in _win_open_handle\n    raise SecureIOError(f"Windows handle escaped canonical path: {path}")'])]) = AppTest(\n    _script_path='D:\\Pets\\ThermoGar\\app\\ThermoGar_app.py',\n    default_timeout=1800,\n    session_state={$...лементы'\n                )\n            }\n        ),\n        2: SpecialBlock(\n            type='event'\n        )\n    }\n).exception
+
+tools\test_ui_g.py:137: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-18 00:45:47.454 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:47.454 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:47.454 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:47.455 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:47.455 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:49.009 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:49.009 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:49.009 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:49.009 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:49.009 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:49.009 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:49.009 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:49.010 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:50.467 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:45:59.428 Uncaught app execution
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1630, in render_kinetics_section
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1407, in record_calculation_history
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1378, in record_history
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 136, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 837, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 11246, in <module>
+    render_kinetics_section(
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1651, in render_kinetics_section
+    render_error(error, context="многофазная гомогенизация")
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 246, in render_friendly_error
+    _render_friendly_error(error, context=context, paths=THERMOGAR_PATHS)
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 1391, in render_friendly_error
+    render_user_error(
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 400, in render_user_error
+    error_id, payload = _write_error_log(
+                        ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 381, in _write_error_log
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ERROR    streamlit.error_util:error_util.py:112 Uncaught app execution
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1630, in render_kinetics_section
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1407, in record_calculation_history
+    record_history(
+  File "D:\Pets\ThermoGar\app\thermogar_workspace.py", line 1378, in record_history
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 136, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 837, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 11246, in <module>
+    render_kinetics_section(
+  File "D:\Pets\ThermoGar\app\thermogar_diffusion.py", line 1651, in render_kinetics_section
+    render_error(error, context="многофазная гомогенизация")
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 246, in render_friendly_error
+    _render_friendly_error(error, context=context, paths=THERMOGAR_PATHS)
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 1391, in render_friendly_error
+    render_user_error(
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 400, in render_user_error
+    error_id, payload = _write_error_log(
+                        ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 381, in _write_error_log
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+_________________________ test_kwn_precipitation[ni] __________________________
+
+database_key = 'ni'
+
+    @pytest.mark.parametrize(
+        "database_key",
+        (
+            "ni",
+            "al",
+            pytest.param("fe", marks=pytest.mark.slow),
+        ),
+    )
+    def test_kwn_precipitation(database_key: str) -> None:
+        matrix, precipitate, temperature = KWN_CELL[database_key]
+        app = start_app(database_key)
+    
+        matrix_options = widget(
+            app, "selectbox", f"precipitation_{database_key}_user_matrix"
+        ).options
+        assert matrix in matrix_options, (
+            f"{matrix} не предлагается матрицей для базы {database_key}: "
+            f"{matrix_options}"
+        )
+    
+        state = app.session_state
+        state[f"precipitation_{database_key}_user_matrix"] = matrix
+        state[f"precipitation_{database_key}_user_precipitate"] = precipitate
+        state[f"precipitation_{database_key}_user_temperature_c"] = temperature
+        state[f"precipitation_{database_key}_user_duration_h"] = SHORT_TIME_H
+        state[f"precipitation_{database_key}_user_bins"] = KWN_BINS
+        app.run()
+    
+        widget(
+            app, "button", f"precipitation_{database_key}_user_calculate"
+        ).click().run()
+        assert_no_traceback(app)
+>       assert new_errors(app) == [], new_errors(app)
+E       AssertionError: ['Библиотека не выгружена: Не удалось записать файл в папку данных ThermoGar.']
+E       assert ['Библиотека ...х ThermoGar.'] == []
+E         
+E         Left contains one more item: 'Библиотека не выгружена: Не удалось записать файл в папку данных ThermoGar.'
+E         Use -v to get more diff
+
+tools\test_ui_g.py:388: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-18 00:46:01.749 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:01.749 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:01.749 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:01.749 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:01.749 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:03.224 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:03.224 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:03.225 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:03.225 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:03.225 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+_________________________ test_kwn_precipitation[al] __________________________
+
+database_key = 'al'
+
+    @pytest.mark.parametrize(
+        "database_key",
+        (
+            "ni",
+            "al",
+            pytest.param("fe", marks=pytest.mark.slow),
+        ),
+    )
+    def test_kwn_precipitation(database_key: str) -> None:
+        matrix, precipitate, temperature = KWN_CELL[database_key]
+        app = start_app(database_key)
+    
+        matrix_options = widget(
+            app, "selectbox", f"precipitation_{database_key}_user_matrix"
+        ).options
+        assert matrix in matrix_options, (
+            f"{matrix} не предлагается матрицей для базы {database_key}: "
+            f"{matrix_options}"
+        )
+    
+        state = app.session_state
+        state[f"precipitation_{database_key}_user_matrix"] = matrix
+        state[f"precipitation_{database_key}_user_precipitate"] = precipitate
+        state[f"precipitation_{database_key}_user_temperature_c"] = temperature
+        state[f"precipitation_{database_key}_user_duration_h"] = SHORT_TIME_H
+        state[f"precipitation_{database_key}_user_bins"] = KWN_BINS
+        app.run()
+    
+        widget(
+            app, "button", f"precipitation_{database_key}_user_calculate"
+        ).click().run()
+        assert_no_traceback(app)
+>       assert new_errors(app) == [], new_errors(app)
+E       AssertionError: ['Библиотека не выгружена: Не удалось записать файл в папку данных ThermoGar.']
+E       assert ['Библиотека ...х ThermoGar.'] == []
+E         
+E         Left contains one more item: 'Библиотека не выгружена: Не удалось записать файл в папку данных ThermoGar.'
+E         Use -v to get more diff
+
+tools\test_ui_g.py:388: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-18 00:46:25.297 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:25.297 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:25.297 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:25.297 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:25.297 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:26.665 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:26.665 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:26.665 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:26.665 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:46:26.665 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+_______________________ test_kwn_size_grid_is_validated _______________________
+
+    def test_kwn_size_grid_is_validated() -> None:
+        app = start_app("fe")
+        state = app.session_state
+        state["precipitation_fe_user_matrix"] = "BCC_A2"
+        state["precipitation_fe_user_precipitate"] = "M23C6"
+        state["precipitation_fe_user_duration_h"] = SHORT_TIME_H
+        state["precipitation_fe_user_cmin_nm"] = 10.0
+        state["precipitation_fe_user_cmax_nm"] = 1.0
+        app.run()
+        widget(app, "button", "precipitation_fe_user_calculate").click().run()
+    
+>       assert_no_traceback(app)
+
+tools\test_ui_g.py:630: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+app = AppTest(
+    _script_path='D:\\Pets\\ThermoGar\\app\\ThermoGar_app.py',
+    default_timeout=1800,
+    session_state={$...лементы'
+                )
+            }
+        ),
+        2: SpecialBlock(
+            type='event'
+        )
+    }
+)
+
+    def assert_no_traceback(app: AppTest) -> None:
+>       assert not app.exception, [element.message for element in app.exception]
+E       AssertionError: ['Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoGar']
+E       assert not ElementList(_list=[Exception(message='Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoG...e_io.py", line 240, in _win_open_handle\n    raise SecureIOError(f"Windows handle escaped canonical path: {path}")'])])
+E        +  where ElementList(_list=[Exception(message='Windows handle escaped canonical path: C:\\Users\\gareg\\AppData\\Local\\ThermoG...e_io.py", line 240, in _win_open_handle\n    raise SecureIOError(f"Windows handle escaped canonical path: {path}")'])]) = AppTest(\n    _script_path='D:\\Pets\\ThermoGar\\app\\ThermoGar_app.py',\n    default_timeout=1800,\n    session_state={$...лементы'\n                )\n            }\n        ),\n        2: SpecialBlock(\n            type='event'\n        )\n    }\n).exception
+
+tools\test_ui_g.py:137: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-18 00:47:31.900 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:47:31.900 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:47:31.900 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:47:31.900 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:47:31.900 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:47:33.526 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:47:33.526 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:47:33.527 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:47:33.531 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:47:33.531 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 00:47:41.386 Uncaught app execution
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\app\thermogar_precipitation.py", line 1570, in render_precipitation_section
+    result = run_precipitation(
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_precipitation.py", line 1054, in run_precipitation
+    raise ValueError("Проверьте диапазон радиусов.")
+ValueError: Проверьте диапазон радиусов.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 136, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 837, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 11259, in <module>
+    render_precipitation_section(
+  File "D:\Pets\ThermoGar\app\thermogar_precipitation.py", line 1606, in render_precipitation_section
+    render_error(error, context="кинетика выделений")
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 246, in render_friendly_error
+    _render_friendly_error(error, context=context, paths=THERMOGAR_PATHS)
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 1391, in render_friendly_error
+    render_user_error(
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 400, in render_user_error
+    error_id, payload = _write_error_log(
+                        ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 381, in _write_error_log
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ERROR    streamlit.error_util:error_util.py:112 Uncaught app execution
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\app\thermogar_precipitation.py", line 1570, in render_precipitation_section
+    result = run_precipitation(
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_precipitation.py", line 1054, in run_precipitation
+    raise ValueError("Проверьте диапазон радиусов.")
+ValueError: Проверьте диапазон радиусов.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 136, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 837, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 11259, in <module>
+    render_precipitation_section(
+  File "D:\Pets\ThermoGar\app\thermogar_precipitation.py", line 1606, in render_precipitation_section
+    render_error(error, context="кинетика выделений")
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 246, in render_friendly_error
+    _render_friendly_error(error, context=context, paths=THERMOGAR_PATHS)
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 1391, in render_friendly_error
+    render_user_error(
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 400, in render_user_error
+    error_id, payload = _write_error_log(
+                        ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_stage14.py", line 381, in _write_error_log
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 560, in exclusive_writer
+    with hold_plain_directory(
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 540, in hold_plain_directory
+    handle = _win_open_handle(
+             ^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar\app\thermogar_secure_io.py", line 240, in _win_open_handle
+    raise SecureIOError(f"Windows handle escaped canonical path: {path}")
+thermogar_secure_io.SecureIOError: Windows handle escaped canonical path: C:\Users\gareg\AppData\Local\ThermoGar
+============================== warnings summary ===============================
+tools/test_ui_g.py::test_kwn_precipitation[ni]
+tools/test_ui_g.py::test_kwn_precipitation[al]
+  D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\kawin\precipitation\NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+    incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tools/test_ui_g.py::test_diffusion_single_phase[ni] - AssertionError: ...
+FAILED tools/test_ui_g.py::test_diffusion_single_phase[al] - AssertionError: ...
+FAILED tools/test_ui_g.py::test_diffusion_single_phase[fe] - AssertionError: ...
+FAILED tools/test_ui_g.py::test_diffusion_homogenization[ni] - AssertionError...
+FAILED tools/test_ui_g.py::test_diffusion_homogenization[fe] - AssertionError...
+FAILED tools/test_ui_g.py::test_kwn_precipitation[ni] - AssertionError: ['Биб...
+FAILED tools/test_ui_g.py::test_kwn_precipitation[al] - AssertionError: ['Биб...
+FAILED tools/test_ui_g.py::test_kwn_size_grid_is_validated - AssertionError: ...
+8 failed, 21 passed, 3 deselected, 2 warnings in 170.13s (0:02:50)

@@ -1,0 +1,30 @@
+2026-09-18 01:51:07.708 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 01:51:07.776 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+==============================================================================
+THERMOGAR SWR — DIFFUSION SOFTWARE REGRESSION
+==============================================================================
+Project: D:\Pets\ThermoGar
+kawin: 0.5.0
+PASS: unknown database rejected
+PASS: non-string database key rejected
+PASS: key/path mismatch rejected
+PASS: database label mismatch rejected
+PASS: non-string database label rejected
+PASS: non-string input provenance rejected
+PASS: blank input provenance rejected
+PASS: unconfirmed input rejected
+PASS: unknown model kind rejected
+PASS: unknown homogenization function rejected
+PASS: database SHA mismatch rejected
+PASS: post-load database change rejected
+PASS: byte-identical noncanonical copy rejected
+
+                   Проверка     Значение       Допуск   Статус
+Сумма состава в каждом узле 0.000000e+00 1.000000e-08 пройдена
+Сохранение среднего состава 6.000000e-08 1.000000e-06 пройдена
+
+Actual time, s: 3.6
+Profile rows: 20
+Max balance error: 5.999999985739635e-08
+
+RESULT: PASSED

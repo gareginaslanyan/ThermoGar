@@ -160,9 +160,12 @@ from thermogar_stage14 import (
     validation_dataframe,
 )
 from thermogar_physical import (
+    OVERRIDES_OFF_BY_USER,
     PHYSICAL_DATABASE_VERSION,
+    PHYSICAL_OVERRIDES_ENV,
     PhysicalDensityDatabase,
     calculate_physical_properties,
+    overrides_enabled_by_environment,
     physical_coverage_dataframe,
 )
 from thermogar_diffusion import (
@@ -198,6 +201,7 @@ import thermogar_verified_state as verified_state
 from thermogar_verified_artifact import read_verified_utf8_text
 from thermogar_release_policy import (
     APP_LINEAGE,
+    DROPPED_PHASES_SHOWN,
     FE_EXCLUDED_PHASES,
     PHASE_MODE_ALL,
     PHASE_MODE_FAST,
@@ -216,6 +220,9 @@ from thermogar_release_policy import (
     SCIENTIFIC_MATERIAL_STATUS,
     SOFTWARE_RELEASE_STATUS,
     PhasePresetError,
+    dropped_phases_expander_label,
+    dropped_phases_full_list,
+    dropped_phases_warning,
     effective_release_phases,
     load_phase_presets,
     phase_mode_note,
@@ -1215,17 +1222,26 @@ PHYSICAL_DATABASE_PATH = (
 def _load_physical_database_cached(
     database_path_text: str,
     expected_sha256: str,
+    physical_overrides: bool = True,
 ) -> PhysicalDensityDatabase:
     database_path = Path(database_path_text)
     if file_sha256(database_path) != expected_sha256:
         raise RuntimeError("Файл physical database изменился до загрузки.")
-    database = PhysicalDensityDatabase(database_path)
+    if physical_overrides:
+        database = PhysicalDensityDatabase(database_path)
+    else:
+        database = PhysicalDensityDatabase(
+            database_path,
+            overrides=OVERRIDES_OFF_BY_USER,
+        )
     if file_sha256(database_path) != expected_sha256:
         raise RuntimeError("Файл physical database изменился во время загрузки.")
     return database
 
 
-def load_physical_database() -> PhysicalDensityDatabase:
+def load_physical_database(
+    physical_overrides: bool = True,
+) -> PhysicalDensityDatabase:
     database_path = PHYSICAL_DATABASE_PATH.resolve()
     expected_path = (PROJECT_ROOT / PHYSICAL_DATABASE_RELATIVE_PATH).resolve()
     if database_path != expected_path or not database_path.is_file():
@@ -1239,12 +1255,81 @@ def load_physical_database() -> PhysicalDensityDatabase:
     database = _load_physical_database_cached(
         str(database_path),
         PHYSICAL_DATABASE_SHA256,
+        bool(physical_overrides),
     )
     if file_sha256(database_path) != PHYSICAL_DATABASE_SHA256:
         raise RuntimeError(
             "Файл physical database изменился после загрузки; повторите запуск."
         )
     return database
+
+
+PHYSICAL_OVERRIDES_TOGGLE_KEY = "physical_overrides_enabled"
+PHYSICAL_OVERRIDES_TOGGLE_LABEL = (
+    "Применять поправки проекта ThermoGar к физической базе"
+)
+PHYSICAL_OVERRIDES_TOGGLE_HELP = (
+    "Поправка проекта заменяет в physical_data_v103.pdb тепловую функцию "
+    "хрома DTCRBCC коэффициентами из статьи, на которую ссылается сама база "
+    "(REF 14): перенос этих чисел в базу сломан. Снимите галочку, чтобы "
+    "считать плотность строго по данным базы, — у сплавов с хромом она выйдет "
+    "ниже, до 1 % при 700 °C и до 2 % при 1300 °C. Действует на вкладки "
+    "«Плотность», «Плотность по T» и «Упругие свойства» (через объёмные "
+    "доли фаз). Подробности: docs/DATABASES.md, раздел 8."
+)
+PHYSICAL_OVERRIDES_ENV_LOCKED_NOTE = (
+    "Поправки выключены переменной окружения "
+    f"{PHYSICAL_OVERRIDES_ENV}: она сильнее галочки. Чтобы включить их, "
+    "запустите программу без этой переменной."
+)
+
+
+# Подписи столбцов долей фаз во вкладке «Упругие свойства» (BL-38).
+# Веса VRH — объёмные доли; мольные (NP равновесия) показаны рядом.
+ELASTIC_MOLE_FRACTION_LABEL = "Мольная доля фаз"
+ELASTIC_VOLUME_FRACTION_LABEL = "Объёмная доля фаз"
+ELASTIC_FRACTION_LABELS = {
+    "mole_fraction": ELASTIC_MOLE_FRACTION_LABEL,
+    "volume_fraction": ELASTIC_VOLUME_FRACTION_LABEL,
+}
+
+
+def render_physical_overrides_toggle() -> bool:
+    """Галочка поправок проекта к физической базе (BL-14).
+
+    Возвращает ``False`` только когда поправки сняты галочкой. Если их
+    выключила переменная окружения, галочка неактивна, а расчёт идёт штатным
+    путём: там переменная уже решила всё сама.
+    """
+
+    if not overrides_enabled_by_environment():
+        st.checkbox(
+            PHYSICAL_OVERRIDES_TOGGLE_LABEL,
+            value=False,
+            disabled=True,
+            help=PHYSICAL_OVERRIDES_TOGGLE_HELP,
+            key=f"{PHYSICAL_OVERRIDES_TOGGLE_KEY}_env_locked",
+        )
+        st.caption(PHYSICAL_OVERRIDES_ENV_LOCKED_NOTE)
+        return True
+    return bool(
+        st.checkbox(
+            PHYSICAL_OVERRIDES_TOGGLE_LABEL,
+            value=True,
+            help=PHYSICAL_OVERRIDES_TOGGLE_HELP,
+            key=PHYSICAL_OVERRIDES_TOGGLE_KEY,
+        )
+    )
+
+
+def _b4b_refresh_overrides(state_key: str, physical_overrides: bool) -> None:
+    """Показанный результат посчитан при другом положении галочки — убрать."""
+
+    state = st.session_state.get(state_key)
+    if type(state) is dict and state.get("physical_overrides", True) != bool(
+        physical_overrides
+    ):
+        st.session_state.pop(state_key, None)
 
 
 def bind_b4b_physical_context(
@@ -1360,11 +1445,13 @@ def _b4b_store_result(
     state_key: str,
     database_key: str,
     execution: verified_physical.VerifiedPhysicalResult,
+    physical_overrides: bool = True,
 ) -> None:
     st.session_state[state_key] = {
         "binding_digest": execution.feature_receipt.binding_digest,
         "database_key": database_key,
         "envelope_digest": execution.result_envelope.envelope_digest,
+        "physical_overrides": bool(physical_overrides),
         "projections": [point.projection for point in execution.points],
         "receipt_digest": execution.feature_receipt.receipt_digest,
         "request_digest": execution.feature_receipt.request_digest,
@@ -1377,6 +1464,7 @@ def _b4b_store_engine_result(
     decision: verified_loaders.FeatureRequest,
     projections: list[dict[str, Any]],
     note: str,
+    physical_overrides: bool = True,
 ) -> None:
     """Результат многоточечного раздела «Свойства», посчитанный движком.
 
@@ -1390,6 +1478,7 @@ def _b4b_store_engine_result(
         "database_key": database_key,
         "engine_note": note,
         "envelope_digest": None,
+        "physical_overrides": bool(physical_overrides),
         "projections": projections,
         "receipt_digest": None,
         "request_digest": decision.request_digest,
@@ -1463,6 +1552,7 @@ def render_b4b_density_single(
     balance: str,
     pressure_pa: float,
     default_temperature_c: float,
+    physical_overrides: bool = True,
 ) -> None:
     st.markdown("### Плотность при одной температуре")
     temperature_c = st.number_input(
@@ -1500,6 +1590,7 @@ def render_b4b_density_single(
         )
     state_key = "_thermogar_vlb_b4b_result_property_density_single"
     _b4b_refresh_result(state_key, decision)
+    _b4b_refresh_overrides(state_key, physical_overrides)
     if verified_physical_button(
         decision,
         "Рассчитать плотность и объёмные доли",
@@ -1516,8 +1607,14 @@ def render_b4b_density_single(
                     context,
                     decision,
                     lease,
+                    physical_overrides=physical_overrides,
                 )
-            _b4b_store_result(state_key, database_key, execution)
+            _b4b_store_result(
+                state_key,
+                database_key,
+                execution,
+                physical_overrides,
+            )
         except Exception as error:
             render_friendly_error(error, context="плотность и объёмные доли")
     state = st.session_state.get(state_key)
@@ -1607,6 +1704,7 @@ def render_b4b_density_temperature(
     default_min_c: float,
     default_max_c: float,
     default_step_c: float,
+    physical_overrides: bool = True,
 ) -> None:
     st.markdown("### Плотность и объёмные доли по температуре")
     columns = st.columns(3)
@@ -1652,6 +1750,7 @@ def render_b4b_density_temperature(
         )
     state_key = "_thermogar_vlb_b4b_result_property_density_temperature"
     _b4b_refresh_result(state_key, decision)
+    _b4b_refresh_overrides(state_key, physical_overrides)
     if verified_physical_button(
         decision,
         "Построить плотность по температуре",
@@ -1700,7 +1799,7 @@ def render_b4b_density_temperature(
                     capture=("X", "Y"),
                     progress_text="Точки плотности",
                 )
-                physical_db = load_physical_database()
+                physical_db = load_physical_database(physical_overrides)
                 projections: list[dict[str, Any]] = []
                 for temperature_k, result in zip(
                     inputs["temperatures_k"], density_run.results
@@ -1724,6 +1823,7 @@ def render_b4b_density_temperature(
                 decision,
                 projections,
                 density_run.note,
+                physical_overrides,
             )
         except Exception as error:
             render_friendly_error(error, context="плотность по температуре")
@@ -1857,12 +1957,14 @@ def _b4b2_store_result(
     state_key: str,
     database_key: str,
     execution: verified_properties.VerifiedPropertiesResult,
+    physical_overrides: bool = True,
 ) -> None:
     st.session_state[state_key] = {
         "binding_digest": execution.feature_receipt.binding_digest,
         "database_key": database_key,
         "envelope_digest": execution.result_envelope.envelope_digest,
         "hill_witness_digest": execution.hill_witness_digest,
+        "physical_overrides": bool(physical_overrides),
         "prepared_witness_digest": execution.prepared_witness_digest,
         "projection": execution.projection,
         "receipt_digest": execution.feature_receipt.receipt_digest,
@@ -1891,6 +1993,7 @@ def render_b4b2_elastic_properties(
     balance: str,
     pressure_pa: float,
     default_temperature_c: float,
+    physical_overrides: bool = True,
 ) -> None:
     st.markdown("### Упругие свойства по фазовым долям")
     st.caption(
@@ -1924,6 +2027,11 @@ def render_b4b2_elastic_properties(
         prepare_error = error
         st.error(str(error))
     prepare_state_key = "_thermogar_vlb_b4b_result_property_elastic_prepare"
+    vrh_state_key = "_thermogar_vlb_b4b_result_property_elastic_vrh"
+    # Объёмные доли фаз зависят от поправок к физической базе (BL-38):
+    # посчитанное при другом положении галочки не показывается.
+    _b4b_refresh_overrides(prepare_state_key, physical_overrides)
+    _b4b_refresh_overrides(vrh_state_key, physical_overrides)
     if prepare_decision is not None:
         _b4b_refresh_result(prepare_state_key, prepare_decision)
         if verified_physical_button(
@@ -1940,8 +2048,14 @@ def render_b4b2_elastic_properties(
                         prepare_decision,
                         lease,
                         paths=THERMOGAR_PATHS,
+                        physical_overrides=physical_overrides,
                     )
-                _b4b2_store_result(prepare_state_key, database_key, execution)
+                _b4b2_store_result(
+                    prepare_state_key,
+                    database_key,
+                    execution,
+                    physical_overrides,
+                )
             except Exception as error:
                 render_friendly_error(error, context="подготовка упругих свойств")
     elif prepare_error is not None:
@@ -1953,6 +2067,8 @@ def render_b4b2_elastic_properties(
     prepared_digest = prepared.get("prepared_witness_digest")
     if type(prepared_digest) is not str:
         return
+    for text in prepared.get("projection", {}).get("warnings", ()):
+        st.warning(text)
     try:
         library_view = verified_properties.property_library_prefill(
             context,
@@ -1967,7 +2083,13 @@ def render_b4b2_elastic_properties(
         editor,
         width="stretch",
         hide_index=True,
-        disabled=["phase", "volume_fraction"],
+        disabled=["phase", "mole_fraction", "volume_fraction"],
+        # Мольные доли даёт равновесие (NP); объёмные — они же, пересчитанные
+        # через молярные объёмы фаз из физической базы. VRH берёт объёмные.
+        column_config={
+            field: st.column_config.NumberColumn(label)
+            for field, label in ELASTIC_FRACTION_LABELS.items()
+        },
         key=f"b4b2_elastic_editor_{prepared_digest}",
     )
     update_library = st.checkbox(
@@ -1999,7 +2121,6 @@ def render_b4b2_elastic_properties(
     except Exception as error:
         st.error(str(error))
         return
-    vrh_state_key = "_thermogar_vlb_b4b_result_property_elastic_vrh"
     _b4b_refresh_result(vrh_state_key, vrh_decision)
     if verified_physical_button(
         vrh_decision,
@@ -2016,7 +2137,12 @@ def render_b4b2_elastic_properties(
                     lease,
                     paths=THERMOGAR_PATHS,
                 )
-            _b4b2_store_result(vrh_state_key, database_key, execution)
+            _b4b2_store_result(
+                vrh_state_key,
+                database_key,
+                execution,
+                physical_overrides,
+            )
         except Exception as error:
             render_friendly_error(error, context="Voigt–Reuss–Hill")
     state = st.session_state.get(vrh_state_key)
@@ -2037,7 +2163,22 @@ def render_b4b2_elastic_properties(
                     [(name, value) for name, value in summary.items()],
                     columns=["Величина", "Значение"],
                 ),
-                "Входные значения по фазам": pd.DataFrame(phase_rows),
+                "Входные значения по фазам": pd.DataFrame(
+                    [
+                        {
+                            "phase": row["phase"],
+                            "mole_fraction": view_row["mole_fraction"],
+                            **{
+                                key: value
+                                for key, value in row.items()
+                                if key != "phase"
+                            },
+                        }
+                        for row, view_row in zip(
+                            phase_rows, library_view.phase_rows
+                        )
+                    ]
+                ).rename(columns=ELASTIC_FRACTION_LABELS),
             },
             file_stem="ThermoGar_elastic_vrh",
             history_label="Упругие свойства (Voigt-Reuss-Hill)",
@@ -2563,14 +2704,12 @@ def phase_selection_editor(
                     # проверки здесь не делается — он стоит столько же, сколько
                     # сам быстрый режим, — но список выпавших фаз показывается
                     # всегда.
-                    st.warning(
-                        "В быстром наборе не рассматриваются "
-                        f"{len(dropped)} совместимых с составом фаз: "
-                        + ", ".join(dropped)
-                        + ". Если какая-то из них устойчива на вашем составе, "
-                        "быстрый режим её не покажет — сверьтесь в режиме "
-                        "«все фазы базы»."
-                    )
+                    st.warning(dropped_phases_warning(dropped))
+                    if len(dropped) > DROPPED_PHASES_SHOWN:
+                        with st.expander(
+                            dropped_phases_expander_label(len(dropped))
+                        ):
+                            st.markdown(dropped_phases_full_list(dropped))
         candidate_phases = (
             fast_phases if phase_mode == PHASE_MODE_FAST else all_phases
         )
@@ -6444,7 +6583,7 @@ except Exception as pending_context_error:
 st.title(DISPLAY_APP_NAME)
 
 st.sidebar.caption(
-    "ThermoGar 0.4.1 — исследовательское ПО. "
+    "ThermoGar 0.4.2 — исследовательское ПО. "
     "Экспериментальная квалификация: NOT_PERFORMED."
 )
 
@@ -11000,6 +11139,8 @@ with physical_tab:
         b4b_physical_error = error
         st.error(f"Проверенная физическая привязка отклонена: {error}")
 
+    physical_overrides = render_physical_overrides_toggle()
+
     (
         physical_single_tab,
         physical_scan_tab,
@@ -11028,6 +11169,7 @@ with physical_tab:
                 balance,
                 float(pressure_pa),
                 float(definition["default_temperature"]),
+                physical_overrides,
             )
 
     with physical_scan_tab:
@@ -11044,6 +11186,7 @@ with physical_tab:
                 float(definition["default_t_min"]),
                 float(definition["default_t_max"]),
                 float(definition["default_t_step"]),
+                physical_overrides,
             )
 
     with elastic_properties_tab:
@@ -11058,6 +11201,7 @@ with physical_tab:
                 balance,
                 float(pressure_pa),
                 float(definition["default_temperature"]),
+                physical_overrides,
             )
 
     with strengthening_tab:

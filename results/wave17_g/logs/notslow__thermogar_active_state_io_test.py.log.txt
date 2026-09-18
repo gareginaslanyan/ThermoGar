@@ -1,0 +1,40 @@
+.....                                                                    [100%]
+============================== warnings summary ===============================
+tools/thermogar_active_state_io_test.py::ActiveStateIOTests::test_005_read_only_install_all_active_writes_are_profile_only
+  D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\_pytest\threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-10 (_readerthread)
+  
+  Traceback (most recent call last):
+    File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\threading.py", line 1045, in _bootstrap_inner
+      self.run()
+    File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\threading.py", line 982, in run
+      self._target(*self._args, **self._kwargs)
+    File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\subprocess.py", line 1599, in _readerthread
+      buffer.append(fh.read())
+                    ^^^^^^^^^
+    File "<frozen codecs>", line 322, in decode
+  UnicodeDecodeError: 'utf-8' codec can't decode byte 0xae in position 0: invalid start byte
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+tools/thermogar_active_state_io_test.py::ActiveStateIOTests::test_005_read_only_install_all_active_writes_are_profile_only
+  D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\_pytest\threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-8 (_readerthread)
+  
+  Traceback (most recent call last):
+    File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\threading.py", line 1045, in _bootstrap_inner
+      self.run()
+    File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\threading.py", line 982, in run
+      self._target(*self._args, **self._kwargs)
+    File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\subprocess.py", line 1599, in _readerthread
+      buffer.append(fh.read())
+                    ^^^^^^^^^
+    File "<frozen codecs>", line 322, in decode
+  UnicodeDecodeError: 'utf-8' codec can't decode byte 0xae in position 0: invalid start byte
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+5 passed, 2 warnings in 3.73s

@@ -37,8 +37,9 @@ from streamlit.testing.v1 import AppTest  # noqa: E402
 
 # Ошибки чужих модулей кинетики (зона 3G), которые появляются на первом
 # рендере и не относятся к разделам 3F. Они вынесены в отчёт, а не чинятся.
+# Отказ «не более четырёх добавок» отсюда убран волной 14-Б (BL-21): предел
+# поднят до 10, а составов длиннее трёх добавок в этом файле нет.
 KNOWN_FOREIGN_ERRORS = (
-    "Research KWN mode допускает не более четырёх добавок",
     "Нет матричной фазы с полным набором мобильностей",
 )
 
@@ -187,6 +188,36 @@ def _private_state_root(tmp_path, monkeypatch) -> None:
     """Приватный профиль на тест: не писать в общий %LOCALAPPDATA%\\ThermoGar."""
 
     monkeypatch.setenv("THERMOGAR_STATE_ROOT", str(tmp_path / "state"))
+
+
+# Волна 15-О (BL-27). Пул воркеров в тесте — два процесса. Без этого число
+# воркеров берётся один раз на процесс из свободной памяти в момент первого
+# рендера (auto_worker_count: свободно // 1,5 ГБ, не больше 6), и пик файла
+# зависел от состояния машины: 2 воркера — 3,15 ГиБ на карте (14-Б, 14-Д),
+# 3 — 4,5 ГиБ (15-О), 5 — 7,2 ГиБ (13-Р2). Числа от числа воркеров не зависят
+# (тесты test_parallel_engine), тест проверяет поведение раздела, а пул
+# из двух процессов остаётся пулом.
+UI_TEST_POOL_WORKERS = 2
+
+
+@pytest.fixture(autouse=True)
+def _bounded_memory(monkeypatch) -> Iterator[None]:
+    """Два воркера на тест; после теста пул закрыт, фигуры закрыты, gc."""
+
+    import gc
+
+    import matplotlib.pyplot as plt
+    import thermogar_parallel_ui
+
+    monkeypatch.setattr(thermogar_parallel_ui, "_WORKER_COUNT", UI_TEST_POOL_WORKERS)
+    yield
+    # Тёплый пул иначе живёт до первого рендера следующего теста и
+    # складывается с его памятью. Сброс st.cache_resource и lru-кэшей
+    # pycalphad проверен в 15-О и памяти основного процесса не снимает
+    # (results/wave15_o/fix1, fix2), поэтому здесь его нет.
+    thermogar_parallel_ui.close_shared_engines()
+    plt.close("all")
+    gc.collect()
 
 
 @pytest.fixture(autouse=True)

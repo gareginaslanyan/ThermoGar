@@ -90,6 +90,24 @@ databases/converted/fe/mc_fe_v2062_with_mobility.thermogar.tdb
     keeps the original command verbatim as a comment. No value is substituted.
     SHA-256: 236EC4D9B0540DE04E4E6305FAA208672F31FBDF45B2AE84E92F80BD98053612
 
+The intermediate thermodynamic-only files the merged ones are built from sit
+next to them and are not shipped in the installer:
+
+databases/converted/mc_ni_v2036.garcalc.tdb
+    from mc_ni_v2036.tdb
+    SHA-256: 1DC72C5501EB2D9A1778C5A5622728257572A1DCD0EE218C9B4F9A00E0AD08F8
+
+databases/converted/al/mc_al_v2037.thermogar.tdb
+    from mc_al_v2037.tdb
+    SHA-256: F02BDA0E42FF0733E4B647CBC904643A46C46FC996C57383815ADE032A750C45
+
+databases/converted/fe/mc_fe_v2062.thermogar.tdb
+    from mc_fe_v2062.tdb, already carrying compatibility patch
+    TG-FE-2062-C15-001 (the same single C15_LAVES G parameter disabled and kept
+    verbatim as a comment, line 5778); the merged steel file inherits the patch
+    from it.
+    SHA-256: DEF6C6862458E879B75CABB32E3BFC93A674F981DF7C89E5F0E6E40C246620ED
+
 A per-file conversion record (what was changed, what was disabled and why) sits
 next to each file as a .tdb.json passport. Full description: docs/DATABASES.md.
 

@@ -1,0 +1,29 @@
+{
+  "source": "study_wave15_v_718.case_arguments(700.0, 95.0, GRID)",
+  "database_rel": "databases/converted/mc_ni_v2036_with_mobility.garcalc.tdb",
+  "arguments": {
+    "database_key": "ni",
+    "balance": "FE",
+    "composition_text": "NI=54.2, CR=17.9, NB=5.3, MO=2.99, TI=0.97, AL=0.5",
+    "units": "wt",
+    "matrix_phase": "FCC_A1",
+    "precipitate_phase": "GAMMA_DP",
+    "schedule_mode": "isothermal",
+    "temperature_c": 700.0,
+    "duration_h": 100.0,
+    "profile_text": "",
+    "gamma": 0.095,
+    "matrix_vm": 7.145624374095655,
+    "precip_vm": 7.300000000000001,
+    "nucleation_type": "BULK",
+    "bulk_n0": 8.427732056321752e+28,
+    "grain_size_um": 100.0,
+    "dislocation_density": 5000000000000.0,
+    "gb_energy": 0.3,
+    "cmin_nm": 0.1,
+    "cmax_nm": 50.0,
+    "bins": 800,
+    "input_provenance": "WAVE15_V: состав и межфазная энергия — Devaux и др., Mater. Sci. Eng. A 486 (2008) 117 (измерена); Vm(GAMMA_DP) измерен там же, переведён на моль атомов делением на 4; Vm(FCC_A1) — physical_data_v103.pdb на равновесном составе матрицы; N0 = N_A/Vm(FCC_A1)",
+    "input_confirmation": true
+  }
+}

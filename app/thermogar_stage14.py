@@ -14,6 +14,7 @@ from pathlib import Path
 import hashlib
 import json
 import platform
+import re
 import sys
 import traceback
 import uuid
@@ -90,6 +91,16 @@ def dataframe_excel_bytes(sheets: dict[str, pd.DataFrame]) -> bytes:
 # ---------------------------------------------------------------------------
 # Ошибки без traceback на основном экране
 # ---------------------------------------------------------------------------
+
+
+EMPTY_SOLUTION_RE = re.compile(r"EMPTY_SOLUTION:.*?\bT=([0-9]+(?:\.[0-9]+)?) K")
+# Текст утверждён владельцем (15-Н2).
+EMPTY_SOLUTION_TEXT = (
+    "Равновесие при {temperature_c:.1f} °C не найдено: pycalphad вернул пустое "
+    "решение (сумма долей фаз равна нулю), поэтому результата нет — попробуйте "
+    "другую температуру или состав; решатель не сходится на части составов, и "
+    "соседние точки тоже могут оказаться пустыми."
+)
 
 
 def _friendly_error_text(error: Exception, context: str) -> tuple[str, str]:
@@ -261,6 +272,17 @@ def _friendly_error_text(error: Exception, context: str) -> tuple[str, str]:
             raw,
         )
 
+    # BL-24: пустое решение pycalphad. Метка и формат причины —
+    # ``thermogar_verified_equilibrium.EMPTY_SOLUTION_MARKER``.
+    empty_solution = EMPTY_SOLUTION_RE.search(raw)
+    if empty_solution is not None:
+        return (
+            EMPTY_SOLUTION_TEXT.format(
+                temperature_c=float(empty_solution.group(1)) - 273.15
+            ),
+            "",
+        )
+
     if "converg" in lower or "solver" in lower or "сходим" in lower:
         return (
             "Решатель не сошёлся для выбранной точки.",
@@ -382,7 +404,7 @@ def render_user_error(
         extra,
     )
 
-    st.error(f"{title}\n\n{action}")
+    st.error(f"{title}\n\n{action}" if action else title)
     st.caption(f"Код ошибки: {error_id}")
     with st.expander("Технические сведения", expanded=False):
         st.write(f"Тип: {payload['exception_type']}")

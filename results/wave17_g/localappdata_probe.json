@@ -1,0 +1,14 @@
+{
+  "requested": "c:\\users\\gareg\\appdata\\local\\thermogar",
+  "GetFileAttributesW": "0x10",
+  "FILE_ATTRIBUTE_REPARSE_POINT (0x400) выставлен": false,
+  "os.path.islink": false,
+  "os.path.realpath": "C:\\Users\\gareg\\AppData\\Local\\Packages\\Claude_pzs8sxrjxfjjc\\LocalCache\\Local\\ThermoGar",
+  "CreateFileW + FILE_FLAG_OPEN_REPARSE_POINT -> GetFinalPathNameByHandle": "\\\\?\\C:\\Users\\gareg\\AppData\\Local\\Packages\\Claude_pzs8sxrjxfjjc\\LocalCache\\Local\\ThermoGar",
+  "CreateFileW без OPEN_REPARSE_POINT -> GetFinalPathNameByHandle": "\\\\?\\C:\\Users\\gareg\\AppData\\Local\\Packages\\Claude_pzs8sxrjxfjjc\\LocalCache\\Local\\ThermoGar",
+  "окружение": {
+    "LOCALAPPDATA": "C:\\Users\\gareg\\AppData\\Local",
+    "CLAUDE_CODE_ENTRYPOINT": "claude-desktop",
+    "CLAUDE_CODE_DESKTOP_APP_VERSION": "2.110.1"
+  }
+}

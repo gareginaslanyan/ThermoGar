@@ -1,0 +1,5 @@
+tools/test_ui_g.py::test_kwn_precipitation[fe]
+tools/test_ui_g.py::test_fe_kwn_provenance_status_is_neutral
+tools/test_ui_g.py::test_ni_kwn_reaches_a_precipitated_state
+
+3/32 tests collected (29 deselected) in 2.94s

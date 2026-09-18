@@ -85,6 +85,12 @@ ROOT = w12.ROOT
 OUT = w12.OUT
 CACHE = w12.CACHE
 
+# Каталог результатов подпункта 12-2, откуда читается равновесная цель
+# (`e1_phase_fractions.csv`, `e1_matrix_fcc_a1.csv`). Он не переезжает вместе с
+# `OUT`, когда подпункт другой волны пишет свои файлы в свой каталог ключом
+# `--out-dir`: цель одна и та же, а результаты — чужие.
+TARGETS_DIR = w12.OUT
+
 log = w12.log
 CSV_WRITE = dict(w12.CSV_WRITE)
 CSV_READ = dict(w12.CSV_READ)
@@ -170,20 +176,32 @@ PREFIX = "k1"
 
 def configure(temperatures: Sequence[float] | None = None,
               prefix: str | None = None,
-              subpoint: str | None = None) -> None:
-    """Назначить температуры и префикс подпункта на этот процесс.
+              subpoint: str | None = None,
+              out_dir: str | None = None) -> None:
+    """Назначить температуры, префикс и каталог подпункта на этот процесс.
 
     Зовётся из `main` до всякого счёта, в том числе в потомке: ключи ему
-    передаются те же. Своего состояния, кроме этих трёх имён, у модуля нет.
+    передаются те же. Своего состояния, кроме этих имён, у модуля нет.
+
+    `out_dir` — каталог результатов относительно корня репозитория (подпункт
+    13-Б1 пишет в `results/hn62m_wave13`). Вместе с ним переезжают кэш и журнал
+    прогресса, в том числе у `w12`, через который пишутся таблицы и сводка.
+    Равновесная цель 12-2 по-прежнему читается из `TARGETS_DIR`.
     """
 
-    global K_TEMPERATURES_C, PREFIX, SUBPOINT
+    global K_TEMPERATURES_C, PREFIX, SUBPOINT, OUT, CACHE
     if temperatures:
         K_TEMPERATURES_C = tuple(float(value) for value in temperatures)
     if prefix:
         PREFIX = str(prefix)
     if subpoint:
         SUBPOINT = str(subpoint)
+    if out_dir:
+        OUT = (ROOT / out_dir).resolve()
+        CACHE = OUT / "cache"
+        w12.OUT = OUT
+        w12.CACHE = CACHE
+        w12.PROGRESS_PATH = OUT / "_progress.json"
 
 # Межфазная энергия, Дж/м². Диапазон задания 0,05…0,50. Шаг логарифмический, а
 # не равномерный, и вот почему: барьер зарождения растёт как γ³, а движущая
@@ -207,6 +225,26 @@ K_SITES: tuple[tuple[str, str], ...] = (
     ("объём зерна", "BULK"),
     ("границы зёрен", "GRAIN BOUNDARIES"),
 )
+
+# Порядок счёта случаев — не порядок таблиц. Сначала все случаи на границах
+# зёрен, затем объёмные, внутри — по возрастанию межфазной энергии. Так решил
+# подпункт 13-Б2: прогон 13-Б1 при 595 °C дважды снимали по памяти, в кэш
+# успели только объёмные случаи, а вопрос о полосе ложно-отрицательного
+# испытания решают граничные. Таблицы, графики и сводка по-прежнему идут в
+# порядке `K_SITES`: список случаев перед возвратом упорядочивается обратно.
+K_RUN_SITES: tuple[tuple[str, str], ...] = tuple(
+    sorted(K_SITES, key=lambda item: item[1] != "GRAIN BOUNDARIES")
+)
+
+
+def table_order(cases: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Случаи в порядке таблиц: температура, места по `K_SITES`, γ."""
+
+    rank = {site: index for index, (_label, site) in enumerate(K_SITES)}
+    return sorted(cases, key=lambda case: (
+        case["T, °C"], rank[case["места зарождения, kawin"]],
+        case["межфазная энергия, Дж/м²"],
+    ))
 
 # Горизонты ТЗ. Обязаны быть узлами сетки времени, а не интерполяцией.
 K_HORIZONS_H: tuple[float, ...] = (200.0, 87600.0)
@@ -489,8 +527,8 @@ def wave12_2_targets() -> dict[str, Any]:
         "доля P-фазы, мольн. %": {},
         "матрица FCC_A1, масс. %": {},
     }
-    fractions_path = OUT / "e1_phase_fractions.csv"
-    matrix_path = OUT / "e1_matrix_fcc_a1.csv"
+    fractions_path = TARGETS_DIR / "e1_phase_fractions.csv"
+    matrix_path = TARGETS_DIR / "e1_matrix_fcc_a1.csv"
     if fractions_path.is_file():
         table = pd.read_csv(fractions_path, **CSV_READ)
         for temperature in K_TEMPERATURES_C:
@@ -991,8 +1029,8 @@ def k1_kinetics(force: bool = False, gammas: Sequence[float] = K_GAMMA,
     skipped: list[dict[str, Any]] = []
 
     for temperature in K_TEMPERATURES_C:
-        for label, site in K_SITES:
-            for gamma in gammas:
+        for label, site in K_RUN_SITES:
+            for gamma in sorted(gammas):
                 key = CaseCache.key(mole, temperature, gamma, site)
                 descriptor = {
                     "T, °C": float(temperature),
@@ -1019,7 +1057,7 @@ def k1_kinetics(force: bool = False, gammas: Sequence[float] = K_GAMMA,
                     log(f"{temperature:.0f} °C, γ={gamma:.3f}, {label} и далее "
                         f"не считались: свободно {free:.1f} ГиБ")
                     return {
-                        "случаи": cases, "пропущено": skipped,
+                        "случаи": table_order(cases), "пропущено": skipped,
                         "узлы, ч": nodes,
                         "состав, масс. %": working_wt(),
                         "состав, мольные доли": dict(mole),
@@ -1061,7 +1099,7 @@ def k1_kinetics(force: bool = False, gammas: Sequence[float] = K_GAMMA,
                               "секунд": time.perf_counter() - started})
 
     return {
-        "случаи": cases,
+        "случаи": table_order(cases),
         "пропущено": skipped,
         "узлы, ч": nodes,
         "состав, масс. %": working_wt(),
@@ -1365,6 +1403,34 @@ def threshold_verdict(mapping: pd.DataFrame) -> list[dict[str, Any]]:
 # --------------------------------------------------------------------------- #
 
 
+# Сколько знаков надзаголовка шрифтом по умолчанию помещается в дюйм ширины
+# фигуры, с запасом: на 6,2 дюйма при 150 точек на дюйм вмещалось около 68.
+TITLE_CHARS_PER_INCH = 10
+
+# Нижний предел оси «число выделений», 1/м³ (BL-37): одна частица на 0,1 мм³.
+# Ниже него в csv лежат ноль и численный шум до 10⁻²⁹⁹, которые растягивали
+# логарифмическую ось на сотни порядков; такие точки не рисуются.
+DENSITY_FLOOR = 1.0e10
+
+
+def wrap_title(parts: Sequence[str], width_in: float) -> str:
+    """Склеить части подписи в строки, каждая не длиннее ширины фигуры.
+
+    Части не разрываются внутри, поэтому числа вроде «87 600» не
+    разъезжаются по строкам. Если всё помещается, подпись остаётся одной
+    строкой, как была.
+    """
+
+    limit = int(TITLE_CHARS_PER_INCH * width_in)
+    lines: list[str] = []
+    for part in parts:
+        if lines and len(lines[-1]) + 1 + len(part) <= limit:
+            lines[-1] += " " + part
+        else:
+            lines.append(part)
+    return "\n".join(lines)
+
+
 def plot_k1(rows: pd.DataFrame, targets: Mapping[str, Any], path: Path) -> None:
     """Доля P-фазы от времени: по столбцу на температуру, по строке на места."""
 
@@ -1407,10 +1473,16 @@ def plot_k1(rows: pd.DataFrame, targets: Mapping[str, Any], path: Path) -> None:
             axis.set_title(f"{temperature:.0f} °C, {label}")
             axis.grid(alpha=0.3)
             axis.legend(fontsize=7)
-    figure.suptitle(
-        f"{SUBPOINT}. Доля P-фазы от времени; пунктир — 200 ч и 87 600 ч по ТЗ. "
-        "Межфазная энергия не измерена, а прогнана диапазоном"
-    )
+    # Одной строкой надзаголовок шире фигуры в один столбец (одна температура,
+    # 6,2 дюйма) и обрезался по краям кадра (BL-30): tight_layout отводит ему
+    # место по высоте, но не по ширине. Поэтому части подписи переносятся на
+    # новую строку, когда не помещаются в ширину фигуры.
+    figure.suptitle(wrap_title(
+        (f"{SUBPOINT}. Доля P-фазы от времени;",
+         "пунктир — 200 ч и 87 600 ч по ТЗ.",
+         "Межфазная энергия не измерена, а прогнана диапазоном"),
+        figure.get_figwidth(),
+    ))
     figure.tight_layout()
     figure.savefig(path, dpi=150)
     plt.close(figure)
@@ -1431,9 +1503,11 @@ def plot_k1_size(rows: pd.DataFrame, path: Path) -> None:
     styles = {label: style for (label, _), style
               in zip(K_SITES, ("-", "--"))}
     for column, temperature in enumerate(K_TEMPERATURES_C):
-        for position, (column_name, ylabel, logscale) in enumerate((
-            ("средний радиус, нм", "средний радиус, нм", True),
-            ("число выделений, 1/м³", "число выделений, 1/м³", True),
+        for position, (column_name, ylabel, logscale, floor) in enumerate((
+            ("средний радиус, нм", "средний радиус, нм", True, 0.0),
+            ("число выделений, 1/м³",
+             "число выделений, 1/м³ (ниже 10¹⁰ не показано)", True,
+             DENSITY_FLOOR),
         )):
             axis = axes[position][column]
             for colour, gamma in zip(colours, gammas):
@@ -1443,7 +1517,10 @@ def plot_k1_size(rows: pd.DataFrame, path: Path) -> None:
                         & (rows["места зарождения"] == label)
                         & (rows["межфазная энергия, Дж/м²"] == gamma)
                     ].sort_values("t, ч")
-                    series = series[series[column_name] > 0.0]
+                    if floor:
+                        series = series[series[column_name] >= floor]
+                    else:
+                        series = series[series[column_name] > 0.0]
                     if not len(series):
                         continue
                     axis.plot(series["t, ч"], series[column_name],
@@ -1453,13 +1530,28 @@ def plot_k1_size(rows: pd.DataFrame, path: Path) -> None:
             axis.set_xscale("log")
             if logscale:
                 axis.set_yscale("log")
+            if floor and axis.lines:
+                # Только низ; верх — автомасштаб по нарисованным точкам.
+                axis.set_ylim(bottom=floor)
             axis.set_xlabel("время, ч")
             axis.set_ylabel(ylabel)
             axis.set_title(f"{temperature:.0f} °C")
             axis.grid(alpha=0.3)
-            axis.legend(fontsize=6, ncol=2)
-    figure.suptitle(f"{SUBPOINT}. Размер и число выделений P-фазы; сплошная — объём "
-                    "зерна, штриховая — границы зёрен")
+            if position:
+                # 11–12 подписей накрывали кривые при любом loc (15-П):
+                # легенда нижней панели уходит под ось, tight_layout
+                # отводит ей место внутри кадра.
+                axis.legend(fontsize=6, ncol=3, loc="upper center",
+                            bbox_to_anchor=(0.5, -0.18))
+            else:
+                axis.legend(fontsize=6, ncol=2)
+    # Переносы — как в plot_k1 (BL-30).
+    figure.suptitle(wrap_title(
+        (f"{SUBPOINT}. Размер и число выделений P-фазы;",
+         "сплошная — объём зерна,",
+         "штриховая — границы зёрен"),
+        figure.get_figwidth(),
+    ))
     figure.tight_layout()
     figure.savefig(path, dpi=150)
     plt.close(figure)
@@ -1516,8 +1608,12 @@ def plot_k1_depletion(rows: pd.DataFrame, targets: Mapping[str, Any],
             axis.set_title(f"{temperature:.0f} °C")
             axis.grid(alpha=0.3)
             axis.legend(fontsize=6, ncol=2)
-    figure.suptitle(f"{SUBPOINT}. Обеднение матрицы FCC_A1 по хрому и молибдену; "
-                    "красная штриховая — равновесие подпункта 12-2")
+    # Переносы — как в plot_k1 (BL-30).
+    figure.suptitle(wrap_title(
+        (f"{SUBPOINT}. Обеднение матрицы FCC_A1 по хрому и молибдену;",
+         "красная штриховая — равновесие подпункта 12-2"),
+        figure.get_figwidth(),
+    ))
     figure.tight_layout()
     figure.savefig(path, dpi=150)
     plt.close(figure)
@@ -1624,6 +1720,7 @@ def run_child(arguments: Sequence[str]) -> tuple[dict[str, Any], dict[str, Any]]
     """
 
     stem = "_".join(argument.strip("-").replace(".", "_").replace(",", "_")
+                    .replace("/", "_").replace("\\", "_")
                     for argument in arguments)
     handoff = CACHE / f"child_{PREFIX}_{stem}.json"
     CACHE.mkdir(parents=True, exist_ok=True)
@@ -1784,6 +1881,11 @@ def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
                      "--per-decade", str(int(per_decade)),
                      "--t-min-h", f"{t_min_h:g}",
                      "--min-free-gib", f"{float(min_free_gib):g}"]
+        # Каталог передаётся потомку, только когда он не умолчание: так имена
+        # файлов замера и итога потомка у 12-1 и 12-9 остаются прежними.
+        if OUT != TARGETS_DIR:
+            arguments += ["--out-dir",
+                          str(OUT.relative_to(ROOT)).replace("\\", "/")]
         if force:
             arguments.append("--force")
         payload, measurement = run_child(arguments)
@@ -1909,7 +2011,9 @@ def step_k1(force: bool = False, gammas: Sequence[float] = K_GAMMA,
                 "ключом запуска --min-free-gib по санкции мастера; константа "
                 "в коде не менялась. Основание — замеренный пик этого счёта "
                 "против 2,3 ГиБ расчёта Шейля, под который порог 4,0 "
-                "назначался волной 11J"
+                "назначил подпункт 11P-1 (коммит 8b05847, J2_MIN_FREE_GIB "
+                "с 6,0 на 4,0); саму константу завела волна 11J со значением "
+                "6,0 (коммит 91cc149)"
             ) if float(min_free_gib) < MIN_FREE_GIB else "не понижен",
         },
         "порог остановки по ходу, свободной физической ГиБ": ABORT_FREE_GIB,
@@ -2035,6 +2139,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--subpoint", default=None,
                         help="номер подпункта для сводки, журнала прогресса и "
                              "подписей графиков; умолчание 12-1")
+    parser.add_argument("--out-dir", default=None,
+                        help="каталог результатов, кэша и журнала прогресса "
+                             "относительно корня; умолчание results/hn62m_wave12. "
+                             "Равновесная цель 12-2 всегда читается из "
+                             "results/hn62m_wave12")
     parser.add_argument("--per-decade", type=int, default=K_PER_DECADE,
                         help="узлов сетки времени на декаду")
     parser.add_argument("--t-min-h", type=float, default=K_T_MIN_H,
@@ -2056,6 +2165,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         ),
         prefix=args.prefix,
         subpoint=args.subpoint,
+        out_dir=args.out_dir,
     )
 
     gammas = (

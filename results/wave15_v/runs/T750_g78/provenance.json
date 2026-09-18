@@ -1,0 +1,82 @@
+﻿{
+  "schema_version": 2,
+  "implementation_revision": "legacy-15.2-r1",
+  "release_status": {
+    "app_name": "ThermoGar",
+    "lineage": "SWR",
+    "gate": "-",
+    "version": "0.4.1",
+    "release_class": "Исследовательское ПО — экспериментальная валидация не проводилась",
+    "software_release_status": "RESEARCH_SOFTWARE",
+    "scientific_material_status": "EXPERIMENTAL_QUALIFICATION_NOT_PERFORMED",
+    "production_use": "NOT_ASSESSED",
+    "exports_enabled": true,
+    "imports_enabled": true,
+    "calculations_enabled": true
+  },
+  "adapter_revision": "legacy-15.2-r1",
+  "database_key": "ni",
+  "database_sha256": "1882d841a337063e0585d261c690ae7e565838234e231e21b8541a5cb0dba391",
+  "packages": {
+    "kawin": "0.5.0",
+    "pycalphad": "0.11.2"
+  },
+  "model": "KWN; one homogeneous matrix; one spherical precipitate phase",
+  "thermodynamics_class": "MulticomponentThermodynamics",
+  "matrix_order_disorder_role": {
+    "phase": "FCC_A1",
+    "role": "independent",
+    "ordered_phase": "",
+    "disordered_phase": ""
+  },
+  "fe_kwn_publication_status": "NOT_APPLICABLE",
+  "temperature_profile": [
+    {
+      "time_h": 0.0,
+      "temperature_c": 750.0
+    },
+    {
+      "time_h": 100.0,
+      "temperature_c": 750.0
+    }
+  ],
+  "parameters": {
+    "База": "Никелевые сплавы — mc_ni 2.036",
+    "Файл базы": "C:\\Users\\gareg\\Desktop\\ThermoGar-w15a\\databases\\converted\\mc_ni_v2036_with_mobility.garcalc.tdb",
+    "SHA-256 базы": "1882d841a337063e0585d261c690ae7e565838234e231e21b8541a5cb0dba391",
+    "Kawin": "0.5.0",
+    "pycalphad": "0.11.2",
+    "Класс термодинамики Kawin": "MulticomponentThermodynamics",
+    "Состав": "NI=54.2, CR=17.9, NB=5.3, MO=2.99, TI=0.97, AL=0.5",
+    "Единицы исходного состава": "массовые %",
+    "Элемент-основа": "FE",
+    "Температурный режим": "изотермический",
+    "Элементы": "FE, AL, CR, MO, NB, NI, TI",
+    "Матрица": "FCC_A1",
+    "Роль матрицы в order/disorder-модели": "independent",
+    "Фаза-выделение": "GAMMA_DP",
+    "Межфазная энергия, Дж/м²": 0.078,
+    "Молярный объём матрицы, см³/моль": 7.169571732561389,
+    "Молярный объём выделения, см³/моль": 7.300000000000001,
+    "Центры зарождения": "BULK",
+    "Bulk N0, 1/м³": 8.399582268840123e+28,
+    "Размер зерна, мкм": 100.0,
+    "Плотность дислокаций, 1/м²": 5000000000000.0,
+    "Энергия границы зерна, Дж/м²": 0.3,
+    "Минимальный радиус, нм": 0.1,
+    "Максимальный радиус, нм": 50.0,
+    "Классов размеров": 800,
+    "Источник физических входов": "WAVE15_V: состав и межфазная энергия — Devaux и др., Mater. Sci. Eng. A 486 (2008) 117 (измерена); Vm(GAMMA_DP) измерен там же, переведён на моль атомов делением на 4; Vm(FCC_A1) — physical_data_v103.pdb на равновесном составе матрицы; N0 = N_A/Vm(FCC_A1)",
+    "Правки базы ThermoGar": "Подвижность ниобия в FCC_A1: в базе записано LN(1,00E-4) с десятичной запятой, ThermoGar читает это как ln(1.00E-4). Правка сделана поверх разобранной базы, байты файла не менялись; число взято из той же строки, первоисточник строки (pov10) не опубликован и не сверен.",
+    "Класс расчёта": "исследовательский сценарий, не прогноз материала"
+  },
+  "input_confirmation": true,
+  "database_overrides": [
+    "Подвижность ниобия в FCC_A1: в базе записано LN(1,00E-4) с десятичной запятой, ThermoGar читает это как ln(1.00E-4). Правка сделана поверх разобранной базы, байты файла не менялись; число взято из той же строки, первоисточник строки (pov10) не опубликован и не сверен."
+  ],
+  "limitations": [
+    "user-supplied interfacial energy and molar volumes",
+    "spherical particles and homogeneous matrix",
+    "no automatic fitting or uncertainty estimate"
+  ]
+}

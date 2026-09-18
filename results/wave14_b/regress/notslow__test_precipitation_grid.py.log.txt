@@ -1,0 +1,14 @@
+.......................                                                  [100%]
+============================== warnings summary ===============================
+tools/test_precipitation_grid.py::test_run_precipitation_refuses_coarse_grid_before_solving
+tools/test_precipitation_grid.py::test_run_precipitation_refuses_minimum_radius_above_nucleus
+tools/test_precipitation_grid.py::test_run_precipitation_on_resolved_grid_passes_all_checks
+tools/test_precipitation_grid.py::test_run_precipitation_refuses_clamped_critical_radius_before_solving
+tools/test_precipitation_grid.py::test_run_precipitation_still_solves_five_solutes_of_ladder_b
+tools/test_precipitation_grid.py::test_nucleus_estimate_does_not_change_kinetics
+tools/test_precipitation_grid.py::test_nucleus_estimate_does_not_change_kinetics
+  C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\kawin\precipitation\NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+    incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+23 passed, 7 warnings in 112.09s (0:01:52)

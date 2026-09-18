@@ -1,0 +1,32 @@
+2026-09-16 19:56:51.655 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-16 19:56:51.655 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-16 19:56:51.655 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-16 19:56:51.655 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-16 19:56:51.655 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-16 19:56:51.655 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+Traceback (most recent call last):
+  File "C:\Users\gareg\Desktop\ThermoGar-w15d\results\wave15_ch\scripts\repro_trace.py", line 37, in traced_backend
+    return original_backend(database, physical_database, call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\AppData\Local\Temp\claude\C--Users-gareg\e4a14b74-a308-4c2d-8db0-61a14eccbf2c\scratchpad\snap\src_be1fe81\app\thermogar_verified_properties.py", line 470, in _default_backend
+    result = equilibrium(
+             ^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\pycalphad\core\equilibrium.py", line 65, in equilibrium
+    wks = Workspace(database=dbf, components=comps, phases=phases, conditions=conditions, models=model, parameters=parameters,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\pycalphad\core\workspace.py", line 338, in __init__
+    setattr(self, kwarg_name, kwargs[kwarg_name])
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\pycalphad\core\workspace.py", line 241, in __set__
+    value = instantiate_models(obj.database, obj.components, obj.phases, model=value, parameters=obj.parameters)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\pycalphad\core\utils.py", line 404, in instantiate_models
+    models_dict[name] = mod(dbf, comps, name, parameters=parameters)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\pycalphad\model.py", line 245, in __init__
+    phase = _extend_ordered_if_subset_of_disorder(dbe, active_species, phase)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\Desktop\ThermoGar\.venv-windows\Lib\site-packages\pycalphad\model.py", line 85, in _extend_ordered_if_subset_of_disorder
+    raise ValueError(f"Order ({phase.name}) and disorder ({disordered_phase_name}) model must have no interstitial sublattice or a single matching one")
+ValueError: Order (BCC_B2) and disorder (BCC_A2) model must have no interstitial sublattice or a single matching one
+
+{"phases_in": 99, "components": ["C", "CR", "NI", "VA"], "is_order_disorder_model_error": true, "structural_detector": ["BCC_B2"], "app_exceptions": [], "shown_errors": ["ThermoGar не завершил расчёт.\n\nПроверьте состав, диапазон и набор фаз. Если ошибка повторяется, скачайте технический отчёт ниже. Причина: BACKEND_FAILED: ValueError"], "prepare_state": null}

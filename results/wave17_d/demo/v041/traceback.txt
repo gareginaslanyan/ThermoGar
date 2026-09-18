@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar\results\wave17_d\demo_718.py", line 46, in <module>
+    result = tp.run_precipitation(**arguments)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\AppData\Local\Temp\claude\C--Users-gareg\359bac8b-443b-4edf-90c9-102f8ee3514b\scratchpad\v041_snapshot\app\thermogar_precipitation.py", line 783, in run_precipitation
+    elements, x_at, _x_wt = _composition_vectors(db, balance, composition_text, units)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\AppData\Local\Temp\claude\C--Users-gareg\359bac8b-443b-4edf-90c9-102f8ee3514b\scratchpad\v041_snapshot\app\thermogar_precipitation.py", line 189, in _composition_vectors
+    raise ValueError("Research KWN mode допускает не более четырёх добавок одновременно.")
+ValueError: Research KWN mode допускает не более четырёх добавок одновременно.

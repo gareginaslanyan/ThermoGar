@@ -1,0 +1,13 @@
+== ui_g_notslow 11:01:56
+exit 0
+29 passed, 3 deselected, 2 warnings in 208.62s (0:03:28)
+== ui_g_slow 11:05:26
+exit 0
+3 passed, 29 deselected, 3 warnings in 225.72s (0:03:45)
+== parallel_integration 11:09:14
+exit 0
+6 passed in 74.64s (0:01:14)
+== bl35 11:10:30
+exit 0
+11 passed, 1 warning in 33.80s
+== done 11:11:05

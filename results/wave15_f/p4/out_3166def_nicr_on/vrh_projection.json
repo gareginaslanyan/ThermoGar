@@ -1,0 +1,57 @@
+{
+ "bounds_rows": [
+  {
+   "E, ГПа": 99.99999999999999,
+   "G, ГПа": 40.0,
+   "K, ГПа": 66.66666666666667,
+   "K/G": 1.6666666666666667,
+   "ν": 0.25,
+   "Метод": "Reuss — нижняя граница"
+  },
+  {
+   "E, ГПа": 99.99999999999999,
+   "G, ГПа": 40.0,
+   "K, ГПа": 66.66666666666667,
+   "K/G": 1.6666666666666667,
+   "ν": 0.25,
+   "Метод": "Hill — средняя VRH"
+  },
+  {
+   "E, ГПа": 99.99999999999999,
+   "G, ГПа": 40.0,
+   "K, ГПа": 66.66666666666667,
+   "K/G": 1.6666666666666667,
+   "ν": 0.25,
+   "Метод": "Voigt — верхняя граница"
+  }
+ ],
+ "library_snapshot_digest_after": "69148deaf3658c8704e79c15517af1f46be3a8234fb309814430c625cf1c7c8f",
+ "library_snapshot_digest_before": "69148deaf3658c8704e79c15517af1f46be3a8234fb309814430c625cf1c7c8f",
+ "library_updated_at": null,
+ "operation": "property_elastic_vrh",
+ "phase_rows": [
+  {
+   "note": "",
+   "origin": "measured",
+   "phase": "FCC_A1",
+   "poisson": 0.25,
+   "reference_temperature_c": 25.0,
+   "source": "условное значение для проверки весов VRH",
+   "volume_fraction": 1.0,
+   "young_gpa": 100.0
+  }
+ ],
+ "summary": {
+  "E_Hill_GPa": 99.99999999999999,
+  "E_Reuss_GPa": 99.99999999999999,
+  "E_Voigt_GPa": 99.99999999999999,
+  "G_Hill_GPa": 40.0,
+  "G_Reuss_GPa": 40.0,
+  "G_Voigt_GPa": 40.0,
+  "K_Hill_GPa": 66.66666666666667,
+  "K_Reuss_GPa": 66.66666666666667,
+  "K_Voigt_GPa": 66.66666666666667,
+  "K_over_G_Hill": 1.6666666666666667,
+  "nu_Hill": 0.25
+ }
+}

@@ -1,0 +1,12 @@
+file                           1880d81         1880d81_repeat  5ff155a         5ff155a_repeat  14-Б main
+db_parameters.txt              78f3853e1768    78f3853e1768    78f3853e1768    78f3853e1768    78f3853e1768
+ni15al_scan.csv                a84a20231415    a84a20231415    a84a20231415    a84a20231415    a84a20231415
+kwn_kinetics.csv               3ac535ee450a    3ac535ee450a    3ac535ee450a    3ac535ee450a    3ac535ee450a
+kwn_summary.csv                2dd22f58327c    2dd22f58327c    2dd22f58327c    2dd22f58327c    2dd22f58327c
+kwn_matrix_composition.csv     23eb50c201aa    23eb50c201aa    23eb50c201aa    23eb50c201aa    23eb50c201aa
+kwn_interface_composition.csv  8e57b5e90e3b    8e57b5e90e3b    8e57b5e90e3b    8e57b5e90e3b    8e57b5e90e3b
+kwn_psd.csv                    224751ed6982    224751ed6982    224751ed6982    224751ed6982    224751ed6982
+kwn_npz_arrays.txt             c925384ae3cd    c925384ae3cd    c925384ae3cd    c925384ae3cd    c925384ae3cd
+kwn_quality.csv                dcd1812d1699    dcd1812d1699    dcd1812d1699    dcd1812d1699    dcd1812d1699
+kwn_settings.csv               e9229029dbb9    e9229029dbb9    9c1828562743    9c1828562743    5d0e6f2d5d2b
+kwn_warnings.json              4f53cda18c2b    4f53cda18c2b    4f53cda18c2b    4f53cda18c2b    4f53cda18c2b

@@ -56,6 +56,11 @@ DB_KEYS = ("ni", "al", "fe")
 # on every run of every section. They are reported, not asserted away.
 KNOWN_FOREIGN_ERRORS = ("BINDING_STALE",)
 
+# BL-35: the quality row that carries the stop note, and the general error the
+# precipitation section shows above the tabs when any quality check fails.
+COMPOSITION_CHECK = "Состав матрицы допустим"
+QUALITY_FAILED_ERROR = "Одна или несколько внутренних проверок не пройдены."
+
 # Sidebar alloy of the wave: balance, solutes, units label.
 SIDEBAR_ALLOY = {
     "ni": ("NI", "AL=15", "атомные %"),
@@ -385,7 +390,6 @@ def test_kwn_precipitation(database_key: str) -> None:
         app, "button", f"precipitation_{database_key}_user_calculate"
     ).click().run()
     assert_no_traceback(app)
-    assert new_errors(app) == [], new_errors(app)
 
     result = app.session_state["thermogar_precipitation_result"]
     assert isinstance(result, PrecipitationResult)
@@ -393,7 +397,26 @@ def test_kwn_precipitation(database_key: str) -> None:
     assert result.phase == precipitate
     assert len(result.kinetics) >= 10
     assert len(result.psd) >= 10
-    assert (result.quality["Статус"] == "пройдена").all()
+    if database_key == "fe":
+        # BL-35 (wave 15): on this grid (40 classes) carbon in the ferrite
+        # matrix is pushed to 0 at 1.418 s of model time and the run stops
+        # with the part computed so far, as tools/test_precipitation_bl35.py
+        # describes. Whether this is a mass-balance break or a numerical
+        # overshoot through the ~1e-5 equilibrium solubility of C that kawin
+        # clamps to zero is open as BL-43 (tasks/REGISTER.md); the 30-class
+        # grid of test_backend_calculations does not stop.
+        quality = result.quality.set_index("Проверка")
+        assert quality.loc[COMPOSITION_CHECK, "Статус"] == "ошибка"
+        assert quality.loc[COMPOSITION_CHECK, "Примечание"] == result.stop_note
+        assert result.stop_note.startswith("Расчёт остановлен"), result.stop_note
+        others = quality.drop(index=COMPOSITION_CHECK)["Статус"]
+        assert (others == "пройдена").all(), others
+        assert result.stop_note in [element.value for element in app.warning]
+        assert new_errors(app) == [QUALITY_FAILED_ERROR], new_errors(app)
+    else:
+        assert new_errors(app) == [], new_errors(app)
+        assert result.stop_note == ""
+        assert (result.quality["Статус"] == "пройдена").all()
 
     fraction = result.kinetics["Объёмная доля, %"]
     radius = result.kinetics["Средний радиус, нм"]
@@ -486,17 +509,35 @@ def test_kwn_matrix_offers_the_disordered_half(
     )
 
 
-def test_kwn_reports_a_too_long_composition_without_a_traceback() -> None:
-    """The shipped Fe composition has eight solutes; KWN accepts four."""
+# The former shipped Fe composition: eight solutes. Up to wave 14-Б the KWN
+# section accepted four and refused it; since BL-21 it accepts ten.
+FE_EIGHT_SOLUTES = "C=0.20, CR=11.5, NI=0.7, MN=0.7, SI=0.3, MO=0.6, W=0.9, V=0.225"
 
-    app = start_app(
-        "fe",
-        composition="C=0.20, CR=11.5, NI=0.7, MN=0.7, SI=0.3, MO=0.6, W=0.9, V=0.225",
-    )
+
+def test_kwn_reports_a_too_long_composition_without_a_traceback() -> None:
+    """Eleven solutes are above the measured limit of ten (BL-21, wave 14-Б).
+
+    NB, TI and AL are a synthetic load on top of the eight-solute steel, not
+    a steel grade.
+    """
+
+    app = start_app("fe", composition=FE_EIGHT_SOLUTES + ", NB=0.05, TI=0.02, AL=0.02")
     assert_no_traceback(app)
     messages = "\n".join(element.value for element in app.error)
-    assert "не более четырёх добавок" in messages
+    assert "не более 10 добавок" in messages
+    assert "в составе 11" in messages
+    assert "предел измеренного, а не физический" in messages
     assert "боковой панели" in captions(app)
+    assert "предел измеренного, а не физический" in captions(app)
+
+
+def test_kwn_accepts_the_eight_solute_steel_since_bl21() -> None:
+    """The eight-solute steel is no longer refused by the solute limit."""
+
+    app = start_app("fe", composition=FE_EIGHT_SOLUTES)
+    assert_no_traceback(app)
+    messages = "\n".join(element.value for element in app.error)
+    assert "добавок одновременно" not in messages, messages
 
 
 # --------------------------------------------------------------------------- #

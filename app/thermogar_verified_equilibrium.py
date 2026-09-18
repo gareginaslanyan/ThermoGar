@@ -28,6 +28,12 @@ ADAPTER_REVISION = "1"
 BACKEND_ID = "pycalphad-equilibrium"
 BACKEND_VERSION = "0.11.2"
 _ELEMENT_RE = re.compile(r"[A-Z][A-Z0-9]{0,2}")
+# BL-24. pycalphad иногда возвращает пустое решение: все NP — NaN, фаз нет
+# (12-4, ЭК199-ВИ с Si = 5 масс. % при 750 °C, на всех плотностях выборки).
+# Сумма мольных долей фаз ниже порога — точка не сошлась; причина отказа
+# начинается с метки, по которой экран выводит понятный текст.
+EMPTY_SOLUTION_SUM = 1e-6
+EMPTY_SOLUTION_MARKER = "EMPTY_SOLUTION"
 
 
 @dataclass(frozen=True, slots=True)
@@ -301,6 +307,13 @@ def _default_backend(database: object, call: EquilibriumCall) -> Mapping[str, ob
     fractions = np.asarray(result.NP.values, dtype=float).ravel()
     if len(names) != len(fractions):
         _fail(verified_loaders.ReasonCode.RESULT_INVALID, "Backend Phase/NP cardinality mismatch.")
+    fraction_sum = float(np.nansum(fractions))
+    if not fraction_sum >= EMPTY_SOLUTION_SUM:
+        _fail(
+            verified_loaders.ReasonCode.RESULT_INVALID,
+            f"{EMPTY_SOLUTION_MARKER}: phase fractions sum to {fraction_sum:.3g} "
+            f"at T={call.temperature_k:.2f} K; the equilibrium did not converge.",
+        )
     aggregated: dict[str, float] = {}
     elements = tuple(component for component in call.components if component != "VA")
     phase_x = {

@@ -43,6 +43,7 @@ def _cleanup() -> None:
 
 atexit.register(_cleanup)
 
+import thermogar_database_repair as repair
 import thermogar_properties as properties
 import thermogar_verified_loaders as vl
 import thermogar_verified_properties as adapter
@@ -71,6 +72,26 @@ class FakeDatabase:
 
 class FakePhysical:
     pass
+
+
+class FakePhysicalOff:
+    """Разбор PDB без поправок проекта: отметка идёт первой в warnings."""
+
+    override_notes = ["fake: project corrections switched off by user"]
+
+
+def _backend_answer(
+    fractions: dict[str, float],
+    volumes: dict[str, float] | None = None,
+    sources: dict[str, str] | None = None,
+) -> dict[str, object]:
+    """Ответ бэкенда подготовки: мольные доли и молярные объёмы фаз (BL-38)."""
+
+    return {
+        "mole_fractions": dict(fractions),
+        "molar_volumes_cm3": dict(volumes or {name: 7.0 for name in fractions}),
+        "volume_sources": dict(sources or {name: "direct" for name in fractions}),
+    }
 
 
 class Counters:
@@ -107,7 +128,7 @@ class Counters:
         self.max_active = max(self.max_active, self.active)
         self.order.append(self.backend)
         try:
-            return {"BCC_A2": 0.4, "FCC_A1": 0.6}
+            return _backend_answer({"BCC_A2": 0.4, "FCC_A1": 0.6})
         finally:
             self.active -= 1
 
@@ -166,6 +187,7 @@ def _execute_prepare(
     counters: Counters | None = None,
     backend: object | None = None,
     context: vl.BoundDatabaseContext | None = None,
+    physical_overrides: bool = True,
 ) -> tuple[adapter.VerifiedPropertiesResult, Counters, vl.BoundDatabaseContext, vl.FeatureRequest]:
     bound = _bind(database_key) if context is None else context
     decision = _prepare_request(bound)
@@ -189,6 +211,7 @@ def _execute_prepare(
                 backend=selected_backend,
                 clock=lambda: FIXED_TIME,
                 packages=[],
+                physical_overrides=physical_overrides,
             )
     return result, current, bound, decision
 
@@ -686,7 +709,7 @@ class VerifiedPropertiesTests(unittest.TestCase):
             counters.max_active = max(counters.max_active, counters.active)
             try:
                 time.sleep(0.02)
-                return {"BCC_A2": 0.4, "FCC_A1": 0.6}
+                return _backend_answer({"BCC_A2": 0.4, "FCC_A1": 0.6})
             finally:
                 counters.active -= 1
         def run(nonce: str) -> None:
@@ -736,6 +759,245 @@ class VerifiedPropertiesTests(unittest.TestCase):
             closed_lease,
             paths=object(),
         )
+
+
+    # ------------------------------------------------------------------
+    # BL-38: веса VRH — объёмные доли фаз
+    # ------------------------------------------------------------------
+
+    def _vrh_with_moduli(
+        self,
+        backend: object,
+        young_by_phase: dict[str, float],
+        *,
+        physical_overrides: bool = True,
+    ) -> tuple[adapter.VerifiedPropertiesResult, adapter.VerifiedPropertiesResult, vl.BoundDatabaseContext]:
+        prepared, _counters, context, _request = _execute_prepare(
+            "fe",
+            backend=backend,
+            physical_overrides=physical_overrides,
+        )
+        assert prepared.prepared_witness_digest is not None
+        view = adapter.property_library_prefill(context, prepared.prepared_witness_digest, paths=PATHS)
+        rows = [
+            {
+                "phase": row["phase"],
+                "volume_fraction": row["volume_fraction"],
+                "young_gpa": young_by_phase[row["phase"]],
+                "poisson": 0.25,
+                "origin": "справочно",
+                "source": "условное значение для проверки весов",
+                "reference_temperature_c": 25.0,
+                "note": "",
+            }
+            for row in view.phase_rows
+        ]
+        decision, _view = _vrh_request(context, prepared.prepared_witness_digest, rows=rows)
+        with vl.acquire_execution(decision, DummyPaths(), clock=lambda: FIXED_TIME, nonce_factory=lambda: "a" * 32) as lease:
+            vrh = adapter.execute_verified_properties(context, decision, lease, paths=PATHS, clock=lambda: FIXED_TIME)
+        return prepared, vrh, context
+
+    def test_32_single_phase_volume_weight_is_one(self) -> None:
+        # (а) Одна фаза: объёмная доля равна мольной и равна 1, VRH не меняется.
+        def backend(*_args: object) -> dict[str, object]:
+            return _backend_answer({"FCC_A1": 1.0}, {"FCC_A1": 6.93})
+
+        prepared, vrh, _context = self._vrh_with_moduli(backend, {"FCC_A1": 210.0})
+        rows = prepared.projection["phase_rows"]
+        self.assertEqual(
+            rows,
+            [
+                {
+                    "phase": "FCC_A1",
+                    "mole_fraction": 1.0,
+                    "molar_volume_cm3": 6.93,
+                    "volume_fraction": 1.0,
+                    "volume_source": "direct",
+                }
+            ],
+        )
+        self.assertEqual(prepared.projection["warnings"], [])
+        summary = vrh.projection["summary"]
+        moduli = properties.moduli_from_e_nu(210.0, 0.25)
+        for bound in ("Voigt", "Reuss", "Hill"):
+            self.assertAlmostEqual(summary[f"K_{bound}_GPa"], moduli.bulk_gpa, places=9)
+            self.assertAlmostEqual(summary[f"G_{bound}_GPa"], moduli.shear_gpa, places=9)
+            self.assertAlmostEqual(summary[f"E_{bound}_GPa"], 210.0, places=9)
+
+    def test_33_two_phase_volume_weights_follow_molar_volumes(self) -> None:
+        # (б) Две фазы с разным молярным объёмом: φ/x различаются ровно в
+        # отношении молярных объёмов, и VRH берёт объёмные доли.
+        fractions = {"BCC_A2": 0.25, "FCC_A1": 0.75}
+        volumes = {"BCC_A2": 12.0, "FCC_A1": 6.0}
+
+        def backend(*_args: object) -> dict[str, object]:
+            return _backend_answer(fractions, volumes)
+
+        prepared, vrh, context = self._vrh_with_moduli(backend, {"BCC_A2": 100.0, "FCC_A1": 300.0})
+        rows = {row["phase"]: row for row in prepared.projection["phase_rows"]}
+        # Σ x·Vm = 0,25·12 + 0,75·6 = 7,5; φ = 3/7,5 = 0,4 и 4,5/7,5 = 0,6.
+        self.assertAlmostEqual(rows["BCC_A2"]["volume_fraction"], 0.4, places=15)
+        self.assertAlmostEqual(rows["FCC_A1"]["volume_fraction"], 0.6, places=15)
+        self.assertEqual(rows["BCC_A2"]["mole_fraction"], 0.25)
+        self.assertEqual(rows["FCC_A1"]["mole_fraction"], 0.75)
+        ratio = (rows["BCC_A2"]["volume_fraction"] / rows["BCC_A2"]["mole_fraction"]) / (
+            rows["FCC_A1"]["volume_fraction"] / rows["FCC_A1"]["mole_fraction"]
+        )
+        self.assertAlmostEqual(ratio, volumes["BCC_A2"] / volumes["FCC_A1"], places=12)
+
+        view = adapter.property_library_prefill(context, prepared.prepared_witness_digest, paths=PATHS)
+        self.assertEqual(
+            [(row["phase"], row["mole_fraction"], row["volume_fraction"]) for row in view.phase_rows],
+            [(name, fractions[name], rows[name]["volume_fraction"]) for name in ("BCC_A2", "FCC_A1")],
+        )
+
+        vrh_rows = {row["phase"]: row["volume_fraction"] for row in vrh.projection["phase_rows"]}
+        self.assertEqual(vrh_rows, {name: rows[name]["volume_fraction"] for name in rows})
+        soft = properties.moduli_from_e_nu(100.0, 0.25)
+        hard = properties.moduli_from_e_nu(300.0, 0.25)
+        summary = vrh.projection["summary"]
+        self.assertAlmostEqual(summary["K_Voigt_GPa"], 0.4 * soft.bulk_gpa + 0.6 * hard.bulk_gpa, places=9)
+        self.assertAlmostEqual(summary["G_Reuss_GPa"], 1.0 / (0.4 / soft.shear_gpa + 0.6 / hard.shear_gpa), places=9)
+        # С мольными весами Voigt был бы другим — веса действительно сменились.
+        self.assertNotAlmostEqual(summary["K_Voigt_GPa"], 0.25 * soft.bulk_gpa + 0.75 * hard.bulk_gpa, places=3)
+
+    def test_34_vrh_rejects_mole_fraction_in_place_of_volume(self) -> None:
+        def backend(*_args: object) -> dict[str, object]:
+            return _backend_answer({"BCC_A2": 0.25, "FCC_A1": 0.75}, {"BCC_A2": 12.0, "FCC_A1": 6.0})
+
+        prepared, _counters, context, _request = _execute_prepare("fe", backend=backend)
+        assert prepared.prepared_witness_digest is not None
+        view = adapter.property_library_prefill(context, prepared.prepared_witness_digest, paths=PATHS)
+        rows = _complete_rows(view)
+        rows[0]["volume_fraction"] = view.phase_rows[0]["mole_fraction"]
+        decision, _view = _vrh_request(context, prepared.prepared_witness_digest, rows=rows)
+        with vl.acquire_execution(decision, DummyPaths(), clock=lambda: FIXED_TIME, nonce_factory=lambda: "b" * 32) as lease:
+            self.assert_reason(vl.ReasonCode.DATA_UNAVAILABLE, adapter.execute_verified_properties, context, decision, lease, paths=PATHS, clock=lambda: FIXED_TIME)
+
+    def test_35_overrides_off_parses_pdb_without_corrections(self) -> None:
+        # (в) Галочка снята: PDB разбирается без поправок и отдельной ревизией
+        # кэша; отметка разбора идёт первой строкой warnings.
+        seen: list[str] = []
+
+        def off_parser(data: bytes) -> FakePhysicalOff:
+            seen.append("off")
+            return FakePhysicalOff()
+
+        def on_parser(data: bytes) -> FakePhysical:
+            seen.append("on")
+            return FakePhysical()
+
+        def backend(*_args: object) -> dict[str, object]:
+            return _backend_answer({"BCC_A2": 0.4, "FCC_A1": 0.6}, sources={"BCC_A2": "mixture", "FCC_A1": "direct"})
+
+        with mock.patch.object(adapter, "_overrides_off_pdb_parser", off_parser):
+            with mock.patch.object(adapter, "_default_pdb_parser", on_parser):
+                context = _bind("ni")
+                decision = _prepare_request(context)
+                assert type(decision) is vl.FeatureRequest
+                with vl.acquire_execution(decision, DummyPaths(), clock=lambda: FIXED_TIME, nonce_factory=lambda: "c" * 32) as lease:
+                    result = adapter.execute_verified_properties(
+                        context, decision, lease, paths=PATHS, tdb_parser=Counters().tdb_parser,
+                        backend=backend, clock=lambda: FIXED_TIME, physical_overrides=False,
+                    )
+        self.assertEqual(seen, ["off"])
+        warnings = result.projection["warnings"]
+        self.assertEqual(warnings[0], FakePhysicalOff.override_notes[0])
+        self.assertEqual(len(warnings), 2)
+        self.assertIn("BCC_A2", warnings[1])
+        self.assertIn("правилу смеси", warnings[1])
+        self.assertEqual(adapter.PDB_PARSER_REVISION_OVERRIDES_OFF, "thermogar-physical-pdb-1-overrides-off")
+        self.assertNotEqual(adapter.PDB_PARSER_REVISION_OVERRIDES_OFF, adapter.PDB_PARSER_REVISION)
+
+    def test_36_backend_answer_shape_is_closed(self) -> None:
+        # Старый ответ бэкенда (одни мольные доли) не проходит: объёмные доли
+        # не подменяются мольными молча.
+        for answer in (
+            {"BCC_A2": 0.4, "FCC_A1": 0.6},
+            _backend_answer({"BCC_A2": 0.4, "FCC_A1": 0.6}, {"BCC_A2": 7.0}),
+            _backend_answer({"BCC_A2": 0.4, "FCC_A1": 0.6}, {"BCC_A2": 7.0, "FCC_A1": 0.0}),
+            _backend_answer({"BCC_A2": 0.4, "FCC_A1": 0.6}, {"BCC_A2": 7.0, "FCC_A1": 7}),
+            _backend_answer({"BCC_A2": 0.4, "FCC_A1": 0.6}, sources={"BCC_A2": "direct", "FCC_A1": "guess"}),
+        ):
+            with self.subTest(answer=answer):
+                with self.assertRaises(vl.VerifiedLoaderError) as caught:
+                    _execute_prepare("fe", backend=lambda *_args, value=answer: value)
+                self.assertEqual(caught.exception.reason_code, vl.ReasonCode.RESULT_INVALID)
+
+    @staticmethod
+    def _detector_removing(*names: str) -> tuple[object, list[tuple[str, ...]]]:
+        """Подменный детектор пары «порядок/беспорядок»: снимает ``names``."""
+
+        seen: list[tuple[str, ...]] = []
+
+        def drop(_database: object, _components: object, phases: object, verify: bool = True):
+            ordered = tuple(str(name) for name in phases)
+            seen.append(ordered)
+            removed = {
+                name: repair.BrokenOrderDisorder(
+                    ordered_phase=name,
+                    disordered_phase="BCC_A2",
+                    interstitial_of_disordered=("C", "VA"),
+                    interstitial_of_ordered=(("VA",),),
+                    reason=f"fake: {name} does not build",
+                )
+                for name in ordered
+                if name in names
+            }
+            return [name for name in ordered if name not in removed], removed
+
+        return drop, seen
+
+    def test_37_detector_removed_phase_skips_backend_and_is_named(self) -> None:
+        # BL-40: набор фаз подготовки идёт через тот же детектор, что у
+        # плотности; снятая фаза в движок не попадает и называется в
+        # warnings сразу после отметки поправок, текстом плотности.
+        drop, seen = self._detector_removing("LIQUID")
+        calls: list[tuple[str, ...]] = []
+
+        def backend(_database: object, _physical: object, call: adapter.PropertyPrepareCall) -> dict[str, object]:
+            calls.append(call.phases)
+            return _backend_answer({"BCC_A2": 0.4, "FCC_A1": 0.6}, sources={"BCC_A2": "mixture", "FCC_A1": "direct"})
+
+        with mock.patch.object(repair, "drop_broken_order_disorder", drop):
+            with mock.patch.object(adapter, "_overrides_off_pdb_parser", lambda _data: FakePhysicalOff()):
+                result, _counters, _context, _request = _execute_prepare("ni", backend=backend, physical_overrides=False)
+        self.assertEqual(seen, [EFFECTIVE])
+        self.assertEqual(calls, [("BCC_A2", "FCC_A1")])
+        warnings = result.projection["warnings"]
+        self.assertEqual(len(warnings), 3)
+        self.assertEqual(warnings[0], FakePhysicalOff.override_notes[0])
+        self.assertTrue(warnings[1].startswith("Из расчёта исключены фазы, модель которых не строится"), warnings[1])
+        self.assertIn("LIQUID (связана с BCC_A2: fake: LIQUID does not build)", warnings[1])
+        self.assertIn("правилу смеси", warnings[2])
+        self.assertEqual([row["phase"] for row in result.projection["phase_rows"]], ["BCC_A2", "FCC_A1"])
+
+        # Бэкенд, вернувший снятую фазу, отвергается: её нет в наборе расчёта.
+        def leaky(*_args: object) -> dict[str, object]:
+            return _backend_answer({"BCC_A2": 0.4, "LIQUID": 0.6})
+
+        with mock.patch.object(repair, "drop_broken_order_disorder", drop):
+            with self.assertRaises(vl.VerifiedLoaderError) as caught:
+                _execute_prepare("ni", backend=leaky)
+        self.assertEqual(caught.exception.reason_code, vl.ReasonCode.RESULT_INVALID)
+
+    def test_38_detector_removing_every_phase_is_input_invalid(self) -> None:
+        drop, _seen = self._detector_removing(*EFFECTIVE)
+        counters = Counters()
+        with mock.patch.object(repair, "drop_broken_order_disorder", drop):
+            with self.assertRaises(vl.VerifiedLoaderError) as caught:
+                _execute_prepare("ni", counters=counters)
+        self.assertEqual(caught.exception.reason_code, vl.ReasonCode.INPUT_INVALID)
+        self.assertIn("не осталось допустимых фаз", str(caught.exception))
+        self.assertEqual(counters.backend, 0)
+
+    def test_39_detector_without_removals_leaves_warnings_unchanged(self) -> None:
+        drop, seen = self._detector_removing()
+        with mock.patch.object(repair, "drop_broken_order_disorder", drop):
+            result, counters, _context, _request = _execute_prepare("ni")
+        self.assertEqual(seen, [EFFECTIVE])
+        self.assertEqual(counters.backend, 1)
+        self.assertEqual(result.projection["warnings"], [])
 
 
 if __name__ == "__main__":
