@@ -808,6 +808,13 @@ def build_rows() -> list[dict[str, Any]]:
         if not path.is_file():
             continue
         data = json.loads(path.read_text("utf-8"))
+        vtoroj = RAW / f"{job['id']}_z2.json"
+        zahod_note = ""
+        if job["metod"] == "Lilit-skript" and vtoroj.is_file():
+            first_peak = max((p.get("pik_MiB", 0) for p in data.get("popytki", [])), default=0)
+            data = json.loads(vtoroj.read_text("utf-8"))
+            zahod_note = (f"второй заход (сторож {data.get('porog_storozha_GiB')} ГиБ); "
+                          f"первый снят по памяти, пик {first_peak / 1024:.1f} ГиБ")
         row = marki[job["marka"]]
         info = BAZY[job["baza"]]
         key = (job["marka"], info["lilit_key"])
@@ -828,6 +835,8 @@ def build_rows() -> list[dict[str, Any]]:
             base["kriterij_solidusa"] = "каскад свипов NP(LIQUID) (скрипт «Лилит»)"
             sek = sum(p.get("sekund", 0) for p in popytki)
             stroki = data.get("stroki") or []
+            if zahod_note:
+                base["zamechaniya"] = zahod_note
             if status == "ok" and stroki:
                 for s in stroki:
                     out = dict(base)
@@ -843,7 +852,9 @@ def build_rows() -> list[dict[str, Any]]:
                         "c15_laves_v_nabore": (
                             "да" if "C15_LAVES" in s.get("nabor_faz", "").split() else "нет")
                         if s.get("nabor_faz") else "",
-                        "zamechaniya": s.get("zamechaniya", ""),
+                        "zamechaniya": " | ".join(
+                            x for x in (base.get("zamechaniya", ""), s.get("zamechaniya", ""))
+                            if x),
                     })
                     rows.append(out)
             else:
@@ -909,6 +920,44 @@ def build_rows() -> list[dict[str, Any]]:
     return rows
 
 
+def command_rerun_lilit(args) -> None:
+    """Второй заход (решение мастера): задания скрипта «Лилит», снятые сторожем.
+
+    Порог сторожа — E1 (ключом, по умолчанию 1,0 ГиБ), старт только при свободной
+    памяти не меньше ``--min-free-gib`` (9,0). Результат — в отдельный файл
+    ``<id>_z2.json``, первый заход остаётся как есть. Третьего захода нет.
+    """
+
+    os.environ.setdefault("THERMOGAR_STATE_ROOT", str(STATE_ROOT_DEFAULT))
+    abort_gib = float(args.abort_gib)
+    jobs = [j for j in plan_jobs(read_marki()) if j["metod"] == "Lilit-skript"]
+    todo = []
+    for job in jobs:
+        first = RAW / f"{job['id']}.json"
+        second = RAW / f"{job['id']}_z2.json"
+        if not first.is_file() or second.is_file():
+            continue
+        if json.loads(first.read_text("utf-8")).get("status") == "snyat_po_pamyati_lilit":
+            todo.append(job)
+    log(f"второй заход: заданий {len(todo)}; аварийный порог {abort_gib:.1f} ГиБ, "
+        f"вход {args.min_free_gib:.1f} ГиБ")
+    gate = argparse.Namespace(min_free_gib=args.min_free_gib,
+                              min_free_gib_full=args.min_free_gib)
+    for index, job in enumerate(todo, 1):
+        log(f"{index}/{len(todo)} {job['marka']} · {job['baza']} · {job['porogi']}")
+        data = run_lilit_job(job, gate, abort_gib)
+        data["zahod"] = 2
+        data["porog_storozha_GiB"] = abort_gib
+        (RAW / f"{job['id']}_z2.json").write_text(
+            json.dumps(data, ensure_ascii=False, indent=1, default=str), "utf-8")
+        pik = max((p.get("pik_MiB", 0) for p in data.get("popytki", [])), default=0)
+        brief = data.get("status")
+        if data.get("stroki"):
+            brief += " · " + " ; ".join(
+                f"{s.get('T_sol_K')} / {s.get('T_liq_K')}" for s in data["stroki"])
+        log(f"   {brief} · пик {pik:.0f} МиБ")
+
+
 def command_table(args) -> None:
     rows = build_rows()
     OUT.mkdir(parents=True, exist_ok=True)
@@ -965,6 +1014,10 @@ def main() -> None:
     child.add_argument("--job", required=True)
     child.add_argument("--out", required=True)
     sub.add_parser("table")
+    rerun = sub.add_parser("rerun-lilit")
+    rerun.add_argument("--abort-gib", type=float, default=None,
+                       help="аварийный порог сторожа, ГиБ; по умолчанию E1_ABORT_FREE_GIB")
+    rerun.add_argument("--min-free-gib", type=float, default=9.0)
     sub.add_parser("plan")
     sub.add_parser("env")
     args = parser.parse_args()
@@ -972,6 +1025,10 @@ def main() -> None:
         command_run(args)
     elif args.command == "child":
         child_thermogar(json.loads(args.job), Path(args.out))
+    elif args.command == "rerun-lilit":
+        if args.abort_gib is None:
+            args.abort_gib = abort_free_gib()
+        command_rerun_lilit(args)
     elif args.command == "table":
         command_table(args)
     elif args.command == "plan":
