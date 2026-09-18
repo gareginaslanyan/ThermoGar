@@ -125,10 +125,27 @@ xarray 2026.7.0 (у «Лилит» 3.12 / numpy 2.5.2 / scipy 1.18.0). Хеши 
 
 ## git
 
+Состояние сразу после коммита `efc95d6`; этот отчёт с git-блоком — следующим коммитом.
+
 ```
-<GIT_LOG>
+efc95d6 feat(16-А): досчёт плана 199/199, сравнение с заморозкой «Лилит», отчёт
+2965255 feat(16-А): второй заход скрипта «Лилит» для снятых по памяти (сторож E1, вход 9,0 ГиБ)
+c1cc7f4 docs(16-А): промежуточная сводка после первых пяти марок
+be5b463 feat(16-А): урезанный план мастера, зерно scheil, порог сторожа «Лилит» 2,0 ГиБ
+3e6ef58 feat(16-А): сценарий контрольной таблицы солидуса/ликвидуса, задание, пакет «Лилит»
+ac31640 docs(17-Е): отчёт
+2a41e88 Merge wave15-release: release 0.4.2
+6c13270 docs(17-Е): реестр — 17-Д принята, 17-Е, выпуск 0.4.2, ошибка мастера (17-Д)
 ```
 
 ```
-<GIT_STATUS>
+?? "Claude outputs/"
+?? PEREDACHA_MASTERA.md
+?? PRAVILA_VZAIMODEYSTVIYA_VLADELEC_MASTER.md
+?? results/wave17_b/
+?? tasks/WAVE17_A_REPORT.md
+?? tasks/WAVE17_B_REPORT.md
+?? tasks/WAVE17_V_REPORT.md
+?? tasks/WAVE17_ZH_OPUS.md
+?? tasks/WAVE17_ZH_REPORT.md
 ```
