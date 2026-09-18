@@ -1,0 +1,294 @@
+{
+ "opisanie": "Манифест слоя открытых баз свойств (APP-304). Каждая база: версия, лицензия, откуда взята, sha256 скачанного файла и sha256 файла ПОСЛЕ починки. Числа проверяются скриптом proverki/sverka_istochnikov.py.",
+ "sostavleno": "APP-304, 07.08.2026",
+ "status_sverki_s_pervoistochnikom": "НЕ ВЫПОЛНЕНА — www.matcalc.at недоступен из песочницы (403 на CONNECT через прокси; та же ошибка в облачной среде и в локальной VM устройства). Команды и коды ответа — в sdacha/LOG_APP-304.md. Сверка выполняется скриптом proverki/sverka_istochnikov.py в среде, где matcalc.at доступен. APP-504 (мак, 04.09.2026): хост ОТКРЫЛСЯ — mc_fe, mc_al и mc_ni скачаны с первоисточника и по sha256 не подменены. Не закрыта сверка по COST507: адрес opencalphad.com/databases.html отдаёт 404 (прежде отдавал 403). Медь этой задачей не переводится, вопрос адреса — отдельный.",
+ "bazy": {
+  "mc_fe": {
+   "fajl": "tdb/mc_fe_v2.059.tdb",
+   "versiya": "2.059",
+   "data_versii": "2016-07-26",
+   "redaktor": "Erwin Povoden-Karadeniz, TU Wien",
+   "licenziya": "Open Database License 1.0 (ODbL) + Database Contents License 1.0 — текст в шапке самого файла",
+   "pervoistochnik": "https://www.matcalc.at/images/stories/Download/Database/mc_fe_v2.059.tdb (НЕ скачан: хост недоступен)",
+   "aktualnaya_versiya_na_sajte": "2.062 от 2024-11-08 (по странице matcalc.at, прочитана WebFetch; файл не скачан)",
+   "zerkalo_A": {
+    "url": "https://raw.githubusercontent.com/richardotis/pycalphad-sandbox/master/steel_database_fix.tdb",
+    "bajt": 367973,
+    "sha256": "1b12f7dcd1ec511735a486ca2c6dc3228db81bb3da5e7a36f819ef89d934914c",
+    "md5": "2131061a43737e8a43fb6f73ce12f081",
+    "zamechanie": "это зеркало положено в слой как исходник (в нём ссылка REF ещё не починена)"
+   },
+   "zerkalo_B": {
+    "url": "https://raw.githubusercontent.com/pycalphad/pycalphad/develop/examples/databases/mc_fe_v2.059.pycalphad.tdb",
+    "bajt": 367973,
+    "sha256": "467211ab854400ac6d247bdfb97069d37e021cfced6b8dbb30c0334b74ee1508",
+    "md5": "0201c17782927445085af18871b623e8"
+   },
+   "sverka_zerkal": "Зеркала A и B различаются РОВНО в 4 строках (4110, 4112, 4115, 4117): 'REF:test koze10' против 'REF:test_koze10'. Размер байт в байт одинаков, числовые параметры совпадают полностью. Починка зеркала A обязана дать зеркало B побитово — это assert в pochinka.py.",
+   "sha256_posle_pochinki": "467211ab854400ac6d247bdfb97069d37e021cfced6b8dbb30c0334b74ee1508",
+   "elementy": [
+    "FE",
+    "AL",
+    "B",
+    "C",
+    "CO",
+    "CR",
+    "CU",
+    "H",
+    "HF",
+    "LA",
+    "MN",
+    "MO",
+    "N",
+    "NB",
+    "NI",
+    "O",
+    "P",
+    "PD",
+    "S",
+    "SI",
+    "TI",
+    "V",
+    "W",
+    "Y"
+   ],
+   "granicy_iz_shapki": {
+    "T_K": [
+     673,
+     2000
+    ],
+    "sostav_mass_procent_menshe": {
+     "AL": 3,
+     "B": 0.5,
+     "C": 0.5,
+     "CO": 3,
+     "CR": 25,
+     "CU": 1,
+     "HF": 0.5,
+     "LA": 0.5,
+     "MN": 25,
+     "MO": 5,
+     "N": 1,
+     "NB": 1,
+     "NI": 26,
+     "O": 0.5,
+     "P": 0.005,
+     "PD": 4,
+     "S": 0.5,
+     "SI": 3.5,
+     "TI": 0.5,
+     "V": 0.5,
+     "W": 3,
+     "Y": 0.5
+    }
+   },
+   "tipichnye_primeneniya": "9-12% Cr стали, инструментальные стали горячей работы, микролегированные стали, аустенитные нержавеющие, PH-мартенситно-стареющие",
+   "pervoistochnik_sha256": "9717c75531cf74e6d997528a8734b0d0441e41d1a1a552149e28c48975c179a7",
+   "pochemu_fajl_sloya_ne_ravem_pervoistochniku": "Файл слоя — зеркало A (steel_database_fix.tdb, починка общины pycalphad), а не байтовая копия matcalc.at. Приёмка APP-304 сверила их ПО СОДЕРЖАНИЮ (логические записи TDB, комментарии отброшены): имён параметров только в файле слоя — 0; в первоисточнике на 14 больше, и все 14 типа HMVA (в энергию Гиббса не входит); ещё 4 записи различаются только записью, причём дефект синтаксиса в ОРИГИНАЛЕ — G(SIGMA,FE:CR:FE;0) и G(SIGMA,FE:CR:MN;0) несут '6000.00.00', а G(PDMN_B2,MN:PD;0) и G(PDMN_B2,PD:MN;0) — лишнее '273' и оборванный хвост. Числовые коэффициенты совпадают все."
+  },
+  "mc_al": {
+   "fajl": "tdb/mc_al_v2037.thermogar.tdb",
+   "versiya": "2.037 (ThermoGar)",
+   "data_versii": "2025-07-25 (по странице matcalc.at — дата выпуска 2.037; шапка файла даёт «Created 3.10.2023» и перечень правок по июль 2025 включительно)",
+   "redaktor": "Erwin Povoden-Karadeniz, TU Wien",
+   "licenziya": "Open Database License 1.0 (ODbL) + Database Contents License 1.0 — текст в шапке самого файла. В v2.037 апстрим ОПЕЧАТКУ ИСПРАВИЛ: текст лицензии называет 2.037 (в v2.036 стояло 2.035).",
+   "pervoistochnik": "https://www.matcalc.at/images/stories/Download/Database/mc_al_v2037.tdb",
+   "ispravlenie_adresa": "APP-304а: имя файла на matcalc.at пишется БЕЗ точки в номере версии (mc_al_v2036.tdb, теперь mc_al_v2037.tdb); адрес с точкой отдаёт HTML-страницу «404 - Category not found». APP-504: адрес v2037 построен по тому же правилу и ПРОВЕРЕН прогоном — файл скачался и сошёлся по sha256 с паспортом ThermoGar.",
+   "aktualnaya_versiya_na_sajte": "2.037 от 2025-07-25 — это и есть внедрённая версия (APP-504)",
+   "zerkalo_A": {
+    "url": "ThermoGar, databases/converted/al/mc_al_v2037.thermogar.tdb (адрес НЕ http — качать нечего, поле держит sha256 файла слоя)",
+    "bajt": 314577,
+    "sha256": "f02bda0e42ff0733e4b647cbc904643a46c46fc996c57383815ade032a750c45",
+    "zamechanie": "APP-504 (вариант Б, решение владельца 04.09 07:12). Файл слоя — КОНВЕРТИРОВАННАЯ база ThermoGar из github.com/gareginaslanyan/ThermoGar, databases/converted; sha256 сверен с паспортом (<файл>.tdb.json, поля source_sha256 / destination_sha256) при внедрении."
+   },
+   "zerkalo_B": null,
+   "sverka_zerkal": "НЕ ВЫПОЛНЕНА — второго независимого зеркала v2.037 нет. Точки доверия: паспорт конвертации ThermoGar (source_sha256 / destination_sha256 сошлись оба, APP-492 п.1 и APP-504), шапка файла (версия, редактор, лицензия) и то, что база разбирается pycalphad начисто и даёт физичные равновесия.",
+   "elementy": [
+    "AL",
+    "CR",
+    "CU",
+    "FE",
+    "MG",
+    "MN",
+    "NI",
+    "SC",
+    "SI",
+    "TI",
+    "ZN",
+    "ZR"
+   ],
+   "granicy_iz_shapki": {
+    "T_K": [
+     273,
+     6000
+    ],
+    "sostav_mass_procent_menshe": {},
+    "molnaya_dolya_osnovy_ne_menee": {
+     "AL": 0.9
+    },
+    "zamechanie": "Явных покомпонентных пределов в масс.% шапка mc_al НЕ даёт (в отличие от mc_fe). Записано ровно то, что в шапке: 'optimized in the Al-rich part, X(Al)>0.9, focusing on the Al-Cr-Cu-Fe-Mg-Mn-Si-Zn system'; проверено на литейных и деформируемых 2xxx/6xxx/7xxx от плавления до комнатной."
+   },
+   "tipichnye_primeneniya": "деформируемые и литейные Al-сплавы 2xxx, 6xxx, 7xxx",
+   "pervoistochnik_sha256": "87ec595f2caae189227ed11d5598c899b436b866ccfefea91304ca57188817c4",
+   "pochemu_fajl_sloya_ne_ravem_pervoistochniku": "Файл слоя — не первоисточник, а его КОНВЕРТАЦИЯ под pycalphad (ThermoGar). Что тронуто, названо паспортом поимённо: 195 описаний фаз перенесены в комментарии, 1 ATTACH_CONTRIBUTION переведён в TYPE_DEFINITION ... DIS_PART, 1 REFERENCE_ELEMENT, 3 COMPOSITION_SET, 7 HMVA и 1 SE закомментированы, добавлено TYPE_DEFINITION % SEQ. Ни одна из этих команд не термодинамическая. Проверено СЧЁТОМ, а не по слову паспорта (APP-500 §4.4): закомментированных PARAMETER G/L/TC/BMAGN в исходнике 72 и в результате 72 — конвертер не отключил ни одного термодинамического параметра. Полей compatibility_patches / disabled_thermodynamic_parameters у паспорта mc_al НЕТ вовсе, warnings пуст.",
+   "pervoistochnik_sha256_otkuda": "ЗАМЕР, а не ожидание — и это первый раз, когда его удалось снять. APP-504: `proverki/sverka_istochnikov.py` прогнан на маке, и www.matcalc.at ОТКРЫЛСЯ (в песочнице APP-304 он отдавал 403 на CONNECT — см. status_sverki_s_pervoistochnikom выше). Скачанный mc_al_v2037.tdb дал sha256 87ec595f… — ровно тот, что стоит source_sha256 в паспорте конвертации ThermoGar. То есть ThermoGar конвертировал файл первоисточника побайтово тот же, а не какую-то свою копию; SOURCES.txt репозитория этого не документирует (там описана только справочная пара mc_ni v2.034), и теперь это не нужно — сверено напрямую. Улика: proverki/sverka_istochnikov_vyvod.log.",
+   "konvertaciya_thermogar": {
+    "passport": "databases/converted/al/mc_al_v2037.thermogar.tdb.json",
+    "patchej_net": "compatibility_patches / disabled_thermodynamic_parameters в паспорте отсутствуют; сличение закомментированных PARAMETER: 72 в исходнике, 72 в результате",
+    "faz": "195 (в v2.036 было 181); элементов 12 — те же"
+   },
+   "isklyuchennye_fazy": "Семейство Ti-Si (TIALSI_TAU, SI2TI, SITI, TI17AL5SI14) — решение владельца 04.09 09:30 (APP-500), подтверждённое 04.09 21:30 как ОКОНЧАТЕЛЬНОЕ: при следовом титане интерметаллиды Ti-Si не подтверждены, а цена ошибки — до 245,5 K в ликвидусе (АК8М3ч). Аршин найден и приложен — F357/A357: справочники дают солидус 557-571 °C и ликвидус 593-613 °C, расчёт без Ti-Si даёт 563 / 616 °C и сходится, с Ti-Si ликвидус 803 °C и опровергнут. Прежнее условие снятия (внешний аршин по литейным Al-Si-Mg) тем самым исчерпано, исключение больше не временное. GP_MAT В СПИСКЕ БОЛЬШЕ НЕТ: исключение снято APP-510 по решению владельца 05.09 11:35 на замер APP-507 — на v2037 конвертер перевёл ATTACH_CONTRIBUTION (AMEND_PHASE_DESCRIPTION GP_MAT DIS_PART FCC_A1), модель полна, движущая сила на всех 166 замороженных позициях Al лежит в 0…+309 Дж/моль, и T_s/T_l всех 166 совпали с заморозкой до последнего знака; пересчёт заморозки не потребовался. Остальные три Ti-Si фазы базы (SI3TI5, SI4TI5, SITI3) НЕ исключены: сторож не взял их в набор ни разу на 174 позициях прохода B (замер APP-500 п.1). Подробности и дословные основания — calphad_layer/granicy.py."
+  },
+  "cost507": {
+   "fajl": "tdb/COST507.tdb",
+   "versiya": "ROUND II (January 1999), FROZEN VERSION",
+   "redaktor": "проект COST 507 (лёгкие сплавы)",
+   "licenziya": "формальной SPDX-лицензии нет; в блоке DATABASE_INFO самого файла: 'It may be used freely but on your own risk'. Это разрешение свободного использования БЕЗ копилефта — юридически слабее ODbL, помечено отдельно.",
+   "pervoistochnik": "http://www.opencalphad.com/databases.html (по шапке файла; хост недоступен из песочницы)",
+   "zerkalo_A": {
+    "url": "https://raw.githubusercontent.com/pycalphad/pycalphad/develop/pycalphad/tests/databases/COST507.tdb",
+    "bajt": 296479,
+    "sha256": "6565f4d67695fbbf779d68b9eeeb83e86e44a1a3dde9bafd612d99daffb9c34d",
+    "md5": "c3dfe122d22c2bb51ff1d4626d6fdd78"
+   },
+   "zerkalo_B": null,
+   "sverka_zerkal": "НЕ ВЫПОЛНЕНА — второго доступного зеркала не найдено.",
+   "sha256_posle_pochinki": null,
+   "elementy_ne_vzyaty_iz_fajla": {
+    "O": "в файле кислород объявлен элементом, но термодинамического описания у него нет: фаз с O — 0, параметров с O — 0, растворяться ему негде. Исключён из перечня НАМЕРЕННО; полное основание и запрет на перегенерацию — в манифесте слоя, запись cost507, поле pochemu_kislorod_ne_vzyat_v_elementy"
+   },
+   "pochemu_kislorod_ne_vzyat_v_elementy": "APP-355, основание к строке elementy. Кислород в файле ОБЪЯВЛЕН элементом (`ELEMENT O 1/2_MOLE_O2(G)`, есть и функция GHSEROO), но термодинамического описания у него нет ни одного. Замер APP-354 §Б.5, повторён сторожем слоя на самом TDB: фаз в базе 243, фаз, где O стоит в подрешётке, — 0; параметров, где O стоит в подрешётке, — 0. Растворяться кислороду негде, и составу с кислородом слой обязан отказывать (element_ne_pokryt), а не считать его так, будто кислорода в сплаве нет. Поэтому O НАМЕРЕННО исключён из elementy. ЗАПРЕТ: перегенерировать этот перечень из `pycalphad Database.elements` нельзя — там O ПРИСУТСТВУЕТ, и такая перегенерация молча снимет отказ, а титановый состав с кислородом посчитается на базе, где у кислорода ноль параметров. Перечень отличается от Database.elements ровно на O (плюс служебные VA и /-), и это отличие — решение, а не небрежность. Менять его можно только вместе с новым замером параметров по файлу. Короткая половина этого основания едет вместе с самим отказом (поле elementy_ne_vzyaty_iz_fajla): длинную в подпись под ответом не кладут, её место здесь.",
+   "elementy": [
+    "AL",
+    "AR",
+    "B",
+    "C",
+    "CE",
+    "CR",
+    "CU",
+    "FE",
+    "HF",
+    "LI",
+    "MG",
+    "MN",
+    "MO",
+    "N",
+    "NB",
+    "ND",
+    "NI",
+    "SI",
+    "SN",
+    "TA",
+    "TI",
+    "V",
+    "W",
+    "Y",
+    "ZN",
+    "ZR"
+   ],
+   "granicy_iz_shapki": {
+    "T_K": [
+     298.15,
+     6000
+    ],
+    "sostav_mass_procent_menshe": {},
+    "zamechanie": "Пределов по составу шапка не даёт. Заверенные бинарные системы перечислены в DATABASE_INFO; для БрХ08 существенны CR-CU (заверена) и CR-ZR/CU-ZR."
+   },
+   "zachem_vzyata": "единственная доступная база с заверенной системой Cu-Cr — под БрХ08 (этап 3 задачи APP-304). APP-355: та же база приписана ВТОРОЙ базой основе AL — см. pochemu_osnova_AL_pripisana.",
+   "pochemu_osnova_AL_pripisana": "APP-355, решение мастера по REPORT_APP-350 §7 и §2.4. У основы AL первой стоит mc_al, и она остаётся первой: состав, который mc_al считает, считает по-прежнему она. COST507 пробуется ВТОРОЙ и только там, где mc_al отказала по своим границам — у mc_al шапка требует X(Al) > 0,9, и литейные Al-Si сплавы за неё выходят (AlSi10Mg: X(Al) = 0,8967). Пределов состава шапка COST507 не даёт вовсе, а системы AL-SI, AL-MG и AL-MG-SI в DATABASE_INFO заверены. Контроли перед припиской (APP-350 §2.4, повторены APP-355): чистый Al 933,5 K против SGTE 933,47; AlSi10Mg (одиннадцатикомпонентная точка датащита EOS) 837,5 / 866,5 K; чистая Cu 1357,8 K против SGTE 1357,77. Приписка ни одного уже опубликованного числа не двигает — это стережёт проверка osnova_al_probuet_mc_al_a_zatem_cost507.",
+   "pochemu_osnova_TI_ne_pripisana": "APP-355, решение мастера: основе TI COST507 НЕ приписывается, титановый состав по-прежнему получает отказ «нет базы для основы». Соблазн симметрии («в базе есть и Ti, и V, и Al — почему бы не считать титан») стоит промаха +77,7 K по солидусу на упрощённой тройной Ti-6Al-4V (APP-350: 1954,3 / 1959,8 K против датащита Grade 5 1877,15 / 1933,15 K), и это дефект не базы, а постановки без интерстиций: лучшая открытая Ti-база Lindahl et al. (2015) даёт тот же промах +79,2 K (REPORT_APP-354 §Б.4). Кислородный отказ от этого НЕ спасает: он срабатывает только на составе, где кислород выписан. Титановый состав БЕЗ кислорода — а его пишут именно так, когда интерстиции опускают, — посчитался бы молча и с промахом. Открытой Ti-базы с O+V не существует (перебраны все 79 титановых записей TDBDB, APP-354 §Б.2); единственный путь — коммерческая TCTI7, это закупка и решение владельца."
+  },
+  "mc_ni": {
+   "fajl": "tdb/mc_ni_v2036.garcalc.tdb",
+   "versiya": "2.036 (ThermoGar garcalc)",
+   "data_versii": "2024-08-20 (в шапке файла «updated 20.08.2024»; страница matcalc.at даёт дату выпуска 2024-08-24 — расхождение апстрима, записаны обе)",
+   "redaktor": "Erwin Povoden-Karadeniz, TU Wien",
+   "licenziya": "Open Database License 1.0 (ODbL) + Database Contents License 1.0 — текст в шапке самого файла (в тексте лицензии автор оставил номер 2.035; сам файл 2.036 — опечатка апстрима, в никеле она не исправлена)",
+   "pervoistochnik": "https://www.matcalc.at/images/stories/Download/Database/mc_ni_v2036.tdb",
+   "pervoistochnik_sha256": "84ba813156e1f7d8bde495d74420319afec03572b981f6b56103807f305313ab",
+   "bajt": 410655,
+   "otkuda_vzyat": "Файл слоя — конвертация ThermoGar. ИСХОДНИК У НЕЁ ТОТ ЖЕ САМЫЙ ФАЙЛ, что «Лилит» скачала с первоисточника напрямую в APP-304а: sha256 исходника ThermoGar 84ba8131… совпал с pervoistochnik_sha256 ниже побайтово (проверено APP-492 п.1 и повторно APP-504). Это самый сильный провенанс из четырёх баз слоя: сходится не паспорт с паспортом, а паспорт с нашей собственной загрузкой. Версия базы при этом НЕ меняется — 2.036 с обеих сторон, и оговорка APP-492 остаётся в силе: сверка на 9 марках показывает чистоту КОНВЕРТАЦИИ, а не переход на новую версию.",
+   "zerkalo_A": {
+    "url": "ThermoGar, databases/converted/mc_ni_v2036.garcalc.tdb (адрес НЕ http — качать нечего, поле держит sha256 файла слоя)",
+    "bajt": 410655,
+    "sha256": "1dc72c5501eb2d9a1778c5a5622728257572a1dcd0ee218c9b4f9a00e0ad08f8",
+    "zamechanie": "APP-504 (вариант Б, решение владельца 04.09 07:12). Файл слоя — КОНВЕРТИРОВАННАЯ база ThermoGar из github.com/gareginaslanyan/ThermoGar, databases/converted; sha256 сверен с паспортом (<файл>.tdb.json, поля source_sha256 / destination_sha256) при внедрении."
+   },
+   "zerkalo_B": null,
+   "sverka_zerkal": "НЕ НУЖНА в прежнем смысле: исходник конвертации побайтово равен нашей собственной загрузке с первоисточника (см. otkuda_vzyat). Второго независимого зеркала не искали.",
+   "pochinki": [
+    "ПОЧИНОК НЕТ. База ThermoGar читается pycalphad 0.11.2 начисто (APP-492 п.1): перекодировка не нужна (файл уже UTF-8), команды MatCalc переведены или закомментированы конвертером, сдвоенные десятичные температуры (2 шт.) исправлены им же. Прежние починки mc_ni-1..4 относились к файлу tdb/mc_ni_v2036.tdb и с APP-504 в расчёт не входят; их код и сторожа оставлены в pochinka.py с записанной причиной."
+   ],
+   "elementy": [
+    "NI",
+    "AL",
+    "B",
+    "C",
+    "CO",
+    "CR",
+    "CU",
+    "FE",
+    "HF",
+    "LA",
+    "MN",
+    "MO",
+    "N",
+    "NB",
+    "O",
+    "S",
+    "SI",
+    "TI",
+    "V",
+    "W",
+    "Y",
+    "ZR"
+   ],
+   "granicy_iz_shapki": {
+    "T_K": [
+     273,
+     6000
+    ],
+    "sostav_mass_procent_menshe": {
+     "AL": 10,
+     "B": 0.05,
+     "C": 0.1,
+     "CO": 20,
+     "CR": 20,
+     "CU": 0.5,
+     "FE": 20,
+     "HF": 2,
+     "LA": 0.1,
+     "MN": 0.5,
+     "MO": 5,
+     "N": 0.1,
+     "NB": 6,
+     "O": 0.1,
+     "S": 0.1,
+     "SI": 1,
+     "TI": 4,
+     "V": 0.5,
+     "W": 8,
+     "Y": 0.1,
+     "ZR": 0.5
+    },
+    "molnaya_dolya_osnovy_ne_menee": {},
+    "zamechanie": "Пределы взяты дословно из шапки файла (строки 57-60): 'The database has been tested inside the following composition limits (given in wt%)'. ВНИМАНИЕ, дефект апстрима: молибден в шапке назван ДВАЖДЫ и по-разному — 'Mo<8' и 'Mo<5'. Записан СТРОГИЙ предел 5: при противоречии в источнике слой обязан брать более узкую область, иначе он молча расширит границы применимости за пределы проверенного. Про X(Ni) шапка минимума не даёт — поэтому molnaya_dolya_osnovy_ne_menee пуст."
+   },
+   "isklyuchennaya_faza_BCC_B2": "BCC_B2 исключена из расчёта. Основание APP-510 (замер APP-507, §4.2): BCC_B2 базы garcalc объявлена с межузельной подрешёткой, где стоит только VA, а у её разупорядоченной половины BCC_A2 там B, C, N, O, VA; pycalphad 0.11.2 строит разделённую модель, только когда межузельные подрешётки совпадают, и на любом составе с C, N, B или O падает с ValueError: Order (BCC_B2) and disorder (BCC_A2) model must have no interstitial sublattice or a single matching one. Из девяти замороженных позиций Ni шесть содержат C или B, и все шесть со снятым исключением дают отказ storozh_ne_proveril_fazy — числа теряются. На трёх позициях без межузельных (DURANICKEL 301, INCONEL 600, INCONEL X-750) фаза считается и даёт +1517 / +2227 / +3270 Дж/моль, T_s/T_l не двигая. Условие снятия — исправление подрешёток BCC_B2 в самой базе или версия pycalphad, допускающая несовпадающие межузельные подрешётки. ПРЕЖНИЙ ДОВОД СНЯТ: числа +89,5/+91,6/+93,3 кДж/моль — замер на СТАРОЙ базе с неполной моделью, доводом они больше не служат.",
+   "pervoistochnik_sha256_otkuda": "Загрузка «Лилит» с matcalc.at, APP-304а, 08.08.2026. Она же — source_sha256 паспорта конвертации ThermoGar. APP-504: повторно скачан с первоисточника на маке — те же 84ba8131…, подмены нет (улика proverki/sverka_istochnikov_vyvod.log).",
+   "pochemu_fajl_sloya_ne_ravem_pervoistochniku": "Файл слоя — конвертация исходника под pycalphad (ThermoGar). Паспорт называет тронутое поимённо: 99 описаний фаз в комментарии, 1 ATTACH_CONTRIBUTION переведён в TYPE_DEFINITION ... DIS_PART, 1 REFERENCE_ELEMENT, 9 COMPOSITION_SET и 13 HMVA закомментированы, 2 сдвоенных десятичных температуры исправлены, добавлены LIST_OF_REFERENCES и TYPE_DEFINITION % SEQ. Термодинамических команд среди них нет; проверено счётом (APP-500 §4.4): закомментированных PARAMETER G/L/TC/BMAGN 2 в исходнике и 2 в результате. Полей патчей у паспорта нет, warnings пуст.",
+   "konvertaciya_thermogar": {
+    "passport": "databases/converted/mc_ni_v2036.garcalc.tdb.json",
+    "patchej_net": "compatibility_patches / disabled_thermodynamic_parameters в паспорте отсутствуют; сличение закомментированных PARAMETER: 2 в исходнике, 2 в результате",
+    "faz": "99 — столько же, сколько в исходнике; элементов 22 — те же. Это и есть контроль чистоты конвертации (APP-492 п.1)"
+   }
+  }
+ },
+ "zavisimosti_sloya": {
+  "pycalphad": {
+   "versiya_prognana": "0.11.2",
+   "licenziya": "MIT"
+  },
+  "zamechanie_o_pinah": "sklearn 1.8.0, numpy 2.4.x, scipy 1.17.x НЕ трогаются: после установки pycalphad проверено импортом, версии на месте (числа — в sdacha/LOG_APP-304.md)."
+ }
+}
