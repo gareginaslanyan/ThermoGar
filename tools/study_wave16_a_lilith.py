@@ -104,6 +104,8 @@ BAZY_SISTEMY = {
 POROGI_NASHI = (1e-6, 1e-4)
 POROGI_LILIT = (1e-9, 1e-6, 1e-4)
 PDENS_LESENKA = (200, 100, 50, 25)
+ZYORNO = 0
+ZYORNA_POVTORA = (1, 2, 3)
 # Пять марок первой сводки, по одной каждого типа: четыре группы файла «Лилит»
 # (kartochka, z26_Al, dobor_Ni, z26_Fe) и строка с отказом слоя по пределам шапки.
 PERVYE_PYAT = ("RS320", "В96ц1оч", "INCONEL 600", "40Х10С2М", "17-4 PH")
@@ -176,44 +178,70 @@ def vne_predelov(row: dict[str, str], lilit_key: str) -> str:
 
 
 def job_id(job: dict[str, Any]) -> str:
-    text = json.dumps(
-        {k: job[k] for k in ("marka", "baza", "metod", "nabor", "c15", "porogi", "pdens")},
-        ensure_ascii=False, sort_keys=True,
-    )
+    keys = ["marka", "baza", "metod", "nabor", "c15", "porogi", "pdens"]
+    keys += [k for k in ("seed", "tolko_scheil") if job.get(k)]
+    text = json.dumps({k: job[k] for k in keys}, ensure_ascii=False, sort_keys=True)
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
 def plan_jobs(marki: list[dict[str, str]]) -> list[dict[str, Any]]:
+    """План после урезки мастера (перезапуск после снятия по памяти).
+
+    На марку: наш метод — полный набор pdens 50 с порогами 1e-6 и 1e-4 (опорный),
+    быстрый набор 1e-6; Fe — с патчем и C15_LAVES, плюс Fe без патча (полный, 1e-6)
+    и опорная строка приложения без C15_LAVES. Скрипт «Лилит» — только sloj,
+    пороги 1e-9 и 1e-6. pdens 200 — не в плане (команда ``run --pdens200``).
+    """
+
     jobs: list[dict[str, Any]] = []
+
+    def nash(row, baza, nabor, c15, porogi, metod="ThermoGar", alias_porogi=None):
+        job = {
+            "marka": row["marka"], "baza": baza, "metod": metod, "nabor": nabor,
+            "c15": c15, "porogi": porogi, "pdens": 50, "tier": 1,
+            "polnyj_tyazhelyj": nabor == "polnyj" and row["sistema"] in ("Ni", "Fe"),
+        }
+        if alias_porogi:
+            # Кэш прежнего плана: тот же вариант, посчитанный с обоими порогами.
+            job["alias"] = job_id(dict(job, porogi=alias_porogi))
+        jobs.append(job)
+
     for row in marki:
-        sistema = row["sistema"]
-        polnyj_tyazhelyj = sistema in ("Ni", "Fe")
-        for baza in BAZY_SISTEMY[sistema]:
-            c15 = sistema == "Fe"
-            for nabor, pdens in (("bystryj", 50), ("polnyj", 50), ("polnyj", 200)):
+        fe = row["sistema"] == "Fe"
+        glavnaya = BAZY_SISTEMY[row["sistema"]][0]
+        nash(row, glavnaya, "polnyj", fe, [1e-6, 1e-4])
+        nash(row, glavnaya, "bystryj", fe, [1e-6], alias_porogi=[1e-6, 1e-4])
+        if fe:
+            nash(row, "mc_fe_2062_bez_patcha", "polnyj", True, [1e-6],
+                 alias_porogi=[1e-6, 1e-4])
+            nash(row, glavnaya, "polnyj", False, [1e-6], metod="ThermoGar-app")
+        for baza in BAZY_SISTEMY[row["sistema"]]:
+            for porog in (1e-9, 1e-6):
                 jobs.append({
-                    "marka": row["marka"], "baza": baza, "metod": "ThermoGar",
-                    "nabor": nabor, "c15": c15, "porogi": list(POROGI_NASHI),
-                    "pdens": pdens, "tier": 4 if pdens == 200 else 1,
-                    "polnyj_tyazhelyj": nabor == "polnyj" and polnyj_tyazhelyj,
+                    "marka": row["marka"], "baza": baza, "metod": "Lilit-skript",
+                    "nabor": "sloj", "c15": None, "porogi": [porog], "pdens": None,
+                    "tier": 1, "polnyj_tyazhelyj": False,
                 })
-            if baza == "mc_fe_2062_patch":
-                jobs.append({
-                    "marka": row["marka"], "baza": baza, "metod": "ThermoGar-app",
-                    "nabor": "polnyj", "c15": False, "porogi": [1e-6],
-                    "pdens": 50, "tier": 1, "polnyj_tyazhelyj": True,
-                })
-            for nabor in ("sloj", "polnyj"):
-                for porog in POROGI_LILIT:
-                    jobs.append({
-                        "marka": row["marka"], "baza": baza, "metod": "Lilit-skript",
-                        "nabor": nabor, "c15": None, "porogi": [porog], "pdens": None,
-                        "tier": (1 if porog == 1e-9 else 2) if nabor == "sloj" else 3,
-                        "polnyj_tyazhelyj": nabor == "polnyj" and polnyj_tyazhelyj,
-                    })
+    # Повторяемость солидуса scheil (отступление, названо в отчёте): адаптивное
+    # уточнение берёт точки из scipy.stats.norm.rvs без зерна, в приложении путь
+    # случаен. Основные строки — с зерном 0; здесь опорный вариант пяти марок с
+    # зёрнами 1..3, только траектория scheil. Идёт последним.
+    by_name = {r["marka"]: r for r in marki}
+    for name in PERVYE_PYAT:
+        if name not in by_name:
+            continue
+        row = by_name[name]
+        for seed in ZYORNA_POVTORA:
+            jobs.append({
+                "marka": name, "baza": BAZY_SISTEMY[row["sistema"]][0],
+                "metod": "ThermoGar-povtor", "nabor": "polnyj",
+                "c15": row["sistema"] == "Fe", "porogi": [1e-6], "pdens": 50,
+                "seed": seed, "tolko_scheil": True, "tier": 9,
+                "polnyj_tyazhelyj": row["sistema"] in ("Ni", "Fe"),
+            })
     first = {name: i for i, name in enumerate(PERVYE_PYAT)}
     jobs.sort(key=lambda j: (
-        0 if j["marka"] in first else 1,
+        3 if j["metod"] == "ThermoGar-povtor" else (0 if j["marka"] in first else 2),
         first.get(j["marka"], 0) if j["marka"] in first else j["tier"],
         [r["marka"] for r in marki].index(j["marka"]),
     ))
@@ -223,7 +251,10 @@ def plan_jobs(marki: list[dict[str, str]]) -> list[dict[str, Any]]:
 
 
 def raw_path(job: dict[str, Any]) -> Path:
-    return RAW / f"{job['id']}.json"
+    own = RAW / f"{job['id']}.json"
+    if not own.is_file() and job.get("alias") and (RAW / f"{job['alias']}.json").is_file():
+        return RAW / f"{job['alias']}.json"
+    return own
 
 
 def job_done(job: dict[str, Any]) -> bool:
@@ -231,8 +262,9 @@ def job_done(job: dict[str, Any]) -> bool:
     if not path.is_file():
         return False
     data = json.loads(path.read_text("utf-8"))
-    # Снятый по памяти или не дождавшийся памяти вариант досчитывается заново.
-    return data.get("status") not in ("snyat_po_pamyati", "net_pamyati", "timeout")
+    # Не дождавшийся памяти вариант досчитывается заново. Снятый сторожем — нет
+    # (решение мастера): отказ по памяти остаётся в таблице.
+    return data.get("status") not in ("net_pamyati", "timeout")
 
 
 # --------------------------------------------------------------------------- #
@@ -379,6 +411,11 @@ def child_thermogar(job: dict[str, Any], out_path: Path) -> None:
         scheil_module = ns["load_scheil"]()
         if scheil_module["package"] is None:
             raise RuntimeError(f"scheil не импортирован: {scheil_module['error']}")
+        import numpy as np
+
+        seed = int(job.get("seed", ZYORNO))
+        np.random.seed(seed)  # norm.rvs в scheil.utils.local_sample берёт глобальный генератор
+        result["zyorno"] = seed
         t0 = time.perf_counter()
         scheil_error = ""
         traj = None
@@ -433,7 +470,13 @@ def child_thermogar(job: dict[str, Any], out_path: Path) -> None:
             eq = equilibrium(db, components, phases, conds, calc_opts={"pdens": pdens})
             return sorted(ns["aggregate_phase_fractions"](eq))
 
-        for porog in job["porogi"]:
+        if job.get("tolko_scheil"):
+            result["stroki"].append({
+                "porog": 1e-6, "T_sol_K": T_sol_scheil_c + 273.15 if T_sol_scheil_c is not None
+                else None, "fazy_pod_solidusom": fazy_scheil,
+                "kriterij_solidusa": "scheil: LIQUID нет в eq.Phase (порог решателя pycalphad)",
+            })
+        for porog in ([] if job.get("tolko_scheil") else job["porogi"]):
             stroka: dict[str, Any] = {"porog": porog}
             t_l0 = time.perf_counter()
             n0 = counter["n"]
@@ -713,15 +756,16 @@ def command_run(args) -> None:
     todo = [j for j in jobs if not job_done(j)]
     log(f"заданий {len(jobs)}, из кэша {len(jobs) - len(todo)}, считать {len(todo)}; "
         f"аварийный порог {abort_gib:.1f} ГиБ, вход {args.min_free_gib:.1f} / "
-        f"{args.min_free_gib_full:.1f} ГиБ")
+        f"{args.min_free_gib_full:.1f} ГиБ; у скрипта «Лилит» аварийный "
+        f"{max(abort_gib, args.abort_lilit_gib):.1f} ГиБ")
     for index, job in enumerate(todo, 1):
         log(f"{index}/{len(todo)} {job['marka']} · {job['baza']} · {job['metod']} · "
             f"{job['nabor']} · {job['porogi']} · pdens {job['pdens']}")
         if job["metod"] == "Lilit-skript":
-            data = run_lilit_job(job, args, abort_gib)
+            data = run_lilit_job(job, args, max(abort_gib, args.abort_lilit_gib))
         else:
             data = run_thermogar_job(job, args, abort_gib)
-        raw_path(job).write_text(json.dumps(data, ensure_ascii=False, indent=1, default=str),
+        (RAW / f"{job['id']}.json").write_text(json.dumps(data, ensure_ascii=False, indent=1, default=str),
                                  "utf-8")
         pik = max((p.get("pik_MiB", 0) for p in data.get("popytki", [])), default=0)
         sek = sum(p.get("sekund", 0) for p in data.get("popytki", []))
@@ -739,7 +783,7 @@ def command_run(args) -> None:
 COLUMNS = (
     "marka", "klyuch_zamorozki", "gruppa", "sistema", "baza", "fajl_tdb", "sha256_tdb",
     "metod", "nabor", "c15_laves_v_nabore", "porog", "kriterij_solidusa", "pdens",
-    "pdens_zaproshen", "T_sol_K", "T_liq_K", "T_sol_bisekciya_K", "T_sol_zamorozka_K",
+    "pdens_zaproshen", "zyorno_scheil", "T_sol_K", "T_liq_K", "T_sol_bisekciya_K", "T_sol_zamorozka_K",
     "T_liq_zamorozka_K", "vremya_s", "pik_pamyati_MiB", "otkaz", "prichina",
     "vne_predelov_shapki", "chislo_faz_v_nabore", "fazy_v_nabore", "fazy_pod_solidusom",
     "zamechaniya", "job_id",
@@ -808,7 +852,8 @@ def build_rows() -> list[dict[str, Any]]:
                 tail = log_text.strip().splitlines()[-1] if log_text.strip() else ""
                 out.update({
                     "porog": job["porogi"][0], "vremya_s": f"{sek:.1f}",
-                    "otkaz": status,
+                    "otkaz": (f"отказ: память, пик {pik / 1024:.1f} ГиБ"
+                              if str(status).startswith("snyat") else status),
                     "prichina": (data.get("oshibka", "") + (f" | {tail}" if tail else "")).strip(" |"),
                 })
                 rows.append(out)
@@ -823,6 +868,7 @@ def build_rows() -> list[dict[str, Any]]:
             out.update({
                 "porog": porog, "pdens": pdens_fakt if status == "ok" or data.get("stroki")
                 else "", "pdens_zaproshen": job["pdens"],
+                "zyorno_scheil": data.get("zyorno", ""),
                 "c15_laves_v_nabore": "да" if data.get("c15_v_nabore") else (
                     "нет" if fazy else ""),
                 "chislo_faz_v_nabore": len(fazy) if fazy else "",
@@ -840,7 +886,9 @@ def build_rows() -> list[dict[str, Any]]:
             if pdens_fakt != job["pdens"]:
                 zam.append(f"pdens снижен {job['pdens']}→{pdens_fakt} после снятия по памяти")
             if s is None:
-                out.update({"otkaz": status, "prichina": data.get("oshibka") or data.get(
+                out.update({"otkaz": (f"отказ: память, пик {pik / 1024:.1f} ГиБ"
+                                      if str(status).startswith("snyat") else status),
+                            "prichina": data.get("oshibka") or data.get(
                     "prichina", ""), "vremya_s": fnum(sum(p.get("sekund", 0) for p in popytki), 1)})
             else:
                 out.update({
@@ -911,6 +959,8 @@ def main() -> None:
     run.add_argument("--metod", default="")
     run.add_argument("--min-free-gib", type=float, default=3.0)
     run.add_argument("--min-free-gib-full", type=float, default=5.0)
+    run.add_argument("--abort-lilit-gib", type=float, default=2.0,
+                     help="аварийный порог сторожа для скрипта «Лилит», ГиБ (E1 не меняется)")
     child = sub.add_parser("child")
     child.add_argument("--job", required=True)
     child.add_argument("--out", required=True)
