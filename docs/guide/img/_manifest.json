@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-04",
+  "generated_utc": "2026-09-18",
   "frames": [
     {
       "image": "start-01.png",
@@ -204,6 +204,26 @@
     {
       "image": "proekty-08.png",
       "title": "Проект сохранён в папке ThermoGar"
+    },
+    {
+      "image": "soobshcheniya-01.png",
+      "title": "Предупреждение о фазах вне быстрого набора и раскрытый полный перечень"
+    },
+    {
+      "image": "soobshcheniya-02.png",
+      "title": "Равновесие при 750 °C не найдено"
+    },
+    {
+      "image": "soobshcheniya-03.png",
+      "title": "Текст остановки расчёта выделений над вкладками"
+    },
+    {
+      "image": "soobshcheniya-04.png",
+      "title": "Таблица проверок: «Состав матрицы допустим» — ошибка"
+    },
+    {
+      "image": "soobshcheniya-05.png",
+      "title": "Зародыш крупнее начальной сетки размеров"
     }
   ]
 }
