@@ -1,0 +1,23 @@
+C:\Program Files\ThermoGar\runtime\Lib\site-packages\kawin\precipitation\NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+2026-09-18 11:48:42.646 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 11:48:42.646 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 11:48:42.861 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 11:48:42.861 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 11:48:43.041 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 11:48:43.041 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 11:48:43.273 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 11:48:43.273 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 11:48:43.338 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-18 11:48:43.338 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+python      : C:\Program Files\ThermoGar\runtime\python.exe
+app         : C:\Program Files\ThermoGar\app\thermogar_precipitation.py
+APP_VERSION : 0.4.2
+состав      : основа FE, NI=54.2, CR=17.9, NB=5.3, MO=2.99, TI=0.97, AL=0.5 (wt)
+пара        : FCC_A1 / GAMMA_DP, 700 °C, γ = 0.095 Дж/м²
+ИСХОД       : РЕЗУЛЬТАТ за 30.5 с
+строк кинетики: 212; последнее время: 3.84371 с
+«Состав матрицы допустим»: ошибка
+stop_note   : Расчёт остановлен на 3.844 с модельного времени (0.001068 ч): доля NB в матрице стала 0 ат. %, баланс масс нарушен. Показана часть расчёта до остановки. Причина: при движущей силе по базе зарождение практически безбарьерное, и выделение вычерпывает добавки из матрицы быстрее, чем модель это выдерживает; см. docs/LIMITS_OF_APPLICABILITY.md.
+warning     : Подвижность ниобия в FCC_A1: в базе записано LN(1,00E-4) с десятичной запятой, ThermoGar читает это как ln(1.00E-4). Правка сделана поверх разобранной базы, байты файла не менялись; число взято из той же строки, первоисточник строки (pov10) не опубликован и не сверен.
+warning     : В составе 6 добавок. Расчёт идёт в этой же вкладке и не отменяется; каждая добавка удлиняет его примерно на 15 %.

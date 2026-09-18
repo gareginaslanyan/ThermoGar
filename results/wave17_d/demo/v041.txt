@@ -1,0 +1,7 @@
+python      : C:\Program Files\ThermoGar\runtime\python.exe
+app         : C:\Users\gareg\AppData\Local\Temp\claude\C--Users-gareg\359bac8b-443b-4edf-90c9-102f8ee3514b\scratchpad\v041_snapshot\app\thermogar_precipitation.py
+APP_VERSION : 0.4.1
+состав      : основа FE, NI=54.2, CR=17.9, NB=5.3, MO=2.99, TI=0.97, AL=0.5 (wt)
+пара        : FCC_A1 / GAMMA_DP, 700 °C, γ = 0.095 Дж/м²
+ИСХОД       : ОТКАЗ за 5.5 с
+исключение  : ValueError: Research KWN mode допускает не более четырёх добавок одновременно.
