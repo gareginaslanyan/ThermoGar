@@ -438,6 +438,108 @@ class StateMigrationTests(unittest.TestCase):
             )
             self.assertIn("no_copy_attempted=true", row["failure_detail"])
 
+    def test_007_concurrent_processes_leave_one_receipt(self):
+        """BL-54: пять процессов разом мигрируют в один STATE_ROOT."""
+
+        workers = 5
+        rounds = 20
+        child = (
+            "import sys, time\n"
+            "from pathlib import Path\n"
+            "sys.path.insert(0, sys.argv[1])\n"
+            "from thermogar_paths import ThermoGarPaths, migrate_legacy_state\n"
+            "go = Path(sys.argv[4])\n"
+            "while not go.exists():\n"
+            "    time.sleep(0.005)\n"
+            "for _ in range(int(sys.argv[5])):\n"
+            "    receipt = migrate_legacy_state(ThermoGarPaths(Path(sys.argv[2])), Path(sys.argv[3]))\n"
+            "    assert receipt['outcome'] == 'completed', receipt\n"
+            "print('BL54_OK')\n"
+        )
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            install = root / "install"
+            install.mkdir()
+            seed_allowlist(install)
+            profile = root / "profile"
+            go = root / "go"
+            processes = [
+                subprocess.Popen(
+                    [
+                        sys.executable, "-B", "-X", "utf8", "-c", child,
+                        str(APP), str(profile), str(install), str(go), str(rounds),
+                    ],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                )
+                for _ in range(workers)
+            ]
+            go.write_bytes(b"")
+            outputs = [process.communicate(timeout=300)[0] for process in processes]
+            for process, output in zip(processes, outputs):
+                self.assertEqual(process.returncode, 0, output)
+                self.assertIn("BL54_OK", output)
+                self.assertNotIn("Traceback", output)
+            state_root = ThermoGarPaths(profile).state_root
+            receipts = [
+                path.name
+                for path in state_root.iterdir()
+                if MIGRATION_RECEIPT_NAME in path.name
+            ]
+            self.assertEqual(receipts, [MIGRATION_RECEIPT_NAME])
+            receipt = json.loads(
+                (state_root / MIGRATION_RECEIPT_NAME).read_text(encoding="utf-8")
+            )
+            self.assertEqual(receipt["outcome"], "completed")
+
+    def test_008_child_process_does_not_migrate(self):
+        """BL-54: воркер пула (дочерний процесс spawn) миграцию не исполняет."""
+
+        import concurrent.futures
+        import multiprocessing
+
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            install = root / "install"
+            install.mkdir()
+            seed_allowlist(install)
+            paths = ThermoGarPaths(root / "profile")
+            with concurrent.futures.ProcessPoolExecutor(
+                max_workers=1, mp_context=multiprocessing.get_context("spawn")
+            ) as pool:
+                receipt = pool.submit(migrate_legacy_state, paths, install).result(
+                    timeout=120
+                )
+            self.assertIsNone(receipt)
+            self.assertFalse((paths.state_root / MIGRATION_RECEIPT_NAME).exists())
+            self.assertFalse(paths.alloys_path.exists())
+
+    def test_009_replace_refused_keeps_existing_receipt(self):
+        """BL-54: os.replace отказал дважды — назначение перечитано, не упало."""
+
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            install = root / "install"
+            install.mkdir()
+            seed_allowlist(install)
+            paths = ThermoGarPaths(root / "profile")
+            first = migrate_legacy_state(paths, install)
+            receipt_path = paths.state_root / MIGRATION_RECEIPT_NAME
+            before = receipt_path.read_bytes()
+            refused = mock.Mock(side_effect=PermissionError(5, "Отказано в доступе"))
+            with mock.patch.object(paths_module.os, "replace", refused):
+                again = migrate_legacy_state(paths, install)
+            self.assertEqual(refused.call_count, 2)
+            self.assertEqual(again, first)
+            self.assertEqual(receipt_path.read_bytes(), before)
+            self.assertEqual(
+                [path.name for path in paths.state_root.iterdir() if path.suffix == ".tmp"],
+                [],
+            )
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
