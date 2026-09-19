@@ -1,0 +1,146 @@
+{
+ "job": {
+  "marka": "09Х18Н9",
+  "baza": "mc_fe_2062_patch",
+  "metod": "ThermoGar",
+  "nabor": "bystryj",
+  "c15": true,
+  "porogi": [
+   1e-06
+  ],
+  "pdens": 50,
+  "tier": 1,
+  "polnyj_tyazhelyj": false,
+  "alias": "dc84b44459886de2",
+  "id": "126abc9d1ee9698b"
+ },
+ "status": "ok",
+ "stroki": [
+  {
+   "porog": 1e-06,
+   "T_liq_K": 1702.8765625,
+   "likvidus_s": 114.79579629999353,
+   "likvidus_ravnovesij": 9,
+   "T_sol_bisekciya_K": 1680.073828125,
+   "fazy_pod_bisekciej": [
+    "BCC_B2",
+    "FCC_A1"
+   ],
+   "bisekciya_vilka_C": [
+    1406.875,
+    1410.0
+   ],
+   "bisekciya_s": 102.52454769999895,
+   "bisekciya_ravnovesij": 7,
+   "kriterij_solidusa": "scheil: LIQUID нет в eq.Phase (порог решателя pycalphad)",
+   "T_sol_K": 1680.025,
+   "fazy_pod_solidusom": [
+    "BCC_A2",
+    "FCC_A1"
+   ]
+  }
+ ],
+ "components": [
+  "C",
+  "CR",
+  "CU",
+  "FE",
+  "MN",
+  "NI",
+  "SI",
+  "TI",
+  "VA"
+ ],
+ "fazy_v_nabore": [
+  "BCC_B2",
+  "BCC_DISL",
+  "C15_LAVES",
+  "CEMENTITE",
+  "CHI_A12",
+  "EPS_CARB",
+  "ETA",
+  "ETA_CARB",
+  "FCC_A1",
+  "GAMMA_PRIME",
+  "G_PHASE",
+  "HCP_A3",
+  "KSI_FE5C2",
+  "LAVES_PHASE",
+  "LIQUID",
+  "M23C6",
+  "M3C2",
+  "M6C",
+  "M7C3",
+  "MU_PHASE_I",
+  "R_PHASE",
+  "SIGMA",
+  "TIB",
+  "TIB2"
+ ],
+ "c15_v_nabore": true,
+ "snyato_detektorom_pary": [],
+ "snyato_rezhimom_stali": [
+  "DIAMOND_A4",
+  "GRAPHITE"
+ ],
+ "T_start_K": 1773.15,
+ "zyorno": 0,
+ "scheil_converged": true,
+ "scheil_tochek": 11,
+ "scheil_hvost": [
+  [
+   1470.0,
+   1.0
+  ],
+  [
+   1460.0,
+   1.0
+  ],
+  [
+   1450.0,
+   1.0
+  ],
+  [
+   1440.0,
+   1.0
+  ],
+  [
+   1430.0,
+   1.0
+  ],
+  [
+   1420.0,
+   0.4305387258843052
+  ],
+  [
+   1410.0,
+   0.07085980173137141
+  ],
+  [
+   1406.875,
+   -2.6634250360757505e-11
+  ]
+ ],
+ "scheil_dolya_tverdogo_v_konce": 1.0000000000266343,
+ "scheil_oshibka": "",
+ "vremya": {
+  "razbor_bazy_s": 0.20707850001053885,
+  "start_s": 13.04837440000847,
+  "scheil_s": 21.376248600005056,
+  "ravnovesij_vsego": 16,
+  "vsego_s": 255.27240690001054
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 8.778827667236328,
+   "pik_MiB": 2922.0703125,
+   "min_svobodno_GiB": 5.944831848144531,
+   "snyat": false,
+   "kod": 0,
+   "sekund": 255.95440459999372,
+   "pdens": 50,
+   "porog_vhoda_GiB": 3.0
+  }
+ ],
+ "pdens_fakt": 50
+}

@@ -1,0 +1,208 @@
+{
+ "T_K": 2000.0,
+ "pdens": 50,
+ "marki": {
+  "316L": {
+   "mc_fe_2062_bez_patcha": {
+    "fazy": {
+     "LIQUID": 1.0
+    },
+    "c15_v_nabore": true,
+    "sekund": 5.9
+   },
+   "mc_fe_2062_patch": {
+    "fazy": {
+     "LIQUID": 1.0
+    },
+    "c15_v_nabore": true,
+    "sekund": 6.0
+   }
+  },
+  "18Ni300": {
+   "mc_fe_2062_bez_patcha": {
+    "fazy": {
+     "C15_LAVES": 0.004383,
+     "LIQUID": 0.995617
+    },
+    "c15_v_nabore": true,
+    "sekund": 18.6
+   },
+   "mc_fe_2062_patch": {
+    "fazy": {
+     "LIQUID": 1.0
+    },
+    "c15_v_nabore": true,
+    "sekund": 17.1
+   }
+  },
+  "17-4 PH": {
+   "mc_fe_2062_bez_patcha": {
+    "fazy": {
+     "LIQUID": 0.957856,
+     "C15_LAVES": 0.042144
+    },
+    "c15_v_nabore": true,
+    "sekund": 8.8
+   },
+   "mc_fe_2062_patch": {
+    "fazy": {
+     "LIQUID": 1.0
+    },
+    "c15_v_nabore": true,
+    "sekund": 9.1
+   }
+  },
+  "12Х18Н10Т": {
+   "mc_fe_2062_bez_patcha": {
+    "fazy": {
+     "LIQUID": 0.946419,
+     "C15_LAVES": 0.053581
+    },
+    "c15_v_nabore": true,
+    "sekund": 6.3
+   },
+   "mc_fe_2062_patch": {
+    "fazy": {
+     "LIQUID": 1.0
+    },
+    "c15_v_nabore": true,
+    "sekund": 7.9
+   }
+  },
+  "40Х10С2М": {
+   "mc_fe_2062_bez_patcha": {
+    "fazy": {
+     "LIQUID": 1.0
+    },
+    "c15_v_nabore": true,
+    "sekund": 7.0
+   },
+   "mc_fe_2062_patch": {
+    "fazy": {
+     "LIQUID": 1.0
+    },
+    "c15_v_nabore": true,
+    "sekund": 7.3
+   }
+  },
+  "09Х18Н9": {
+   "mc_fe_2062_bez_patcha": {
+    "fazy": {
+     "C15_LAVES": 0.071466,
+     "LIQUID": 0.928534
+    },
+    "c15_v_nabore": true,
+    "sekund": 10.1
+   },
+   "mc_fe_2062_patch": {
+    "fazy": {
+     "LIQUID": 1.0
+    },
+    "c15_v_nabore": true,
+    "sekund": 9.7
+   }
+  },
+  "16Х11Н2В2МФ": {
+   "mc_fe_2062_bez_patcha": {
+    "fazy": {
+     "LIQUID": 0.975115,
+     "C15_LAVES": 0.024885
+    },
+    "c15_v_nabore": true,
+    "sekund": 20.2
+   },
+   "mc_fe_2062_patch": {
+    "fazy": {
+     "LIQUID": 1.0
+    },
+    "c15_v_nabore": true,
+    "sekund": 20.9
+   }
+  },
+  "08Х21Н6М2Т": {
+   "mc_fe_2062_bez_patcha": {
+    "fazy": {
+     "LIQUID": 0.966198,
+     "C15_LAVES": 0.033802
+    },
+    "c15_v_nabore": true,
+    "sekund": 15.9
+   },
+   "mc_fe_2062_patch": {
+    "fazy": {
+     "LIQUID": 1.0
+    },
+    "c15_v_nabore": true,
+    "sekund": 10.4
+   }
+  },
+  "08Х17Н6Т": {
+   "mc_fe_2062_bez_patcha": {
+    "fazy": {
+     "LIQUID": 0.966337,
+     "C15_LAVES": 0.033663
+    },
+    "c15_v_nabore": true,
+    "sekund": 8.8
+   },
+   "mc_fe_2062_patch": {
+    "fazy": {
+     "LIQUID": 1.0
+    },
+    "c15_v_nabore": true,
+    "sekund": 8.8
+   }
+  },
+  "45Х22Н4М 3": {
+   "mc_fe_2062_bez_patcha": {
+    "fazy": {
+     "C15_LAVES": 0.063291,
+     "LIQUID": 0.936709
+    },
+    "c15_v_nabore": true,
+    "sekund": 10.8
+   },
+   "mc_fe_2062_patch": {
+    "fazy": {
+     "LIQUID": 1.0
+    },
+    "c15_v_nabore": true,
+    "sekund": 8.5
+   }
+  },
+  "1.4828": {
+   "mc_fe_2062_bez_patcha": {
+    "fazy": {
+     "LIQUID": 0.906284,
+     "C15_LAVES": 0.093716
+    },
+    "c15_v_nabore": true,
+    "sekund": 8.6
+   },
+   "mc_fe_2062_patch": {
+    "fazy": {
+     "LIQUID": 1.0
+    },
+    "c15_v_nabore": true,
+    "sekund": 8.3
+   }
+  },
+  "06Х18Н11": {
+   "mc_fe_2062_bez_patcha": {
+    "fazy": {
+     "LIQUID": 0.946337,
+     "C15_LAVES": 0.053663
+    },
+    "c15_v_nabore": true,
+    "sekund": 8.1
+   },
+   "mc_fe_2062_patch": {
+    "fazy": {
+     "LIQUID": 1.0
+    },
+    "c15_v_nabore": true,
+    "sekund": 9.0
+   }
+  }
+ }
+}

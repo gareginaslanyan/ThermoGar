@@ -1,0 +1,135 @@
+{
+ "job": {
+  "marka": "IN718",
+  "baza": "mc_ni_2036",
+  "metod": "ThermoGar",
+  "nabor": "lilit_4fazy",
+  "fazy": [
+   "LIQUID",
+   "FCC_A1",
+   "BCC_A2",
+   "HCP_A3"
+  ],
+  "c15": false,
+  "porogi": [
+   1e-06
+  ],
+  "pdens": 50,
+  "tier": 5,
+  "polnyj_tyazhelyj": false,
+  "id": "c5d5e2e7416d2f45"
+ },
+ "status": "ok",
+ "stroki": [
+  {
+   "porog": 1e-06,
+   "T_liq_K": 1622.9546875,
+   "likvidus_s": 7.256713399998262,
+   "likvidus_ravnovesij": 9,
+   "T_sol_bisekciya_K": 1520.3814453125,
+   "fazy_pod_bisekciej": [
+    "FCC_A1"
+   ],
+   "bisekciya_vilka_C": [
+    1247.1875,
+    1250.0
+   ],
+   "bisekciya_s": 6.676427699996566,
+   "bisekciya_ravnovesij": 7,
+   "kriterij_solidusa": "scheil: LIQUID нет в eq.Phase (порог решателя pycalphad)",
+   "T_sol_K": 1520.3375,
+   "fazy_pod_solidusom": []
+  }
+ ],
+ "fazy_zadany": [
+  "LIQUID",
+  "FCC_A1",
+  "BCC_A2",
+  "HCP_A3"
+ ],
+ "components": [
+  "AL",
+  "C",
+  "CO",
+  "CR",
+  "CU",
+  "FE",
+  "MN",
+  "MO",
+  "NB",
+  "NI",
+  "SI",
+  "TI",
+  "VA"
+ ],
+ "fazy_v_nabore": [
+  "FCC_A1",
+  "HCP_A3",
+  "LIQUID"
+ ],
+ "c15_v_nabore": false,
+ "snyato_detektorom_pary": [
+  "BCC_B2"
+ ],
+ "snyato_rezhimom_stali": [],
+ "T_start_K": 2073.15,
+ "zyorno": 0,
+ "scheil_converged": false,
+ "scheil_tochek": 57,
+ "scheil_hvost": [
+  [
+   1310.0,
+   0.44941244012765746
+  ],
+  [
+   1300.0,
+   0.36340762254955017
+  ],
+  [
+   1290.0,
+   0.289791586343509
+  ],
+  [
+   1280.0,
+   0.22591146317350186
+  ],
+  [
+   1270.0,
+   1.0
+  ],
+  [
+   1260.0,
+   1.0
+  ],
+  [
+   1250.0,
+   1.0
+  ],
+  [
+   1247.1875,
+   1.0
+  ]
+ ],
+ "scheil_dolya_tverdogo_v_konce": 0.0,
+ "scheil_oshibka": "",
+ "vremya": {
+  "razbor_bazy_s": 0.17265809999662451,
+  "start_s": 4.3062721000023885,
+  "scheil_s": 17.618429200003447,
+  "ravnovesij_vsego": 16,
+  "vsego_s": 39.008313699996506
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 8.584663391113281,
+   "pik_MiB": 545.54296875,
+   "min_svobodno_GiB": 8.091415405273438,
+   "snyat": false,
+   "kod": 0,
+   "sekund": 39.47832770000241,
+   "pdens": 50,
+   "porog_vhoda_GiB": 3.0
+  }
+ ],
+ "pdens_fakt": 50
+}

@@ -1,0 +1,2 @@
+"marka","klyuch_zamorozki","baza","sha256_tdb","porog","nabor","pdens","vremya_s","T_sol_zamorozka_K","T_liq_zamorozka_K","T_sol_K","T_liq_K","polnyj_nabor_ponadobilsya","nabor_faz","fazy_pod_solidusom","zamechaniya"
+"18Ni300","","mc_fe","def6c6862458e879b75cabb32e3bfc93a674f981df7c89e5f0e6e40c246620ed","1e-09","sloj","200","135.9","NA","NA","1666.4","1726.9","False","LIQUID FCC_A1 BCC_A2 HCP_A3","FCC_A1","сторож движущей силы: проверено 108 из 108 пар «фаза-температура» (2 точки, 54 исключённых фаз); минимум 2092 Дж/моль у BCC_B2"

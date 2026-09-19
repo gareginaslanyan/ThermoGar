@@ -1,0 +1,158 @@
+{
+ "job": {
+  "marka": "45Х22Н4М 3",
+  "baza": "mc_fe_2062_patch",
+  "metod": "ThermoGar",
+  "nabor": "polnyj",
+  "c15": true,
+  "porogi": [
+   1e-06
+  ],
+  "pdens": 30,
+  "tier": 1,
+  "polnyj_tyazhelyj": true,
+  "id": "7751ba58a0d1e28e_pd30"
+ },
+ "status": "ok",
+ "stroki": [
+  {
+   "porog": 1e-06,
+   "T_liq_K": 1688.7359375,
+   "likvidus_s": 121.60765230000106,
+   "likvidus_ravnovesij": 9,
+   "T_sol_bisekciya_K": 1540.9087890625,
+   "fazy_pod_bisekciej": [
+    "BCC_B2",
+    "FCC_A1",
+    "M23C6"
+   ],
+   "bisekciya_vilka_C": [
+    1258.75,
+    1270.0
+   ],
+   "bisekciya_s": 154.6226483999999,
+   "bisekciya_ravnovesij": 10,
+   "kriterij_solidusa": "scheil: LIQUID нет в eq.Phase (порог решателя pycalphad)",
+   "T_sol_K": 1541.9,
+   "fazy_pod_solidusom": []
+  }
+ ],
+ "components": [
+  "C",
+  "CR",
+  "FE",
+  "MN",
+  "MO",
+  "NI",
+  "SI",
+  "VA"
+ ],
+ "fazy_v_nabore": [
+  "ALPHA_MN",
+  "BCC_B2",
+  "BCC_DISL",
+  "BETA_MN",
+  "BETA_RHOMBO_B",
+  "C15_LAVES",
+  "CEMENTITE",
+  "CHI_A12",
+  "CR3MN5",
+  "EPS_CARB",
+  "ETA",
+  "ETA_CARB",
+  "FCC_A1",
+  "FE24C10",
+  "GAMMA_PRIME",
+  "G_PHASE",
+  "HCP_A3",
+  "H_BCC",
+  "KSI_CARBIDE",
+  "KSI_FE5C2",
+  "LAVES_PHASE",
+  "LIQUID",
+  "M23C6",
+  "M3C2",
+  "M6C",
+  "M7C3",
+  "MNNI",
+  "MNNI2",
+  "MOB2",
+  "MOC_ETA",
+  "MU_PHASE",
+  "MU_PHASE_I",
+  "NI2SIH",
+  "NI2SIL",
+  "NI3SI2",
+  "NI3SIH",
+  "NI3SIL",
+  "NI5SI2",
+  "NISI",
+  "NITI2",
+  "PD3MN",
+  "PDFE_L12",
+  "PDMN_AF",
+  "PDMN_B2",
+  "PDMN_P",
+  "R_PHASE",
+  "SIGMA",
+  "T2_MNNISI",
+  "T4",
+  "T7",
+  "TIB2",
+  "WC",
+  "ZET"
+ ],
+ "c15_v_nabore": true,
+ "snyato_detektorom_pary": [],
+ "snyato_rezhimom_stali": [
+  "DIAMOND_A4",
+  "GRAPHITE"
+ ],
+ "T_start_K": 1773.15,
+ "zyorno": 0,
+ "scheil_converged": false,
+ "scheil_tochek": 25,
+ "scheil_hvost": [
+  [
+   1330.0,
+   0.2024525243350459
+  ],
+  [
+   1320.0,
+   0.158053037547355
+  ],
+  [
+   1310.0,
+   0.12292850917046783
+  ],
+  [
+   1300.0,
+   0.09468774361445664
+  ],
+  [
+   1290.0,
+   0.07149610962445219
+  ],
+  [
+   1280.0,
+   0.05196174710277268
+  ],
+  [
+   1270.0,
+   0.0350500419717219
+  ],
+  [
+   1268.75,
+   1.0
+  ]
+ ],
+ "scheil_dolya_tverdogo_v_konce": 0.0,
+ "scheil_oshibka": "",
+ "vremya": {
+  "razbor_bazy_s": 5.01770740000029,
+  "start_s": 13.888815500000419,
+  "scheil_s": 30.834392200000366,
+  "ravnovesij_vsego": 19,
+  "vsego_s": 329.2038577000003
+ }
+}

@@ -1,0 +1,240 @@
+{
+ "job": {
+  "marka": "AW-Al Mg2,5",
+  "baza": "mc_al_2037",
+  "metod": "ThermoGar",
+  "nabor": "polnyj",
+  "c15": false,
+  "porogi": [
+   1e-06,
+   0.0001
+  ],
+  "pdens": 50,
+  "tier": 1,
+  "polnyj_tyazhelyj": false,
+  "id": "b08daadae1978afe"
+ },
+ "status": "ok",
+ "stroki": [
+  {
+   "porog": 1e-06,
+   "T_liq_K": 925.6109375000001,
+   "likvidus_s": 142.98971040001197,
+   "likvidus_ravnovesij": 8,
+   "T_sol_bisekciya_K": 889.1192382812501,
+   "fazy_pod_bisekciej": [
+    "ALCRFEMNSI_A",
+    "GP_MAT"
+   ],
+   "bisekciya_vilka_C": [
+    615.9375000000001,
+    620.0000000000001
+   ],
+   "bisekciya_s": 159.34962389999419,
+   "bisekciya_ravnovesij": 8,
+   "kriterij_solidusa": "scheil: LIQUID нет в eq.Phase (порог решателя pycalphad)",
+   "T_sol_K": 889.0875000000001,
+   "fazy_pod_solidusom": [
+    "ALCRFEMNSI_A",
+    "GP_MAT"
+   ]
+  },
+  {
+   "porog": 0.0001,
+   "T_liq_K": 925.2984375000001,
+   "likvidus_s": 36.18763489999401,
+   "likvidus_ravnovesij": 2,
+   "T_sol_bisekciya_K": 889.1192382812501,
+   "fazy_pod_bisekciej": [
+    "ALCRFEMNSI_A",
+    "GP_MAT"
+   ],
+   "bisekciya_vilka_C": [
+    615.9375000000001,
+    620.0000000000001
+   ],
+   "bisekciya_s": 17.499177000005147,
+   "bisekciya_ravnovesij": 0,
+   "kriterij_solidusa": "бисекция: доля жидкости ≤ 0.0001",
+   "T_sol_K": 889.1192382812501,
+   "fazy_pod_solidusom": [
+    "ALCRFEMNSI_A",
+    "GP_MAT"
+   ]
+  }
+ ],
+ "components": [
+  "AL",
+  "CR",
+  "FE",
+  "MG",
+  "SI",
+  "VA"
+ ],
+ "fazy_v_nabore": [
+  "AL11CR2",
+  "AL11MN4",
+  "AL12MG2CR",
+  "AL12MN",
+  "AL13CR2",
+  "AL13CR4SI4",
+  "AL13FE4",
+  "AL18CR2MG3",
+  "AL2CU3_D",
+  "AL2FE",
+  "AL3MG",
+  "AL3M_D022",
+  "AL3NI",
+  "AL3NI2",
+  "AL3SC",
+  "AL3TI_H",
+  "AL3TI_L",
+  "AL3ZR",
+  "AL4CR",
+  "AL4MN",
+  "AL58CR31SI11",
+  "AL5FE2",
+  "AL5FE4",
+  "AL6MN",
+  "AL8CR5_H",
+  "AL8CR5_L",
+  "AL9CR3SI",
+  "AL9CR4_H",
+  "AL9CR4_L",
+  "ALCR",
+  "ALCR2",
+  "ALCRCU_TAU",
+  "ALCRFEMNSI_A",
+  "ALCRSI",
+  "ALCRSI_T3",
+  "ALCUZN_T",
+  "ALFEMNSI_B",
+  "ALFENI_T1",
+  "ALFENI_T2",
+  "ALFESI_T1",
+  "ALFESI_T10",
+  "ALFESI_T11",
+  "ALFESI_T2",
+  "ALFESI_T3",
+  "ALFESI_T4",
+  "ALFESI_T5",
+  "ALFESI_T6",
+  "ALFESI_T7",
+  "ALFESI_T8",
+  "ALM_D019",
+  "ALTI",
+  "AL_B_DP",
+  "BCC_A2",
+  "BETA_AL3MG2",
+  "B_PRIME_H",
+  "B_PRIME_L",
+  "CBCC_A12",
+  "CL_CUMG0",
+  "CL_CUMG1",
+  "CL_FCC",
+  "CL_MGX",
+  "CL_SPL",
+  "CR3SI",
+  "CR5SI3",
+  "CRSI",
+  "CRSI2",
+  "CUB_A13",
+  "E_AL30MG23",
+  "FCCAL",
+  "FCCMG",
+  "FCCSI",
+  "FE2SI",
+  "FE5SI3",
+  "FESI",
+  "FESI2_H",
+  "FESI2_L",
+  "GP_MAT",
+  "G_AL12MG17",
+  "HCP_A3",
+  "HCP_ZN",
+  "LAVES_C15",
+  "LAVES_C36",
+  "LC14_ZN2MG",
+  "LIQUID",
+  "MG2SI_B",
+  "MG2ZN11",
+  "MG2ZN3",
+  "MG5SI6_B_DP",
+  "MGALCUZN_T",
+  "MGALZN_PHI",
+  "MGSI_B_P",
+  "MGZN",
+  "PI_ALFEMGSI",
+  "PRE_B_DP",
+  "SI2ZR",
+  "SIGMA",
+  "SI_DIAMOND_A4",
+  "THETA_AL2CU",
+  "TH_DP_GPB",
+  "U1_PHASE",
+  "U2_PHASE"
+ ],
+ "c15_v_nabore": false,
+ "snyato_detektorom_pary": [],
+ "snyato_rezhimom_stali": [],
+ "T_start_K": 1123.15,
+ "zyorno": 0,
+ "scheil_converged": true,
+ "scheil_tochek": 48,
+ "scheil_hvost": [
+  [
+   650.0,
+   0.9993480394714624
+  ],
+  [
+   645.0,
+   0.7447593004079025
+  ],
+  [
+   640.0,
+   0.473032335893509
+  ],
+  [
+   635.0,
+   0.30781488533292123
+  ],
+  [
+   630.0,
+   0.20286202976331114
+  ],
+  [
+   625.0,
+   0.1157651801755516
+  ],
+  [
+   620.0,
+   0.03898336243226541
+  ],
+  [
+   615.9375,
+   4.874323167314287e-12
+  ]
+ ],
+ "scheil_dolya_tverdogo_v_konce": 0.9999999999951257,
+ "scheil_oshibka": "",
+ "vremya": {
+  "razbor_bazy_s": 0.13050319999456406,
+  "start_s": 10.107721699998365,
+  "scheil_s": 35.52920020000602,
+  "ravnovesij_vsego": 18,
+  "vsego_s": 405.10925080000015
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 8.983245849609375,
+   "pik_MiB": 2217.06640625,
+   "min_svobodno_GiB": 6.475597381591797,
+   "snyat": false,
+   "kod": 0,
+   "sekund": 405.700717899992,
+   "pdens": 50,
+   "porog_vhoda_GiB": 3.0
+  }
+ ],
+ "pdens_fakt": 50
+}

@@ -1,0 +1,152 @@
+{
+ "job": {
+  "marka": "NICKEL 200",
+  "baza": "mc_ni_2036",
+  "metod": "ThermoGar",
+  "nabor": "polnyj",
+  "c15": false,
+  "porogi": [
+   1e-06,
+   0.0001
+  ],
+  "pdens": 50,
+  "tier": 1,
+  "polnyj_tyazhelyj": true,
+  "id": "f3edb969ab0fe5db"
+ },
+ "status": "ok",
+ "stroki": [
+  {
+   "porog": 1e-06,
+   "T_liq_K": 1726.0015625,
+   "likvidus_s": 5.18172340000001,
+   "likvidus_ravnovesij": 9,
+   "T_sol_bisekciya_K": 1717.723974609375,
+   "fazy_pod_bisekciej": [
+    "FCC_A1"
+   ],
+   "bisekciya_vilka_C": [
+    1444.53125,
+    1450.0
+   ],
+   "bisekciya_s": 4.636099899999863,
+   "bisekciya_ravnovesij": 7,
+   "kriterij_solidusa": "scheil: LIQUID нет в eq.Phase (порог решателя pycalphad)",
+   "T_sol_K": 1717.68125,
+   "fazy_pod_solidusom": [
+    "FCC_A1"
+   ]
+  },
+  {
+   "porog": 0.0001,
+   "T_liq_K": 1726.0015625,
+   "likvidus_s": 4.7500000619038474e-05,
+   "likvidus_ravnovesij": 0,
+   "T_sol_bisekciya_K": 1717.723974609375,
+   "fazy_pod_bisekciej": [
+    "FCC_A1"
+   ],
+   "bisekciya_vilka_C": [
+    1444.53125,
+    1450.0
+   ],
+   "bisekciya_s": 0.5798500000000786,
+   "bisekciya_ravnovesij": 0,
+   "kriterij_solidusa": "бисекция: доля жидкости ≤ 0.0001",
+   "T_sol_K": 1717.723974609375,
+   "fazy_pod_solidusom": [
+    "FCC_A1"
+   ]
+  }
+ ],
+ "components": [
+  "C",
+  "NI",
+  "VA"
+ ],
+ "fazy_v_nabore": [
+  "ALPHA_MN",
+  "BETA_MN",
+  "CEMENTITE",
+  "DELTA",
+  "DIAMOND_A4",
+  "ETA",
+  "FCC_A1",
+  "GAMMA_DP",
+  "GAMMA_PRIME",
+  "GRAPHITE",
+  "HCP_A3",
+  "LAVES",
+  "LAV_C14",
+  "LIQUID",
+  "M23C6",
+  "M7C3",
+  "NIAL",
+  "NITI2"
+ ],
+ "c15_v_nabore": false,
+ "snyato_detektorom_pary": [
+  "BCC_B2"
+ ],
+ "snyato_rezhimom_stali": [],
+ "T_start_K": 2073.15,
+ "zyorno": 0,
+ "scheil_converged": true,
+ "scheil_tochek": 37,
+ "scheil_hvost": [
+  [
+   1510.0,
+   1.0
+  ],
+  [
+   1500.0,
+   1.0
+  ],
+  [
+   1490.0,
+   1.0
+  ],
+  [
+   1480.0,
+   1.0
+  ],
+  [
+   1470.0,
+   1.0
+  ],
+  [
+   1460.0,
+   1.0
+  ],
+  [
+   1450.0,
+   0.28746514061383843
+  ],
+  [
+   1444.5312,
+   -5.773159728050814e-15
+  ]
+ ],
+ "scheil_dolya_tverdogo_v_konce": 1.0000000000000058,
+ "scheil_oshibka": "",
+ "vremya": {
+  "razbor_bazy_s": 0.1512217999998029,
+  "start_s": 1.1743839000000662,
+  "scheil_s": 1.0144974000004368,
+  "ravnovesij_vsego": 16,
+  "vsego_s": 15.474578100000144
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 10.479923248291016,
+   "pik_MiB": 402.2109375,
+   "min_svobodno_GiB": 10.090892791748047,
+   "snyat": false,
+   "kod": 0,
+   "sekund": 15.880413300000328,
+   "pdens": 50,
+   "porog_vhoda_GiB": 5.0
+  }
+ ],
+ "pdens_fakt": 50
+}

@@ -1,0 +1,70 @@
+{
+ "job": {
+  "marka": "316L",
+  "baza": "mc_fe_2062_patch",
+  "metod": "Lilit-skript",
+  "nabor": "sloj",
+  "c15": null,
+  "porogi": [
+   1e-06
+  ],
+  "pdens": null,
+  "tier": 1,
+  "polnyj_tyazhelyj": false,
+  "id": "43cabf00d46563be"
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 9.912956237792969,
+   "pik_MiB": 1288.08984375,
+   "min_svobodno_GiB": 8.660335540771484,
+   "snyat": false,
+   "kod": 0,
+   "sekund": 39.210338100005174,
+   "porog_vhoda_GiB": 3.0
+  }
+ ],
+ "komanda": [
+  "D:\\Pets\\ThermoGar\\.venv-windows\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-W",
+  "default",
+  "D:\\Pets\\ThermoGar\\tasks\\lilith_16A\\metod_solidus_lilit.py",
+  "--csv",
+  "D:\\Pets\\ThermoGar\\results\\wave16_a\\raw\\43cabf00d46563be_lilit\\marka.csv",
+  "--tdb",
+  "mc_fe=D:\\Pets\\ThermoGar\\databases\\converted\\fe\\mc_fe_v2062.thermogar.tdb",
+  "--porog",
+  "1e-06",
+  "--nabor",
+  "sloj",
+  "--bez-granic",
+  "--vyvod",
+  "D:\\Pets\\ThermoGar\\results\\wave16_a\\raw\\43cabf00d46563be_lilit\\vyvod.csv"
+ ],
+ "log": "D:\\Pets\\ThermoGar\\tasks\\lilith_16A\\metod_solidus_lilit.py:105: ResourceWarning: unclosed file <_io.TextIOWrapper name='D:\\\\Pets\\\\ThermoGar\\\\results\\\\wave16_a\\\\raw\\\\43cabf00d46563be_lilit\\\\marka.csv' mode='r' encoding='utf-8'>\n  stroki = [r for r in csv.DictReader(open(a.csv, encoding=\"utf-8\", newline=\"\"))\nResourceWarning: Enable tracemalloc to get the object allocation traceback\npycalphad 0.11.2; слой D:\\Pets\\ThermoGar\\tasks\\lilith_16A\\calphad_layer\n  8602c130f8fdbbfe96ab94d23dbd2b6c533262574e1d4225bafd37c1ff644877  __init__.py\n  5667aede8f58830d69e8ea325a5da9012014cfbc2e08bbf183aac732a2c1dbbd  atomic_masses.py\n  b0700efcdd03f0228b0f61ab873a025f8f58fcba969202dbd2213fda49666bb5  granicy.py\n  b44afb82bc564cb4aedb7a290c87dd84168e2d6c51f375015f37cb2134a18757  pochinka.py\n  52b76dd6327b70058cc00c419802b34dff28a813f4d7baa99055f54f4cc5bfa6  raschet.py\n  14e97cee515efc633b0b3f575d41751a4964045d8a983763f9f2c1c5223deb05  manifest.json\nпорог NP(LIQUID) 1e-06; набор sloj; пределы шапки ВЫКЛ; режим счёт\nбаза mc_fe: D:\\Pets\\ThermoGar\\databases\\converted\\fe\\mc_fe_v2062.thermogar.tdb sha256 def6c6862458e879b75cabb32e3bfc93a674f981df7c89e5f0e6e40c246620ed\n316L                             mc_fe       30.0 с  1689.4 / 1701.6 K; к заморозке +6.5 / +5.7 K\n",
+ "stroki": [
+  {
+   "marka": "316L",
+   "klyuch_zamorozki": "W-4|316L (вариант ASTM F138)",
+   "baza": "mc_fe",
+   "sha256_tdb": "def6c6862458e879b75cabb32e3bfc93a674f981df7c89e5f0e6e40c246620ed",
+   "porog": "1e-06",
+   "nabor": "sloj",
+   "pdens": "200",
+   "vremya_s": "30.0",
+   "T_sol_zamorozka_K": "1682.9",
+   "T_liq_zamorozka_K": "1695.9",
+   "T_sol_K": "1689.4",
+   "T_liq_K": "1701.6",
+   "polnyj_nabor_ponadobilsya": "False",
+   "nabor_faz": "LIQUID FCC_A1 BCC_A2 HCP_A3",
+   "fazy_pod_solidusom": "BCC_A2 FCC_A1",
+   "zamechaniya": "сторож движущей силы: проверено 80 из 80 пар «фаза-температура» (2 точки, 40 исключённых фаз); минимум 2076 Дж/моль у BCC_B2",
+   "dT_sol_K": "6.5",
+   "dT_liq_K": "5.7"
+  }
+ ],
+ "status": "ok"
+}
