@@ -1,0 +1,32 @@
+{
+ "python": "C:\\Program Files\\ThermoGar\\runtime\\python.exe",
+ "app": "C:\\Program Files\\ThermoGar\\app\\ThermoGar_app.py",
+ "case": "pool",
+ "auto": {
+  "note": "Параллельный расчёт: 6 воркеров.",
+  "seconds": 22.4,
+  "rows": 5,
+  "columns": [
+   "Температура, °C",
+   "M23C6",
+   "BCC_B2",
+   "FCC_A1"
+  ],
+  "cells_sha256": "108e8b9787237ba1102ee341bfe3c4eae03dc514cbc91329254c566f21f5274f",
+  "csv_sha256": "10811ed88c0441c39e1a22eae1d1c93296ec923700a2caba239900c7fa26f876"
+ },
+ "off": {
+  "note": "Последовательный расчёт в одном процессе.",
+  "seconds": 21.8,
+  "rows": 5,
+  "columns": [
+   "Температура, °C",
+   "M23C6",
+   "BCC_B2",
+   "FCC_A1"
+  ],
+  "cells_sha256": "108e8b9787237ba1102ee341bfe3c4eae03dc514cbc91329254c566f21f5274f",
+  "csv_sha256": "10811ed88c0441c39e1a22eae1d1c93296ec923700a2caba239900c7fa26f876"
+ },
+ "ok": true
+}

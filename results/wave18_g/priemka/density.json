@@ -1,0 +1,15 @@
+{
+ "python": "C:\\Program Files\\ThermoGar\\runtime\\python.exe",
+ "app": "C:\\Program Files\\ThermoGar\\app\\ThermoGar_app.py",
+ "case": "density",
+ "20C_errors": [
+  "Физическая база задаёт плотность с 25 °C; введите 25 °C или выше."
+ ],
+ "20C_button_disabled": true,
+ "20C_result_absent": true,
+ "25C_errors": [],
+ "25C_temperature_k": 298.15,
+ "25C_density_kg_m3": 2663.716441047474,
+ "25C_vs_datasheet_2659_pct": 0.17737649670830524,
+ "ok": true
+}

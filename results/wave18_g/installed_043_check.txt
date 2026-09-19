@@ -1,0 +1,6 @@
+payload-manifest: 15078 файлов, расхождений с установленными: 0 []
+файлов тега v0.4.3 сверено: 75 нет в установке: 0 [] байты расходятся: []
+1a09a7b800cfbe40a50e215bfe917dfd66333edb48372c129d46afe67200fb2a Uninstall.exe
+5f7b89a612c9b8af1d6456cdfcd1dbe5ca630849e79aebced9bee9a6694952ec runtime/python.exe
+47fda67252b12e2e226c64468fcbc3a9f73a2b1b5573e2f1bc442999ab92c1f9 app/ThermoGar_app.py
+5ee418f5670f351479cbdbb2a15357122521afac92984ea20e98339d77c8a9e4 app/thermogar_release_policy.py

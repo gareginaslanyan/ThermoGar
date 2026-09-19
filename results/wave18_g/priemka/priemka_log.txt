@@ -1,0 +1,96 @@
+﻿== version start 21:41:46
+{"python": "C:\\Program Files\\ThermoGar\\runtime\\python.exe", "app": "C:\\Program Files\\ThermoGar\\app\\ThermoGar_app.py", "case": "version", "app_version": "0.4.3", "sidebar": ["ThermoGar 0.4.3 — исследовательское ПО. Экспериментальная квалификация: NOT_PERFORMED."], "ok": true}
+== version exit 0 end 21:41:59
+== density start 21:41:59
+{"python": "C:\\Program Files\\ThermoGar\\runtime\\python.exe", "app": "C:\\Program Files\\ThermoGar\\app\\ThermoGar_app.py", "case": "density", "20C_errors": ["Физическая база задаёт плотность с 25 °C; введите 25 °C или выше."], "20C_button_disabled": true, "20C_result_absent": true, "25C_errors": [], "25C_temperature_k": 298.15, "25C_density_kg_m3": 2663.716441047474, "25C_vs_datasheet_2659_pct": 0.17737649670830524, "ok": true}
+== density exit 0 end 21:42:32
+== pool start 21:42:32
+2026-09-19 21:42:53.170 
+  [33m[1mWarning:[0m to view a Streamlit app on a browser, use Streamlit in a file and
+  run it with the following command:
+
+    streamlit run [FILE_NAME] [ARGUMENTS]
+2026-09-19 21:42:53.171 Session state does not function when running a script without `streamlit run`
+2026-09-19 21:42:53.307 
+  [33m[1mWarning:[0m to view a Streamlit app on a browser, use Streamlit in a file and
+  run it with the following command:
+
+    streamlit run [FILE_NAME] [ARGUMENTS]
+2026-09-19 21:42:53.310 Session state does not function when running a script without `streamlit run`
+2026-09-19 21:42:53.314 
+  [33m[1mWarning:[0m to view a Streamlit app on a browser, use Streamlit in a file and
+  run it with the following command:
+
+    streamlit run [FILE_NAME] [ARGUMENTS]
+2026-09-19 21:42:53.315 Session state does not function when running a script without `streamlit run`
+2026-09-19 21:42:53.318 
+  [33m[1mWarning:[0m to view a Streamlit app on a browser, use Streamlit in a file and
+  run it with the following command:
+
+    streamlit run [FILE_NAME] [ARGUMENTS]
+2026-09-19 21:42:53.320 Session state does not function when running a script without `streamlit run`
+2026-09-19 21:42:53.421 
+  [33m[1mWarning:[0m to view a Streamlit app on a browser, use Streamlit in a file and
+  run it with the following command:
+
+    streamlit run [FILE_NAME] [ARGUMENTS]
+2026-09-19 21:42:53.422 Session state does not function when running a script without `streamlit run`
+{"python": "C:\\Program Files\\ThermoGar\\runtime\\python.exe", "app": "C:\\Program Files\\ThermoGar\\app\\ThermoGar_app.py", "case": "pool", "auto": {"note": "Параллельный расчёт: 6 воркеров.", "seconds": 22.4, "rows": 5, "columns": ["Температура, °C", "M23C6", "BCC_B2", "FCC_A1"], "cells_sha256": "108e8b9787237ba1102ee341bfe3c4eae03dc514cbc91329254c566f21f5274f", "csv_sha256": "10811ed88c0441c39e1a22eae1d1c93296ec923700a2caba239900c7fa26f876"}, "off": {"note": "Последовательный расчёт в одном процессе.", "seconds": 21.8, "rows": 5, "columns": ["Температура, °C", "M23C6", "BCC_B2", "FCC_A1"], "cells_sha256": "108e8b9787237ba1102ee341bfe3c4eae03dc514cbc91329254c566f21f5274f", "csv_sha256": "10811ed88c0441c39e1a22eae1d1c93296ec923700a2caba239900c7fa26f876"}, "ok": true}
+== pool exit 0 end 21:43:32
+== solidus start 21:43:32
+2026-09-19 21:51:02.061 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-09-19 21:51:02.379 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2026-09-19 21:51:02.687 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+{"python": "C:\\Program Files\\ThermoGar\\runtime\\python.exe", "app": "C:\\Program Files\\ThermoGar\\app\\ThermoGar_app.py", "case": "solidus", "seconds": 441.1, "summary": {"Метод": "'Равновесное'", "Расчётный ликвидус, °C": "607.3828125000001", "T при доле твёрдого 0.01 % по траектории, °C": "609.9892654977269", "Температура окончания, °C": "564.9902343750001", "Что означает окончание": "'равновесный солидус'", "Интервал кристаллизации, °C": "42.392578125", "Остаточный расплав в точке окончания, %": "nan", "Точек расчёта": "51", "Расчёт завершён": "'нет'"}, "solidus_k": 838.1402343750001, "criterion": "бисекция", "warning": ["Быстрый набор не рассматривает часть фаз, совместимых с составом, — всего 50: AL11CR2, AL13CR2, AL4CR, AL5FE4, ALCR и ещё 45. Если какая-то из них устойчива на вашем составе, быстрый режим её не покажет — сверьтесь в режиме «все фазы базы». Полный перечень — в блоке ниже.", "Быстрый набор не рассматривает часть фаз, совместимых с составом, — всего 21: AL11CR2, AL13CR2, AL4CR, AL5FE4, AL8CR5_H и ещё 16. Если какая-то из них устойчива на вашем составе, быстрый режим её не покажет — сверьтесь в режиме «все фазы базы». Полный перечень — в блоке ниже.", "Быстрый набор не рассматривает часть фаз, совместимых с составом, — всего 19: AL11CR2, AL13CR2, AL4CR, AL5FE4, ALCR и ещё 14. Если какая-то из них устойчива на вашем составе, быстрый режим её не покажет — сверьтесь в режиме «все фазы базы». Полный перечень — в блоке ниже.", "Быстрый набор не рассматривает часть фаз, совместимых с составом, — всего 40: AL11CR2, AL13CR2, AL4CR, AL5FE4, ALCR и ещё 35. Если какая-то из них устойчива на вашем составе, быстрый режим её не покажет — сверьтесь в режиме «все фазы базы». Полный перечень — в блоке ниже.", "Быстрый набор не рассматривает часть фаз, совместимых с составом, — всего 23: AL11CR2, AL13CR2, AL4CR, AL5FE4, ALCR и ещё 18. Если какая-то из них устойчива на вашем составе, быстрый режим её не покажет — сверьтесь в режиме «все фазы базы». Полный перечень — в блоке ниже.", "Быстрый набор не рассматривает часть фаз, совместимых с составом, — всего 23: AL11CR2, AL13CR2, AL4CR, AL5FE4, ALCR и ещё 18. Если какая-то из них устойчива на вашем составе, быстрый режим её не покажет — сверьтесь в режиме «все фазы базы». Полный перечень — в блоке ниже.", "В расчёте оставлено больше 15 фаз. На подробной сетке это может занять много времени. Для обзорной карты сначала оставьте матрицу, выбранную фазу, жидкость и основные конкурирующие фазы.", "Равновесное затвердевание не сошлось; солидус найден половинным делением по доле жидкости.", "Для элементов AL, CU в этой базе есть параметры подвижности только у фазы FCC_A1. Многофазная гомогенизация требует минимум две такие фазы, поэтому для этого состава доступна только однофазная пара.", "TDB/DDB не содержат всех параметров KWN. Межфазная энергия, молярные объёмы и центры зарождения должны быть заданы или откалиброваны."], "converged": {"equilibrium": false}, "ok": true}
+== solidus exit 0 end 21:51:05
+== g start 21:51:05
+2026-09-19 21:51:51.292 
+  [33m[1mWarning:[0m to view a Streamlit app on a browser, use Streamlit in a file and
+  run it with the following command:
+
+    streamlit run [FILE_NAME] [ARGUMENTS]
+2026-09-19 21:51:51.294 Session state does not function when running a script without `streamlit run`
+2026-09-19 21:51:51.365 
+  [33m[1mWarning:[0m to view a Streamlit app on a browser, use Streamlit in a file and
+  run it with the following command:
+
+    streamlit run [FILE_NAME] [ARGUMENTS]
+2026-09-19 21:51:51.367 Session state does not function when running a script without `streamlit run`
+2026-09-19 21:51:51.377 
+  [33m[1mWarning:[0m to view a Streamlit app on a browser, use Streamlit in a file and
+  run it with the following command:
+
+    streamlit run [FILE_NAME] [ARGUMENTS]
+2026-09-19 21:51:51.378 Session state does not function when running a script without `streamlit run`
+2026-09-19 21:51:51.416 
+  [33m[1mWarning:[0m to view a Streamlit app on a browser, use Streamlit in a file and
+  run it with the following command:
+
+    streamlit run [FILE_NAME] [ARGUMENTS]
+2026-09-19 21:51:51.418 Session state does not function when running a script without `streamlit run`
+2026-09-19 21:51:51.459 
+  [33m[1mWarning:[0m to view a Streamlit app on a browser, use Streamlit in a file and
+  run it with the following command:
+
+    streamlit run [FILE_NAME] [ARGUMENTS]
+2026-09-19 21:51:51.461 Session state does not function when running a script without `streamlit run`
+2026-09-19 21:51:51.466 
+  [33m[1mWarning:[0m to view a Streamlit app on a browser, use Streamlit in a file and
+  run it with the following command:
+
+    streamlit run [FILE_NAME] [ARGUMENTS]
+2026-09-19 21:51:51.469 Session state does not function when running a script without `streamlit run`
+{"mode": "on", "case": "nicr", "shown_warnings": ["Быстрый набор не рассматривает часть фаз, совместимых с составом, — всего 3: ALPHA_MN, BETA_MN, NITI2. Если какая-то из них устойчива на вашем составе, быстрый режим её не покажет — сверьтесь в режиме «все фазы базы».", "Быстрый набор не рассматривает часть фаз, совместимых с составом, — всего 4: ALPHA_MN, BETA_MN, DIAMOND_A4, NITI2. Если какая-то из них устойчива на вашем составе, быстрый режим её не покажет — сверьтесь в режиме «все фазы базы».", "Быстрый набор не рассматривает часть фаз, совместимых с составом, — всего 4: ALPHA_MN, BETA_MN, DIAMOND_A4, NITI2. Если какая-то из них устойчива на вашем составе, быстрый режим её не покажет — сверьтесь в режиме «все фазы базы».", "Быстрый набор не рассматривает часть фаз, совместимых с составом, — всего 4: ALPHA_MN, BETA_MN, DIAMOND_A4, NITI2. Если какая-то из них устойчива на вашем составе, быстрый режим её не покажет — сверьтесь в режиме «все фазы базы».", "Быстрый набор не рассматривает часть фаз, совместимых с составом, — всего 4: ALPHA_MN, BETA_MN, DIAMOND_A4, NITI2. Если какая-то из них устойчива на вашем составе, быстрый режим её не покажет — сверьтесь в режиме «все фазы базы».", "Быстрый набор не рассматривает часть фаз, совместимых с составом, — всего 4: ALPHA_MN, BETA_MN, DIAMOND_A4, NITI2. Если какая-то из них устойчива на вашем составе, быстрый режим её не покажет — сверьтесь в режиме «все фазы базы».", "Быстрый набор не рассматривает часть фаз, совместимых с составом, — всего 3: ALPHA_MN, BETA_MN, NITI2. Если какая-то из них устойчива на вашем составе, быстрый режим её не покажет — сверьтесь в режиме «все фазы базы».", "Плотность хрома посчитана по поправке проекта ThermoGar, а не по данным physical_data_v103.pdb: тепловая функция DTCRBCC заменена. Это не наша оценка величины, а восстановление источника — статья REF 14 самой базы (Lu, Selleby, Sundman, Calphad 29 (2005) 68-89, doi:10.1016/j.calphad.2005.05.001) даёт правильные коэффициенты, сломан их перенос в базу: активный полином завышает тепловое расширение хрома в 2,5-3 раза против измерений (Hidnert, NBS RP1407, 1941). Опорная плотность при 25 °C не изменена. Чтобы считать по чистой базе, запустите программу с переменной окружения THERMOGAR_PHYSICAL_OVERRIDES=off — тогда ни одна наша правка не применяется. Подробности: docs/DATABASES.md, раздел «Поправки проекта к физической базе».", "Плотность хрома посчитана по поправке проекта ThermoGar, а не по данным physical_data_v103.pdb: тепловая функция DTCRBCC заменена. Это не наша оценка величины, а восстановление источника — статья REF 14 самой базы (Lu, Selleby, Sundman, Calphad 29 (2005) 68-89, doi:10.1016/j.calphad.2005.05.001) даёт правильные коэффициенты, сломан их перенос в базу: активный полином завышает тепловое расширение хрома в 2,5-3 раза против измерений (Hidnert, NBS RP1407, 1941). Опорная плотность при 25 °C не изменена. Чтобы считать по чистой базе, запустите программу с переменной окружения THERMOGAR_PHYSICAL_OVERRIDES=off — тогда ни одна наша правка не применяется. Подробности: docs/DATABASES.md, раздел «Поправки проекта к физической базе».", "Плотность фаз NI2CR оценена по правилу смеси; погрешность до 10 %. Суммарная мольная доля таких фаз 43.55 %.", "TDB/DDB не содержат всех параметров KWN. Межфазная энергия, молярные объёмы и центры зарождения должны быть заданы или откалиброваны."], "toggles": [{"label": "Применять поправки проекта ThermoGar к физической базе", "value": true, "disabled": false, "key": "physical_overrides_enabled"}], "errors": [], "files": {}, "single_state_overrides": true, "single_density_kg_m3": [8256.92979779211], "scan_state_overrides": true, "scan_density_kg_m3": [8476.860532072638, 8443.248571201615, 8408.182928633489, 8371.99821940022, 8334.763847095648, 8296.438699626306, 8256.929797792109, 8216.118510228218, 8173.8736308631715, 8130.058217195962, 8084.53350594347]}
+== g exit 0 end 21:52:00

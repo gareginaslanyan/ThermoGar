@@ -1,0 +1,12 @@
+Ni-20Cr, «Плотность по T» 100–1100 °C, галочка вкл.: установленная 0.4.3 против блобов 18-А (head, on) и против дерева main (venv)
+файл | блоб 18-А | дерево main
+scan_projections.json | = | = | 206dcbf6420ee000
+scan_sheet_Параметры.csv | = | = | de4a67efbaafbe28
+scan_sheet_Плотность по температуре.csv | = | = | 94a03d9afc151d3b
+scan_warnings.json | = | = | 0c245af86e463d57
+single_projections.json | = | = | 1884afda7d733c57
+single_sheet_Без данных PDB.csv | = | = | 01ba4719c80b6fe9
+single_sheet_Параметры.csv | = | = | c44450a8d13bccc4
+single_sheet_Фазы.csv | = | = | 1d9597cf39696a2b
+single_warnings.json | = | = | 36afab3761ef6d9f
+summary.json | разница | = | 6ab2281d4a8afd42
