@@ -1,0 +1,72 @@
+{
+ "job": {
+  "marka": "VJ159",
+  "baza": "mc_ni_2036",
+  "metod": "Lilit-skript",
+  "nabor": "sloj",
+  "c15": null,
+  "porogi": [
+   1e-06
+  ],
+  "pdens": null,
+  "tier": 1,
+  "polnyj_tyazhelyj": false,
+  "mashina": "mac-m4",
+  "id": "3feb94dd84e8d993"
+ },
+ "popytki": [
+  {
+   "svobodno_do_GiB": 12.84576416015625,
+   "swap_do_MiB": 2304.625,
+   "limit_s": 2700,
+   "pik_MiB": 9832.8125,
+   "min_svobodno_GiB": 2.6914215087890625,
+   "snyat": false,
+   "pik_swap_MiB": 2983.25,
+   "kod": 0,
+   "sekund": 133.40845166600775,
+   "porog_vhoda_GiB": 3.0
+  }
+ ],
+ "komanda": [
+  "/Users/gareg/ThermoGar/.venv/bin/python",
+  "-X",
+  "utf8",
+  "-W",
+  "default",
+  "/Users/gareg/ThermoGar/tasks/lilith_16A/metod_solidus_lilit.py",
+  "--csv",
+  "/Users/gareg/ThermoGar/results/wave16_a/raw/3feb94dd84e8d993_lilit/marka.csv",
+  "--tdb",
+  "mc_ni=/Users/gareg/ThermoGar/databases/converted/mc_ni_v2036.garcalc.tdb",
+  "--porog",
+  "1e-06",
+  "--nabor",
+  "sloj",
+  "--bez-granic",
+  "--vyvod",
+  "/Users/gareg/ThermoGar/results/wave16_a/raw/3feb94dd84e8d993_lilit/vyvod.csv"
+ ],
+ "log": "/Users/gareg/ThermoGar/tasks/lilith_16A/metod_solidus_lilit.py:105: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/gareg/ThermoGar/results/wave16_a/raw/3feb94dd84e8d993_lilit/marka.csv' mode='r' encoding='utf-8'>\n  stroki = [r for r in csv.DictReader(open(a.csv, encoding=\"utf-8\", newline=\"\"))\nResourceWarning: Enable tracemalloc to get the object allocation traceback\npycalphad 0.11.2; слой /Users/gareg/ThermoGar/tasks/lilith_16A/calphad_layer\n  8602c130f8fdbbfe96ab94d23dbd2b6c533262574e1d4225bafd37c1ff644877  __init__.py\n  5667aede8f58830d69e8ea325a5da9012014cfbc2e08bbf183aac732a2c1dbbd  atomic_masses.py\n  b0700efcdd03f0228b0f61ab873a025f8f58fcba969202dbd2213fda49666bb5  granicy.py\n  b44afb82bc564cb4aedb7a290c87dd84168e2d6c51f375015f37cb2134a18757  pochinka.py\n  52b76dd6327b70058cc00c419802b34dff28a813f4d7baa99055f54f4cc5bfa6  raschet.py\n  14e97cee515efc633b0b3f575d41751a4964045d8a983763f9f2c1c5223deb05  manifest.json\nпорог NP(LIQUID) 1e-06; набор sloj; пределы шапки ВЫКЛ; режим счёт\nбаза mc_ni: /Users/gareg/ThermoGar/databases/converted/mc_ni_v2036.garcalc.tdb sha256 1dc72c5501eb2d9a1778c5a5622728257572a1dcd0ee218c9b4f9a00e0ad08f8\nVJ159                            mc_ni      130.7 с  1515.1 / 1605.9 K\n",
+ "stroki": [
+  {
+   "marka": "VJ159",
+   "klyuch_zamorozki": "",
+   "baza": "mc_ni",
+   "sha256_tdb": "1dc72c5501eb2d9a1778c5a5622728257572a1dcd0ee218c9b4f9a00e0ad08f8",
+   "porog": "1e-06",
+   "nabor": "sloj",
+   "pdens": "200",
+   "vremya_s": "130.7",
+   "T_sol_zamorozka_K": "NA",
+   "T_liq_zamorozka_K": "NA",
+   "T_sol_K": "1515.1",
+   "T_liq_K": "1605.9",
+   "polnyj_nabor_ponadobilsya": "False",
+   "nabor_faz": "LIQUID FCC_A1 BCC_A2 HCP_A3 M23C6",
+   "fazy_pod_solidusom": "FCC_A1 M23C6",
+   "zamechaniya": "фаза BCC_B2 исключена из расчёта: BCC_B2 базы garcalc объявлена с межузельной подрешёткой, где стоит только VA, а у её разупорядоченной половины BCC_A2 там B, C, N, O, VA. | сторож движущей силы: проверено 66 из 66 пар «фаза-температура» (2 точки, 33 исключённых фаз); минимум 149 Дж/моль у M23C6_WY | по требованию сторожа в набор добавлены фазы: M23C6"
+  }
+ ],
+ "status": "ok"
+}

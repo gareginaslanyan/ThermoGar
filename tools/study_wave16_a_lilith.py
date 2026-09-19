@@ -117,6 +117,15 @@ OPYT_NABORA = {"IN718": ["LIQUID", "FCC_A1", "BCC_A2", "HCP_A3"]}
 PERENOS_LILIT = ("VJ159", "IN718", "HAYNES Waspaloy")
 PERENOS_PRICHINA = "ноутбук 16 ГБ; перенос на другую машину"
 
+# 16-А3: счёт на маке. Столбец mashina; у заданий мака значение входит в ключ кэша
+# (у ноутбука ключа mashina нет — прежние id и raw/ не меняются).
+MASHINA_NOUTBUK = "ноутбук-win10"
+MASHINA_MAC = "mac-m4"
+KONTROL_MAC = ("INCONEL 600", "В96ц1оч", "40Х10С2М")
+PORYADOK_NI_MAC = ("IN718", "HAYNES Waspaloy", "VJ159")
+JOB_LIMIT_MAC_S = 45 * 60
+SVOBODNO_LOG_S = 10.0
+
 MEMORY_POLL_S = 1.0
 JOB_TIMEOUT_S = 4 * 3600
 WAIT_FOR_MEMORY_S = 3600
@@ -186,7 +195,7 @@ def vne_predelov(row: dict[str, str], lilit_key: str) -> str:
 
 def job_id(job: dict[str, Any]) -> str:
     keys = ["marka", "baza", "metod", "nabor", "c15", "porogi", "pdens"]
-    keys += [k for k in ("seed", "tolko_scheil", "fazy") if job.get(k)]
+    keys += [k for k in ("seed", "tolko_scheil", "fazy", "mashina") if job.get(k)]
     text = json.dumps({k: job[k] for k in keys}, ensure_ascii=False, sort_keys=True)
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
@@ -271,6 +280,39 @@ def plan_jobs(marki: list[dict[str, str]]) -> list[dict[str, Any]]:
     return jobs
 
 
+def plan_mac(marki: list[dict[str, str]]) -> list[dict[str, Any]]:
+    """16-А3, мак: контроль «та же марка на двух машинах» и скрипт «Лилит» по Ni.
+
+    Контроль — те же задания, что на ноутбуке: ThermoGar полный набор, главная база
+    (Fe с патчем, C15_LAVES в наборе), pdens 50, зерно 0; скрипт «Лилит» sloj 1e-9
+    на главной базе. Затем скрипт «Лилит» sloj по VJ159, IN718, HAYNES Waspaloy ×
+    1e-9 и 1e-6 в порядке IN718, Waspaloy, VJ159.
+    """
+
+    kontrol: list[dict[str, Any]] = []
+    ni: list[dict[str, Any]] = []
+    for job in plan_jobs(marki):
+        glavnaya = job["baza"] == BAZY_SISTEMY[BAZY[job["baza"]]["sistema"]][0]
+        if not glavnaya:
+            continue
+        if job["marka"] in KONTROL_MAC and (
+                (job["metod"] == "ThermoGar" and job["nabor"] == "polnyj"
+                 and job["porogi"] == [1e-6, 1e-4])
+                or (job["metod"] == "Lilit-skript" and job["porogi"] == [1e-9])):
+            kontrol.append(job)
+        elif job["marka"] in PORYADOK_NI_MAC and job["metod"] == "Lilit-skript":
+            ni.append(job)
+    kontrol.sort(key=lambda j: (KONTROL_MAC.index(j["marka"]), j["metod"] != "ThermoGar"))
+    ni.sort(key=lambda j: (PORYADOK_NI_MAC.index(j["marka"]), j["porogi"][0]))
+    jobs = []
+    for job in kontrol + ni:
+        job = {k: v for k, v in job.items() if k not in ("alias", "id")}
+        job["mashina"] = MASHINA_MAC
+        job["id"] = job_id(job)
+        jobs.append(job)
+    return jobs
+
+
 def raw_path(job: dict[str, Any]) -> Path:
     own = RAW / f"{job['id']}.json"
     if not own.is_file() and job.get("alias") and (RAW / f"{job['alias']}.json").is_file():
@@ -285,6 +327,9 @@ def job_done(job: dict[str, Any]) -> bool:
     data = json.loads(path.read_text("utf-8"))
     # Не дождавшийся памяти вариант досчитывается заново. Снятый сторожем — нет
     # (решение мастера): отказ по памяти остаётся в таблице.
+    # У мака «отказ: время» — результат (16-А3), не повторяется.
+    if job.get("mashina"):
+        return data.get("status") != "net_pamyati"
     return data.get("status") not in ("net_pamyati", "timeout")
 
 
@@ -607,7 +652,8 @@ def solidus_bisection(ns, liquid_fraction, phases_at, traj, T_sol_scheil_c, liq_
 def watch(proc, stop: threading.Event, record: dict[str, Any], abort_gib: float) -> None:
     import psutil
 
-    record.update({"pik_MiB": 0.0, "min_svobodno_GiB": free_gib(), "snyat": False})
+    record.update({"pik_MiB": 0.0, "min_svobodno_GiB": free_gib(), "snyat": False,
+                   "pik_swap_MiB": psutil.swap_memory().used / 2**20})
     while not stop.is_set():
         try:
             rss = 0
@@ -621,6 +667,7 @@ def watch(proc, stop: threading.Event, record: dict[str, Any], abort_gib: float)
             pass
         free = free_gib()
         record["min_svobodno_GiB"] = min(record["min_svobodno_GiB"], free)
+        record["pik_swap_MiB"] = max(record["pik_swap_MiB"], psutil.swap_memory().used / 2**20)
         if free < abort_gib and not record["snyat"]:
             record["snyat"] = True
             record["svobodno_pri_snyatii_GiB"] = free
@@ -633,7 +680,8 @@ def watch(proc, stop: threading.Event, record: dict[str, Any], abort_gib: float)
         stop.wait(MEMORY_POLL_S)
 
 
-def run_process(command: list[str], log_path: Path, abort_gib: float) -> dict[str, Any]:
+def run_process(command: list[str], log_path: Path, abort_gib: float,
+                timeout_s: float = JOB_TIMEOUT_S) -> dict[str, Any]:
     import psutil
 
     env = dict(os.environ, PYTHONHASHSEED="0")
@@ -642,13 +690,15 @@ def run_process(command: list[str], log_path: Path, abort_gib: float) -> dict[st
     with log_path.open("w", encoding="utf-8") as handle:
         popen = subprocess.Popen(command, env=env, cwd=str(ROOT), stdout=handle,
                                  stderr=subprocess.STDOUT)
-        record: dict[str, Any] = {"svobodno_do_GiB": free_gib()}
+        record: dict[str, Any] = {"svobodno_do_GiB": free_gib(),
+                                  "swap_do_MiB": psutil.swap_memory().used / 2**20,
+                                  "limit_s": timeout_s}
         stop = threading.Event()
         thread = threading.Thread(target=watch, args=(psutil.Process(popen.pid), stop, record,
                                                       abort_gib), daemon=True)
         thread.start()
         try:
-            code = popen.wait(timeout=JOB_TIMEOUT_S)
+            code = popen.wait(timeout=timeout_s)
         except subprocess.TimeoutExpired:
             popen.kill()
             code = popen.wait()
@@ -692,7 +742,8 @@ def run_thermogar_job(job: dict[str, Any], args, abort_gib: float) -> dict[str, 
         command = [sys.executable, "-B", "-X", "utf8", str(Path(__file__).resolve()),
                    "child", "--job", json.dumps(spec, ensure_ascii=False),
                    "--out", str(child_out)]
-        record = run_process(command, LOGS / f"{job['id']}_pd{pdens}.log", abort_gib)
+        record = run_process(command, LOGS / f"{job['id']}_pd{pdens}.log", abort_gib,
+                             args.limit_s)
         record["pdens"] = pdens
         record["porog_vhoda_GiB"] = need
         history.append(record)
@@ -742,7 +793,8 @@ def run_lilit_job(job: dict[str, Any], args, abort_gib: float) -> dict[str, Any]
                "--porog", repr(job["porogi"][0]), "--nabor", job["nabor"], "--bez-granic",
                "--vyvod", str(vyvod)]
     log_path = LOGS / f"{job['id']}_lilit.log"
-    record = run_process(command, log_path, abort_gib)
+    record = run_process(command, log_path, abort_gib,
+                         getattr(args, "limit_s", JOB_TIMEOUT_S))
     record["porog_vhoda_GiB"] = need
     out: dict[str, Any] = {"job": job, "popytki": [record], "komanda": command,
                            "log": log_path.read_text("utf-8", errors="replace")}
@@ -760,6 +812,20 @@ def run_lilit_job(job: dict[str, Any], args, abort_gib: float) -> dict[str, Any]
     return out
 
 
+def svobodno_log(path: Path, stop: threading.Event) -> None:
+    """Раз в 10 с: время, available и swap used, ГиБ (16-А3)."""
+
+    import psutil
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    while not stop.is_set():
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} available_GiB="
+                         f"{psutil.virtual_memory().available / 1024**3:.3f} swap_used_GiB="
+                         f"{psutil.swap_memory().used / 1024**3:.3f}\n")
+        stop.wait(SVOBODNO_LOG_S)
+
+
 def command_run(args) -> None:
     os.environ.setdefault("THERMOGAR_STATE_ROOT", str(STATE_ROOT_DEFAULT))
     Path(os.environ["THERMOGAR_STATE_ROOT"]).mkdir(parents=True, exist_ok=True)
@@ -770,7 +836,12 @@ def command_run(args) -> None:
             raise SystemExit(f"{baza}: sha256 {actual} ≠ {info['sha']}")
     abort_gib = abort_free_gib()
     marki = read_marki()
-    jobs = plan_jobs(marki)
+    jobs = plan_mac(marki) if args.mac else plan_jobs(marki)
+    if args.limit_s is None:
+        args.limit_s = JOB_LIMIT_MAC_S if args.mac else JOB_TIMEOUT_S
+    if args.mac:
+        threading.Thread(target=svobodno_log, args=(LOGS / "svobodno_mac.log",
+                                                     threading.Event()), daemon=True).start()
     if args.only_marki:
         wanted = {m.strip() for m in args.only_marki.split(";") if m.strip()}
         jobs = [j for j in jobs if j["marka"] in wanted]
@@ -790,7 +861,8 @@ def command_run(args) -> None:
     log(f"заданий {len(jobs)}, из кэша {len(jobs) - len(todo)}, считать {len(todo)}; "
         f"аварийный порог {abort_gib:.1f} ГиБ, вход {args.min_free_gib:.1f} / "
         f"{args.min_free_gib_full:.1f} ГиБ; у скрипта «Лилит» аварийный "
-        f"{max(abort_gib, args.abort_lilit_gib):.1f} ГиБ")
+        f"{max(abort_gib, args.abort_lilit_gib):.1f} ГиБ; лимит задания {args.limit_s:.0f} с"
+        + (f"; машина {MASHINA_MAC}" if args.mac else ""))
     for index, job in enumerate(todo, 1):
         log(f"{index}/{len(todo)} {job['marka']} · {job['baza']} · {job['metod']} · "
             f"{job['nabor']} · {job['porogi']} · pdens {job['pdens']}")
@@ -806,7 +878,8 @@ def command_run(args) -> None:
         if data.get("stroki"):
             brief += " · " + " ; ".join(
                 f"{s.get('T_sol_K')} / {s.get('T_liq_K')}" for s in data["stroki"])
-        log(f"   {brief} · {sek:.0f} с · пик {pik:.0f} МиБ")
+        swap = max((p.get("pik_swap_MiB", 0) for p in data.get("popytki", [])), default=0)
+        log(f"   {brief} · {sek:.0f} с · пик {pik:.0f} МиБ · swap {swap:.0f} МиБ")
 
 
 # --------------------------------------------------------------------------- #
@@ -819,7 +892,7 @@ COLUMNS = (
     "pdens_zaproshen", "zyorno_scheil", "T_sol_K", "T_liq_K", "T_sol_bisekciya_K", "T_sol_zamorozka_K",
     "T_liq_zamorozka_K", "vremya_s", "pik_pamyati_MiB", "otkaz", "prichina",
     "vne_predelov_shapki", "chislo_faz_v_nabore", "fazy_v_nabore", "fazy_pod_solidusom",
-    "zamechaniya", "job_id",
+    "zamechaniya", "job_id", "mashina", "pik_swap_MiB",
 )
 
 
@@ -836,7 +909,8 @@ def build_rows() -> list[dict[str, Any]]:
     marki = {r["marka"]: r for r in read_marki()}
     predely: dict[tuple[str, str], str] = {}
     rows: list[dict[str, Any]] = []
-    for job in plan_jobs(list(marki.values())):
+    for job in plan_jobs(list(marki.values())) + plan_mac(list(marki.values())):
+        mac = bool(job.get("mashina"))
         path = raw_path(job)
         if not path.is_file():
             continue
@@ -855,6 +929,9 @@ def build_rows() -> list[dict[str, Any]]:
             predely[key] = vne_predelov(row, info["lilit_key"])
         popytki = data.get("popytki", [])
         pik = max((p.get("pik_MiB", 0) for p in popytki), default=0)
+        swap = max((p.get("pik_swap_MiB", 0) for p in popytki), default=0)
+        pamyat = "отказ: память (mac-m4 16 ГБ)" if mac else "отказ: память"
+        vremya_otkaz = "отказ: время" if mac else "timeout"
         base = {
             "marka": job["marka"], "klyuch_zamorozki": row["klyuch_zamorozki"],
             "gruppa": row["gruppa"], "sistema": row["sistema"], "baza": job["baza"],
@@ -862,6 +939,8 @@ def build_rows() -> list[dict[str, Any]]:
             "nabor": job["nabor"], "T_sol_zamorozka_K": row["T_sol_K"],
             "T_liq_zamorozka_K": row["T_liq_K"], "pik_pamyati_MiB": f"{pik:.0f}",
             "vne_predelov_shapki": predely[key], "job_id": job["id"],
+            "mashina": job.get("mashina", MASHINA_NOUTBUK),
+            "pik_swap_MiB": f"{swap:.0f}" if mac else "",
         }
         status = data.get("status")
         if job["metod"] == "Lilit-skript":
@@ -896,11 +975,12 @@ def build_rows() -> list[dict[str, Any]]:
                 tail = log_text.strip().splitlines()[-1] if log_text.strip() else ""
                 out.update({
                     "porog": job["porogi"][0], "vremya_s": f"{sek:.1f}",
-                    "otkaz": (f"отказ: память, пик {pik / 1024:.1f} ГиБ"
-                              if str(status).startswith("snyat") else status),
+                    "otkaz": (f"{pamyat}, пик {pik / 1024:.1f} ГиБ"
+                              if str(status).startswith("snyat") else
+                              vremya_otkaz if status == "timeout" else status),
                     "prichina": (data.get("oshibka", "") + (f" | {tail}" if tail else "")).strip(" |"),
                 })
-                if str(status).startswith("snyat") and job["marka"] in PERENOS_LILIT:
+                if str(status).startswith("snyat") and job["marka"] in PERENOS_LILIT and not mac:
                     out["prichina"] = " | ".join(
                         x for x in (out["prichina"], PERENOS_PRICHINA) if x)
                 rows.append(out)
@@ -933,8 +1013,9 @@ def build_rows() -> list[dict[str, Any]]:
             if pdens_fakt != job["pdens"]:
                 zam.append(f"pdens снижен {job['pdens']}→{pdens_fakt} после снятия по памяти")
             if s is None:
-                out.update({"otkaz": (f"отказ: память, пик {pik / 1024:.1f} ГиБ"
-                                      if str(status).startswith("snyat") else status),
+                out.update({"otkaz": (f"{pamyat}, пик {pik / 1024:.1f} ГиБ"
+                                      if str(status).startswith("snyat") else
+                                      vremya_otkaz if status == "timeout" else status),
                             "prichina": data.get("oshibka") or data.get(
                     "prichina", ""), "vremya_s": fnum(sum(p.get("sekund", 0) for p in popytki), 1)})
             else:
@@ -1049,6 +1130,10 @@ def main() -> None:
                      help="набор фаз через пробел: опыт nabor=lilit_4fazy для --only-marki")
     run.add_argument("--min-free-gib", type=float, default=3.0)
     run.add_argument("--min-free-gib-full", type=float, default=5.0)
+    run.add_argument("--mac", action="store_true",
+                     help="16-А3: план мака (контроль и скрипт «Лилит» по Ni), mashina mac-m4")
+    run.add_argument("--limit-s", type=float, default=None,
+                     help="лимит времени задания, с; по умолчанию 4 ч, с --mac 45 мин")
     run.add_argument("--abort-lilit-gib", type=float, default=2.0,
                      help="аварийный порог сторожа для скрипта «Лилит», ГиБ (E1 не меняется)")
     child = sub.add_parser("child")
