@@ -204,3 +204,26 @@ f096bf996ee0a5c15597c6a5e805af29aceca1ce	refs/heads/wave16-lilith
 ```
 ?? .venv/
 ```
+
+## Слияние
+
+Санкция мастера: влить `wave16-lilith` в `main`. Машина — мак, `~/ThermoGar`.
+
+- Проверка до слияния: `origin/main` = `ac31640`, `origin/wave16-lilith` = `a948251`,
+  локальная `wave16-lilith` = `a948251`. Рабочее дерево чистое, кроме `?? .venv/`.
+  Локальный `main` стоял на старом `15296ac` (предок `origin/main`). Он перемотан
+  `--ff-only` на `ac31640`, коммиты не переписывались.
+- `git merge --no-ff wave16-lilith` прошёл без конфликтов: merge-коммит `63cc2b8`.
+- `git diff a948251 main --stat` пуст. `git diff --stat ac31640 main -- app databases`
+  пуст: `app/` и базы слиянием не тронуты.
+- Реестр: у 16-А3 примечание о `pik_swap_MiB`: в 9 строках контроля 884 МиБ — это swap
+  на входе, а не пик; в 6 строках Ni пики настоящие. Заведён BL-46. Коммит `afe3681`.
+- `git push origin main`: `ac31640..afe3681`. `git ls-remote origin main`:
+
+  ```
+  afe3681a44aa3a9f45a22780e0d419d10e0136bf	refs/heads/main
+  ```
+
+  Совпадает с локальным `main`. Этот раздел отчёта идёт следующим коммитом в `main`.
+  Итоговые хэши `main` и `wave16-lilith` на origin — в сессии. `wave16-lilith` после
+  слияния не двигалась: `a948251`.
