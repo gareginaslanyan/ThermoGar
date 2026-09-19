@@ -572,6 +572,13 @@ class PhysicalDensityDatabase:
     def direct_phase_models(self) -> list[str]:
         return sorted(self.parameters_by_phase)
 
+    @property
+    def density_lower_temperature_k(self) -> float:
+        """Нижняя граница, с которой база задаёт плотность: минимум нижних
+        границ DP-параметров (BL-49). Ниже неё ``parameter_value`` отказывает."""
+
+        return min(parameter.lower_temperature for parameter in self.parameters)
+
     def _parse(self, text: str) -> None:
         for command in _active_commands(text):
             upper = command.upper()

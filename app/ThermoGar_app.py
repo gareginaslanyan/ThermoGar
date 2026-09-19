@@ -1264,6 +1264,34 @@ def load_physical_database(
     return database
 
 
+def density_below_pdb_text(
+    temperature_c: float,
+    physical_overrides: bool = True,
+) -> str | None:
+    """Текст отказа, если температура ниже той, с которой PDB задаёт плотность.
+
+    BL-49: все DP-параметры physical_data_v103.pdb действуют с 298,15 K, и
+    ниже расчёт падал ValueError (BACKEND_FAILED). Граница берётся из самой
+    базы, текст утверждён владельцем. Сравнение то же, что у
+    ``PhysicalDensityDatabase.parameter_value``, на той же температуре в K.
+    """
+
+    try:
+        lower_k = load_physical_database(
+            physical_overrides
+        ).density_lower_temperature_k
+    except Exception:
+        # Базу не загрузить — об этом скажет сам расчёт, не эта проверка.
+        return None
+    if float(temperature_c) + 273.15 >= lower_k:
+        return None
+    lower_c = f"{lower_k - 273.15:.2f}".rstrip("0").rstrip(".")
+    return (
+        f"Физическая база задаёт плотность с {lower_c} °C; "
+        f"введите {lower_c} °C или выше."
+    )
+
+
 PHYSICAL_OVERRIDES_TOGGLE_KEY = "physical_overrides_enabled"
 PHYSICAL_OVERRIDES_TOGGLE_LABEL = (
     "Применять поправки проекта ThermoGar к физической базе"
@@ -1565,6 +1593,16 @@ def render_b4b_density_single(
         context,
         "physical_single",
     )
+    too_cold = density_below_pdb_text(temperature_c, physical_overrides)
+    if too_cold is not None:
+        st.error(too_cold)
+        st.button(
+            "Рассчитать плотность и объёмные доли",
+            type="primary",
+            key="physical_single_calculate",
+            disabled=True,
+        )
+        return
     try:
         inputs = verified_physical.make_physical_inputs(
             "property_density_single",
@@ -1715,6 +1753,17 @@ def render_b4b_density_temperature(
     with columns[2]:
         step_c = st.number_input("Шаг температуры, °C", min_value=0.1, value=float(default_step_c), step=5.0, key=f"physical_t_step_{database_key}")
     requested, _phase_mode = _b4b_requested_phases(context, "physical_scan")
+    # Скан начинается с minimum_c: ниже границы PDB счёт не запускается (BL-49).
+    too_cold = density_below_pdb_text(minimum_c, physical_overrides)
+    if too_cold is not None:
+        st.error(too_cold)
+        st.button(
+            "Построить плотность по температуре",
+            type="primary",
+            key="physical_scan_calculate",
+            disabled=True,
+        )
+        return
     try:
         if maximum_c <= minimum_c:
             raise ValueError("Конечная температура должна быть выше начальной.")
