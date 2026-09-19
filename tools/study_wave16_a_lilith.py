@@ -347,7 +347,8 @@ APP_NAMES = (
     "unbuildable_order_disorder", "drop_unbuildable_order_disorder",
     "rejected_release_phases", "excluded_phase_message", "prepare_calculation",
     "aggregate_phase_fractions", "resolve_solidification_start_temperature",
-    "equilibrium_solid_fraction_at", "equilibrium_liquidus_c", "liquidus_bracket_c",
+    "equilibrium_solid_fraction_at", "_solid_fraction_probe", "_step_bracket_edge",
+    "equilibrium_liquidus_c", "liquidus_bracket_c",
     "solidification_end_index", "_parse_database_snapshot",
 )
 

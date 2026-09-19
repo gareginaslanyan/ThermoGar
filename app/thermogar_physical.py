@@ -113,6 +113,12 @@ PHASE_ALIASES: dict[str, tuple[str, str, str]] = {
         "structural",
         "Использована общая модель карбида M6C.",
     ),
+    # 18-А (BL-48): растворная фаза кремния mc_al (AL,CR,CU,MG,SI%,TI,ZN).
+    "SI_DIAMOND_A4": (
+        "DIAMOND_A4",
+        "inherited",
+        "Плотность оценена по модели DIAMOND_A4 той же структуры.",
+    ),
 }
 
 # PDB conventions for a bare wildcard in matrix phases. The original file has
@@ -566,6 +572,13 @@ class PhysicalDensityDatabase:
     def direct_phase_models(self) -> list[str]:
         return sorted(self.parameters_by_phase)
 
+    @property
+    def density_lower_temperature_k(self) -> float:
+        """Нижняя граница, с которой база задаёт плотность: минимум нижних
+        границ DP-параметров (BL-49). Ниже неё ``parameter_value`` отказывает."""
+
+        return min(parameter.lower_temperature for parameter in self.parameters)
+
     def _parse(self, text: str) -> None:
         for command in _active_commands(text):
             upper = command.upper()
@@ -638,6 +651,18 @@ class PhysicalDensityDatabase:
     ELEMENT_DENSITY_PHASES = ("FCC_A1", "BCC_A2", "HCP_A3")
     ELEMENT_DENSITY_LAST_PHASE = "LIQUID"
 
+    # BL-47: эталонная фаза элемента из записи ELEMENT термодинамической базы
+    # пробуется первой. Имена, которые в PDB записаны иначе; имя без модели в
+    # PDB (например BCC_A12) эталонной фазы не даёт — остаётся прежний порядок.
+    _REFERENCE_PHASE_NAMES = {"DIA_A4": "DIAMOND_A4", "DIAMOND_A4": "DIAMOND_A4"}
+
+    def reference_density_phase(self, reference_phase: str | None) -> str | None:
+        """Фаза PDB, соответствующая эталонной фазе элемента, или ``None``."""
+
+        name = str(reference_phase or "").upper()
+        name = self._REFERENCE_PHASE_NAMES.get(name, name)
+        return name if name and name in self.phases else None
+
     # Структура в имени D0-функции элемента и суффикс его DT-функции:
     # D0HCP_SC + DTSCHCP.
     _D0_STRUCTURE_TO_DT = {"FCC": "FCC", "BCC": "BCC", "HCP": "HCP", "DIAM": "DIAM"}
@@ -679,13 +704,19 @@ class PhysicalDensityDatabase:
         self,
         element: str,
         temperature_k: float,
+        reference_phase: str | None = None,
     ) -> tuple[float, str, str] | None:
         """Плотность чистого элемента и откуда она взята.
 
         Возвращает ``(плотность, вид, модель)`` или ``None``, если в физической
-        базе плотности элемента нет ни в каком виде. Вид:
+        базе плотности элемента нет ни в каком виде. ``reference_phase`` —
+        эталонная фаза элемента из записи ELEMENT термодинамической базы; если
+        у неё есть модель в PDB, она пробуется первой (BL-47). Вид:
 
         * ``matrix`` — собственная запись элемента в FCC_A1;
+        * ``reference`` — собственная запись элемента в его эталонной фазе
+          (кроме FCC_A1: там вид прежний, ``matrix``). ``matrix`` и
+          ``reference`` — один главный путь, примечания у них нет (18-А);
         * ``phase`` — собственная запись элемента в другой фазе базы;
         * ``function`` — только D0-функция элемента (плюс его DT-функция, если
           она есть в базе).
@@ -708,6 +739,9 @@ class PhysicalDensityDatabase:
             *others,
             self.ELEMENT_DENSITY_LAST_PHASE,
         ]
+        reference = self.reference_density_phase(reference_phase)
+        if reference is not None:
+            order = [reference, *(phase for phase in order if phase != reference)]
         for phase in order:
             for parameter in self._own_element_parameters(phase, element):
                 site_fractions = [
@@ -723,7 +757,12 @@ class PhysicalDensityDatabase:
                     array = ":".join(
                         ",".join(group) for group in parameter.constituent_array
                     )
-                    kind = "matrix" if phase == "FCC_A1" else "phase"
+                    if phase == "FCC_A1":
+                        kind = "matrix"
+                    elif phase == reference:
+                        kind = "reference"
+                    else:
+                        kind = "phase"
                     return float(value), kind, f"DP({phase},{array})"
 
         # Записей нет — остаётся D0-функция элемента (плотность при 298,15 K).
@@ -750,30 +789,33 @@ class PhysicalDensityDatabase:
         self,
         element: str,
         temperature_k: float,
+        reference_phase: str | None = None,
     ) -> float | None:
         """Плотность чистого элемента по модели PDB этого элемента."""
 
-        model = self.element_density_model(element, temperature_k)
+        model = self.element_density_model(element, temperature_k, reference_phase)
         return None if model is None else model[0]
 
     def element_density_note(
         self,
         element: str,
         temperature_k: float,
+        reference_phase: str | None = None,
     ) -> str | None:
         """Текст для пользователя: по какой модели взята плотность элемента.
 
-        Для собственной записи элемента в FCC_A1 текста нет — это основной
-        путь правила смеси. Для элемента без плотности в базе — тоже ``None``:
+        Для собственной записи элемента в FCC_A1 или в его эталонной фазе
+        текста нет — это основной путь правила смеси; текст есть только у
+        обходных путей (``phase`` не по эталону и ``function``). Для элемента без плотности в базе — тоже ``None``:
         об этом говорит :func:`mixture_unavailable_message`.
         """
 
         element = str(element).upper()
-        model = self.element_density_model(element, temperature_k)
+        model = self.element_density_model(element, temperature_k, reference_phase)
         if model is None:
             return None
         _value, kind, label = model
-        if kind == "matrix":
+        if kind in {"matrix", "reference"}:
             return None
         if element == "C" and label.startswith("DP(DIAMOND_A4,"):
             return (
@@ -804,6 +846,7 @@ class PhysicalDensityDatabase:
         composition: Mapping[str, float],
         temperature_k: float,
         atomic_masses: Mapping[str, float] | None = None,
+        reference_phases: Mapping[str, str] | None = None,
     ) -> tuple[float | None, float, list[str]]:
         """Плотность фазы по правилу смеси из плотностей элементов.
 
@@ -815,7 +858,8 @@ class PhysicalDensityDatabase:
         Если плотности или массы хотя бы одного элемента фазы нет, оценки нет:
         объём такой фазы не выдумывается (BL-39). ``atomic_masses`` — массы из
         термодинамической базы для элементов, которых нет в
-        ``_ATOMIC_MASSES``.
+        ``_ATOMIC_MASSES``. ``reference_phases`` — эталонные фазы элементов из
+        записей ELEMENT той же базы (BL-47), см. :func:`element_reference_phases`.
 
         Возвращает ``(плотность, покрытие по массе, предупреждения)``.
         """
@@ -840,7 +884,9 @@ class PhysicalDensityDatabase:
         volume = 0.0
         covered_mass = 0.0
         for element, mass in masses.items():
-            density = self.element_density(element, temperature_k)
+            density = self.element_density(
+                element, temperature_k, (reference_phases or {}).get(element)
+            )
             if density is None or density <= 0.0:
                 unknown.append(element)
                 continue
@@ -862,9 +908,11 @@ class PhysicalDensityDatabase:
         self,
         composition: Mapping[str, float],
         temperature_k: float,
+        reference_phases: Mapping[str, str] | None = None,
     ) -> list[str]:
         """Элементы фазы, плотности которых в физической базе нет."""
 
+        references = reference_phases or {}
         return sorted(
             {
                 str(element).upper()
@@ -872,7 +920,9 @@ class PhysicalDensityDatabase:
                 if str(element).upper() not in {"VA", ""}
                 and np.isfinite(fraction)
                 and fraction > 0.0
-                and self.element_density(element, temperature_k) is None
+                and self.element_density(
+                    element, temperature_k, references.get(str(element).upper())
+                ) is None
             }
         )
 
@@ -880,6 +930,7 @@ class PhysicalDensityDatabase:
         self,
         composition: Mapping[str, float],
         temperature_k: float,
+        reference_phases: Mapping[str, str] | None = None,
     ) -> list[str]:
         """Тексты о моделях плотности элементов фазы, кроме основного пути."""
 
@@ -891,7 +942,9 @@ class PhysicalDensityDatabase:
             and np.isfinite(fraction)
             and fraction > 0.0
         ):
-            note = self.element_density_note(element, temperature_k)
+            note = self.element_density_note(
+                element, temperature_k, (reference_phases or {}).get(element)
+            )
             if note and note not in notes:
                 notes.append(note)
         return notes
@@ -1207,6 +1260,21 @@ def _refstate_masses(
     return masses
 
 
+def element_reference_phases(thermodynamic_db: Any) -> dict[str, str]:
+    """Эталонные фазы элементов из записей ELEMENT термодинамической базы (BL-47)."""
+
+    refstates = getattr(thermodynamic_db, "refstates", None) or {}
+    phases: dict[str, str] = {}
+    for element, record in refstates.items():
+        try:
+            phase = str(record["phase"]).strip().upper()
+        except (KeyError, TypeError):
+            continue
+        if phase:
+            phases[str(element).upper()] = phase
+    return phases
+
+
 def calculate_physical_properties(
     thermodynamic_db: Any,
     equilibrium_result: Any,
@@ -1273,6 +1341,7 @@ def calculate_physical_properties(
     # фазы выпали, потому что плотности элемента в базе нет.
     element_notes: list[str] = []
     unavailable_notes: list[str] = []
+    reference_phases = element_reference_phases(thermodynamic_db)
 
     for index, (phase_name, phase_amount) in enumerate(
         zip(phase_names, phase_amounts)
@@ -1323,13 +1392,14 @@ def calculate_physical_properties(
                     composition,
                     temperature_k,
                     _refstate_masses(thermodynamic_db, composition),
+                    reference_phases,
                 )
             )
             for warning in estimate_warnings:
                 aggregate["warnings"].add(warning)
             if estimate is None or estimate <= 0.0:
                 missing_elements = physical_db.mixture_missing_elements(
-                    composition, temperature_k
+                    composition, temperature_k, reference_phases
                 )
                 if missing_elements:
                     unavailable_notes.append(
@@ -1337,7 +1407,7 @@ def calculate_physical_properties(
                     )
                 continue
             for note in physical_db.mixture_element_notes(
-                composition, temperature_k
+                composition, temperature_k, reference_phases
             ):
                 element_notes.append(note)
             aggregate["qualities"].add("mixture")

@@ -1,0 +1,39 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0 -- D:\Pets\ThermoGar\.venv-windows\Scripts\python.exe
+rootdir: D:\Pets\ThermoGar
+plugins: anyio-4.15.1, cov-7.1.0, timeout-2.4.0
+collecting ... collected 6 items
+
+tools/test_parallel_integration.py::test_snapshot_reproduces_equilibrium_object PASSED [ 16%]
+tools/test_parallel_integration.py::test_engine_matches_in_process_bytewise PASSED [ 33%]
+tools/test_parallel_integration.py::test_temperature_scan_tables_match_with_and_without_pool Windows fatal exception: code 0x80000003
+
+Current thread 0x000029e8 (most recent call first):
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\_pytest\unraisableexception.py", line 83 in collect_unraisable
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\_pytest\unraisableexception.py", line 183 in pytest_runtest_call
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\_pytest\runner.py", line 250 in <lambda>
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\_pytest\runner.py", line 361 in from_call
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\_pytest\runner.py", line 249 in call_and_report
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\_pytest\runner.py", line 139 in runtestprotocol
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\_pytest\runner.py", line 118 in pytest_runtest_protocol
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\_pytest\main.py", line 408 in pytest_runtestloop
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\_pytest\main.py", line 384 in _main
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\_pytest\main.py", line 330 in wrap_session
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\_pytest\main.py", line 377 in pytest_cmdline_main
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\_pytest\config\__init__.py", line 229 in _main
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\_pytest\config\__init__.py", line 253 in _console_main
+  File "D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\pytest\__main__.py", line 9 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 198 in _run_module_as_main

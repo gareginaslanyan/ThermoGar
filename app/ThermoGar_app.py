@@ -1264,6 +1264,34 @@ def load_physical_database(
     return database
 
 
+def density_below_pdb_text(
+    temperature_c: float,
+    physical_overrides: bool = True,
+) -> str | None:
+    """Текст отказа, если температура ниже той, с которой PDB задаёт плотность.
+
+    BL-49: все DP-параметры physical_data_v103.pdb действуют с 298,15 K, и
+    ниже расчёт падал ValueError (BACKEND_FAILED). Граница берётся из самой
+    базы, текст утверждён владельцем. Сравнение то же, что у
+    ``PhysicalDensityDatabase.parameter_value``, на той же температуре в K.
+    """
+
+    try:
+        lower_k = load_physical_database(
+            physical_overrides
+        ).density_lower_temperature_k
+    except Exception:
+        # Базу не загрузить — об этом скажет сам расчёт, не эта проверка.
+        return None
+    if float(temperature_c) + 273.15 >= lower_k:
+        return None
+    lower_c = f"{lower_k - 273.15:.2f}".rstrip("0").rstrip(".")
+    return (
+        f"Физическая база задаёт плотность с {lower_c} °C; "
+        f"введите {lower_c} °C или выше."
+    )
+
+
 PHYSICAL_OVERRIDES_TOGGLE_KEY = "physical_overrides_enabled"
 PHYSICAL_OVERRIDES_TOGGLE_LABEL = (
     "Применять поправки проекта ThermoGar к физической базе"
@@ -1565,6 +1593,16 @@ def render_b4b_density_single(
         context,
         "physical_single",
     )
+    too_cold = density_below_pdb_text(temperature_c, physical_overrides)
+    if too_cold is not None:
+        st.error(too_cold)
+        st.button(
+            "Рассчитать плотность и объёмные доли",
+            type="primary",
+            key="physical_single_calculate",
+            disabled=True,
+        )
+        return
     try:
         inputs = verified_physical.make_physical_inputs(
             "property_density_single",
@@ -1715,6 +1753,17 @@ def render_b4b_density_temperature(
     with columns[2]:
         step_c = st.number_input("Шаг температуры, °C", min_value=0.1, value=float(default_step_c), step=5.0, key=f"physical_t_step_{database_key}")
     requested, _phase_mode = _b4b_requested_phases(context, "physical_scan")
+    # Скан начинается с minimum_c: ниже границы PDB счёт не запускается (BL-49).
+    too_cold = density_below_pdb_text(minimum_c, physical_overrides)
+    if too_cold is not None:
+        st.error(too_cold)
+        st.button(
+            "Построить плотность по температуре",
+            type="primary",
+            key="physical_scan_calculate",
+            disabled=True,
+        )
+        return
     try:
         if maximum_c <= minimum_c:
             raise ValueError("Конечная температура должна быть выше начальной.")
@@ -4434,6 +4483,59 @@ def equilibrium_solid_fraction_at(
     )
 
 
+def _solid_fraction_probe(
+    db: Database,
+    components: list[str],
+    phases: list[str],
+    composition_conditions: dict[Any, float],
+    pdens: int,
+    expected: int,
+    progress: Any,
+) -> Any:
+    """Доля твёрдого при температуре, °C, с запоминанием — общая для ликвидуса и солидуса.
+
+    Край вилки щупают дважды — цикл её раскрытия и проверка краёв внутри
+    половинного деления. Запоминание убирает лишнее равновесие.
+    """
+    step = 0
+    seen: dict[float, float] = {}
+
+    def measure(temperature_c: float) -> float:
+        nonlocal step
+        key = round(float(temperature_c), 6)
+        if key in seen:
+            return seen[key]
+        step += 1
+        solid = equilibrium_solid_fraction_at(
+            db, components, phases, composition_conditions, key, pdens
+        )
+        seen[key] = solid
+        if progress is not None:
+            progress(step, expected, key, solid)
+        return solid
+
+    return measure
+
+
+def _step_bracket_edge(
+    holds: Any,
+    start_c: float,
+    step_c: float,
+    limit_c: float,
+    failure: str,
+) -> float:
+    """Сдвигать край вилки на ``step_c``, пока ``holds`` при нём ложно.
+
+    Край, ушедший за ``limit_c``, не проверяется: поиск отказывает с ``failure``.
+    """
+    temperature_c = float(start_c)
+    while not holds(temperature_c):
+        temperature_c += step_c
+        if temperature_c > limit_c if step_c > 0 else temperature_c < limit_c:
+            raise ValueError(failure)
+    return temperature_c
+
+
 def equilibrium_liquidus_c(
     db: Database,
     components: list[str],
@@ -4475,48 +4577,33 @@ def equilibrium_liquidus_c(
             )
         ),
     )
-    step = 0
-    seen: dict[float, float] = {}
-
-    def measure(temperature_c: float) -> float:
-        # Верхний край вилки щупают дважды — цикл её раскрытия и проверка краёв
-        # внутри половинного деления. Запоминание убирает лишнее равновесие.
-        nonlocal step
-        key = round(float(temperature_c), 6)
-        if key in seen:
-            return seen[key]
-        step += 1
-        solid = equilibrium_solid_fraction_at(
-            db, components, phases, composition_conditions, key, pdens
-        )
-        seen[key] = solid
-        if progress is not None:
-            progress(step, expected, key, solid)
-        return solid
+    measure = _solid_fraction_probe(
+        db, components, phases, composition_conditions, pdens, expected, progress
+    )
 
     ceiling = float(high_c) + LIQUIDUS_BRACKET_MARGIN_C
-    upper = float(high_c)
-    while measure(upper) > SOLID_PRESENCE_FLOOR:
-        upper += LIQUIDUS_BRACKET_STEP_C
-        if upper > ceiling:
-            raise ValueError(
-                "Ликвидус не найден: твёрдая фаза остаётся вплоть до "
-                f"{ceiling:.1f} °C."
-            )
+    upper = _step_bracket_edge(
+        lambda temperature_c: measure(temperature_c) <= SOLID_PRESENCE_FLOOR,
+        float(high_c),
+        LIQUIDUS_BRACKET_STEP_C,
+        ceiling,
+        "Ликвидус не найден: твёрдая фаза остаётся вплоть до "
+        f"{ceiling:.1f} °C.",
+    )
 
     # Нижний край раскрывается так же, как верхний. Он приходит из узла
     # траектории, и узел мог быть получен адаптивным шагом, то есть при нём
     # твёрдого может не оказаться. Тогда вилка не охватывает переход, и без
     # раскрытия вниз расчёт отказал бы там, где ответ есть.
     floor = float(low_c) - LIQUIDUS_BRACKET_MARGIN_C
-    lower = float(low_c)
-    while measure(lower) <= SOLID_PRESENCE_FLOOR:
-        lower -= LIQUIDUS_BRACKET_STEP_C
-        if lower < floor:
-            raise ValueError(
-                "Ликвидус не найден: расплав остаётся полностью жидким вплоть "
-                f"до {floor:.1f} °C."
-            )
+    lower = _step_bracket_edge(
+        lambda temperature_c: measure(temperature_c) > SOLID_PRESENCE_FLOOR,
+        float(low_c),
+        -LIQUIDUS_BRACKET_STEP_C,
+        floor,
+        "Ликвидус не найден: расплав остаётся полностью жидким вплоть "
+        f"до {floor:.1f} °C.",
+    )
 
     def fully_liquid(temperature_c: float) -> bool:
         return bool(measure(float(temperature_c)) <= SOLID_PRESENCE_FLOOR)
@@ -4529,6 +4616,152 @@ def equilibrium_liquidus_c(
             float(tolerance_c),
         ).value
     )
+
+
+# BL-44 (18-В). Доля твёрдого в конце равновесной траектории, от которой её
+# конец принимается за солидус; ниже — солидус ищется половинным делением.
+EQUILIBRIUM_SOLIDUS_MIN_SOLID_FRACTION = 0.999
+# Текст утверждён владельцем (18-В).
+SOLIDUS_FALLBACK_WARNING = (
+    "Равновесное затвердевание не сошлось; солидус найден половинным "
+    "делением по доле жидкости."
+)
+# Подпись окна состояния на время поиска солидуса; текст утверждён
+# владельцем (18-Г).
+SOLIDUS_SEARCH_STATUS_LABEL = "Ищем солидус половинным делением…"
+
+
+def database_lower_temperature_c(db: Database) -> float:
+    """Нижняя граница базы, °C: наименьшая температура, где заданы все её выражения.
+
+    У каждой функции и каждого параметра TDB свой нижний предел первого
+    интервала; ниже наибольшего из них часть выражений не определена. У
+    ``mc_ni`` и ``mc_al`` это 298,15 K, у ``mc_fe`` — 273 K.
+    """
+    import symengine
+
+    expressions = list(db.symbols.values()) + [
+        record["parameter"] for record in db._parameters.all()
+    ]
+    lowest: list[float] = []
+    for expression in expressions:
+        bounds = [
+            float(relation.args[0])
+            for piecewise in getattr(expression, "atoms", lambda *_: ())(
+                symengine.Piecewise
+            )
+            for relation in _relations(piecewise)
+            if relation.args[1] == v.T and relation.args[0].is_Number
+        ]
+        if bounds:
+            lowest.append(min(bounds))
+    if not lowest:
+        raise ValueError("В базе не заданы температурные интервалы.")
+    return max(lowest) - 273.15
+
+
+def _relations(expression: Any) -> list[Any]:
+    """Все сравнения ``a <= b`` и ``a < b`` внутри выражения symengine."""
+    import symengine
+
+    found: list[Any] = []
+    stack = [expression]
+    while stack:
+        node = stack.pop()
+        if isinstance(node, (symengine.LessThan, symengine.StrictLessThan)):
+            found.append(node)
+        else:
+            stack.extend(getattr(node, "args", ()))
+    return found
+
+
+def equilibrium_solidus_c(
+    db: Database,
+    components: list[str],
+    phases: list[str],
+    composition_conditions: dict[Any, float],
+    liquidus_c: float,
+    lower_limit_c: float,
+    pdens: int,
+    tolerance_c: float = LIQUIDUS_TOLERANCE_C,
+) -> float:
+    """Равновесный солидус половинным делением по доле жидкости (BL-44, 18-В).
+
+    Солидус — граница, ниже которой доля жидкости не больше
+    ``SOLID_PRESENCE_FLOOR``; порог, набор фаз и pdens те же, что у ликвидуса,
+    и равновесия щупает тот же код. Вилка — от ликвидуса вниз шагом
+    ``LIQUIDUS_BRACKET_STEP_C``, пока жидкость не исчезнет, но не ниже
+    ``lower_limit_c`` — нижней границы базы. Способ из 16-А
+    (``tools/study_wave16_a_lilith.py``, столбец ``T_sol_bisekciya_K``); там
+    вилка шла от конца траектории, здесь конец несошедшейся траектории
+    ничего не говорит, поэтому — от ликвидуса.
+    """
+    measure = _solid_fraction_probe(
+        db, components, phases, composition_conditions, pdens, 0, None
+    )
+
+    def liquid_present(temperature_c: float) -> bool:
+        return bool(1.0 - measure(float(temperature_c)) > SOLID_PRESENCE_FLOOR)
+
+    lower = _step_bracket_edge(
+        lambda temperature_c: not liquid_present(temperature_c),
+        float(liquidus_c) - LIQUIDUS_BRACKET_STEP_C,
+        -LIQUIDUS_BRACKET_STEP_C,
+        float(lower_limit_c),
+        "Солидус не найден: жидкость остаётся вплоть до "
+        f"{float(lower_limit_c):.1f} °C.",
+    )
+    return float(
+        bisect_transition_temperature(
+            liquid_present,
+            lower,
+            float(liquidus_c),
+            float(tolerance_c),
+        ).value
+    )
+
+
+def equilibrium_solidus_needs_fallback(result: Any) -> bool:
+    """Конец равновесной траектории не солидус: путь не сошёлся или твёрдого мало."""
+    fractions = np.asarray(result.fraction_solid, dtype=float)
+    end_solid = float(fractions[solidification_end_index(result)])
+    return bool(
+        not bool(result.converged)
+        or not end_solid >= EQUILIBRIUM_SOLIDUS_MIN_SOLID_FRACTION
+    )
+
+
+def equilibrium_solidus_override(
+    result: Any,
+    db: Database,
+    components: list[str],
+    phases: list[str],
+    composition_conditions: dict[Any, float],
+    liquidus_c: float | None,
+    pdens: int,
+) -> float | None:
+    """Солидус равновесного пути вместо конца траектории.
+
+    ``None`` — конец траектории и есть солидус (критерий ``scheil``). Число —
+    солидус половинным делением. ``nan`` — не нашло и оно: тогда солидус не
+    показывается вовсе, как и температура последней точки.
+    """
+    if not equilibrium_solidus_needs_fallback(result):
+        return None
+    if liquidus_c is None:
+        return float("nan")
+    try:
+        return equilibrium_solidus_c(
+            db,
+            components,
+            phases,
+            composition_conditions,
+            float(liquidus_c),
+            database_lower_temperature_c(db),
+            int(pdens),
+        )
+    except Exception:
+        return float("nan")
 
 
 def liquidus_bracket_c(result: Any, fallback_low_c: float, fallback_high_c: float) -> tuple[float, float]:
@@ -4653,8 +4886,14 @@ def solidification_summary_row(
     result: Any,
     appearance_threshold_fraction: float,
     liquidus_c: float | None,
+    solidus_c: float | None = None,
 ) -> dict[str, Any]:
     """Собрать основные температуры и статус одного метода.
+
+    ``solidus_c`` — результат ``equilibrium_solidus_override`` (BL-44): число
+    встаёт вместо температуры последней точки, ``nan`` убирает её; остаточный
+    расплав относится к концу траектории, при найденном солидусе он не
+    показывается.
 
     ``liquidus_c`` приходит снаружи и считается половинным делением по
     равновесиям (``equilibrium_liquidus_c``): ликвидус — свойство состава, а не
@@ -4671,6 +4910,11 @@ def solidification_summary_row(
         appearance_threshold_fraction,
     )
     end_temperature_c = float(temperatures[end_index]) - 273.15
+    residual_liquid_percent = 100.0 * float(fraction_liquid[end_index])
+    if solidus_c is not None:
+        end_temperature_c = float(solidus_c)
+        if np.isfinite(end_temperature_c):
+            residual_liquid_percent = np.nan
     interval = (
         float(liquidus_c) - end_temperature_c
         if liquidus_c is not None
@@ -4694,9 +4938,7 @@ def solidification_summary_row(
             else "достигнут критерий остаточного расплава"
         ),
         "Интервал кристаллизации, °C": interval,
-        "Остаточный расплав в точке окончания, %": (
-            100.0 * float(fraction_liquid[end_index])
-        ),
+        "Остаточный расплав в точке окончания, %": residual_liquid_percent,
         "Точек расчёта": len(temperatures),
         "Расчёт завершён": "да" if bool(result.converged) else "нет",
     }
@@ -6583,7 +6825,7 @@ except Exception as pending_context_error:
 st.title(DISPLAY_APP_NAME)
 
 st.sidebar.caption(
-    "ThermoGar 0.4.2 — исследовательское ПО. "
+    "ThermoGar 0.4.3 — исследовательское ПО. "
     "Экспериментальная квалификация: NOT_PERFORMED."
 )
 
@@ -10069,6 +10311,33 @@ with solidification_tab:
                         errors["Ликвидус"] = str(liquidus_error)
                         status.write(f"Ликвидус не найден: {liquidus_error}")
 
+                    # BL-44: конец несошедшейся равновесной траектории — не
+                    # солидус; тогда он ищется половинным делением.
+                    if (
+                        "equilibrium" in results
+                        and computed_liquidus_c is not None
+                        and equilibrium_solidus_needs_fallback(
+                            results["equilibrium"]
+                        )
+                    ):
+                        status.update(
+                            label=SOLIDUS_SEARCH_STATUS_LABEL,
+                            state="running",
+                        )
+                    equilibrium_solidus = (
+                        equilibrium_solidus_override(
+                            results["equilibrium"],
+                            db,
+                            components,
+                            phases,
+                            composition_conditions,
+                            computed_liquidus_c,
+                            int(solidification_pdens),
+                        )
+                        if "equilibrium" in results
+                        else None
+                    )
+
                     status.update(
                         label="Расчёт затвердевания завершён",
                         state="complete",
@@ -10116,9 +10385,21 @@ with solidification_tab:
                             result,
                             appearance_fraction,
                             computed_liquidus_c,
+                            equilibrium_solidus if key == "equilibrium" else None,
                         )
-                        for result in results.values()
+                        for key, result in results.items()
                     ]
+                )
+                solidus_bisected = (
+                    equilibrium_solidus is not None
+                    and bool(np.isfinite(equilibrium_solidus))
+                )
+                # Поле выгрузки: чем получен показанный солидус равновесного пути.
+                solidus_criterion_rows = (
+                    [("Критерий солидуса", "бисекция" if solidus_bisected else "scheil")]
+                    if "equilibrium" in results
+                    and (equilibrium_solidus is None or solidus_bisected)
+                    else []
                 )
                 settings_table = pd.DataFrame(
                     [
@@ -10149,6 +10430,7 @@ with solidification_tab:
                         ("Выбранные фазы", ", ".join(phases)),
                         ("Плотность поиска", solidification_pdens),
                         ("Адаптивное уточнение", "да" if solidification_adaptive else "нет"),
+                        *solidus_criterion_rows,
                     ],
                     columns=["Параметр", "Значение"],
                 )
@@ -10168,6 +10450,7 @@ with solidification_tab:
                     "sequences": sequences,
                     "final_phases": final_phases,
                     "quality": solidification_quality,
+                    "solidus_bisected": solidus_bisected,
                     "fe_profile_key": fe_profile_key,
                     "display_threshold_percent": float(
                         solidification_display_percent
@@ -10233,6 +10516,8 @@ with solidification_tab:
                     width="stretch",
                     hide_index=True,
                 )
+                if state.get("solidus_bisected"):
+                    st.warning(SOLIDUS_FALLBACK_WARNING)
                 if "quality" in state:
                     render_quality_panel(state["quality"])
                 st.pyplot(comparison_figure, use_container_width=False)

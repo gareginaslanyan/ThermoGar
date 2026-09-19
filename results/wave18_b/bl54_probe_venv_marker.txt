@@ -1,0 +1,17 @@
+﻿{
+ "python": "D:\\Pets\\ThermoGar\\.venv-windows\\Scripts\\python.exe",
+ "script": "D:\\Pets\\ThermoGar\\results\\wave18_b\\bl54_marker_script.py",
+ "results": [
+  {
+   "pid": 10840,
+   "mp_main_file": "D:\\Pets\\ThermoGar\\results\\wave18_b\\bl54_marker_script.py",
+   "mp_main_is_app": false,
+   "receipt_in_worker": null,
+   "marker": "исполнен в воркере",
+   "modules_total": 132,
+   "thermogar_modules": [],
+   "streamlit_loaded": false,
+   "pycalphad_loaded": false
+  }
+ ]
+}

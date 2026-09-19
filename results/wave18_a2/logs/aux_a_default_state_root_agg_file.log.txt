@@ -1,0 +1,162 @@
+﻿..F...                                                                   [100%]
+================================== FAILURES ===================================
+__________ test_temperature_scan_tables_match_with_and_without_pool ___________
+
+    def test_temperature_scan_tables_match_with_and_without_pool() -> None:
+        """Пять точек Fe: таблица и CSV из интерфейса совпадают побайтово."""
+    
+        if not tp.parent_hash_seed_is_fixed():
+            pytest.skip(
+                "Сравнение режимов требует PYTHONHASHSEED=0 у процесса тестов "
+                "(RUN_TESTS_WINDOWS.cmd задаёт её)."
+            )
+        pooled_data, pooled_note, pooled_csv = _temperature_scan(parallel_ui.MODE_AUTO)
+        plain_data, plain_note, plain_csv = _temperature_scan(parallel_ui.MODE_OFF)
+    
+        assert len(pooled_data) == 5
+        assert plain_note == "Последовательный расчёт в одном процессе."
+        if parallel_ui.pool_worker_count() > 1:
+>           assert pooled_note.startswith("Параллельный расчёт:"), pooled_note
+E           AssertionError: Пул процессов отказал (Воркер завершился, не вернув результат (вероятно, не хватило памяти на 5 процессов)); оставшиеся точки досчитаны последовательно.
+E           assert False
+E            +  where False = <built-in method startswith of str object at 0x000002319A83E8B0>('Параллельный расчёт:')
+E            +    where <built-in method startswith of str object at 0x000002319A83E8B0> = 'Пул процессов отказал (Воркер завершился, не вернув результат (вероятно, не хватило памяти на 5 процессов)); оставшиеся точки досчитаны последовательно.'.startswith
+
+tools\test_parallel_integration.py:249: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-19 14:42:07.548 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:07.548 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:07.549 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:07.549 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:07.560 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:07.560 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:07.560 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:07.560 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:07.560 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:14.662 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+2026-09-19 14:42:14.672 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+2026-09-19 14:42:14.682 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+2026-09-19 14:42:14.688 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+2026-09-19 14:42:14.688 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+2026-09-19 14:42:14.697 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+2026-09-19 14:42:14.707 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+Traceback (most recent call last):
+
+  File "<string>", line 1, in <module>
+
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\spawn.py", line 122, in spawn_main
+
+    exitcode = _main(fd, parent_sentinel)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\spawn.py", line 131, in _main
+
+    prepare(preparation_data)
+
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\spawn.py", line 246, in prepare
+
+    _fixup_main_from_path(data['init_main_from_path'])
+
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\spawn.py", line 297, in _fixup_main_from_path
+
+    main_content = runpy.run_path(main_path,
+
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "<frozen runpy>", line 291, in run_path
+
+  File "<frozen runpy>", line 98, in _run_module_code
+
+  File "<frozen runpy>", line 88, in _run_code
+
+  File "D:\Pets\ThermoGar\app\ThermoGar_app.py", line 612, in <module>
+
+    LEGACY_MIGRATION_RECEIPT = migrate_legacy_state(THERMOGAR_PATHS, PROJECT_ROOT)
+
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Pets\ThermoGar\app\thermogar_paths.py", line 819, in migrate_legacy_state
+
+    _atomic_write_receipt(paths, receipt)
+
+  File "D:\Pets\ThermoGar\app\thermogar_paths.py", line 412, in _atomic_write_receipt
+
+    os.replace(temp, destination)
+
+PermissionError: [WinError 5] Отказано в доступе: 'C:\\Users\\gareg\\AppData\\Local\\ThermoGar\\.migration_receipt.json.migration-e9f7b8d92a07a2c986e2dd7b.tmp' -> 'C:\\Users\\gareg\\AppData\\Local\\ThermoGar\\migration_receipt.json'
+
+2026-09-19 14:42:14.714 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+2026-09-19 14:42:14.729 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+
+Traceback (most recent call last):
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\queues.py", line 246, in _feed
+    send_bytes(obj)
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\connection.py", line 184, in send_bytes
+    self._check_closed()
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\connection.py", line 137, in _check_closed
+    raise OSError("handle is closed")
+OSError: handle is closed
+Traceback (most recent call last):
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\queues.py", line 246, in _feed
+    send_bytes(obj)
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\connection.py", line 184, in send_bytes
+    self._check_closed()
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\connection.py", line 137, in _check_closed
+    raise OSError("handle is closed")
+OSError: handle is closed
+Traceback (most recent call last):
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\queues.py", line 246, in _feed
+    send_bytes(obj)
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\connection.py", line 184, in send_bytes
+    self._check_closed()
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\connection.py", line 137, in _check_closed
+    raise OSError("handle is closed")
+OSError: handle is closed
+Traceback (most recent call last):
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\queues.py", line 246, in _feed
+    send_bytes(obj)
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\connection.py", line 184, in send_bytes
+    self._check_closed()
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\connection.py", line 137, in _check_closed
+    raise OSError("handle is closed")
+OSError: handle is closed
+2026-09-19 14:42:37.190 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:37.190 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:37.190 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:37.190 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:37.190 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:37.190 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:37.190 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:37.190 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-19 14:42:37.190 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+=========================== short test summary info ===========================
+FAILED tools/test_parallel_integration.py::test_temperature_scan_tables_match_with_and_without_pool
+1 failed, 5 passed in 73.22s (0:01:13)

@@ -25,6 +25,12 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import matplotlib
+
+# До pycalphad, как в test_ui_g.py: иначе matplotlib грузится с TkAgg, и сборка
+# мусора в главном потоке роняет процесс паникой Tcl (BL-53, 18-А2).
+matplotlib.use("Agg")
+
 import numpy as np
 import pandas as pd
 import pytest

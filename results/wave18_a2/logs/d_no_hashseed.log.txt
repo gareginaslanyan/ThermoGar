@@ -1,0 +1,97 @@
+FFs...                                                                   [100%]
+================================== FAILURES ===================================
+_________________ test_snapshot_reproduces_equilibrium_object _________________
+
+fe_database = <pycalphad.io.database.Database object at 0x000001EB6531B610>
+fe_database_path = WindowsPath('D:/Pets/ThermoGar/databases/converted/fe/mc_fe_v2062_with_mobility.thermogar.tdb')
+fe_sha256 = '236ec4d9b0540de04e4e6305faa208672f31fbdf45b2ae84e92f80bd98053612'
+
+    def test_snapshot_reproduces_equilibrium_object(
+        fe_database: Database,
+        fe_database_path: Path,
+        fe_sha256: str,
+    ) -> None:
+        """Переходник отдаёт те же числа, что и объект ``equilibrium``."""
+    
+        components, phases, mole = _fe_point(fe_database)
+        conditions: dict[Any, float] = {
+            v.N: 1.0,
+            v.P: 101325.0,
+            v.T: FE_TEMPERATURE_K,
+        }
+        conditions.update({v.X(element): value for element, value in mole.items()})
+        reference = equilibrium(
+            fe_database,
+            components,
+            phases,
+            conditions,
+            calc_opts={"pdens": 500},
+        )
+    
+        point = {"N": 1.0, "P": 101325.0, "T": FE_TEMPERATURE_K, "X": mole}
+        with tp.ParallelEquilibrium(fe_database_path, fe_sha256, workers=2) as engine:
+            results = engine.map_points(
+                [point],
+                components,
+                phases,
+                pdens=500,
+                capture=("X", "Y"),
+            )
+        assert results[0].ok, results[0].error
+        snapshot = parallel_ui.snapshot_of(results[0])
+    
+        assert list(np.asarray(snapshot.Phase.values, dtype=str).ravel()) == list(
+            np.asarray(reference.Phase.values, dtype=str).ravel()
+        )
+>       assert _hex_values(snapshot.NP.values) == _hex_values(reference.NP.values)
+E       AssertionError: assert ['0x1.698cc0a... 'nan', 'nan'] == ['0x1.698cc08... 'nan', 'nan']
+E         
+E         At index 0 diff: '0x1.698cc0a98c5fep-5' != '0x1.698cc08dc8a8ep-5'
+E         Use -v to get more diff
+
+tools\test_parallel_integration.py:132: AssertionError
+___________________ test_engine_matches_in_process_bytewise ___________________
+
+fe_database = <pycalphad.io.database.Database object at 0x000001EB6531B610>
+fe_database_path = WindowsPath('D:/Pets/ThermoGar/databases/converted/fe/mc_fe_v2062_with_mobility.thermogar.tdb')
+fe_sha256 = '236ec4d9b0540de04e4e6305faa208672f31fbdf45b2ae84e92f80bd98053612'
+
+    def test_engine_matches_in_process_bytewise(
+        fe_database: Database,
+        fe_database_path: Path,
+        fe_sha256: str,
+    ) -> None:
+        """Пул и счёт в текущем процессе дают одни и те же биты на пяти точках."""
+    
+        components, phases, mole = _fe_point(fe_database)
+        points = [
+            {"N": 1.0, "P": 101325.0, "T": 773.15 + 100.0 * step, "X": mole}
+            for step in range(5)
+        ]
+        local = tp.solve_points_in_process(
+            fe_database,
+            points,
+            components,
+            phases,
+            pdens=500,
+            capture=("X",),
+        )
+        with tp.ParallelEquilibrium(fe_database_path, fe_sha256, workers=3) as engine:
+            pooled = engine.map_points(
+                points,
+                components,
+                phases,
+                pdens=500,
+                capture=("X",),
+            )
+>       assert tp.canonical_digest(local) == tp.canonical_digest(pooled)
+E       AssertionError: assert '018639a6e7b4...e169dea9ea2c9' == 'fbf84eae105d...26fc3fa20f54a'
+E         
+E         - fbf84eae105d4b019d75d75b018e44aef00e29e2a36fe9b913b26fc3fa20f54a
+E         + 018639a6e7b4757f0dec780977b02d3435c3b195ad775679fbae169dea9ea2c9
+
+tools\test_parallel_integration.py:178: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/test_parallel_integration.py::test_snapshot_reproduces_equilibrium_object
+FAILED tools/test_parallel_integration.py::test_engine_matches_in_process_bytewise
+2 failed, 3 passed, 1 skipped in 15.96s

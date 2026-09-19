@@ -10,11 +10,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 import hashlib
 import json
+import multiprocessing
 import os
 from pathlib import Path
 import re
 import secrets
 import stat
+import time
 from typing import Any
 
 
@@ -375,7 +377,18 @@ def _atomic_copy_no_overwrite(
             pass
 
 
-def _atomic_write_receipt(paths: ThermoGarPaths, payload: dict[str, Any]) -> None:
+def _atomic_write_receipt(
+    paths: ThermoGarPaths,
+    payload: dict[str, Any],
+) -> dict[str, Any]:
+    """Write the receipt; return what ``migration_receipt.json`` now holds.
+
+    On Windows ``os.replace`` refuses with PermissionError while another
+    process is replacing or reading the same destination (BL-54). If the
+    destination already exists, retry once after 50 ms, then keep the other
+    writer's receipt and return it re-read instead of failing.
+    """
+
     destination = paths.state_root / MIGRATION_RECEIPT_NAME
     encoded = (
         json.dumps(
@@ -409,12 +422,29 @@ def _atomic_write_receipt(paths: ThermoGarPaths, payload: dict[str, Any]) -> Non
     finally:
         os.close(descriptor)
     try:
-        os.replace(temp, destination)
+        try:
+            os.replace(temp, destination)
+        except PermissionError:
+            if not destination.exists():
+                raise
+            time.sleep(0.05)
+            try:
+                os.replace(temp, destination)
+            except PermissionError:
+                if not destination.exists():
+                    raise
+                existing = _read_held_snapshot(
+                    destination,
+                    canonical_root=paths.state_root,
+                    maximum_bytes=MAX_MIGRATION_FILE_BYTES,
+                )
+                return json.loads(existing.data.decode("utf-8"))
     finally:
         try:
             temp.unlink()
         except FileNotFoundError:
             pass
+    return payload
 
 
 def _record(
@@ -679,11 +709,18 @@ def _legacy_candidates(
 def migrate_legacy_state(
     paths: ThermoGarPaths,
     install_root: str | os.PathLike[str],
-) -> dict[str, Any]:
-    """Copy the finite legacy allowlist once without mutating either source."""
+) -> dict[str, Any] | None:
+    """Copy the finite legacy allowlist once without mutating either source.
+
+    Returns ``None`` in a child process. A spawn worker of the calculation pool
+    re-executes the Streamlit script as ``__mp_main__`` and would otherwise
+    migrate again, racing the other workers for the receipt (BL-54).
+    """
 
     if not isinstance(paths, ThermoGarPaths):
         raise TypeError("paths must be a ThermoGarPaths instance")
+    if multiprocessing.parent_process() is not None:
+        return None
     root = _absolute_path(install_root, label="legacy install root")
     _assert_plain_existing_chain(root, canonical_root=None, final_kind="directory")
     try:
@@ -816,7 +853,7 @@ def migrate_legacy_state(
         "outcome": "conflict" if conflict else "completed",
         "records": records,
     }
-    _atomic_write_receipt(paths, receipt)
+    written = _atomic_write_receipt(paths, receipt)
     if conflict:
         raise LegacyMigrationConflict(receipt)
-    return receipt
+    return written

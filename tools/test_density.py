@@ -1238,6 +1238,124 @@ def test_vrh_volumes_refuse_a_phase_without_element_density(
     )
 
 
+# --------------------------------------------------------------------------- #
+# 18-А (BL-47). Эталонная фаза элемента из записи ELEMENT пробуется первой
+# --------------------------------------------------------------------------- #
+
+T_BL47 = 298.15
+
+
+def test_reference_phases_come_from_element_records() -> None:
+    """Эталонные фазы — из записей ELEMENT базы (refstates pycalphad)."""
+
+    from thermogar_physical import element_reference_phases
+
+    phases = element_reference_phases(Database(str(AL_TDB)))
+    assert phases["FE"] == "BCC_A2"
+    assert phases["SI"] == "DIA_A4"
+    assert phases["MN"] == "BCC_A12"
+    assert phases["AL"] == "FCC_A1"
+
+
+@pytest.mark.parametrize(
+    ("element", "reference", "phase", "expected"),
+    (
+        # До 18-А: Fe из DP(FCC_A1,FE:VA) = 8140, Si из DP(FCC_A1,SI:VA) = 3053.
+        ("FE", "BCC_A2", "BCC_A2", 7876.16),
+        ("SI", "DIA_A4", "DIAMOND_A4", 2329.38),
+    ),
+)
+def test_reference_phase_is_tried_first(
+    physical_db_plain: PhysicalDensityDatabase,
+    element: str,
+    reference: str,
+    phase: str,
+    expected: float,
+) -> None:
+    value, kind, label = physical_db_plain.element_density_model(
+        element, T_BL47, reference
+    )
+    assert label.startswith(f"DP({phase},{element}")
+    assert kind == "reference"
+    assert value == pytest.approx(expected, abs=0.01)
+    # Эталонная фаза — главный путь, как FCC_A1: примечания нет (решение 18-А).
+    assert physical_db_plain.element_density_note(element, T_BL47, reference) is None
+
+
+@pytest.mark.parametrize(
+    ("element", "reference"),
+    (("AL", "FCC_A1"), ("NI", "FCC_A1"), ("CU", "FCC_A1"), ("MN", "BCC_A12")),
+)
+def test_fcc_reference_or_phase_without_model_keeps_old_path(
+    physical_db_plain: PhysicalDensityDatabase,
+    element: str,
+    reference: str,
+) -> None:
+    """Эталон FCC_A1 совпадает с прежним первым; BCC_A12 в PDB нет — прежний порядок."""
+
+    assert physical_db_plain.element_density_model(
+        element, T_BL47, reference
+    ) == physical_db_plain.element_density_model(element, T_BL47)
+    assert physical_db_plain.element_density_note(element, T_BL47, reference) is None
+
+
+def test_reference_phase_does_not_take_a_foreign_d0(
+    physical_db_plain: PhysicalDensityDatabase,
+) -> None:
+    """BL-39 остаётся: DP(DIAMOND_A4,B) = D0BCC_FE+… бору не годится и как эталон."""
+
+    for reference in ("DIAMOND_A4", "BETA_RHOMBO_B"):
+        assert physical_db_plain.element_density(
+            "B", T_BL47, reference
+        ) == pytest.approx(physical_db_plain.function_value("D0TETR_B", T_BL47))
+
+
+def test_mixture_uses_reference_phases(
+    physical_db_plain: PhysicalDensityDatabase,
+) -> None:
+    """Правило смеси Fe–Si берёт Fe из BCC_A2 и Si из DIAMOND_A4."""
+
+    composition = {"FE": 0.5, "SI": 0.5}
+    references = {"FE": "BCC_A2", "SI": "DIA_A4"}
+    density, coverage, warnings = physical_db_plain.estimate_density_by_mixture(
+        composition, T_BL47, None, references
+    )
+    mass_fe, mass_si = 0.5 * 55.845, 0.5 * 28.085
+    fe = physical_db_plain.element_density("FE", T_BL47, "BCC_A2")
+    si = physical_db_plain.element_density("SI", T_BL47, "DIA_A4")
+    assert density == pytest.approx((mass_fe + mass_si) / (mass_fe / fe + mass_si / si))
+    assert coverage == pytest.approx(1.0) and warnings == []
+    assert physical_db_plain.mixture_element_notes(composition, T_BL47, references) == []
+
+
+def test_zinc_reference_phase_drops_the_old_note(
+    physical_db_plain: PhysicalDensityDatabase,
+) -> None:
+    """Zn и раньше шёл из HCP_A3, но как обходной путь с примечанием; по эталону — без."""
+
+    assert physical_db_plain.element_density_note("ZN", T_BL47) is not None
+    assert physical_db_plain.element_density_note("ZN", T_BL47, "HCP_A3") is None
+
+
+def test_si_diamond_a4_inherits_the_diamond_model(
+    physical_db_plain: PhysicalDensityDatabase,
+) -> None:
+    """18-А (BL-48): SI_DIAMOND_A4 mc_al — по DP-модели DIAMOND_A4, вид inherited."""
+
+    database = Database(str(AL_TDB))
+    resolution = physical_db_plain.resolve_phase(database, "SI_DIAMOND_A4")
+    assert resolution.physical_phase == "DIAMOND_A4"
+    assert resolution.quality == "inherited"
+    assert resolution.note == "Плотность оценена по модели DIAMOND_A4 той же структуры."
+    value, coverage, _warnings = physical_db_plain.density_from_site_fractions(
+        "DIAMOND_A4", [{"SI": 1.0}], T_BL47
+    )
+    assert coverage == pytest.approx(1.0)
+    assert value == pytest.approx(
+        physical_db_plain.element_density("SI", T_BL47, "DIA_A4"), rel=1.0e-12
+    )
+
+
 def test_vrh_prepare_accepts_element_notes_and_rejects_bad_ones() -> None:
     """Необязательное поле volume_notes: список строк или отказ RESULT_INVALID."""
 

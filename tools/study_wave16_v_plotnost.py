@@ -33,6 +33,9 @@
     .venv-windows\\Scripts\\python.exe -B -X utf8 tools\\study_wave16_v_plotnost.py run
     ... table          # 16V_plotnost.csv и 16V_sravnenie.md из raw/, без счёта
 
+18-А: тот же сценарий с ``--out-dir results\\wave18_a`` (до подкоманды) — 16-В не
+перезаписывается; вариант D берёт эталонные фазы элементов из TDB (BL-47).
+
 Память: вход — ``--min-free-gib`` (3,0); аварийный — ``E1_ABORT_FREE_GIB`` модуля
 волны 12, читается из исходника и не меняется. Один расчётный поток: задания идут
 по одному, каждое — отдельным процессом под сторожем 16-А.
@@ -312,9 +315,12 @@ def mixture_point(context, entered, balance, temperature_k) -> dict[str, Any]:
         temperatures_k=(float(temperature_k),))
     atomic, _mass = vp.composition_fractions(database, inputs)
     masses = vp._database_masses(database, [el for el, _ in atomic])
+    # 18-А (BL-47): эталонные фазы элементов из той же TDB, как в приложении.
+    references = physical.element_reference_phases(database)
     density, coverage, notes = pdb.estimate_density_by_mixture(
-        dict(atomic), float(temperature_k), masses)
-    notes = list(notes) + pdb.mixture_element_notes(dict(atomic), float(temperature_k))
+        dict(atomic), float(temperature_k), masses, references)
+    notes = list(notes) + pdb.mixture_element_notes(
+        dict(atomic), float(temperature_k), references)
     out = {"plotnost_kg_m3": density, "pokrytie_mass_pct": 100.0 * coverage,
            "predupr": notes + list(pdb.override_notes)}
     if density is None:
@@ -563,7 +569,10 @@ def command_child(args) -> None:
 
 
 def main() -> None:
+    global OUT, RAW, LOGS
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser.add_argument("--out-dir", default="",
+                        help="каталог результатов вместо results/wave16_v (18-А: results/wave18_a)")
     sub = parser.add_subparsers(dest="command", required=True)
     run = sub.add_parser("run")
     run.add_argument("--only-marki", default="", help="через ;")
@@ -575,6 +584,9 @@ def main() -> None:
     ch.add_argument("--out", required=True)
     sub.add_parser("table")
     args = parser.parse_args()
+    if args.out_dir:
+        OUT = Path(args.out_dir).resolve()
+        RAW, LOGS = OUT / "raw", OUT / "logs"
     {"run": command_run, "child": command_child, "table": command_table}[args.command](args)
 
 

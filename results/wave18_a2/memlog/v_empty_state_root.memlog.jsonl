@@ -1,0 +1,2 @@
+{"test": "tools/test_parallel_integration.py::test_snapshot_reproduces_equilibrium_object", "seconds": 11.5, "rss_before_gib": 0.189, "rss_after_gib": 0.331, "growth_gib": 0.142, "peak_tree_gib": 0.626, "peak_wset_process_gib": 0.336, "open_figures": 0, "pool_workers": null}
+{"test": "tools/test_parallel_integration.py::test_engine_matches_in_process_bytewise", "seconds": 6.8, "rss_before_gib": 0.331, "rss_after_gib": 0.343, "growth_gib": 0.012, "peak_tree_gib": 1.233, "peak_wset_process_gib": 0.348, "open_figures": 0, "pool_workers": null}

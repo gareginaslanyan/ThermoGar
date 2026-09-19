@@ -1,0 +1,51 @@
+== nicr: sha256 before vs after
+11c11
+< f8b19c5f7a1a6361d2f60b05ed7d6accba0c4fc88b19ab48b3bddb53229abd61  settings.csv
+---
+> cf7dc002b6de8e5663821d5ceaeed2fdeb6aa691638b5eab170e09c888d44d2f  settings.csv
+-- settings.csv diff
+18a19
+> Критерий солидуса,scheil
+== nialcr: sha256 before vs after
+11c11
+< c03fcd94f55e731e6041bd0da4b2003bd9ed5b26c06fa4bbeaa28ae1ae4111c8  settings.csv
+---
+> d5b86de75ecea957e569804e6b0b89854c7c07663e7a0cb59ff4a4bc27cfbac6  settings.csv
+-- settings.csv diff
+18a19
+> Критерий солидуса,scheil
+== fecrc: sha256 before vs after
+11c11
+< 15c500c96eb33f616234d26f0afbdfe1f1c7a3beadf2f4d3595696e03ede9c00  settings.csv
+---
+> 047f94d9e14fdb3a1dd6918cf7046fa37fe8f455dc87379a585a242dc34cf870  settings.csv
+-- settings.csv diff
+18a19
+> Критерий солидуса,scheil
+== inconel600: sha256 before vs after
+6c6
+< 647c68609cbaad81a4da8193b299c558660bcf8800252b6800b420378d2c4ea8  settings.csv
+---
+> e2d8269dc3b035d549fba69ef493dc7194258128ce782427b811606699066684  settings.csv
+-- settings.csv diff
+18a19
+> Критерий солидуса,scheil
+== rs320: sha256 before vs after
+6c6
+< 94a24f576be62a6b0f98f43168b6e298565461902b60101f243ff9102e72ae8c  settings.csv
+---
+> 9820299c555e44225641d5d9b25e7ada24cc2d362ff02bb54fadfd1335e63c90  settings.csv
+8c8
+< 298a9608f31ad76caa911607c2b242543a9e70286f66e7ad1ffa4bd9206544c0  summary.csv
+---
+> 56031aa1ce64ebf041abe8badd11d54ca585212fe520d315cbffb341fc170f7b  summary.csv
+-- settings.csv diff
+18a19
+> Критерий солидуса,бисекция
+== rs320 summary.csv diff
+2c2
+< Равновесное,607.3828125000001,609.9892654977269,602.8906250000001,равновесный солидус,4.4921875,100.0,51,нет
+---
+> Равновесное,607.3828125000001,609.9892654977269,564.9902343750001,равновесный солидус,42.392578125,,51,нет
+== nicr repeat before vs before2
+identical
