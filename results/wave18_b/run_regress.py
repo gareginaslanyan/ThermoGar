@@ -1,5 +1,7 @@
-"""Регрессия 18-А: копия раннера 17-Г; логи regress_logs/, memlog regress_memlog/,
-THERMOGAR_STATE_ROOT = results/validation/wave18_a_state; test_ui_f -m slow — только при >= 6,0 ГиБ.
+"""Регрессия 18-Б: копия раннера 18-А (results/wave18_a/run_regress.py), логи — в results/wave18_b/,
+чтобы не перезаписать логи 18-А. MPLBACKEND=Agg для всех процессов (BL-53).
+
+Как в 18-А: THERMOGAR_STATE_ROOT = results/validation/wave18_a_state; test_ui_f -m slow — только при >= 6,0 ГиБ.
 
 Исходная шапка 17-Г:
 Полная пофайловая регрессия 17-Г (выпуск 0.4.2, код d3f3d1c).
