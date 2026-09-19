@@ -1,0 +1,103 @@
+﻿F..F.................................................................F.. [ 80%]
+.....FF..........F                                                       [100%]
+================================== FAILURES ===================================
+________________________ test_payload_list_is_complete ________________________
+
+    def test_payload_list_is_complete() -> None:
+        payload = tracked(*PAYLOAD_TREES) + list(PAYLOAD_FILES)
+        assert len(payload) == 75, len(payload)
+        missing = [name for name in checked_files() if not (ROOT / name).is_file()]
+>       assert not missing, missing
+E       AssertionError: ['docs/guide/ThermoGar_Guide_0.4.3.html']
+E       assert not ['docs/guide/ThermoGar_Guide_0.4.3.html']
+
+tools\test_version_consistency.py:97: AssertionError
+_____ test_first_version_mention_is_app_version[QUICK_START_THERMOGAR.md] _____
+
+relative = 'QUICK_START_THERMOGAR.md'
+
+    @pytest.mark.parametrize("relative", checked_files())
+    def test_first_version_mention_is_app_version(relative: str) -> None:
+        found = first_mention(relative) if (ROOT / relative).is_file() else None
+        if relative in MUST_MENTION and relative != "packaging/product-version.json":
+            assert found is not None, f"{relative}: нет упоминания «ThermoGar {APP_VERSION}»"
+        if found is not None:
+>           assert found == APP_VERSION, f"{relative}: первое упоминание {found}, APP_VERSION {APP_VERSION}"
+E           AssertionError: QUICK_START_THERMOGAR.md: первое упоминание 0.4.2, APP_VERSION 0.4.3
+E           assert '0.4.2' == '0.4.3'
+E             
+E             - 0.4.3
+E             ?     ^
+E             + 0.4.2
+E             ?     ^
+
+tools\test_version_consistency.py:106: AssertionError
+_________ test_first_version_mention_is_app_version[docs/FEATURES.md] _________
+
+relative = 'docs/FEATURES.md'
+
+    @pytest.mark.parametrize("relative", checked_files())
+    def test_first_version_mention_is_app_version(relative: str) -> None:
+        found = first_mention(relative) if (ROOT / relative).is_file() else None
+        if relative in MUST_MENTION and relative != "packaging/product-version.json":
+            assert found is not None, f"{relative}: нет упоминания «ThermoGar {APP_VERSION}»"
+        if found is not None:
+>           assert found == APP_VERSION, f"{relative}: первое упоминание {found}, APP_VERSION {APP_VERSION}"
+E           AssertionError: docs/FEATURES.md: первое упоминание 0.4.2, APP_VERSION 0.4.3
+E           assert '0.4.2' == '0.4.3'
+E             
+E             - 0.4.3
+E             ?     ^
+E             + 0.4.2
+E             ?     ^
+
+tools\test_version_consistency.py:106: AssertionError
+_______ test_first_version_mention_is_app_version[docs/guide/README.md] _______
+
+relative = 'docs/guide/README.md'
+
+    @pytest.mark.parametrize("relative", checked_files())
+    def test_first_version_mention_is_app_version(relative: str) -> None:
+        found = first_mention(relative) if (ROOT / relative).is_file() else None
+        if relative in MUST_MENTION and relative != "packaging/product-version.json":
+            assert found is not None, f"{relative}: нет упоминания «ThermoGar {APP_VERSION}»"
+        if found is not None:
+>           assert found == APP_VERSION, f"{relative}: первое упоминание {found}, APP_VERSION {APP_VERSION}"
+E           AssertionError: docs/guide/README.md: первое упоминание 0.4.2, APP_VERSION 0.4.3
+E           assert '0.4.2' == '0.4.3'
+E             
+E             - 0.4.3
+E             ?     ^
+E             + 0.4.2
+E             ?     ^
+
+tools\test_version_consistency.py:106: AssertionError
+_ test_first_version_mention_is_app_version[docs/guide/ThermoGar_Guide_0.4.3.html] _
+
+relative = 'docs/guide/ThermoGar_Guide_0.4.3.html'
+
+    @pytest.mark.parametrize("relative", checked_files())
+    def test_first_version_mention_is_app_version(relative: str) -> None:
+        found = first_mention(relative) if (ROOT / relative).is_file() else None
+        if relative in MUST_MENTION and relative != "packaging/product-version.json":
+>           assert found is not None, f"{relative}: нет упоминания «ThermoGar {APP_VERSION}»"
+E           AssertionError: docs/guide/ThermoGar_Guide_0.4.3.html: нет упоминания «ThermoGar 0.4.3»
+E           assert None is not None
+
+tools\test_version_consistency.py:104: AssertionError
+__________________ test_guide_builder_names_current_version ___________________
+
+    def test_guide_builder_names_current_version() -> None:
+        source = (ROOT / "tools/make_guide_screens.py").read_text("utf-8")
+>       assert f'HTML_NAME = "ThermoGar_Guide_{APP_VERSION}.html"' in source
+E       assert 'HTML_NAME = "ThermoGar_Guide_0.4.3.html"' in '"""Скриншоты иллюстрированного руководства ThermoGar (docs/guide).\n\nСкрипт поднимает приложение из этого worktree н...arguments.no_html:\n        build_html()\n    return 0\n\n\nif __name__ == "__main__":\n    raise SystemExit(main())\n'
+
+tools\test_version_consistency.py:124: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/test_version_consistency.py::test_payload_list_is_complete - Ass...
+FAILED tools/test_version_consistency.py::test_first_version_mention_is_app_version[QUICK_START_THERMOGAR.md]
+FAILED tools/test_version_consistency.py::test_first_version_mention_is_app_version[docs/FEATURES.md]
+FAILED tools/test_version_consistency.py::test_first_version_mention_is_app_version[docs/guide/README.md]
+FAILED tools/test_version_consistency.py::test_first_version_mention_is_app_version[docs/guide/ThermoGar_Guide_0.4.3.html]
+FAILED tools/test_version_consistency.py::test_guide_builder_names_current_version
+6 failed, 84 passed in 0.77s

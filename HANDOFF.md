@@ -80,7 +80,7 @@ powershell -ExecutionPolicy Bypass -File packaging\build_installer.ps1
 ```
 
 Цепочка: `generate_notices.ps1` → `stage_payload.ps1` → `makensis` → SHA-256 → `dist\`.
-Результат — `dist\ThermoGar-0.4.2-win64.exe` и `dist\ThermoGar-0.4.2-win64.build.json` с размером,
+Результат — `dist\ThermoGar-0.4.3-win64.exe` и `dist\ThermoGar-0.4.3-win64.build.json` с размером,
 числом файлов, SHA-256 и `estimated_size_kb` — размером установки для «Программ и компонентов»,
 который передаётся в NSIS через `/DESTIMATED_SIZE_KB`. Занимает около 20 минут, почти всё
 время — копирование и хеширование рантайма (15 003 файла, ~549 МБ).
