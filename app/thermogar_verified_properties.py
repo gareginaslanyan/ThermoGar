@@ -421,6 +421,7 @@ def _mixture_molar_volumes_cm3(
         for name in real
     }
     volumes: dict[str, float] = {}
+    reference_phases = physical.element_reference_phases(database)
     for phase in names:
         amount_total = 0.0
         volume_total = 0.0
@@ -434,8 +435,11 @@ def _mixture_molar_volumes_cm3(
                 composition,
                 temperature_k,
                 physical._refstate_masses(database, composition),
+                reference_phases,
             )
-            missing = physical_database.mixture_missing_elements(composition, temperature_k)
+            missing = physical_database.mixture_missing_elements(
+                composition, temperature_k, reference_phases
+            )
             if missing:
                 # BL-39: плотности элемента в базе нет — объём фазы не выдумывается.
                 _fail(
@@ -450,7 +454,9 @@ def _mixture_molar_volumes_cm3(
                 )
             amount_total += amount
             volume_total += amount * molar_mass / density
-            for note in physical_database.mixture_element_notes(composition, temperature_k):
+            for note in physical_database.mixture_element_notes(
+                composition, temperature_k, reference_phases
+            ):
                 if note not in notes:
                     notes.append(note)
         if amount_total <= 0.0 or volume_total <= 0.0:
