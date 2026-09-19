@@ -183,22 +183,23 @@ sha на маке = `c1b0c7d3…`, то есть содержимое то же.
 
 ## git
 
-Коммит результатов — `2db20c187e422d46529605dfd4bae5f8676ca848`, этот отчёт —
-следующим коммитом.
+Коммит результатов — `2db20c187e422d46529605dfd4bae5f8676ca848`, отчёт до сверки пуша —
+`f096bf996ee0a5c15597c6a5e805af29aceca1ce`.
 
-**Пуш не прошёл:**
+Первый пуш отклонён (403): токен git в `osxkeychain` без права записи. По решению мастера
+вход через GitHub CLI: `brew install gh` (2.101.0), `gh auth login --web` (вход как
+`gareginaslanyan`, права `repo`), `gh auth setup-git`. Запись в `osxkeychain` не
+удалялась, коммиты не переписывались.
+
+Пуш `b415851..f096bf9`. `git ls-remote origin wave16-lilith`:
 
 ```
-remote: Permission to gareginaslanyan/ThermoGar.git denied to gareginaslanyan.
-fatal: unable to access 'https://github.com/gareginaslanyan/ThermoGar.git/': The requested URL returned error: 403
+f096bf996ee0a5c15597c6a5e805af29aceca1ce	refs/heads/wave16-lilith
 ```
 
-Учётные данные git на маке берутся из `osxkeychain`; у этого токена нет права записи в
-репозиторий (`fetch` проходит). `gh` на маке не установлен. `git ls-remote origin
-wave16-lilith` = `b415851aa33b3747b01f920a446c3a430d6bb595` ≠ HEAD. Нужен токен с правом
-записи, после него — `git push origin wave16-lilith` и сверка `ls-remote`.
+Совпадает с HEAD. Этот отчёт идёт следующим коммитом и пушем, сверка по нему — в сессии.
 
-`git status --short` после коммита:
+`git status --short`:
 
 ```
 ?? .venv/
