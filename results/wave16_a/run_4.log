@@ -1,0 +1,177 @@
+[22:56:12] заданий 199, из кэша 112, считать 87; аварийный порог 1.0 ГиБ, вход 3.0 / 5.0 ГиБ; у скрипта «Лилит» аварийный 2.0 ГиБ
+[22:56:12] 1/87 16Х11Н2В2МФ · mc_fe_2062_patch · Lilit-skript · sloj · [1e-09] · pdens None
+[22:59:07]    ok · 1687.1 / 1762.1 · 175 с · пик 8333 МиБ
+[22:59:07] 2/87 16Х11Н2В2МФ · mc_fe_2062_patch · Lilit-skript · sloj · [1e-06] · pdens None
+[23:01:49]    ok · 1687.1 / 1762.1 · 161 с · пик 8337 МиБ
+[23:01:49] 3/87 16Х11Н2В2МФ · mc_fe_2062_bez_patcha · Lilit-skript · sloj · [1e-09] · pdens None
+[23:04:40]    ok · None / None · 171 с · пик 8337 МиБ
+[23:04:40] 4/87 16Х11Н2В2МФ · mc_fe_2062_bez_patcha · Lilit-skript · sloj · [1e-06] · pdens None
+[23:07:30]    ok · None / None · 170 с · пик 8338 МиБ
+[23:07:30] 5/87 08Х21Н6М2Т · mc_fe_2062_patch · ThermoGar · polnyj · [1e-06, 0.0001] · pdens 50
+[23:13:19]    ok · 1669.009375 / 1726.9390625 ; 1669.1064208984376 / 1726.9390625 · 349 с · пик 2547 МиБ
+[23:13:19] 6/87 08Х21Н6М2Т · mc_fe_2062_patch · ThermoGar · bystryj · [1e-06] · pdens 50
+[23:17:56]    ok · 1669.009375 / 1726.9390625 · 277 с · пик 3126 МиБ
+[23:17:56] 7/87 08Х21Н6М2Т · mc_fe_2062_bez_patcha · ThermoGar · polnyj · [1e-06] · pdens 50
+[23:19:15]    oshibka · 79 с · пик 2399 МиБ
+[23:19:15] 8/87 08Х21Н6М2Т · mc_fe_2062_patch · ThermoGar-app · polnyj · [1e-06] · pdens 50
+[23:24:39]    ok · 1669.009375 / 1726.9390625 · 324 с · пик 2554 МиБ
+[23:24:39] 9/87 08Х21Н6М2Т · mc_fe_2062_patch · Lilit-skript · sloj · [1e-09] · pdens None
+[23:26:09]    ok · 1669.1 / 1726.9 · 90 с · пик 4679 МиБ
+[23:26:09] 10/87 08Х21Н6М2Т · mc_fe_2062_patch · Lilit-skript · sloj · [1e-06] · pdens None
+[23:27:38]    ok · 1669.1 / 1726.9 · 89 с · пик 4681 МиБ
+[23:27:38] 11/87 08Х21Н6М2Т · mc_fe_2062_bez_patcha · Lilit-skript · sloj · [1e-09] · pdens None
+[23:29:17]    ok · None / None · 99 с · пик 4680 МиБ
+[23:29:17] 12/87 08Х21Н6М2Т · mc_fe_2062_bez_patcha · Lilit-skript · sloj · [1e-06] · pdens None
+[23:30:56]    ok · None / None · 99 с · пик 4677 МиБ
+[23:30:56] 13/87 08Х17Н6Т · mc_fe_2062_patch · ThermoGar · polnyj · [1e-06, 0.0001] · pdens 50
+[23:34:05]    ok · 1692.759375 / 1734.5953125 ; 1692.808203125 / 1734.5953125 · 189 с · пик 2242 МиБ
+[23:34:05] 14/87 08Х17Н6Т · mc_fe_2062_patch · ThermoGar · bystryj · [1e-06] · pdens 50
+[23:36:27]    ok · 1692.759375 / 1734.5953125 · 142 с · пик 2657 МиБ
+[23:36:27] 15/87 08Х17Н6Т · mc_fe_2062_bez_patcha · ThermoGar · polnyj · [1e-06] · pdens 50
+[23:37:23]    oshibka · 56 с · пик 2100 МиБ
+[23:37:23] 16/87 08Х17Н6Т · mc_fe_2062_patch · ThermoGar-app · polnyj · [1e-06] · pdens 50
+[23:40:17]    ok · 1692.759375 / 1734.5953125 · 174 с · пик 2238 МиБ
+[23:40:17] 17/87 08Х17Н6Т · mc_fe_2062_patch · Lilit-skript · sloj · [1e-09] · pdens None
+[23:41:13]    ok · 1692.9 / 1734.6 · 56 с · пик 2468 МиБ
+[23:41:13] 18/87 08Х17Н6Т · mc_fe_2062_patch · Lilit-skript · sloj · [1e-06] · pdens None
+[23:42:09]    ok · 1692.9 / 1734.6 · 56 с · пик 2469 МиБ
+[23:42:09] 19/87 08Х17Н6Т · mc_fe_2062_bez_patcha · Lilit-skript · sloj · [1e-09] · pdens None
+[23:43:11]    ok · None / None · 62 с · пик 2469 МиБ
+[23:43:11] 20/87 08Х17Н6Т · mc_fe_2062_bez_patcha · Lilit-skript · sloj · [1e-06] · pdens None
+[23:44:13]    ok · None / None · 62 с · пик 2470 МиБ
+[23:44:13] 21/87 45Х22Н4М 3 · mc_fe_2062_patch · ThermoGar · polnyj · [1e-06, 0.0001] · pdens 50
+[23:49:37]    ok · 1541.978125 / 1688.7359375 ; 1540.9243530273438 / 1688.7359375 · 324 с · пик 2386 МиБ
+[23:49:37] 22/87 45Х22Н4М 3 · mc_fe_2062_patch · ThermoGar · bystryj · [1e-06] · pdens 50
+[23:53:57]    ok · 1541.978125 / 1688.7359375 · 260 с · пик 2924 МиБ
+[23:53:57] 23/87 45Х22Н4М 3 · mc_fe_2062_bez_patcha · ThermoGar · polnyj · [1e-06] · pdens 50
+[23:55:05]    oshibka · 68 с · пик 2203 МиБ
+[23:55:05] 24/87 45Х22Н4М 3 · mc_fe_2062_patch · ThermoGar-app · polnyj · [1e-06] · pdens 50
+[00:00:12]    ok · 1541.978125 / 1688.7359375 · 307 с · пик 2378 МиБ
+[00:00:12] 25/87 45Х22Н4М 3 · mc_fe_2062_patch · Lilit-skript · sloj · [1e-09] · pdens None
+[00:02:13]    ok · 1537.1 / 1688.6 · 120 с · пик 2954 МиБ
+[00:02:13] 26/87 45Х22Н4М 3 · mc_fe_2062_patch · Lilit-skript · sloj · [1e-06] · pdens None
+[00:04:14]    ok · 1537.1 / 1688.6 · 122 с · пик 2948 МиБ
+[00:04:14] 27/87 45Х22Н4М 3 · mc_fe_2062_bez_patcha · Lilit-skript · sloj · [1e-09] · pdens None
+[00:05:25]    ok · None / None · 71 с · пик 1849 МиБ
+[00:05:25] 28/87 45Х22Н4М 3 · mc_fe_2062_bez_patcha · Lilit-skript · sloj · [1e-06] · pdens None
+[00:06:36]    ok · None / None · 71 с · пик 1850 МиБ
+[00:06:36] 29/87 1.4828 · mc_fe_2062_patch · ThermoGar · polnyj · [1e-06, 0.0001] · pdens 50
+[00:10:45]    ok · 1653.775 / 1683.4234375 ; 1653.81162109375 / 1683.4234375 · 249 с · пик 2189 МиБ
+[00:10:45] 30/87 1.4828 · mc_fe_2062_patch · ThermoGar · bystryj · [1e-06] · pdens 50
+[00:13:54]    ok · 1653.775 / 1683.4234375 · 188 с · пик 2557 МиБ
+[00:13:54] 31/87 1.4828 · mc_fe_2062_bez_patcha · ThermoGar · polnyj · [1e-06] · pdens 50
+[00:14:51]    oshibka · 57 с · пик 2065 МиБ
+[00:14:51] 32/87 1.4828 · mc_fe_2062_patch · ThermoGar-app · polnyj · [1e-06] · pdens 50
+[00:18:46]    ok · 1653.775 / 1683.4234375 · 235 с · пик 2165 МиБ
+[00:18:46] 33/87 1.4828 · mc_fe_2062_patch · Lilit-skript · sloj · [1e-09] · pdens None
+[00:19:40]    ok · 1653.9 / 1683.4 · 54 с · пик 2562 МиБ
+[00:19:40] 34/87 1.4828 · mc_fe_2062_patch · Lilit-skript · sloj · [1e-06] · pdens None
+[00:20:35]    ok · 1653.9 / 1683.4 · 55 с · пик 2563 МиБ
+[00:20:35] 35/87 1.4828 · mc_fe_2062_bez_patcha · Lilit-skript · sloj · [1e-09] · pdens None
+[00:21:37]    ok · None / None · 61 с · пик 2561 МиБ
+[00:21:37] 36/87 1.4828 · mc_fe_2062_bez_patcha · Lilit-skript · sloj · [1e-06] · pdens None
+[00:22:38]    ok · None / None · 62 с · пик 2563 МиБ
+[00:22:38] 37/87 06Х18Н11 · mc_fe_2062_patch · ThermoGar · polnyj · [1e-06, 0.0001] · pdens 50
+[00:25:44]    ok · 1695.884375 / 1708.6578125 ; 1695.9127563476563 / 1708.6578125 · 185 с · пик 2051 МиБ
+[00:25:44] 38/87 06Х18Н11 · mc_fe_2062_patch · ThermoGar · bystryj · [1e-06] · pdens 50
+[00:27:59]    ok · 1695.884375 / 1708.6578125 · 135 с · пик 2406 МиБ
+[00:27:59] 39/87 06Х18Н11 · mc_fe_2062_bez_patcha · ThermoGar · polnyj · [1e-06] · pdens 50
+[00:28:42]    oshibka · 43 с · пик 1941 МиБ
+[00:28:42] 40/87 06Х18Н11 · mc_fe_2062_patch · ThermoGar-app · polnyj · [1e-06] · pdens 50
+[00:31:35]    ok · 1695.884375 / 1708.6578125 · 173 с · пик 2033 МиБ
+[00:31:35] 41/87 06Х18Н11 · mc_fe_2062_patch · Lilit-skript · sloj · [1e-09] · pdens None
+[00:32:08]    ok · 1695.9 / 1708.6 · 33 с · пик 1445 МиБ
+[00:32:08] 42/87 06Х18Н11 · mc_fe_2062_patch · Lilit-skript · sloj · [1e-06] · pdens None
+[00:32:41]    ok · 1695.9 / 1708.6 · 33 с · пик 1448 МиБ
+[00:32:41] 43/87 06Х18Н11 · mc_fe_2062_bez_patcha · Lilit-skript · sloj · [1e-09] · pdens None
+[00:33:18]    ok · None / None · 37 с · пик 1751 МиБ
+[00:33:18] 44/87 06Х18Н11 · mc_fe_2062_bez_patcha · Lilit-skript · sloj · [1e-06] · pdens None
+[00:33:55]    ok · None / None · 37 с · пик 1750 МиБ
+[00:33:55] 45/87 INCONEL X-750 (Special Metals) · mc_ni_2036 · ThermoGar · polnyj · [1e-06, 0.0001] · pdens 50
+[00:36:01]    ok · 1621.275 / 1654.9078125 ; 1621.362890625 / 1654.9078125 · 126 с · пик 2156 МиБ
+[00:36:01] 46/87 INCONEL X-750 (Special Metals) · mc_ni_2036 · ThermoGar · bystryj · [1e-06] · pdens 50
+[00:37:51]    ok · 1621.275 / 1654.9078125 · 110 с · пик 2422 МиБ
+[00:37:51] 47/87 INCONEL X-750 (Special Metals) · mc_ni_2036 · Lilit-skript · sloj · [1e-09] · pdens None
+[00:38:17]    ok · 1621.4 / 1654.9 · 25 с · пик 846 МиБ
+[00:38:17] 48/87 INCONEL X-750 (Special Metals) · mc_ni_2036 · Lilit-skript · sloj · [1e-06] · pdens None
+[00:38:42]    ok · 1621.4 / 1654.9 · 25 с · пик 853 МиБ
+[00:38:42] 49/87 NICKEL 200 · mc_ni_2036 · ThermoGar · polnyj · [1e-06, 0.0001] · pdens 50
+[00:38:58]    ok · 1717.68125 / 1726.0015625 ; 1717.723974609375 / 1726.0015625 · 16 с · пик 402 МиБ
+[00:38:58] 50/87 NICKEL 200 · mc_ni_2036 · ThermoGar · bystryj · [1e-06] · pdens 50
+[00:39:10]    ok · 1717.68125 / 1726.0015625 · 13 с · пик 360 МиБ
+[00:39:10] 51/87 NICKEL 200 · mc_ni_2036 · Lilit-skript · sloj · [1e-09] · pdens None
+[00:39:21]    ok · 1717.6 / 1726.1 · 10 с · пик 357 МиБ
+[00:39:21] 52/87 NICKEL 200 · mc_ni_2036 · Lilit-skript · sloj · [1e-06] · pdens None
+[00:39:31]    ok · 1717.6 / 1726.1 · 10 с · пик 357 МиБ
+[00:39:31] 53/87 NICKEL 201 · mc_ni_2036 · ThermoGar · polnyj · [1e-06, 0.0001] · pdens 50
+[00:39:45]    ok · 1722.915625 / 1727.1734375 ; 1722.944921875 / 1727.1734375 · 14 с · пик 400 МиБ
+[00:39:45] 54/87 NICKEL 201 · mc_ni_2036 · ThermoGar · bystryj · [1e-06] · pdens 50
+[00:39:56]    ok · 1722.915625 / 1727.1734375 · 11 с · пик 359 МиБ
+[00:39:56] 55/87 NICKEL 201 · mc_ni_2036 · Lilit-skript · sloj · [1e-09] · pdens None
+[00:40:06]    ok · 1722.9 / 1727.1 · 10 с · пик 357 МиБ
+[00:40:06] 56/87 NICKEL 201 · mc_ni_2036 · Lilit-skript · sloj · [1e-06] · pdens None
+[00:40:17]    ok · 1722.9 / 1727.1 · 10 с · пик 357 МиБ
+[00:40:17] 57/87 DURANICKEL 301 · mc_ni_2036 · ThermoGar · polnyj · [1e-06, 0.0001] · pdens 50
+[00:40:52]    ok · 1714.946875 / 1717.7987426757813 ; 1714.9914354324342 / 1717.7987426757813 · 35 с · пик 1316 МиБ
+[00:40:52] 58/87 DURANICKEL 301 · mc_ni_2036 · ThermoGar · bystryj · [1e-06] · pdens 50
+[00:41:06]    ok · 1714.946875 / 1717.7987426757813 · 14 с · пик 413 МиБ
+[00:41:06] 59/87 DURANICKEL 301 · mc_ni_2036 · Lilit-skript · sloj · [1e-09] · pdens None
+[00:41:18]    ok · 1714.9 / 1717.9 · 12 с · пик 515 МиБ
+[00:41:18] 60/87 DURANICKEL 301 · mc_ni_2036 · Lilit-skript · sloj · [1e-06] · pdens None
+[00:41:30]    ok · 1714.9 / 1717.9 · 12 с · пик 535 МиБ
+[00:41:30] 61/87 HAYNES Waspaloy · mc_ni_2036 · ThermoGar · polnyj · [1e-06, 0.0001] · pdens 50
+[00:51:52]    ok · 1586.9 / 1641.7046875 ; 1586.948828125 / 1641.7046875 · 622 с · пик 3451 МиБ
+[00:51:52] 62/87 HAYNES Waspaloy · mc_ni_2036 · ThermoGar · bystryj · [1e-06] · pdens 50
+[01:01:20]    ok · 1586.9 / 1641.7046875 · 568 с · пик 3912 МиБ
+[01:01:20] 63/87 HAYNES Waspaloy · mc_ni_2036 · Lilit-skript · sloj · [1e-09] · pdens None
+[01:04:33]    snyat_po_pamyati_lilit · 193 с · пик 10803 МиБ
+[01:04:33] 64/87 HAYNES Waspaloy · mc_ni_2036 · Lilit-skript · sloj · [1e-06] · pdens None
+[01:04:33] ждём память: свободно 0.25 ГиБ, нужно 3.0
+[01:08:16]    snyat_po_pamyati_lilit · 193 с · пик 10820 МиБ
+[01:08:16] 65/87 ХН67МВТЮ · mc_ni_2036 · ThermoGar · polnyj · [1e-06, 0.0001] · pdens 50
+[01:08:16] ждём память: свободно 0.25 ГиБ, нужно 5.0
+[01:16:46]    ok · 1589.86875 / 1641.5484375 ; 1589.945654296875 / 1641.5484375 · 480 с · пик 3171 МиБ
+[01:16:46] 66/87 ХН67МВТЮ · mc_ni_2036 · ThermoGar · bystryj · [1e-06] · pdens 50
+[01:24:04]    ok · 1589.86875 / 1641.5484375 · 437 с · пик 3550 МиБ
+[01:24:04] 67/87 ХН67МВТЮ · mc_ni_2036 · Lilit-skript · sloj · [1e-09] · pdens None
+[01:26:48]    ok · 1589.9 / 1641.6 · 164 с · пик 8005 МиБ
+[01:26:48] 68/87 ХН67МВТЮ · mc_ni_2036 · Lilit-skript · sloj · [1e-06] · pdens None
+[01:29:32]    ok · 1589.9 / 1641.6 · 164 с · пик 8005 МиБ
+[01:29:32] 69/87 ХН73МБТЮ · mc_ni_2036 · ThermoGar · polnyj · [1e-06, 0.0001] · pdens 50
+[01:36:06]    ok · 1582.759375 / 1639.2828125 ; 1582.808203125 / 1639.2828125 · 394 с · пик 3085 МиБ
+[01:36:06] 70/87 ХН73МБТЮ · mc_ni_2036 · ThermoGar · bystryj · [1e-06] · pdens 50
+[01:42:01]    ok · 1582.759375 / 1639.2828125 · 355 с · пик 3472 МиБ
+[01:42:01] 71/87 ХН73МБТЮ · mc_ni_2036 · Lilit-skript · sloj · [1e-09] · pdens None
+[01:44:57]    ok · 1582.9 / 1639.4 · 176 с · пик 8650 МиБ
+[01:44:57] 72/87 ХН73МБТЮ · mc_ni_2036 · Lilit-skript · sloj · [1e-06] · pdens None
+[01:47:53]    ok · 1582.9 / 1639.4 · 176 с · пик 8648 МиБ
+[01:47:53] 73/87 RS320 · mc_al_2037 · ThermoGar-povtor · polnyj · [1e-06] · pdens 50
+[01:48:41]    ok · 876.0406250000001 / None · 48 с · пик 2059 МиБ
+[01:48:41] 74/87 RS320 · mc_al_2037 · ThermoGar-povtor · polnyj · [1e-06] · pdens 50
+[01:49:29]    ok · 876.0406250000001 / None · 48 с · пик 2059 МиБ
+[01:49:29] 75/87 RS320 · mc_al_2037 · ThermoGar-povtor · polnyj · [1e-06] · pdens 50
+[01:50:17]    ok · 876.0406250000001 / None · 48 с · пик 2051 МиБ
+[01:50:17] 76/87 В96ц1оч · mc_al_2037 · ThermoGar-povtor · polnyj · [1e-06] · pdens 50
+[01:51:22]    ok · 781.9000000000001 / None · 65 с · пик 2394 МиБ
+[01:51:22] 77/87 В96ц1оч · mc_al_2037 · ThermoGar-povtor · polnyj · [1e-06] · pdens 50
+[01:52:27]    ok · 781.9000000000001 / None · 65 с · пик 2389 МиБ
+[01:52:27] 78/87 В96ц1оч · mc_al_2037 · ThermoGar-povtor · polnyj · [1e-06] · pdens 50
+[01:53:32]    ok · 781.9000000000001 / None · 65 с · пик 2398 МиБ
+[01:53:32] 79/87 INCONEL 600 · mc_ni_2036 · ThermoGar-povtor · polnyj · [1e-06] · pdens 50
+[01:53:39]    ok · 1698.30625 / None · 8 с · пик 622 МиБ
+[01:53:39] 80/87 INCONEL 600 · mc_ni_2036 · ThermoGar-povtor · polnyj · [1e-06] · pdens 50
+[01:53:47]    ok · 1698.30625 / None · 8 с · пик 623 МиБ
+[01:53:47] 81/87 INCONEL 600 · mc_ni_2036 · ThermoGar-povtor · polnyj · [1e-06] · pdens 50
+[01:53:55]    ok · 1698.30625 / None · 8 с · пик 622 МиБ
+[01:53:55] 82/87 40Х10С2М · mc_fe_2062_patch · ThermoGar-povtor · polnyj · [1e-06] · pdens 50
+[01:54:21]    ok · 1671.665625 / None · 27 с · пик 1451 МиБ
+[01:54:21] 83/87 40Х10С2М · mc_fe_2062_patch · ThermoGar-povtor · polnyj · [1e-06] · pdens 50
+[01:54:48]    ok · 1671.665625 / None · 27 с · пик 1450 МиБ
+[01:54:48] 84/87 40Х10С2М · mc_fe_2062_patch · ThermoGar-povtor · polnyj · [1e-06] · pdens 50
+[01:55:15]    ok · 1671.665625 / None · 27 с · пик 1450 МиБ
+[01:55:15] 85/87 17-4 PH · mc_fe_2062_patch · ThermoGar-povtor · polnyj · [1e-06] · pdens 50
+[01:55:55]    ok · 1646.196875 / None · 40 с · пик 1886 МиБ
+[01:55:55] 86/87 17-4 PH · mc_fe_2062_patch · ThermoGar-povtor · polnyj · [1e-06] · pdens 50
+[01:56:36]    ok · 1646.196875 / None · 41 с · пик 1888 МиБ
+[01:56:36] 87/87 17-4 PH · mc_fe_2062_patch · ThermoGar-povtor · polnyj · [1e-06] · pdens 50
+[01:57:16]    ok · 1646.196875 / None · 41 с · пик 1889 МиБ

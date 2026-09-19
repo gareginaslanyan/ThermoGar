@@ -109,6 +109,13 @@ ZYORNA_POVTORA = (1, 2, 3)
 # Пять марок первой сводки, по одной каждого типа: четыре группы файла «Лилит»
 # (kartochka, z26_Al, dobor_Ni, z26_Fe) и строка с отказом слоя по пределам шапки.
 PERVYE_PYAT = ("RS320", "В96ц1оч", "INCONEL 600", "40Х10С2М", "17-4 PH")
+# 16-А2: опыт «набор „Лилит“» — метод ThermoGar с набором фаз ровно как в заморозке
+# (столбец nabor_faz_zamorozki). nabor = NABOR_LILIT, фазы — ключ задания ``fazy``.
+NABOR_LILIT = "lilit_4fazy"
+OPYT_NABORA = {"IN718": ["LIQUID", "FCC_A1", "BCC_A2", "HCP_A3"]}
+# 16-А2, решение мастера: скрипт «Лилит» по этим маркам на этой машине не считается.
+PERENOS_LILIT = ("VJ159", "IN718", "HAYNES Waspaloy")
+PERENOS_PRICHINA = "ноутбук 16 ГБ; перенос на другую машину"
 
 MEMORY_POLL_S = 1.0
 JOB_TIMEOUT_S = 4 * 3600
@@ -179,9 +186,20 @@ def vne_predelov(row: dict[str, str], lilit_key: str) -> str:
 
 def job_id(job: dict[str, Any]) -> str:
     keys = ["marka", "baza", "metod", "nabor", "c15", "porogi", "pdens"]
-    keys += [k for k in ("seed", "tolko_scheil") if job.get(k)]
+    keys += [k for k in ("seed", "tolko_scheil", "fazy") if job.get(k)]
     text = json.dumps({k: job[k] for k in keys}, ensure_ascii=False, sort_keys=True)
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+
+
+def opyt_nabora_job(row: dict[str, str], fazy: list[str]) -> dict[str, Any]:
+    """Задание 16-А2: метод ThermoGar, главная база, 1e-6, pdens 50, заданный набор фаз."""
+
+    return {
+        "marka": row["marka"], "baza": BAZY_SISTEMY[row["sistema"]][0],
+        "metod": "ThermoGar", "nabor": NABOR_LILIT, "fazy": list(fazy),
+        "c15": row["sistema"] == "Fe", "porogi": [1e-6], "pdens": 50, "tier": 5,
+        "polnyj_tyazhelyj": False,
+    }
 
 
 def plan_jobs(marki: list[dict[str, str]]) -> list[dict[str, Any]]:
@@ -239,6 +257,9 @@ def plan_jobs(marki: list[dict[str, str]]) -> list[dict[str, Any]]:
                 "seed": seed, "tolko_scheil": True, "tier": 9,
                 "polnyj_tyazhelyj": row["sistema"] in ("Ni", "Fe"),
             })
+    for row in marki:
+        if row["marka"] in OPYT_NABORA:
+            jobs.append(opyt_nabora_job(row, OPYT_NABORA[row["marka"]]))
     first = {name: i for i, name in enumerate(PERVYE_PYAT)}
     jobs.sort(key=lambda j: (
         3 if j["metod"] == "ThermoGar-povtor" else (0 if j["marka"] in first else 2),
@@ -358,7 +379,11 @@ def child_thermogar(job: dict[str, Any], out_path: Path) -> None:
         components, _, _, _ = ns["build_input"](db, available, entered, "wt", balance)
         all_phases = ns["compatible_phases_for_components"](
             db, key, components, "metastable", ns["PHASE_MODE_ALL"])
-        if job["nabor"] == "bystryj":
+        if job.get("fazy"):
+            # 16-А2: набор задан списком (как в заморозке «Лилит»), без пресета.
+            selected = [p for p in job["fazy"] if p in all_phases]
+            result["fazy_zadany"] = list(job["fazy"])
+        elif job["nabor"] == "bystryj":
             selected = ns["preset_phases"](ns["available_phase_presets"](), key, all_phases)
             selected = ns["effective_release_phases"](key, selected)
             if c15 and "C15_LAVES" in all_phases and "C15_LAVES" not in selected:
@@ -753,6 +778,14 @@ def command_run(args) -> None:
         jobs = [j for j in jobs if j["tier"] <= args.tier]
     if args.metod:
         jobs = [j for j in jobs if j["metod"] in args.metod.split(",")]
+    if args.fazy:
+        # Опыт с заданным набором фаз для марок из --only-marki (nabor lilit_4fazy).
+        fazy = args.fazy.replace(",", " ").split()
+        by_name = {r["marka"]: r for r in marki}
+        jobs = [opyt_nabora_job(by_name[m], fazy) for m in sorted(
+            {j["marka"] for j in jobs})]
+        for job in jobs:
+            job["id"] = job_id(job)
     todo = [j for j in jobs if not job_done(j)]
     log(f"заданий {len(jobs)}, из кэша {len(jobs) - len(todo)}, считать {len(todo)}; "
         f"аварийный порог {abort_gib:.1f} ГиБ, вход {args.min_free_gib:.1f} / "
@@ -867,6 +900,9 @@ def build_rows() -> list[dict[str, Any]]:
                               if str(status).startswith("snyat") else status),
                     "prichina": (data.get("oshibka", "") + (f" | {tail}" if tail else "")).strip(" |"),
                 })
+                if str(status).startswith("snyat") and job["marka"] in PERENOS_LILIT:
+                    out["prichina"] = " | ".join(
+                        x for x in (out["prichina"], PERENOS_PRICHINA) if x)
                 rows.append(out)
             continue
 
@@ -1009,6 +1045,8 @@ def main() -> None:
     run.add_argument("--only-marki", default="", help="через ;")
     run.add_argument("--tier", type=int, default=0)
     run.add_argument("--metod", default="")
+    run.add_argument("--fazy", default="",
+                     help="набор фаз через пробел: опыт nabor=lilit_4fazy для --only-marki")
     run.add_argument("--min-free-gib", type=float, default=3.0)
     run.add_argument("--min-free-gib-full", type=float, default=5.0)
     run.add_argument("--abort-lilit-gib", type=float, default=2.0,

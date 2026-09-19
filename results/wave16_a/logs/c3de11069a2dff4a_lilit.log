@@ -1,0 +1,13 @@
+D:\Pets\ThermoGar\tasks\lilith_16A\metod_solidus_lilit.py:105: ResourceWarning: unclosed file <_io.TextIOWrapper name='D:\\Pets\\ThermoGar\\results\\wave16_a\\raw\\c3de11069a2dff4a_lilit\\marka.csv' mode='r' encoding='utf-8'>
+  stroki = [r for r in csv.DictReader(open(a.csv, encoding="utf-8", newline=""))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+pycalphad 0.11.2; слой D:\Pets\ThermoGar\tasks\lilith_16A\calphad_layer
+  8602c130f8fdbbfe96ab94d23dbd2b6c533262574e1d4225bafd37c1ff644877  __init__.py
+  5667aede8f58830d69e8ea325a5da9012014cfbc2e08bbf183aac732a2c1dbbd  atomic_masses.py
+  b0700efcdd03f0228b0f61ab873a025f8f58fcba969202dbd2213fda49666bb5  granicy.py
+  b44afb82bc564cb4aedb7a290c87dd84168e2d6c51f375015f37cb2134a18757  pochinka.py
+  52b76dd6327b70058cc00c419802b34dff28a813f4d7baa99055f54f4cc5bfa6  raschet.py
+  14e97cee515efc633b0b3f575d41751a4964045d8a983763f9f2c1c5223deb05  manifest.json
+порог NP(LIQUID) 1e-09; набор sloj; пределы шапки ВЫКЛ; режим счёт
+база mc_fe: D:\Pets\ThermoGar\databases\converted\fe\mc_fe_v2062.thermogar.tdb sha256 def6c6862458e879b75cabb32e3bfc93a674f981df7c89e5f0e6e40c246620ed
+1.4828                           mc_fe       47.5 с  1653.9 / 1683.4 K; к заморозке +7.0 / +7.0 K

@@ -1,0 +1,3 @@
+D:\Pets\ThermoGar\tasks\lilith_16A\metod_solidus_lilit.py:105: ResourceWarning: unclosed file <_io.TextIOWrapper name='D:\\Pets\\ThermoGar\\results\\wave16_a\\raw\\bbe94a17592d6757_lilit\\marka.csv' mode='r' encoding='utf-8'>
+  stroki = [r for r in csv.DictReader(open(a.csv, encoding="utf-8", newline=""))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
