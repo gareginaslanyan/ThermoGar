@@ -1,0 +1,2 @@
+{"test": "tools/test_liquidus_bisection.py::test_bisection_finds_control_liquidus_and_solidus", "seconds": 109.8, "rss_before_gib": 0.044, "rss_after_gib": 1.118, "growth_gib": 1.074, "peak_tree_gib": 1.287, "peak_wset_process_gib": 1.352, "open_figures": 0, "pool_workers": null}
+{"test": "tools/test_liquidus_bisection.py::test_grid_interpolation_misses_both_windows", "seconds": 146.2, "rss_before_gib": 1.118, "rss_after_gib": 1.117, "growth_gib": -0.002, "peak_tree_gib": 1.346, "peak_wset_process_gib": 1.352, "open_figures": 0, "pool_workers": null}
