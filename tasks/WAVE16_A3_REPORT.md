@@ -183,4 +183,23 @@ sha на маке = `c1b0c7d3…`, то есть содержимое то же.
 
 ## git
 
-Заполняется после коммита и пуша.
+Коммит результатов — `2db20c187e422d46529605dfd4bae5f8676ca848`, этот отчёт —
+следующим коммитом.
+
+**Пуш не прошёл:**
+
+```
+remote: Permission to gareginaslanyan/ThermoGar.git denied to gareginaslanyan.
+fatal: unable to access 'https://github.com/gareginaslanyan/ThermoGar.git/': The requested URL returned error: 403
+```
+
+Учётные данные git на маке берутся из `osxkeychain`; у этого токена нет права записи в
+репозиторий (`fetch` проходит). `gh` на маке не установлен. `git ls-remote origin
+wave16-lilith` = `b415851aa33b3747b01f920a446c3a430d6bb595` ≠ HEAD. Нужен токен с правом
+записи, после него — `git push origin wave16-lilith` и сверка `ls-remote`.
+
+`git status --short` после коммита:
+
+```
+?? .venv/
+```
