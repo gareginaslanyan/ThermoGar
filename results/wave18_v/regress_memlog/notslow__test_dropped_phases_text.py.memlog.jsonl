@@ -1,0 +1,2 @@
+{"test": "tools/test_dropped_phases_text.py::test_three_phases_are_named_in_full", "seconds": 0.0, "rss_before_gib": 0.036, "rss_after_gib": 0.037, "growth_gib": 0.0, "peak_tree_gib": 0.037, "peak_wset_process_gib": 0.037, "open_figures": null, "pool_workers": null}
+{"test": "tools/test_dropped_phases_text.py::test_twenty_phases_show_five_names_and_the_rest_in_the_block", "seconds": 0.0, "rss_before_gib": 0.037, "rss_after_gib": 0.037, "growth_gib": 0.0, "peak_tree_gib": 0.037, "peak_wset_process_gib": 0.037, "open_figures": null, "pool_workers": null}
