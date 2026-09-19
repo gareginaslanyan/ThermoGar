@@ -1,0 +1,10 @@
+...                                                                      [100%]
+============================== warnings summary ===============================
+tools/test_ui_g.py::test_kwn_precipitation[fe]
+tools/test_ui_g.py::test_fe_kwn_provenance_status_is_neutral
+tools/test_ui_g.py::test_ni_kwn_reaches_a_precipitated_state
+  D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\kawin\precipitation\NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+    incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+3 passed, 29 deselected, 3 warnings in 164.28s (0:02:44)

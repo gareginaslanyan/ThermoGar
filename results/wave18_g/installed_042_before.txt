@@ -1,0 +1,9 @@
+2026-09-19 19:40:57
+df08800828b32f86ce1cd17bda8ee1ec3b39a925f65520eb0b6993f09913d8ef *dist/release-0.4.2/ThermoGar-0.4.2-win64.exe
+214d9e2db39a3d4af592e011905d9eb6f3e973473297d384caaf67beb0a0e6d3 */c/Program Files/ThermoGar/Uninstall.exe
+5f7b89a612c9b8af1d6456cdfcd1dbe5ca630849e79aebced9bee9a6694952ec */c/Program Files/ThermoGar/runtime/python.exe
+fabd4441283fab0f0da1b32d36bda668349580cda6563a7d860219ace247a1b5 */c/Program Files/ThermoGar/app/ThermoGar_app.py
+9466a3264ad4438947371def5997a2a61442069405756fee1382dcc25f0c0bcf */c/Program Files/ThermoGar/app/thermogar_release_policy.py
+git v0.4.2 app/ThermoGar_app.py: fabd4441283fab0f0da1b32d36bda668349580cda6563a7d860219ace247a1b5 *-
+    DisplayVersion    REG_SZ    0.4.2
+
