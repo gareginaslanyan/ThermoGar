@@ -4626,6 +4626,9 @@ SOLIDUS_FALLBACK_WARNING = (
     "Равновесное затвердевание не сошлось; солидус найден половинным "
     "делением по доле жидкости."
 )
+# Подпись окна состояния на время поиска солидуса; текст утверждён
+# владельцем (18-Г).
+SOLIDUS_SEARCH_STATUS_LABEL = "Ищем солидус половинным делением…"
 
 
 def database_lower_temperature_c(db: Database) -> float:
@@ -10310,6 +10313,17 @@ with solidification_tab:
 
                     # BL-44: конец несошедшейся равновесной траектории — не
                     # солидус; тогда он ищется половинным делением.
+                    if (
+                        "equilibrium" in results
+                        and computed_liquidus_c is not None
+                        and equilibrium_solidus_needs_fallback(
+                            results["equilibrium"]
+                        )
+                    ):
+                        status.update(
+                            label=SOLIDUS_SEARCH_STATUS_LABEL,
+                            state="running",
+                        )
                     equilibrium_solidus = (
                         equilibrium_solidus_override(
                             results["equilibrium"],

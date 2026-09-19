@@ -46,6 +46,7 @@ OWNER_WARNING = (
     "Равновесное затвердевание не сошлось; солидус найден половинным "
     "делением по доле жидкости."
 )
+OWNER_SOLIDUS_STATUS = "Ищем солидус половинным делением…"
 
 APP_NAMES = (
     "SOLID_PRESENCE_FLOOR",
@@ -54,6 +55,7 @@ APP_NAMES = (
     "LIQUIDUS_BRACKET_MARGIN_C",
     "EQUILIBRIUM_SOLIDUS_MIN_SOLID_FRACTION",
     "SOLIDUS_FALLBACK_WARNING",
+    "SOLIDUS_SEARCH_STATUS_LABEL",
     "SOLIDIFICATION_METHOD_LABELS",
     "interpolate_temperature_at_solid_fraction",
     "equilibrium_solid_fraction_at",
@@ -233,6 +235,23 @@ def test_summary_row(app) -> None:
 def test_owner_warning_text(app) -> None:
     assert app["SOLIDUS_FALLBACK_WARNING"] == OWNER_WARNING
     assert app["EQUILIBRIUM_SOLIDUS_MIN_SOLID_FRACTION"] == 0.999
+
+
+def test_solidus_search_status_label(app) -> None:
+    """18-Г: подпись окна состояния на время поиска солидуса — текст владельца.
+
+    Ставится тем же ``status.update``, что подпись ликвидуса, перед вызовом
+    ``equilibrium_solidus_override`` и только при запасном пути.
+    """
+
+    assert app["SOLIDUS_SEARCH_STATUS_LABEL"] == OWNER_SOLIDUS_STATUS
+    source = APP_PATH.read_text("utf-8")
+    liquidus = source.index('label="Ищем ликвидус половинным делением…"')
+    solidus = source.index("label=SOLIDUS_SEARCH_STATUS_LABEL")
+    override = source.index("equilibrium_solidus_override(\n", solidus)
+    assert liquidus < solidus < override
+    assert "equilibrium_solidus_needs_fallback(" in source[liquidus:solidus]
+    assert "status.update(" in source[solidus - 120 : solidus]
 
 
 @pytest.mark.parametrize(
