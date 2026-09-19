@@ -43,7 +43,7 @@ Ni. В расчёт вошли три фазы: LIQUID FCC_A1 HCP_A3. У `scheil
 
 ## 2. Пакет в git, размеры, пуш
 
-- `.gitignore` резал `*.log`: 208 журналов 16-А (`logs/` и `run_*.log`) в коммит не
+- `.gitignore` резал `*.log`: 217 журналов 16-А (`logs/` и `run_*.log`) в коммит не
   попадали. Добавлены исключения `!results/wave16_a/**/*.log` и `!results/wave16_a/*.log`.
 - После коммита на диске 620 файлов `results/wave16_a/`, в git 620.
   `git status --short results/wave16_a` пуст, игнорируемых нет.
