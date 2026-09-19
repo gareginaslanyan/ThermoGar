@@ -1,0 +1,45 @@
+....F.                                                                   [100%]
+================================== FAILURES ===================================
+_ ThermoGarPathsTests.test_005_module_is_stdlib_only_and_minus_b_creates_no_bytecode _
+
+self = <thermogar_paths_test.ThermoGarPathsTests testMethod=test_005_module_is_stdlib_only_and_minus_b_creates_no_bytecode>
+
+    def test_005_module_is_stdlib_only_and_minus_b_creates_no_bytecode(self):
+        module_path = APP / "thermogar_paths.py"
+        tree = ast.parse(module_path.read_text(encoding="utf-8"))
+        imported: set[str] = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imported.update(alias.name.split(".", 1)[0] for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                imported.add(node.module.split(".", 1)[0])
+        self.assertTrue(imported <= set(sys.stdlib_module_names), imported)
+        scoped_prefixes = (
+            "thermogar_paths.",
+            "thermogar_workspace.",
+            "thermogar_properties.",
+            "thermogar_stage14.",
+            "ThermoGar_app.",
+        )
+        scoped_bytecode = [
+            path
+            for path in (APP / "__pycache__").glob("*.pyc")
+            if path.name.startswith(scoped_prefixes)
+        ]
+>       self.assertEqual(scoped_bytecode, [])
+E       AssertionError: Lists differ: [WindowsPath('D:/Pets/ThermoGar/app/__pyca[292 chars]yc')] != []
+E       
+E       First list contains 4 additional elements.
+E       First extra element 0:
+E       WindowsPath('D:/Pets/ThermoGar/app/__pycache__/thermogar_paths.cpython-311.pyc')
+E       
+E       + []
+E       - [WindowsPath('D:/Pets/ThermoGar/app/__pycache__/thermogar_paths.cpython-311.pyc'),
+E       -  WindowsPath('D:/Pets/ThermoGar/app/__pycache__/thermogar_properties.cpython-311.pyc'),
+E       -  WindowsPath('D:/Pets/ThermoGar/app/__pycache__/thermogar_stage14.cpython-311.pyc'),
+E       -  WindowsPath('D:/Pets/ThermoGar/app/__pycache__/thermogar_workspace.cpython-311.pyc')]
+
+tools\thermogar_paths_test.py:256: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/thermogar_paths_test.py::ThermoGarPathsTests::test_005_module_is_stdlib_only_and_minus_b_creates_no_bytecode
+1 failed, 5 passed in 0.18s

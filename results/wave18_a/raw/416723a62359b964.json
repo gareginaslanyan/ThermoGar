@@ -1,0 +1,100 @@
+{
+ "job": {
+  "marka": "316L",
+  "variant": "C",
+  "temperatury_K": [
+   293.15,
+   298.15
+  ],
+  "pdens": 50,
+  "id": "416723a62359b964"
+ },
+ "status": "ok",
+ "tochki": [
+  {
+   "T_K": 293.15,
+   "otkaz": "VerifiedLoaderError: BACKEND_FAILED: ValueError: Температура 293.15 K вне диапазона DP-параметра FCC_A1: 298.15–6000.00 K.",
+   "vremya_s": 7.224580299996887
+  },
+  {
+   "T_K": 298.15,
+   "effektivnye_fazy": [
+    "FCC_A1"
+   ],
+   "proekciya": {
+    "alloy_density_g_cm3": 8.047552083192313,
+    "alloy_density_kg_m3": 8047.552083192312,
+    "direct_mole_pct": 100.0,
+    "inherited_mole_pct": 0.0,
+    "mass_coverage_pct": 100.0,
+    "missing_rows": [],
+    "mole_coverage_pct": 100.0,
+    "phase_rows": [
+     {
+      "Диагностика": "",
+      "Массовая доля, %": 100.0,
+      "Модель плотности": "FCC_A1",
+      "Мольная доля, %": 100.00000000125544,
+      "Молярный объём, см³/моль атомов": 6.956175389766895,
+      "Объёмная доля среди покрытых, %": 100.0,
+      "Объёмная доля, %": 100.0,
+      "Плотность фазы, г/см³": 8.047552083192313,
+      "Плотность фазы, кг/м³": 8047.552083192312,
+      "Примечание": "Прямая DP-модель из physical_data.pdb.",
+      "Средняя молярная масса, г/моль атомов": 55.98018374896967,
+      "Статус данных": "прямая модель",
+      "Фаза": "FCC_A1"
+     }
+    ],
+    "physical_database_sha256": "4cf81c992b57263c50b370ea47eb0d5bb4f622cf23c18479bab54267762f20bd",
+    "physical_database_version": "1.03",
+    "quality_label": "полная по доступным прямым DP-моделям",
+    "temperature_k": 298.15,
+    "warnings": [
+     "Плотность хрома посчитана по поправке проекта ThermoGar, а не по данным physical_data_v103.pdb: тепловая функция DTCRBCC заменена. Это не наша оценка величины, а восстановление источника — статья REF 14 самой базы (Lu, Selleby, Sundman, Calphad 29 (2005) 68-89, doi:10.1016/j.calphad.2005.05.001) даёт правильные коэффициенты, сломан их перенос в базу: активный полином завышает тепловое расширение хрома в 2,5-3 раза против измерений (Hidnert, NBS RP1407, 1941). Опорная плотность при 25 °C не изменена. Чтобы считать по чистой базе, запустите программу с переменной окружения THERMOGAR_PHYSICAL_OVERRIDES=off — тогда ни одна наша правка не применяется. Подробности: docs/DATABASES.md, раздел «Поправки проекта к физической базе»."
+    ]
+   },
+   "fazy_v_raschete": [
+    "FCC_A1"
+   ],
+   "snyato_detektorom": [],
+   "estimated_mole_pct": 0.0,
+   "dtcrbcc_vyzovov": 5,
+   "dtcrbcc_znachenie": -18.090000000000146,
+   "popravki_primeneny": [
+    "DTCRBCC"
+   ],
+   "popravki_vyklyucheny": [],
+   "vremya_s": 5.316793999998481
+  }
+ ],
+ "sostav_wt_pct": {
+  "C": 0.015,
+  "CR": 18.0,
+  "FE": 65.31,
+  "MO": 2.625,
+  "N": 0.05,
+  "NI": 14.0
+ },
+ "tdb": {
+  "fajl": "databases/converted/fe/mc_fe_v2062_with_mobility.thermogar.tdb",
+  "sha256": "236ec4d9b0540de04e4e6305faa208672f31fbdf45b2ae84e92f80bd98053612"
+ },
+ "pdb_sha256": "4cf81c992b57263c50b370ea47eb0d5bb4f622cf23c18479bab54267762f20bd",
+ "zaprosheny_fazy": [
+  "FCC_A1"
+ ],
+ "vsego_s": 12.566569100003107,
+ "popytka": {
+  "svobodno_do_GiB": 10.183578491210938,
+  "swap_do_MiB": 47.3046875,
+  "limit_s": 3600.0,
+  "pik_MiB": 245.1875,
+  "min_svobodno_GiB": 9.915729522705078,
+  "snyat": false,
+  "pik_swap_MiB": 47.3046875,
+  "kod": 0,
+  "sekund": 13.393690199998673,
+  "porog_vhoda_GiB": 3.0
+ }
+}
