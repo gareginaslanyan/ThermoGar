@@ -1,0 +1,5 @@
+ni: rows 99, changed 26, same 73, stub left 2
+al: rows 195, changed 27, same 168, stub left 0
+fe: rows 132, changed 41, same 91, stub left 3
+total: changed 94, same 332
+problems: none

@@ -1,0 +1,100 @@
+Код фазы,Простыми словами,Описание по-русски,Примечание модели,Оригинал из базы (англ.)
+ALN,,Описание фазы AlN основано на оценённом произведении растворимости; модель специально настроена для этой фазы. Параметры основаны на оценённом произведении растворимости.,,AlN phase description based on assessed solubility product.
+ALN_EQU,,"Новое описание фазы, основанное на калориметрических данных.",,New phase description based on calorimetric data.
+ALPHA_MN,,Объёмно-центрированная кубическая (ОЦК) структура.,,Body-centered cubic Manganese modification.
+ANILITE,,Описание в исходной базе отсутствует.,,
+A_CHALC,,Гексагональная плотноупакованная модификация Cu₂S — A-халькозин.,,"Hexagonal close-packed Cu2S, A-chalcosite."
+BCC_A2,,Объёмно-центрированная кубическая (ОЦК) структура.,Разупорядоченная часть связанной модели BCC_B2.,Body-centered cubic phase.
+BCC_B2,B2 / связанная ОЦК-модель,B2 / связанная ОЦК-модель. Объёмно-центрированная кубическая (ОЦК) структура. Матричная фаза или модель твёрдого раствора. Упорядоченная фаза. Используется подрешёточная модель.,Связанная order/disorder-модель с BCC_A2; одно имя фазы не всегда означает полное упорядочение.,Bcc_base ordered NiTi Matrix phase in shape memory alloys. 2 substitutional sublattices split model used.
+BETA_MN,,Кубическая структура.,,Simple cubic Manganese modification between 1000 K and 1370 K.
+BETA_RHOMBO_B,,Ромбоэдрическая структура.,,Rhombohedral Boron.
+BN_HP4,,Нитридная фаза.,,"Hexagonal Boron Nitride, graphite-type structure."
+B_CHALC,,Сульфидная фаза.,,"Cu2S, B-chalcosite."
+CEMENTITE,цементит,цементит.,,"(Fe,M)C3; orthorhombic. Unit cell consists of four formula units. In particular Cr and Mn can dissolve into cementite in large quantities. W, V, Mo with limited solubilities."
+CHI_A12,,Русская расшифровка для этой специализированной фазы ещё не добавлена.,,"Alpha-Mn structure closely related to topologically close-packed sigma, Mu, and R-Phase. Unit cell contains 58 atoms plus interstitials (carbon)."
+CO3MO,,Описание в исходной базе отсутствует.,,
+CO3V,,Описание в исходной базе отсутствует.,,
+CORUND,,Оксидная фаза.,,"corund-structured (Al,Cr,Fe)2O3"
+COV3,,Описание в исходной базе отсутствует.,,
+COVELLITE,,Описание в исходной базе отсутствует.,,
+CR2B,,Ромбическая структура. Боридная фаза.,,Orthorhombic.
+CR2VC2,,Описание в исходной базе отсутствует.,,
+CR3MN5,,Интерметаллидная фаза.,,"Also called ""alpha prime Phase"""
+CR5B3,,Описание в исходной базе отсутствует.,,
+CRB,,Боридная фаза.,,relevance in bracing filler alloy
+CU2S,,Гранецентрированная кубическая (ГЦК) структура.,,Fcc-structured.
+DELTA,δ-фаза,δ-фаза.,,"Orthorhombic Ni3Nb-base, D0a structure"
+DIAMOND_A4,,Описание в исходной базе отсутствует.,,
+DIGENITE,,Служебная фаза базы: только для расчёта равновесия.,,Use for equilibrium calculation only.
+DISULF,,Сульфидная фаза.,,"Pyrite, FeS2."
+DJURLEITE,,Описание в исходной базе отсутствует.,,
+D_NIMO,,Интерметаллидная фаза.,,Ni-Mo delta
+ETA,η-фаза,η-фаза.,,"Hexagonal Ni3Ti-type, D024 structure."
+FCC_A1,"γ-матрица, ГЦК","γ-матрица, ГЦК. Гранецентрированная кубическая (ГЦК) структура. Нитридная фаза. Используется подрешёточная модель.",,"Face-centered cubic phase with Va on interstitial sublattice; V- and/or W-rich MC carbo-nitride phase is denoted ""fcc_A1#01"" in the MatCalc databases, with C and N on substitutional sublattice. MC carbo-nitride composition sets can be defined by the User. Typically MC is precipitating on grain boundaries."
+FC_MONO,,Моноклинная структура. Высокотемпературная модификация.,,Monoclinic sulfur (high T)
+FC_ORTHO,,Ромбическая структура. Низкотемпературная модификация.,,Orthorhombic Sulfur (low T).
+FE17Y2,,Описание в исходной базе отсутствует.,,
+FE3NB3B4,,Описание в исходной базе отсутствует.,,
+FE4N,,Описание в исходной базе отсутствует.,,
+FEB,,Описание в исходной базе отсутствует.,,
+FENBB,,Описание в исходной базе отсутствует.,,
+FES_P,,Сульфидная фаза.,,"Fe-rich Fe,Mn-sulfide."
+GAMMA_DP,,"Метастабильная фаза. Фаза-выделение, связанная с дисперсионным упрочнением.",,Gamma double-prime; metastable body-centered tetragonal Ni3Nb-type phase. Important precipitate in Ni-base superalloy 718
+GAMMA_PRIME,γ′-упрочняющая фаза,γ′-упрочняющая фаза. Используется подрешёточная модель.,,"Cubic Ni3Al-type, L12-structure; simplified description as solid solution phase consisting of two substitutional sublattices"
+GRAPHITE,графит,графит.,,Stable hexagonal Carbon phase.
+G_PHASE,,"Фаза-выделение, связанная с дисперсионным упрочнением.",,Silicide precipitate in some Nb-Si-containing Ni-base superalloys
+HALITE,,Оксидная фаза.,,"halite-structured (Cr,Fe,Ni)O"
+HCP_A3,,Гексагональная плотноупакованная (ГПУ) структура.,,"Hexagonal close-packed. M2C, denoted ""hcp#01"" in the MatCalc databases, with C on interstitial sites and Mo as mayor constituent. Cr and V can dissolve with significant quantities in M2C."
+HF1O2_C,,Кубическая структура. Оксидная фаза.,,cubic
+HF1O2_M,,Моноклинная структура. Оксидная фаза. Упрочняющий дисперсоид.,,"monoclinic, strengthening dispersoid"
+HF1O2_T,,Тетрагональная структура. Оксидная фаза.,,tetragonal
+KSI_CARBIDE,,Карбидная фаза.,,Mo-Cr-Fe carbide.
+LA2O3_A,,Гексагональная структура. Оксидная фаза. Упрочняющий дисперсоид.,,"hexagonal, strengthening dispersoid"
+LA2O3_C,,Кубическая структура. Оксидная фаза.,,cubic
+LA2O3_H,,Упорядоченная фаза.,,ordered hexagonal
+LAVES,фаза Лавеса,фаза Лавеса.,,can form as topologically close-packed structure in superalloys; affecting brittleness. Preliminary description.
+LAV_C14,фаза Лавеса C14,фаза Лавеса C14.,,can form as topologically close-packed structure in superalloys; affecting brittleness.
+LIQUID,расплав,расплав.,,
+M12C,,Карбидная фаза.,,Co-W-rich carbide.
+M23C6,,Гранецентрированная кубическая (ГЦК) структура. Карбидная фаза.,,"Face-centered cubic Cr-rich carbide, can contain significant amounts of W, Mo, V, Ni. Has a large crystallographic unit cell."
+M23C6_WY,,Гранецентрированная кубическая (ГЦК) структура. Карбидная фаза.,,Face-centered cubic Cr-rich carbide. Has a large crystallographic unit cell. With correct structural formular (according Wyckoff)
+M2B,,Тетрагональная структура. Боридная фаза.,,Tetragonal.
+M3C2,,Карбидная фаза.,,Cr-rich carbide.
+M6C,,Карбидная фаза.,,"Mo,W-rich carbide, can contain significant amounts of Cr and V. Has a large unit cell."
+M6C_WY,,Карбидная фаза.,,M6C with physically correct sites according to Wyckoff positions.
+M7C3,,Карбидная фаза.,,Trigonal Cr-rich carbide with a large crystallographic unit cell. In particular Fe- and Mn-solubilities.
+MN6N4,,Описание в исходной базе отсутствует.,,
+MN6N5,,Описание в исходной базе отсутствует.,,
+MNS_Q,,Описание в исходной базе отсутствует.,,
+MOB,,Описание в исходной базе отсутствует.,,
+MOB2,,Описание в исходной базе отсутствует.,,
+MU_PHASE,,Топологически плотноупакованная (ТПУ) фаза. Может охрупчивать сплав.,,can form as topologically close-packed structure in superalloys; affecting brittleness.
+NB3B2,,Описание в исходной базе отсутствует.,,
+NB5B6,,Описание в исходной базе отсутствует.,,
+NBB,,Описание в исходной базе отсутствует.,,
+NI2CR,,"Фаза-выделение, связанная с дисперсионным упрочнением.",,precipitate in high Mo- and Cr-containing Ni-superalloys
+NI5HF,,Описание в исходной базе отсутствует.,,
+NI5Y,,Описание в исходной базе отсутствует.,,
+NI7HF2,,Описание в исходной базе отсутствует.,,
+NIAL,интерметаллид NiAl,интерметаллид NiAl. Используется подрешёточная модель.,,"NiAl-base B2-Phase, modeled with simple 2-substitutional sublattices model."
+NITI2,,"Фаза-выделение, связанная с дисперсионным упрочнением.",,"Cubic, importance as precipitate in high Ni-Ti alloys"
+O1_GAS,,Газовая фаза. Служебная фаза базы: только для расчёта термодинамических свойств.,,for thermodynamic properties calculations only
+PYRR,,Гексагональная плотноупакованная (ГПУ) структура.,,"(Cu,Fe)S pyrrhotite, hexagonal close-packed, for thermodynamic equilibrium calculations only."
+P_PHASE,,Топологически плотноупакованная (ТПУ) фаза. Может охрупчивать сплав.,,closely related to Sigma. Can form as topologically close-packed structure in superalloys; affecting brittleness.
+R_PHASE,,Топологически плотноупакованная (ТПУ) фаза. Может охрупчивать сплав.,,closely related to Sigma and Mu-phase. Can form as topologically close-packed structure in superalloys; affecting brittleness.
+SIGMA,σ-фаза,"σ-фаза. Фаза-выделение, связанная с дисперсионным упрочнением. Используется подрешёточная модель.",,Intermetallic transition elements compound with broad solid solubility range. Tetragonal with five non-equivalent sites. A simplified 3-sublattice description is used. Hard and brittle topologically close-packed (TCP) precipitates.
+SIO2,,Оксидная фаза.,,Low Quartz
+SPINEL,,Описание в исходной базе отсутствует.,,
+TI2O3,,Описание в исходной базе отсутствует.,,
+TI3B4,,Описание в исходной базе отсутствует.,,
+TI4C2S2,,Описание в исходной базе отсутствует.,,
+TIB,,Описание в исходной базе отсутствует.,,
+TIB2,,Описание в исходной базе отсутствует.,,
+TIO2,,Оксидная фаза.,,Note: fully oxidized compound without oxygen vacancies
+TIS,,Описание в исходной базе отсутствует.,,
+TRID,,Русская расшифровка для этой специализированной фазы ещё не добавлена.,,Tridymite
+V3C2,,Описание в исходной базе отсутствует.,,
+WC,,Описание в исходной базе отсутствует.,,
+Y2O3_C,,Оксидная фаза.,,"cubic Yttrium oxide, strengthening dispersoid"
+Y2O3_H,,Оксидная фаза.,,"hexagonal Yttrium oxide, strengthening dispersoid"
+ZET,,Нитридная фаза.,,Cr-Fe-Nb-V-Mo nitride.
