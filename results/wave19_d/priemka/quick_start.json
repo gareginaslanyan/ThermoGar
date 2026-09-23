@@ -1,0 +1,10 @@
+{
+ "python": "C:\\Program Files\\ThermoGar\\runtime\\python.exe",
+ "app": "C:\\Program Files\\ThermoGar\\app\\ThermoGar_app.py",
+ "case": "quick_start",
+ "first_line": "# ThermoGar 0.4.4 — быстрый старт",
+ "first_mention": "0.4.4",
+ "first_version_like": "0.4.4",
+ "ok": true,
+ "case_seconds": 0.0
+}

@@ -1,0 +1,50 @@
+{
+ "python": "C:\\Program Files\\ThermoGar\\runtime\\python.exe",
+ "app": "C:\\Program Files\\ThermoGar\\app\\ThermoGar_app.py",
+ "case": "batch",
+ "runner_rows": 3,
+ "files": {
+  "Fe-пусто": {
+   "row_index": 1,
+   "steel_mode": "metastable",
+   "status": "success",
+   "sha256": "57dc1b945b3a0a5bec147f352c967a3032d86281985ca2d52acea4b92b0eab8b"
+  },
+  "Fe-метастабильный": {
+   "row_index": 2,
+   "steel_mode": "metastable",
+   "status": "success",
+   "sha256": "57dc1b945b3a0a5bec147f352c967a3032d86281985ca2d52acea4b92b0eab8b"
+  },
+  "Fe-стабильный": {
+   "row_index": 3,
+   "steel_mode": "stable",
+   "status": "success",
+   "sha256": "bd7984c275da1b29800b2d5eacb11fb7118cbbd11ad3b030d9a89ad18a4aff66"
+  }
+ },
+ "summary": [
+  {
+   "Название": "Fe-пусто",
+   "Статус": "готово",
+   "Ошибка": ""
+  },
+  {
+   "Название": "Fe-метастабильный",
+   "Статус": "готово",
+   "Ошибка": ""
+  },
+  {
+   "Название": "Fe-стабильный",
+   "Статус": "готово",
+   "Ошибка": ""
+  },
+  {
+   "Название": "Fe-metastabe",
+   "Статус": "ошибка",
+   "Ошибка": "Неизвестный режим стали: «metastabe». Используйте «стабильный» или «метастабильный»."
+  }
+ ],
+ "ok": true,
+ "case_seconds": 23.8
+}

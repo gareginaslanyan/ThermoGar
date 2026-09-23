@@ -1,0 +1,11 @@
+{
+ "python": "C:\\Program Files\\ThermoGar\\runtime\\python.exe",
+ "app": "C:\\Program Files\\ThermoGar\\app\\ThermoGar_app.py",
+ "case": "density",
+ "25C_errors": [],
+ "25C_temperature_k": 298.15,
+ "25C_density_kg_m3": 2663.716441047474,
+ "25C_density_2dp": "2663.72",
+ "ok": true,
+ "case_seconds": 38.2
+}

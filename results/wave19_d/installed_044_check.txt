@@ -1,0 +1,9 @@
+19-Д, шаг 9: установленная 0.4.4 2026-09-23 14:18:52
+payload-manifest generated_utc 2026-09-23T11:10:09Z file_count 15079 расхождений 0 []
+файлов тега в нагрузке 76 отличий от блобов v0.4.4 0 []
+вне runtime и не из тега []
+60ca53dc18970a09f099c426b2e19921e71686fbad3c8d19ab8fbaca4f6fd94c Uninstall.exe
+5f7b89a612c9b8af1d6456cdfcd1dbe5ca630849e79aebced9bee9a6694952ec runtime/python.exe
+1231073340c9392f45413f24572d603d31815e6d8146adc0290ea5a5add2fb53 app/ThermoGar_app.py
+блоб v0.4.4:app/ThermoGar_app.py 1231073340c9392f45413f24572d603d31815e6d8146adc0290ea5a5add2fb53
+DisplayName=ThermoGar DisplayVersion=0.4.4

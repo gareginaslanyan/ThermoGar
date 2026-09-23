@@ -1,0 +1,20 @@
+{
+ "python": "C:\\Program Files\\ThermoGar\\runtime\\python.exe",
+ "app": "C:\\Program Files\\ThermoGar\\app\\ThermoGar_app.py",
+ "case": "phase_reference",
+ "files": {
+  "ni": {
+   "rows": 99,
+   "sha256": "0a711620043487ea2f33d1f05a019bed0605a70887010ce6455e1e870ad61e74"
+  },
+  "al": {
+   "rows": 195,
+   "sha256": "6b849fc8a2bd932f8e8febecaaa467798432644fff9a8373bda359ca0fc14d30"
+  },
+  "fe": {
+   "rows": 132,
+   "sha256": "5689f2e67a1b1350ce060319d5045e1efdc26a21bd9671ff36e3b4728851d552"
+  }
+ },
+ "case_seconds": 23.2
+}
