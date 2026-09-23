@@ -1,0 +1,9 @@
+...............                                                          [100%]
+============================== warnings summary ===============================
+tools/test_wave15_z.py::test_run_precipitation_warns_when_nucleus_exceeds_cmax
+tools/test_wave15_z.py::test_run_precipitation_is_silent_when_cmax_covers_nucleus
+  D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\kawin\precipitation\NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+    incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+15 passed, 2 warnings in 19.87s

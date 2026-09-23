@@ -1,0 +1,2 @@
+{"test": "tools/test_equilibrium_solidus_fallback.py::test_rs320_full_set_bisection_solidus", "seconds": 508.9, "rss_before_gib": 0.056, "rss_after_gib": 1.906, "growth_gib": 1.85, "peak_tree_gib": 2.136, "peak_wset_process_gib": 2.158, "open_figures": 0, "pool_workers": 4}
+{"test": "tools/test_equilibrium_solidus_fallback.py::test_inconel600_scheil_solidus_unchanged", "seconds": 34.4, "rss_before_gib": 1.906, "rss_after_gib": 1.85, "growth_gib": -0.057, "peak_tree_gib": 1.967, "peak_wset_process_gib": 2.158, "open_figures": 0, "pool_workers": 4}
