@@ -58,6 +58,19 @@ HISTORY_HEADERS = (
 )
 BATCH_REQUIRED_HEADERS = ("name", "database", "balance", "units", "temperature_C")
 BATCH_OPTIONAL_HEADERS = ("pressure_Pa", "steel_mode", "phases", "composition")
+# Закрытый перечень режима стали (BL-56): и приём файла, и строка пакета
+# читают только его. Пустая ячейка — ``metastable`` (``steel_mode_or_none``).
+STEEL_MODE_ALIASES = {
+    "metastable": "metastable",
+    "метастабильный": "metastable",
+    "практический": "metastable",
+    "цементит": "metastable",
+    "cementite": "metastable",
+    "stable": "stable",
+    "стабильный": "stable",
+    "графит": "stable",
+    "graphite": "stable",
+}
 BATCH_ALIAS_PAIRS = (
     ("Название", "name"), ("Наименование", "name"), ("База", "database"),
     ("Основа", "balance"), ("Единицы", "units"),
@@ -336,11 +349,24 @@ def _units(value: object) -> str:
     raise ValueError("units")
 
 
+def steel_mode_or_none(value: object) -> str | None:
+    """Режим стали по закрытому перечню ``STEEL_MODE_ALIASES`` или ``None``.
+
+    Пустая ячейка (``None``, пустая строка, NaN) — ``metastable``. Сравнение
+    на равенство после ``strip`` + ``casefold``: «метастабильный» содержит
+    «стаб», поэтому поиск подстрок здесь недопустим (BL-56).
+    """
+    if value is None or (isinstance(value, float) and math.isnan(value)):
+        return "metastable"
+    text = str(value).strip().casefold()
+    if not text:
+        return "metastable"
+    return STEEL_MODE_ALIASES.get(text)
+
+
 def _steel_mode(value: object) -> str:
-    text = str(value or "").strip().casefold()
-    if any(token in text for token in ("стаб", "граф", "stable", "graphite")):
-        return "stable"
-    return "metastable"
+    mode = steel_mode_or_none(value)
+    return str(value).strip() if mode is None else mode
 
 
 def _phase_tokens(value: object) -> tuple[str, ...]:

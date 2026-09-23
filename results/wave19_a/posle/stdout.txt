@@ -1,0 +1,25 @@
+=== posle 1a
+пусто | metastable | metastable | готово | 
+metastable | metastable | metastable | готово | 
+метастабильный | metastable | metastable | готово | 
+практический | metastable | metastable | готово | 
+цементит | metastable | metastable | готово | 
+cementite | metastable | metastable | готово | 
+stable | stable | stable | готово | 
+стабильный | stable | stable | готово | 
+графит | stable | stable | готово | 
+graphite | stable | stable | готово | 
+metastabe | metastabe | — | ошибка | Неизвестный режим стали: «metastabe». Используйте «стабильный» или «метастабильный».
+runner rows: 10 calls: 1 sha256: 1ff112b5cc7af1f6980548d993856339f75734f762326449c268efc6179d222e
+=== posle 1v
+{"база": "ni", "фаз": 99, "описание_непусто": 64, "слово_disordered": 0, "слово_ordered": 2, "подстрока_ordered": 2, "выход_Упорядоченная": 2, "выход_Разупорядоченная": 0, "sha256": "33935f37de8dabf66c3ba9b1de69366c49a546a0a6fe811ab69bb48bd30e9dfc"}
+{"база": "al", "фаз": 195, "описание_непусто": 87, "слово_disordered": 0, "слово_ordered": 6, "подстрока_ordered": 6, "выход_Упорядоченная": 6, "выход_Разупорядоченная": 0, "sha256": "56d9f4c1e0ca42c71c930e2dbe5cc708a7b52276189c6993e1983a0bdc749f60"}
+{"база": "fe", "фаз": 132, "описание_непусто": 94, "слово_disordered": 0, "слово_ordered": 7, "подстрока_ordered": 7, "выход_Упорядоченная": 7, "выход_Разупорядоченная": 0, "sha256": "451b379837ce6f16a8a7f1d92acd90444f676e327e2ad9d4e09126fd93218b25"}
+=== posle 1g_batch
+Fe-пусто metastable [['BCC_B2', 0.8577531064096179], ['CEMENTITE', 0.1422468935902007]] bytes equal to DO metastable True
+Fe-метастабильный metastable [['BCC_B2', 0.8577531064096179], ['CEMENTITE', 0.1422468935902007]] bytes equal to DO metastable True
+Fe-стабильный stable [['BCC_B2', 0.9643462664947882], ['GRAPHITE', 0.035653733505094175]] bytes equal to DO stable True
+            Название  Статус Ошибка
+0           Fe-пусто  готово       
+1  Fe-метастабильный  готово       
+2      Fe-стабильный  готово       

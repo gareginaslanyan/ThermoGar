@@ -1,0 +1,26 @@
+# Зелёный прогон тестов шага 2 после правки, 2026-09-23 10:23:44
+# git diff --stat e14b3e3 -- app/:  3 files changed, 42 insertions(+), 10 deletions(-)
+..............                               [100%]
+=================================== PASSES ====================================
+_______ VerifiedStateTests.test_batch_steel_mode_closed_list_on_ingress _______
+---------------------------- Captured stdout call -----------------------------
+uu
+_ VerifiedEquilibriumTests.test_17_batch_steel_mode_is_one_closed_list_with_owner_error _
+---------------------------- Captured stdout call -----------------------------
+uuuuuuuuuuuuuuuuuuuuuuuuuu
+=========================== short test summary info ===========================
+PASSED tools/thermogar_verified_state_test.py::VerifiedStateTests::test_batch_steel_mode_closed_list_on_ingress
+PASSED tools/thermogar_verified_equilibrium_test.py::VerifiedEquilibriumTests::test_17_batch_steel_mode_is_one_closed_list_with_owner_error
+PASSED tools/thermogar_verified_equilibrium_test.py::VerifiedEquilibriumTests::test_18_batch_file_steel_mode_reaches_engine_row
+PASSED tools/test_phase_description_order_words.py::test_disordered_gives_only_disordered_phrase[Disordered part of the sigma model.]
+PASSED tools/test_phase_description_order_words.py::test_disordered_gives_only_disordered_phrase[disordered FCC solid solution]
+PASSED tools/test_phase_description_order_words.py::test_disordered_gives_only_disordered_phrase[Chemically DISORDERED phase]
+PASSED tools/test_phase_description_order_words.py::test_ordered_gives_only_ordered_phrase[Ordered L12 phase.]
+PASSED tools/test_phase_description_order_words.py::test_ordered_gives_only_ordered_phrase[chemically ordered compound]
+PASSED tools/test_phase_description_order_words.py::test_ordered_gives_only_ordered_phrase[ORDERED intermetallic]
+PASSED tools/test_phase_description_order_words.py::test_both_words_give_both_phrases[Ordered phase with a disordered counterpart.]
+PASSED tools/test_phase_description_order_words.py::test_both_words_give_both_phrases[disordered and ordered parts of one model]
+PASSED tools/test_phase_description_order_words.py::test_word_inside_another_word_gives_neither_phrase[Unordered list of sites.]
+PASSED tools/test_phase_description_order_words.py::test_word_inside_another_word_gives_neither_phrase[reordered sublattice]
+PASSED tools/test_phase_description_order_words.py::test_word_inside_another_word_gives_neither_phrase[orderedness]
+14 passed, 28 subtests passed in 3.15s

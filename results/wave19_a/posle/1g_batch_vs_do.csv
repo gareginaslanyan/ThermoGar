@@ -1,0 +1,4 @@
+строка,в runner,эталон ДО,статус,побайтно
+Fe-пусто,metastable,metastable,success,True
+Fe-метастабильный,metastable,metastable,success,True
+Fe-стабильный,stable,stable,success,True
