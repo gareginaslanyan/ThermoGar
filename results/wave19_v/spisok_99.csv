@@ -1,0 +1,100 @@
+baza,faza,opisanie_en
+ni,BETA_MN,Simple cubic Manganese modification between 1000 K and 1370 K.
+ni,BETA_RHOMBO_B,Rhombohedral Boron.
+ni,B_CHALC,"Cu2S, B-chalcosite."
+ni,CHI_A12,"Alpha-Mn structure closely related to topologically close-packed sigma, Mu, and R-Phase. Unit cell contains 58 atoms plus interstitials (carbon)."
+ni,CORUND,"corund-structured (Al,Cr,Fe)2O3"
+ni,CR2B,Orthorhombic.
+ni,CR3MN5,"Also called ""alpha prime Phase"""
+ni,CRB,relevance in bracing filler alloy
+ni,DIGENITE,Use for equilibrium calculation only.
+ni,DISULF,"Pyrite, FeS2."
+ni,D_NIMO,Ni-Mo delta
+ni,FC_MONO,Monoclinic sulfur (high T)
+ni,FC_ORTHO,Orthorhombic Sulfur (low T).
+ni,HALITE,"halite-structured (Cr,Fe,Ni)O"
+ni,HF1O2_C,cubic
+ni,HF1O2_M,"monoclinic, strengthening dispersoid"
+ni,HF1O2_T,tetragonal
+ni,LA2O3_A,"hexagonal, strengthening dispersoid"
+ni,LA2O3_C,cubic
+ni,M2B,Tetragonal.
+ni,M6C_WY,M6C with physically correct sites according to Wyckoff positions.
+ni,MU_PHASE,can form as topologically close-packed structure in superalloys; affecting brittleness.
+ni,O1_GAS,for thermodynamic properties calculations only
+ni,P_PHASE,closely related to Sigma. Can form as topologically close-packed structure in superalloys; affecting brittleness.
+ni,R_PHASE,closely related to Sigma and Mu-phase. Can form as topologically close-packed structure in superalloys; affecting brittleness.
+ni,SIO2,Low Quartz
+ni,TIO2,Note: fully oxidized compound without oxygen vacancies
+ni,TRID,Tridymite
+al,AL12MG2CR,dispersoid in AA7xxx
+al,AL18CR2MG3,"E-phase, dispersoid in overaging regime in 7xxx Al-alloys [C42,C43]. Contains some Cu and Zn [C44]"
+al,AL2CU3_D,delta phase
+al,AL3TI_H,Tetragonal high temperature modification with space group I4/mmm.
+al,AL3TI_L,"Tetragonal low-temperature modification, space group I4/mmm."
+al,AL4MN,Hexagonal
+al,AL8FEMNSI2,"Intermetallic alpha_AlMnSi phase reported to crystallize during undercooling of Al-Si-Fe-Mn alloys. [REF:C18] Has higher Si than cubic alpha-phase ALCRFEMNSI_A. Relevant in simulations of high-Si Al-alloys, such as A356."
+al,AL9CU11_Z,zeta phase
+al,AL9CU11_ZP,zeta prime phase
+al,ALCUMN_T1,"T1-phase with orthorhombic crystal structure, space group Bbmm or Cmcm. Crystallizes during casting of Cu-Mn containing 2xxx alloys and as rodlike dispersoids. Previously discribed as AL20CU2MN3 [REF:C5,C22,C23,C41], however experiments support stoichiometries close to Al20Cu3Mn4."
+al,ALCU_EPL,epsilon prime phase low T
+al,ALCU_EPS,AlCu-epsilon
+al,ALCU_ETH,eta phase high T
+al,ALCU_ETL,eta prime phase low T
+al,ALCU_G,stable as high T gamma spec in Al-Cu
+al,ALFENI_T1,"Ternary compound Al9FeNi. Al9Co2-type monoclinic structure with 22 atoms per form,ula unit. Contributes to hardening, reported for alloy 2618, with a high thermal stability of particles up to 600C. [REF:C19,C20,C21]"
+al,ALFESI_T5,hexagonal alpha-AlFeSi end-member
+al,ALFESI_T6,"Monoclinic AlFeSi-Beta phase, roughly given as Al5FeSi. Important dispersoid in Fe-containing Al-alloys"
+al,BCC_A2,relevant in Al-Cu
+al,PI_ALFEMGSI,"Hexagonal equilibrium pi-phase. Occurs in Al-alloys with high contents of Si and Mg. Influencing ductility. [REF:C14,C15]"
+al,SI2TI,oF24 Fddd TiSi2
+al,SI3TI5,hP16 P63_mcm Mn5Si3
+al,SI4TI5,tP36 P41212 Si4Zr5
+al,SITI,oP8 Pnma FeB
+al,SITI3,tP30 P42_n PTi3
+al,TI17AL5SI14,orthorhombic.
+al,TIALSI_TAU,orthorhombic.
+fe,BETA_MN,Simple cubic Manganese modification between around 1000 K and 1370 K.
+fe,BETA_RHOMBO_B,Rhombohedral Boron.
+fe,B_CHALC,"Cu2S, B-chalcosite."
+fe,CHI_A12,"Alpha-Mn structure closely related to topologically close-packed sigma, Mu, and R-Phase. Unit cell contains 58 atoms plus interstitials (carbon)."
+fe,CORUND,"corund-structured (Al,Cr,Fe)2O3"
+fe,CR2B,Orthorhombic.
+fe,CR3MN5,"Also named ""alpha Phase"""
+fe,CRB,"Orthorhombic, space group Cmcm."
+fe,DIGENITE,Use for equilibrium calculation only.
+fe,DISULF,"Pyrite, FeS2."
+fe,FC_MONO,Monoclinic sulfur (high T)
+fe,FEB,"Orthorhombic, space group Pnma."
+fe,HALITE,"halite-structured (Cr,Fe,Ni)O"
+fe,HF1O2_C,cubic
+fe,HF1O2_M,"monoclinic, strengthening dispersoid"
+fe,HF1O2_T,tetragonal
+fe,LA2O3_A,"hexagonal, strengthening dispersoid"
+fe,LA2O3_C,cubic
+fe,M2B,Tetragonal.
+fe,M5B6,"Orthorhombic, space group Cmmm."
+fe,MN3B4,"Orthorhombic, space group Immm."
+fe,MNB2,"Hexagonal, space group P6/mmm."
+fe,MNNI,cubic
+fe,MO2M1B2,"tetragonal, space group P4/mbm"
+fe,MU_PHASE,"Hard, brittle intermetallic compound. W6Fe7-type. Important hardening phase in Fe-Co-Mo alloys. Simplified description, model IV from ref 77 used. Use for multi-component systems."
+fe,MU_PHASE_I,"Hard, brittle intermetallic compound. W6Fe7-type. Important hardening phase in Fe-Co-Mo alloys. Advanced description, based on model V from ref 77. Use for Fe-Co-Mo-Si tool steel applications."
+fe,O1_GAS,for thermodynamic properties calculations only
+fe,O_MN2B,Orthorhombic.
+fe,PD2MN,orthorhombic
+fe,PD5MN3,orthorhombic
+fe,PD6FE5MN2,observed in high-Pd Fe-Pd with Mn.
+fe,R_PHASE,"Topologically close-packed structure, closely related to Sigma and Mu-Phase."
+fe,SIO2,Low Quartz
+fe,SPINEL,Fe-Cr-Spinel
+fe,TI3B4,"Orthorhombic, space group Immm."
+fe,TIB,"Orthorhombic, space group Pnma."
+fe,TIB2,"Hexagonal, space group P6/mmm."
+fe,TIO2,Note: fully oxidized compound without oxygen vacancies
+fe,TRID,Tridymite
+fe,WC,simple hexagonal
+fe,Y2TI2O7,"pyrochlore structure, strengthening dispersoid"
+fe,Y2TIO5,"orthorhombic, strengthening dispersoid"
+fe,Y4AL2O9,monoclinic strengthening dispersoid
+fe,YALO3,"strengthening dispersoid, perovskite structure"
