@@ -1,0 +1,19 @@
+1в. Справочник фаз: сверка с ожиданием мастера.
+Путь вызова: results/wave19_a/scripts/app_extract.py — разбор app/ThermoGar_app.py через ast,
+импорты верхнего уровня + нужные определения, exec (как фикстура `app` в
+tools/test_equilibrium_solidus_fallback.py), набор дополнен замыканием по свободным именам.
+Вызов как во вкладке (app/ThermoGar_app.py:12120): db, path = load_database(key);
+phase_reference_dataframe(db, path, key). Fe — профиль по умолчанию (thermogar_patch).
+
+база | фаз (мастер / замер) | описание непусто (мастер / замер) | слово disordered | слово ordered
+ni   | 103 / 99   | 64 / 64 | 0 / 0 | 2 / 2
+al   | 196 / 195  | 87 / 87 | 0 / 0 | 6 / 6
+fe   | 136 / 132  | 94 / 94 | 0 / 0 | 7 / 7
+всего| 435 / 426
+
+Расхождение по числу фаз: 9 (4 ni, 1 al, 4 fe). Не СТОП, записано.
+Причина (проверено): 103/196/136 — число совпадений `^\s*PHASE\s+(\S+)` в тексте TDB,
+куда попадают строки комментариев-описаний: ni и fe — DIAGRAM, EQUILBRIA, EQUILIBRIA,
+STABILITY; al — RELATIONS. Эти же 9 «имён» есть в ключах parse_phase_descriptions,
+но в db.phases (pycalphad) их нет, и в таблицу справочника они не попадают.
+Таблица справочника строится по sorted(db.phases): 99/195/132 строк.

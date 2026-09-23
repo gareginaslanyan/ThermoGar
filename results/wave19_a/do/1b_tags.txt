@@ -1,0 +1,10 @@
+тег | коммит | sha256[:12] _steel_mode | sha256[:12] normalize_steel_mode | вызов _steel_mode в _normalize_batch_table | вызов normalize_steel_mode в run_batch_calculations | _parse_csv в _parse_ingress | batch_table_dataframe в UI | run_batch_calculations в UI
+v0.3.0 | 80ebf35 | 39cebef0b16e | ffbebc100a5b | 1 | 1 | 1 | 1 | 1
+v0.3.1 | 7f0c7ab | 39cebef0b16e | ffbebc100a5b | 1 | 1 | 1 | 1 | 1
+v0.4.0 | df15a0e | 39cebef0b16e | ffbebc100a5b | 1 | 1 | 1 | 1 | 1
+v0.4.1 | 2dc68a2 | 39cebef0b16e | ffbebc100a5b | 1 | 1 | 1 | 1 | 1
+v0.4.2 | 2a41e88 | 39cebef0b16e | ffbebc100a5b | 1 | 1 | 1 | 1 | 1
+v0.4.3 | 7745df8 | 39cebef0b16e | ffbebc100a5b | 1 | 1 | 1 | 1 | 1
+e14b3e3 | e14b3e3 | 39cebef0b16e | ffbebc100a5b | 1 | 1 | 1 | 1 | 1
+
+Итог: задевает выпуски 0.3.0, 0.3.1, 0.4.0, 0.4.1, 0.4.2, 0.4.3 (обе функции побайтно одинаковы во всех шести тегах и в e14b3e3; путь файл -> _parse_csv -> batch_table_dataframe -> run_batch_calculations -> normalize_steel_mode есть в каждом).
