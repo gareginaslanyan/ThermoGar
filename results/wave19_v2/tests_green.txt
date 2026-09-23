@@ -1,0 +1,17 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0 -- D:\Pets\ThermoGar\.venv-windows\Scripts\python.exe
+rootdir: D:\Pets\ThermoGar
+plugins: anyio-4.15.1, cov-7.1.0, timeout-2.4.0
+collecting ... collected 9 items
+
+tools/test_phase_description_stub_keys.py::test_new_phrases_bytewise PASSED [ 11%]
+tools/test_phase_description_stub_keys.py::test_phrase_keys_and_order PASSED [ 22%]
+tools/test_phase_description_stub_keys.py::test_existing_phrases_are_translate_literals PASSED [ 33%]
+tools/test_phase_description_stub_keys.py::test_stub_keys_table PASSED   [ 44%]
+tools/test_phase_description_stub_keys.py::test_phrases_for PASSED       [ 55%]
+tools/test_phase_description_stub_keys.py::test_translate_uses_table PASSED [ 66%]
+tools/test_phase_description_stub_keys.py::test_translate_without_pair_keeps_stub[ZZZ-Orthorhombic.] PASSED [ 77%]
+tools/test_phase_description_stub_keys.py::test_translate_without_pair_keeps_stub[SPINEL-Fe-Cr-Spinel] PASSED [ 88%]
+tools/test_phase_description_stub_keys.py::test_translate_old_path_unchanged PASSED [100%]
+
+============================== 9 passed in 4.97s ==============================

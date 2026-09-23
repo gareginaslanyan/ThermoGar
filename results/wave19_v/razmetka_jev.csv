@@ -1,0 +1,81 @@
+faza,opisanie_en,klyuchi,struktura_vybor,struktura_confidence,klass_vybor,klass_confidence,dispersoid_vybor,dispersoid_confidence,uprochnenie_noul,tpu_noul,khrupkost_vybor,khrupkost_confidence,ustojchivost_vybor,ustojchivost_confidence,temperatura_vybor,temperatura_confidence,sluzhebnaya_vybor,sluzhebnaya_confidence,model
+BETA_MN,Simple cubic Manganese modification between 1000 K and 1370 K.,S_CUB T_HIGH,S_CUB,0.99,not_stated,0.97,not_stated,0.99,0.11,0.08,not_stated,0.99,not_stated,0.93,T_HIGH,0.46,not_stated,0.93,jev-1.13.0
+BETA_RHOMBO_B,Rhombohedral Boron.,S_RHO,S_RHO,0.99,not_stated,0.52,not_stated,0.96,0.12,0.11,not_stated,0.78,not_stated,0.97,not_stated,0.92,not_stated,0.96,jev-1.13.0
+B_CHALC,"Cu2S, B-chalcosite.",C_SUL,not_stated,0.92,C_SUL,0.92,not_stated,0.95,0.14,0.11,not_stated,0.97,not_stated,0.98,not_stated,0.72,not_stated,0.41,jev-1.13.0
+CHI_A12,"Alpha-Mn structure closely related to topologically close-packed sigma, Mu, and R-Phase. Unit cell contains 58 atoms plus interstitials (carbon).",C_CAR,not_stated,0.93,C_CAR,0.53,not_stated,0.95,0.13,0.12,not_stated,0.97,not_stated,0.98,not_stated,0.84,not_stated,0.97,jev-1.13.0
+CORUND,"corund-structured (Al,Cr,Fe)2O3",C_OX,not_stated,0.91,C_OX,1.0,not_stated,0.93,0.14,0.12,not_stated,0.61,not_stated,0.98,not_stated,0.97,not_stated,0.96,jev-1.13.0
+CR2B,Orthorhombic.,S_ORT,S_ORT,0.99,not_stated,0.51,not_stated,0.95,0.13,0.11,not_stated,0.98,not_stated,0.99,not_stated,0.96,not_stated,0.97,jev-1.13.0
+CR3MN5,"Also called ""alpha prime Phase""",C_NIT,not_stated,0.95,C_NIT,0.5,not_stated,0.96,0.19,0.13,not_stated,0.97,not_stated,0.84,not_stated,0.89,not_stated,0.96,jev-1.13.0
+CRB,relevance in bracing filler alloy,,not_stated,0.78,not_stated,0.37,not_stated,0.92,0.19,0.15,not_stated,0.95,not_stated,0.97,not_stated,0.98,not_stated,0.82,jev-1.13.0
+DIGENITE,Use for equilibrium calculation only.,SL_EQ,not_stated,0.97,not_stated,0.94,not_stated,0.92,0.13,0.12,not_stated,0.99,not_stated,0.6,not_stated,0.89,SL_EQ,0.99,jev-1.13.0
+DISULF,"Pyrite, FeS2.",C_SUL,not_stated,0.94,C_SUL,0.99,not_stated,0.92,0.13,0.1,not_stated,0.88,not_stated,0.98,not_stated,0.91,not_stated,0.95,jev-1.13.0
+D_NIMO,Ni-Mo delta,C_INT,not_stated,0.87,C_INT,0.85,not_stated,0.85,0.18,0.16,not_stated,0.95,not_stated,0.94,not_stated,0.86,not_stated,0.85,jev-1.13.0
+FC_MONO,Monoclinic sulfur (high T),S_MON T_HIGH,S_MON,0.97,not_stated,0.64,not_stated,0.98,0.1,0.09,not_stated,0.96,not_stated,0.97,T_HIGH,0.99,not_stated,0.91,jev-1.13.0
+FC_ORTHO,Orthorhombic Sulfur (low T).,S_ORT T_LOW,S_ORT,0.99,not_stated,0.57,not_stated,0.99,0.1,0.08,not_stated,0.93,not_stated,0.96,T_LOW,0.99,not_stated,0.93,jev-1.13.0
+HALITE,"halite-structured (Cr,Fe,Ni)O",C_OX,not_stated,0.85,C_OX,0.99,not_stated,0.92,0.12,0.09,not_stated,0.91,not_stated,0.99,not_stated,0.96,not_stated,0.96,jev-1.13.0
+HF1O2_C,cubic,S_CUB C_OX T_HIGH,S_CUB,0.98,C_OX,0.82,not_stated,0.96,0.15,0.13,not_stated,0.97,not_stated,0.99,T_HIGH,0.22,not_stated,0.97,jev-1.13.0
+HF1O2_M,"monoclinic, strengthening dispersoid",S_MON C_OX R_DISPU,S_MON,0.99,C_OX,0.88,R_DISPU,0.94,0.17,0.11,not_stated,0.94,not_stated,0.87,not_stated,0.21,not_stated,0.91,jev-1.13.0
+HF1O2_T,tetragonal,S_TET C_OX T_HIGH,S_TET,0.99,C_OX,0.8,not_stated,0.94,0.12,0.11,not_stated,0.97,not_stated,0.99,T_HIGH,0.71,not_stated,0.86,jev-1.13.0
+LA2O3_A,"hexagonal, strengthening dispersoid",S_HEX C_OX R_DISPU,S_HEX,0.98,C_OX,0.91,R_DISPU,0.97,0.18,0.16,not_stated,0.89,not_stated,0.97,not_stated,0.95,not_stated,0.95,jev-1.13.0
+LA2O3_C,cubic,S_CUB C_OX,S_CUB,0.99,C_OX,0.62,not_stated,0.93,0.13,0.11,not_stated,0.97,not_stated,0.98,not_stated,0.87,not_stated,0.96,jev-1.13.0
+M2B,Tetragonal.,S_TET C_BOR,S_TET,0.98,C_BOR,0.65,not_stated,0.96,0.15,0.12,not_stated,0.98,not_stated,0.97,not_stated,0.94,not_stated,0.94,jev-1.13.0
+M6C_WY,M6C with physically correct sites according to Wyckoff positions.,C_CAR,not_stated,0.75,C_CAR,0.72,not_stated,0.88,0.19,0.15,not_stated,0.98,not_stated,0.98,not_stated,0.98,not_stated,0.96,jev-1.13.0
+MU_PHASE,can form as topologically close-packed structure in superalloys; affecting brittleness.,R_TPU R_OXR,not_stated,0.95,not_stated,0.81,not_stated,0.91,0.11,0.83,R_OXR,0.95,not_stated,0.9,not_stated,0.94,not_stated,0.95,jev-1.13.0
+O1_GAS,for thermodynamic properties calculations only,C_GAS SL_TD,not_stated,1.0,C_GAS,0.99,not_stated,0.98,0.12,0.11,not_stated,0.98,not_stated,0.93,not_stated,0.91,SL_TD,0.94,jev-1.13.0
+P_PHASE,closely related to Sigma. Can form as topologically close-packed structure in superalloys; affecting brittleness.,C_INT R_TPU R_OXR,not_stated,0.92,C_INT,0.75,not_stated,0.9,0.11,0.53,R_OXR,0.95,not_stated,0.96,not_stated,0.92,not_stated,0.94,jev-1.13.0
+R_PHASE,closely related to Sigma and Mu-phase. Can form as topologically close-packed structure in superalloys; affecting brittleness.,C_INT R_TPU R_OXR,not_stated,0.92,C_INT,0.43,not_stated,0.87,0.13,0.56,R_OXR,0.95,not_stated,0.95,not_stated,0.97,not_stated,0.94,jev-1.13.0
+SIO2,Low Quartz,C_OX T_LOW,not_stated,0.87,C_OX,0.98,not_stated,0.91,0.12,0.09,not_stated,0.68,not_stated,0.95,T_LOW,0.92,not_stated,0.85,jev-1.13.0
+TIO2,Note: fully oxidized compound without oxygen vacancies,C_OX,not_stated,0.98,C_OX,0.99,not_stated,0.94,0.15,0.14,not_stated,0.87,not_stated,0.97,not_stated,0.93,not_stated,0.93,jev-1.13.0
+TRID,Tridymite,,not_stated,0.95,not_stated,0.87,not_stated,0.96,0.11,0.11,not_stated,0.93,not_stated,0.97,not_stated,0.51,not_stated,0.63,jev-1.13.0
+AL12MG2CR,dispersoid in AA7xxx,C_INT R_DISP,not_stated,0.97,C_INT,0.59,R_DISP,0.87,0.2,0.15,not_stated,0.93,not_stated,0.81,not_stated,0.97,not_stated,0.9,jev-1.13.0
+AL18CR2MG3,"E-phase, dispersoid in overaging regime in 7xxx Al-alloys [C42,C43]. Contains some Cu and Zn [C44]",C_INT R_DISP,not_stated,0.97,C_INT,0.77,R_DISP,0.85,0.2,0.13,not_stated,0.93,not_stated,0.47,not_stated,0.9,not_stated,0.95,jev-1.13.0
+AL2CU3_D,delta phase,C_INT,not_stated,0.94,C_INT,0.49,not_stated,0.85,0.16,0.13,not_stated,0.94,not_stated,0.93,not_stated,0.94,not_stated,0.86,jev-1.13.0
+AL3TI_H,Tetragonal high temperature modification with space group I4/mmm.,S_TET T_HIGH,S_TET,1.0,not_stated,0.76,not_stated,0.99,0.13,0.11,not_stated,0.99,not_stated,0.99,T_HIGH,0.99,not_stated,0.97,jev-1.13.0
+AL3TI_L,"Tetragonal low-temperature modification, space group I4/mmm.",S_TET T_LOW,S_TET,1.0,not_stated,0.77,not_stated,0.99,0.12,0.1,not_stated,0.99,not_stated,0.98,T_LOW,0.99,not_stated,0.95,jev-1.13.0
+AL4MN,Hexagonal,S_HEX C_INT,S_HEX,0.94,C_INT,0.58,not_stated,0.95,0.17,0.15,not_stated,0.98,not_stated,0.99,not_stated,0.96,not_stated,0.95,jev-1.13.0
+AL8FEMNSI2,"Intermetallic alpha_AlMnSi phase reported to crystallize during undercooling of Al-Si-Fe-Mn alloys. [REF:C18] Has higher Si than cubic alpha-phase ALCRFEMNSI_A. Relevant in simulations of high-Si Al-alloys, such as A356.",C_INT,not_stated,0.8,C_INT,1.0,not_stated,0.83,0.11,0.1,not_stated,0.98,not_stated,0.37,not_stated,0.88,not_stated,0.94,jev-1.13.0
+AL9CU11_Z,zeta phase,C_INT,not_stated,0.93,C_INT,0.63,not_stated,0.93,0.16,0.16,not_stated,0.91,not_stated,0.97,not_stated,0.97,not_stated,0.94,jev-1.13.0
+AL9CU11_ZP,zeta prime phase,C_INT,not_stated,0.97,C_INT,0.48,not_stated,0.92,0.19,0.12,not_stated,0.96,not_stated,0.95,not_stated,0.97,not_stated,0.94,jev-1.13.0
+ALCUMN_T1,"T1-phase with orthorhombic crystal structure, space group Bbmm or Cmcm. Crystallizes during casting of Cu-Mn containing 2xxx alloys and as rodlike dispersoids. Previously discribed as AL20CU2MN3 [REF:C5,C22,C23,C41], however experiments support stoichiometries close to Al20Cu3Mn4.",S_ORT C_INT R_DISP,S_ORT,1.0,C_INT,0.54,R_DISP,0.84,0.13,0.08,not_stated,0.98,not_stated,0.89,not_stated,0.86,not_stated,0.95,jev-1.13.0
+ALCU_EPL,epsilon prime phase low T,T_LOW,not_stated,0.93,not_stated,0.64,not_stated,0.92,0.16,0.13,not_stated,0.97,not_stated,0.94,T_LOW,0.99,not_stated,0.87,jev-1.13.0
+ALCU_EPS,AlCu-epsilon,C_INT,not_stated,0.89,C_INT,0.76,not_stated,0.91,0.18,0.12,not_stated,0.91,not_stated,0.95,not_stated,0.91,not_stated,0.82,jev-1.13.0
+ALCU_ETH,eta phase high T,C_INT T_HIGH,not_stated,0.95,C_INT,0.45,not_stated,0.95,0.15,0.14,not_stated,0.96,not_stated,0.96,T_HIGH,0.99,not_stated,0.78,jev-1.13.0
+ALCU_ETL,eta prime phase low T,T_LOW,not_stated,0.91,not_stated,0.61,not_stated,0.91,0.15,0.15,not_stated,0.98,not_stated,0.94,T_LOW,0.98,not_stated,0.75,jev-1.13.0
+ALCU_G,stable as high T gamma spec in Al-Cu,C_INT T_HIGH,not_stated,0.47,C_INT,0.55,not_stated,0.9,0.16,0.13,not_stated,0.97,not_stated,0.49,T_HIGH,0.99,not_stated,0.81,jev-1.13.0
+ALFENI_T1,"Ternary compound Al9FeNi. Al9Co2-type monoclinic structure with 22 atoms per form,ula unit. Contributes to hardening, reported for alloy 2618, with a high thermal stability of particles up to 600C. [REF:C19,C20,C21]",S_MON C_INT R_DISPU R_UPR T_HIGH,S_MON,0.98,C_INT,0.82,R_DISPU,0.57,0.71,0.1,not_stated,0.83,not_stated,0.97,T_HIGH,0.8,not_stated,0.96,jev-1.13.0
+ALFESI_T5,hexagonal alpha-AlFeSi end-member,S_HEX C_SIL,S_HEX,0.94,C_SIL,0.64,not_stated,0.88,0.14,0.15,not_stated,0.94,not_stated,0.94,not_stated,0.59,not_stated,0.91,jev-1.13.0
+ALFESI_T6,"Monoclinic AlFeSi-Beta phase, roughly given as Al5FeSi. Important dispersoid in Fe-containing Al-alloys",S_MON C_SIL R_DISP,S_MON,0.99,C_SIL,0.46,R_DISP,0.94,0.13,0.1,not_stated,0.93,not_stated,0.92,not_stated,0.88,not_stated,0.96,jev-1.13.0
+BCC_A2,relevant in Al-Cu,C_INT,not_stated,0.64,C_INT,0.43,not_stated,0.93,0.12,0.11,not_stated,0.99,not_stated,0.96,not_stated,0.81,not_stated,0.93,jev-1.13.0
+PI_ALFEMGSI,"Hexagonal equilibrium pi-phase. Occurs in Al-alloys with high contents of Si and Mg. Influencing ductility. [REF:C14,C15]",S_HEX C_INT R_OXR U_EQ,S_HEX,0.97,C_INT,0.8,not_stated,0.9,0.13,0.14,R_OXR,0.94,U_EQ,0.93,not_stated,0.98,not_stated,0.43,jev-1.13.0
+SI2TI,oF24 Fddd TiSi2,S_TET C_SIL,S_TET,0.43,C_SIL,0.82,not_stated,0.89,0.15,0.14,not_stated,0.92,not_stated,0.97,not_stated,0.82,not_stated,0.91,jev-1.13.0
+SI3TI5,hP16 P63_mcm Mn5Si3,S_HEX C_SIL,S_HEX,0.97,C_SIL,0.89,not_stated,0.84,0.15,0.14,not_stated,0.89,not_stated,0.95,not_stated,0.92,not_stated,0.86,jev-1.13.0
+SI4TI5,tP36 P41212 Si4Zr5,S_TET C_SIL,S_TET,0.62,C_SIL,0.76,not_stated,0.91,0.17,0.37,not_stated,0.96,not_stated,0.98,not_stated,0.9,not_stated,0.89,jev-1.13.0
+SITI,oP8 Pnma FeB,S_ORT C_BOR,S_ORT,0.7,C_BOR,0.86,not_stated,0.93,0.15,0.12,not_stated,0.97,not_stated,0.97,not_stated,0.93,not_stated,0.92,jev-1.13.0
+SITI3,tP30 P42_n PTi3,S_TET C_NIT,S_TET,0.64,C_NIT,0.21,not_stated,0.81,0.18,0.33,not_stated,0.91,not_stated,0.96,not_stated,0.77,not_stated,0.81,jev-1.13.0
+TI17AL5SI14,orthorhombic.,S_ORT C_INT,S_ORT,0.99,C_INT,0.51,not_stated,0.96,0.13,0.13,not_stated,0.96,not_stated,0.99,not_stated,0.86,not_stated,0.98,jev-1.13.0
+TIALSI_TAU,orthorhombic.,S_ORT,S_ORT,1.0,not_stated,0.26,not_stated,0.96,0.15,0.12,not_stated,0.97,not_stated,0.99,not_stated,0.92,not_stated,0.98,jev-1.13.0
+BETA_MN,Simple cubic Manganese modification between around 1000 K and 1370 K.,S_CUB T_HIGH,S_CUB,0.99,not_stated,0.96,not_stated,0.98,0.09,0.08,not_stated,0.98,not_stated,0.93,T_HIGH,0.67,not_stated,0.95,jev-1.13.0
+CR3MN5,"Also named ""alpha Phase""",C_NIT,not_stated,0.96,C_NIT,0.51,not_stated,0.98,0.16,0.16,not_stated,0.97,not_stated,0.98,not_stated,0.75,not_stated,0.96,jev-1.13.0
+CRB,"Orthorhombic, space group Cmcm.",S_ORT,S_ORT,0.98,not_stated,0.61,not_stated,0.97,0.14,0.1,not_stated,0.97,not_stated,0.99,not_stated,0.98,not_stated,0.98,jev-1.13.0
+FEB,"Orthorhombic, space group Pnma.",S_ORT,S_ORT,1.0,not_stated,0.98,not_stated,0.99,0.14,0.11,not_stated,0.99,not_stated,0.99,not_stated,0.88,not_stated,0.99,jev-1.13.0
+M5B6,"Orthorhombic, space group Cmmm.",S_ORT C_BOR,S_ORT,1.0,C_BOR,0.56,not_stated,0.98,0.11,0.1,not_stated,0.99,not_stated,0.99,not_stated,0.98,not_stated,0.99,jev-1.13.0
+MN3B4,"Orthorhombic, space group Immm.",S_ORT C_BOR,S_ORT,0.99,C_BOR,0.4,not_stated,0.98,0.12,0.11,not_stated,0.99,not_stated,0.99,not_stated,0.99,not_stated,0.99,jev-1.13.0
+MNB2,"Hexagonal, space group P6/mmm.",S_HEX,S_HEX,0.98,not_stated,0.38,not_stated,0.98,0.12,0.16,not_stated,0.99,not_stated,0.98,not_stated,0.98,not_stated,0.98,jev-1.13.0
+MNNI,cubic,S_CUB,S_CUB,0.91,not_stated,0.26,not_stated,0.95,0.16,0.12,not_stated,0.98,not_stated,0.97,not_stated,0.97,not_stated,0.95,jev-1.13.0
+MO2M1B2,"tetragonal, space group P4/mbm",S_TET C_OX,S_TET,1.0,C_OX,0.66,not_stated,0.95,0.12,0.1,not_stated,0.99,not_stated,0.99,not_stated,0.91,not_stated,0.98,jev-1.13.0
+MU_PHASE,"Hard, brittle intermetallic compound. W6Fe7-type. Important hardening phase in Fe-Co-Mo alloys. Simplified description, model IV from ref 77 used. Use for multi-component systems.",C_INT R_UPR R_TVXR,not_stated,0.98,C_INT,0.98,not_stated,0.28,0.59,0.14,R_TVXR,0.97,not_stated,0.94,not_stated,0.97,not_stated,0.89,jev-1.13.0
+MU_PHASE_I,"Hard, brittle intermetallic compound. W6Fe7-type. Important hardening phase in Fe-Co-Mo alloys. Advanced description, based on model V from ref 77. Use for Fe-Co-Mo-Si tool steel applications.",C_INT R_UPR R_TVXR,not_stated,0.97,C_INT,0.99,not_stated,0.31,0.5,0.14,R_TVXR,0.96,not_stated,0.96,not_stated,0.99,not_stated,0.9,jev-1.13.0
+O_MN2B,Orthorhombic.,S_ORT C_OX,S_ORT,0.99,C_OX,0.63,not_stated,0.97,0.13,0.09,not_stated,0.98,not_stated,0.99,not_stated,0.99,not_stated,0.97,jev-1.13.0
+PD2MN,orthorhombic,S_ORT,S_ORT,0.98,not_stated,0.66,not_stated,0.95,0.17,0.11,not_stated,0.98,not_stated,0.98,not_stated,0.95,not_stated,0.97,jev-1.13.0
+PD5MN3,orthorhombic,S_ORT,S_ORT,0.97,not_stated,0.52,not_stated,0.96,0.14,0.12,not_stated,0.98,not_stated,0.99,not_stated,0.98,not_stated,0.98,jev-1.13.0
+PD6FE5MN2,observed in high-Pd Fe-Pd with Mn.,C_INT,not_stated,0.38,C_INT,0.78,not_stated,0.88,0.13,0.13,not_stated,0.99,not_stated,0.95,not_stated,0.97,not_stated,0.95,jev-1.13.0
+R_PHASE,"Topologically close-packed structure, closely related to Sigma and Mu-Phase.",R_TPU,not_stated,0.9,not_stated,0.43,not_stated,0.94,0.15,0.5,not_stated,0.94,not_stated,0.98,not_stated,0.99,not_stated,0.97,jev-1.13.0
+SPINEL,Fe-Cr-Spinel,,not_stated,0.92,not_stated,0.5,not_stated,0.88,0.13,0.1,not_stated,0.91,not_stated,0.96,not_stated,0.97,not_stated,0.96,jev-1.13.0
+TI3B4,"Orthorhombic, space group Immm.",S_ORT,S_ORT,0.99,not_stated,0.89,not_stated,0.98,0.13,0.12,not_stated,0.99,not_stated,0.99,not_stated,0.96,not_stated,0.99,jev-1.13.0
+TIB,"Orthorhombic, space group Pnma.",S_ORT,S_ORT,1.0,not_stated,0.89,not_stated,0.98,0.15,0.18,not_stated,0.98,not_stated,0.99,not_stated,0.69,not_stated,0.97,jev-1.13.0
+TIB2,"Hexagonal, space group P6/mmm.",S_HEX C_BOR,S_HEX,0.99,C_BOR,0.74,not_stated,0.95,0.13,0.17,not_stated,0.98,not_stated,0.99,not_stated,0.93,not_stated,0.98,jev-1.13.0
+WC,simple hexagonal,S_HEX,S_HEX,0.93,not_stated,0.79,not_stated,0.97,0.17,0.13,not_stated,0.98,not_stated,0.99,not_stated,0.98,not_stated,0.94,jev-1.13.0
+Y2TI2O7,"pyrochlore structure, strengthening dispersoid",C_OX R_DISPU,not_stated,0.92,C_OX,0.98,R_DISPU,0.95,0.17,0.1,not_stated,0.79,not_stated,0.97,not_stated,0.96,not_stated,0.89,jev-1.13.0
+Y2TIO5,"orthorhombic, strengthening dispersoid",S_ORT C_OX R_DISPU,S_ORT,0.99,C_OX,0.65,R_DISPU,0.95,0.17,0.09,not_stated,0.93,not_stated,0.95,not_stated,0.92,not_stated,0.95,jev-1.13.0
+Y4AL2O9,monoclinic strengthening dispersoid,S_MON C_OX R_DISPU,S_MON,0.98,C_OX,0.97,R_DISPU,0.96,0.2,0.09,not_stated,0.81,not_stated,0.89,not_stated,0.89,not_stated,0.9,jev-1.13.0
+YALO3,"strengthening dispersoid, perovskite structure",R_DISPU,not_stated,0.95,not_stated,0.54,R_DISPU,0.95,0.21,0.11,not_stated,0.9,not_stated,0.96,not_stated,0.91,not_stated,0.94,jev-1.13.0

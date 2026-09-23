@@ -1,0 +1,196 @@
+Код фазы,Простыми словами,Описание по-русски,Примечание модели,Оригинал из базы (англ.)
+AL11CR2,,Равновесная фаза.,,"Monoclinic eta-phase, high-temperatures equilibrium phase above 700C - pontential dispersoid only after solution treatment at high temperatures. [REF:C3]"
+AL11MN4,,Описание в исходной базе отсутствует.,,
+AL11TI5,,Описание в исходной базе отсутствует.,,
+AL12MG2CR,,Интерметаллидная фаза. Дисперсоид.,,dispersoid in AA7xxx
+AL12MN,,Объёмно-центрированная кубическая (ОЦК) структура. Метастабильная фаза.,,"Body-centered cubic. Occasionally observed metastable Mn- and Fe containing particles in aluminium alloyed with Mn. Example: Al-0.7at% Mn, ellipsoid to rod-like particle morphologies.[REF:C26]"
+AL13CR2,,"Фаза-выделение, связанная с дисперсионным упрочнением.",,"Common Cr-precipitate in 7xxx Al-alloys. Synonymous to Al7Cr; both are specific stoichiometries of equilibrium Al-Cr intermetallic phases with a composition range between 12.5 to 14 at.% Cr. Monoclinic, space group C2/m. [REFS:C1,C2]"
+AL13CR4SI4,,Описание в исходной базе отсутствует.,,
+AL13FE4,,Равновесная фаза.,,"Monoclinic equilibrium phase, space group C2/m. Intermetallic particles observed in Fe-containing cast alloys and 8xxx series. [REF:C16,C17]"
+AL18CR2MG3,,Интерметаллидная фаза. Дисперсоид.,,"E-phase, dispersoid in overaging regime in 7xxx Al-alloys [C42,C43]. Contains some Cu and Zn [C44]"
+AL23CUFE4,,"Фаза-выделение, связанная с дисперсионным упрочнением.",,Precipitate observed in AA7xxx.
+AL2CU3_D,,Интерметаллидная фаза.,,delta phase
+AL2FE,,Описание в исходной базе отсутствует.,,
+AL2SC,,Описание в исходной базе отсутствует.,,
+AL2TI,,Описание в исходной базе отсутствует.,,
+AL2ZR,,Описание в исходной базе отсутствует.,,
+AL2ZR3,,Описание в исходной базе отсутствует.,,
+AL3MG,,Упорядоченная фаза.,,"nonstoich, close to ordered AlMg L12 phase"
+AL3M_D022,,Описание в исходной базе отсутствует.,,
+AL3NI,,"Фаза-выделение, связанная с дисперсионным упрочнением.",,Potential precipitate in Ni-containing Al-alloys. Simple description used
+AL3NI2,,Описание в исходной базе отсутствует.,,
+AL3NI5,,Описание в исходной базе отсутствует.,,
+AL3SC,упрочняющая фаза Al₃Sc,"упрочняющая фаза Al₃Sc. Фаза-выделение, связанная с дисперсионным упрочнением. Упорядоченная фаза.",,"Ordered L12-type. Coherent, nano-scale precipitates in Sc-containing Al-alloys contribute to precipitation hardening. [REF:C28,C29]"
+AL3TI_H,,Тетрагональная структура. Интерметаллидная фаза. Высокотемпературная модификация.,,Tetragonal high temperature modification with space group I4/mmm.
+AL3TI_L,,Тетрагональная структура. Интерметаллидная фаза. Низкотемпературная модификация.,,"Tetragonal low-temperature modification, space group I4/mmm."
+AL3ZR,фаза Al₃Zr,"фаза Al₃Zr. Фаза-выделение, связанная с дисперсионным упрочнением. Упорядоченная фаза.",,"tetragonal ordered D023 structure, Pd3Mn type. Coherent, nano-scale precipitates in Zr-Sc-containing Al-alloys contribute to precipitation hardening. [REF:C28,C30]"
+AL3ZR2,,Описание в исходной базе отсутствует.,,
+AL3ZR4,,Описание в исходной базе отсутствует.,,
+AL3ZR5,,Описание в исходной базе отсутствует.,,
+AL4CR,,"Фаза-выделение, связанная с дисперсионным упрочнением.",,Orthorhombic epsilon-phase. Potential precipitate in Cr-containing Al-alloys. [REF:C1]
+AL4MN,,Гексагональная структура. Интерметаллидная фаза.,,Hexagonal
+AL4SI5ZR3,,Описание в исходной базе отсутствует.,,
+AL4ZR5,,Описание в исходной базе отсутствует.,,
+AL58CR31SI11,,Описание в исходной базе отсутствует.,,
+AL5FE2,,Описание в исходной базе отсутствует.,,
+AL5FE4,,Описание в исходной базе отсутствует.,,
+AL6MN,,Равновесная фаза.,,"Orthorhombic equilibrium phase with 28 atoms per unit cell. At high Mn-alloying. Example: Hardenable Al-0.7 at.% Mn, ellipsoid to rod-like particle morphologies. [REF:C24,C25,C26]"
+AL7CU2FE,,"Фаза-выделение, связанная с дисперсионным упрочнением.",,"Tetragonal. Common precipitate in 2524 Al-alloys, observed also in 7075. [REFS:C4,C5]"
+AL8CR5_H,,Описание в исходной базе отсутствует.,,
+AL8CR5_L,,Описание в исходной базе отсутствует.,,
+AL8FEMNSI2,,Интерметаллидная фаза.,,"Intermetallic alpha_AlMnSi phase reported to crystallize during undercooling of Al-Si-Fe-Mn alloys. [REF:C18] Has higher Si than cubic alpha-phase ALCRFEMNSI_A. Relevant in simulations of high-Si Al-alloys, such as A356."
+AL8MN5_D810,,Описание в исходной базе отсутствует.,,
+AL9CR3SI,,Описание в исходной базе отсутствует.,,
+AL9CR4_H,,Описание в исходной базе отсутствует.,,
+AL9CR4_L,,Описание в исходной базе отсутствует.,,
+AL9CU11_Z,,Интерметаллидная фаза.,,zeta phase
+AL9CU11_ZP,,Интерметаллидная фаза.,,zeta prime phase
+ALCR,,Описание в исходной базе отсутствует.,,
+ALCR2,,Описание в исходной базе отсутствует.,,
+ALCRCU_TAU,,"Фаза-выделение, связанная с дисперсионным упрочнением.",,"Quaternary extension Al16(Cr,Fe)3Cu of Al-Cr-Cu-type tau-phases [C45]. Precipitate observed in 7xxx Al-alloy."
+ALCRFEMNSI_A,,Равновесная фаза.,,"Cubic Alpha-AlCr(Fe)MnSi equilibrium phase with compositions close to Al9Mn2Si. Important dispersoid phase in Fe-, Cr-, Mn-containing Al-alloys. [REF:76]"
+ALCRSI,,"Метастабильная фаза. Фаза-выделение, связанная с дисперсионным упрочнением.",,"metastable, potential precipitate in 6xxx Al-alloys. Ideal extension, to be optimized"
+ALCRSI_T3,,Описание в исходной базе отсутствует.,,
+ALCU2,,Метастабильная фаза.,,"Metastable phase. Orthorhombic, space group cmcm"
+ALCUMG_V,,Описание в исходной базе отсутствует.,,
+ALCUMN_T1,,Ромбическая структура. Интерметаллидная фаза. Дисперсоид.,,"T1-phase with orthorhombic crystal structure, space group Bbmm or Cmcm. Crystallizes during casting of Cu-Mn containing 2xxx alloys and as rodlike dispersoids. Previously discribed as AL20CU2MN3 [REF:C5,C22,C23,C41], however experiments support stoichiometries close to Al20Cu3Mn4."
+ALCUZN_T,,Метастабильная фаза.,,metastable in Al-Cu
+ALCU_EPL,,Интерметаллидная фаза. Низкотемпературная модификация.,,epsilon prime phase low T
+ALCU_EPS,,Интерметаллидная фаза.,,AlCu-epsilon
+ALCU_ETH,,Интерметаллидная фаза. Высокотемпературная модификация.,,eta phase high T
+ALCU_ETL,,Интерметаллидная фаза. Низкотемпературная модификация.,,eta prime phase low T
+ALCU_G,,Интерметаллидная фаза. Высокотемпературная модификация.,,stable as high T gamma spec in Al-Cu
+ALCU_G_P,,Равновесная фаза.,,"Cu9Al4 Gamma prime phase. Cubic, equilibrium phase. D83 from Strukturbericht. Space group P-43m"
+ALFEMNSI_B,,Равновесная фаза.,,"Hexagonal Beta-Al(Fe)MnSi equilibrium phase, Al15Si1(Al,Si)4(Fe,Mn)6. Compositions significantly extending around (Al,Si)10Mn3. Dispersoid phase in Fe-, Mn-containing Al-alloys. [REF:76]"
+ALFENI_T1,,Моноклинная структура. Интерметаллидная фаза. Упрочняющая фаза.,,"Ternary compound Al9FeNi. Al9Co2-type monoclinic structure with 22 atoms per form,ula unit. Contributes to hardening, reported for alloy 2618, with a high thermal stability of particles up to 600C. [REF:C19,C20,C21]"
+ALFENI_T2,,Описание в исходной базе отсутствует.,,
+ALFENI_T3,,Описание в исходной базе отсутствует.,,
+ALFESI_T1,,Описание в исходной базе отсутствует.,,
+ALFESI_T10,,Описание в исходной базе отсутствует.,,
+ALFESI_T11,,Описание в исходной базе отсутствует.,,
+ALFESI_T2,,Описание в исходной базе отсутствует.,,
+ALFESI_T3,,Описание в исходной базе отсутствует.,,
+ALFESI_T4,,Описание в исходной базе отсутствует.,,
+ALFESI_T5,,Гексагональная структура. Интерметаллидная фаза.,,hexagonal alpha-AlFeSi end-member
+ALFESI_T6,,Моноклинная структура. Интерметаллидная фаза. Дисперсоид.,,"Monoclinic AlFeSi-Beta phase, roughly given as Al5FeSi. Important dispersoid in Fe-containing Al-alloys"
+ALFESI_T7,,Описание в исходной базе отсутствует.,,
+ALFESI_T8,,Описание в исходной базе отсутствует.,,
+ALMG4ZN11,,"Метастабильная фаза. Фаза-выделение, связанная с дисперсионным упрочнением. Параметры фазы получены термодинамической оценкой.",,"NOTE - Not assessed yet. Metastable, reported as precipitate phase in Al-Zn-Mg-Li alloy. [REF:C13]"
+ALMGMN_T,,Описание в исходной базе отсутствует.,,
+ALMGZN_GP,,Описание основано на литературных данных.,,GP-zones in AA7xxx. Averaged composition assessed from literature data (pov09).
+ALM_D019,,Описание в исходной базе отсутствует.,,
+ALSC,,Описание в исходной базе отсутствует.,,
+ALSIZR_T1,,Описание в исходной базе отсутствует.,,
+ALSIZR_T2,,Описание в исходной базе отсутствует.,,
+ALTI,,Описание в исходной базе отсутствует.,,
+ALZR,,Описание в исходной базе отсутствует.,,
+ALZR2,,Описание в исходной базе отсутствует.,,
+ALZR3,,Описание в исходной базе отсутствует.,,
+AL_B_DP,,"Метастабильная фаза. Фаза-выделение, связанная с дисперсионным упрочнением.",,"Metastable Al-containing precipitate phase in the low-T beta double-prime precipitation regime. Same structure as Al-free beta double-prime, monoclinic with space group C2/m. Semicoherent needles in 6xxx alloys. [C36]"
+A_MNTI,,Описание в исходной базе отсутствует.,,
+A_SIZR,,Описание в исходной базе отсутствует.,,
+BCC_A2,,Объёмно-центрированная кубическая (ОЦК) структура.,,relevant in Al-Cu
+BETA_AL3MG2,,Равновесная фаза.,,"Cubic (Al,Zn)3Mg2 equilibrium phase, prototype: Al3Mg2."
+B_MNTI,,Описание в исходной базе отсутствует.,,
+B_PRIME_H,,Метастабильная фаза.,,"Metastable B prime phase. Structure can be related to the hexagonal structure of Q-Phase, with empty Cu-sites. [REF:C11,C37]"
+B_PRIME_L,,Метастабильная фаза.,,"Metastable B prime phase - low-T type reflecting lowest energy modification from 1st principles. Structure can be related to the hexagonal structure of Q-Phase, with empty Cu-sites. [REF:C11,C37]"
+B_SIZR,,Описание в исходной базе отсутствует.,,
+CBCC_A12,,Описание в исходной базе отсутствует.,,
+CL_CUMG0,,Метастабильная фаза.,,Initial metastable Cu-Mg Co-Cluster.
+CL_CUMG1,,Метастабильная фаза.,,Early metastable Cu-Mg Co-Cluster.
+CL_FCC,,"Метастабильная фаза. Фаза-выделение, связанная с дисперсионным упрочнением.",,"Early metastable Mg-Si Co-Cluster. [REF:C31,C32] Solely use in thermokinetic precipitation simulations. Stable Mg-endmember (comment pov23)."
+CL_MGX,,Метастабильная фаза.,,"Early metastable complex Co-Cluster phase. [REF:C31,C32]"
+CL_SPL,,Метастабильная фаза. Параметры фазы получены термодинамической оценкой.,,"Early metastable Mg-X Cluster. Reassessed 2025 (E. Povoden-Karadeniz) for improved demixing, splitting to Si-Rich and Mg-rich clusters. Mg-Si balanced Co-cluster less stabilised"
+CR3MN5,,Описание в исходной базе отсутствует.,,
+CR3SI,,Описание в исходной базе отсутствует.,,
+CR5SI3,,Описание в исходной базе отсутствует.,,
+CRSI,,Описание в исходной базе отсутствует.,,
+CRSI2,,Описание в исходной базе отсутствует.,,
+CRZN13,,Описание в исходной базе отсутствует.,,
+CRZN17,,Описание в исходной базе отсутствует.,,
+CU10ZR7,,Описание в исходной базе отсутствует.,,
+CU15SI4_E,,Описание в исходной базе отсутствует.,,
+CU19SI6_ETA,,Описание в исходной базе отсутствует.,,
+CU33SI7_D,,Описание в исходной базе отсутствует.,,
+CU51ZR14,,Описание в исходной базе отсутствует.,,
+CU56SI11_G,,Описание в исходной базе отсутствует.,,
+CU5ZR,,Описание в исходной базе отсутствует.,,
+CU8ZR3,,Описание в исходной базе отсутствует.,,
+CUB_A13,,Описание в исходной базе отсутствует.,,
+CUMGSI_S,,Описание в исходной базе отсутствует.,,
+CUMGSI_T,,Описание в исходной базе отсутствует.,,
+CUZN_G,,Описание в исходной базе отсутствует.,,
+CUZR,,Описание в исходной базе отсутствует.,,
+CUZR2,,Описание в исходной базе отсутствует.,,
+ETA_P_ALMGZN,,"Метастабильная фаза. Фаза-выделение, связанная с дисперсионным упрочнением.",,Metastable eta prime precipitate in AA7xxx [REF:C27]
+E_AL30MG23,,Равновесная фаза.,,"Epsilon equilibrium phase, prototype: Co5Cr2Mo3"
+FCCAL,"алюминиевая матрица, ГЦК","алюминиевая матрица, ГЦК.",,
+FCCMG,,Описание в исходной базе отсутствует.,,
+FCCSI,,Описание в исходной базе отсутствует.,,
+FCC_A1,ГЦК-твёрдый раствор,ГЦК-твёрдый раствор. Гранецентрированная кубическая (ГЦК) структура. Матричная фаза или модель твёрдого раствора.,Разупорядоченная часть связанной модели GP_MAT.,"Al-Matrix phase, face-centered cubic"
+FE2SI,,Описание в исходной базе отсутствует.,,
+FE5SI3,,Описание в исходной базе отсутствует.,,
+FESI,,Описание в исходной базе отсутствует.,,
+FESI2_H,,Описание в исходной базе отсутствует.,,
+FESI2_L,,Описание в исходной базе отсутствует.,,
+FETI,,Описание в исходной базе отсутствует.,,
+GP_MAT,связанная модель Al-матрицы / GP-зон; название само по себе не означает 100 % GP-зон,связанная модель Al-матрицы / GP-зон; название само по себе не означает 100 % GP-зон. Гранецентрированная кубическая (ГЦК) структура. Метастабильная фаза. Упорядоченная фаза.,Связанная order/disorder-модель с FCC_A1; одно имя фазы не всегда означает полное упорядочение.,"Metastable, coherent Al-containing GP-Zones, ""Matsuda-Phase"": These GP-zones are modeled as ordered fcc-based phase, giving Al2Mg1Si1 according to Matsuda phase plus Al [REF:C33]"
+GP_MGZN,,Упорядоченная фаза.,,ordered GP in Al-Mg-Zn
+G_AL12MG17,,"Равновесная фаза. Фаза-выделение, связанная с дисперсионным упрочнением.",,"Gamma equilibrium phase, space group: I43m, prototype: Alpha-Mn. Precipitate in Al-Mg-Zn alloy"
+HCP_A3,,Описание в исходной базе отсутствует.,,
+HCP_ZN,,Описание в исходной базе отсутствует.,,
+H_SIGMA,,Описание в исходной базе отсутствует.,,
+L12AL3ZR,когерентная L1₂-фаза Al₃Zr,"когерентная L1₂-фаза Al₃Zr. Метастабильная фаза. Фаза-выделение, связанная с дисперсионным упрочнением. Упорядоченная фаза.",,"cubic ordered L12 structure, metastable. Coherent, nano-scale precipitates."
+LAVES_C15,,Фаза Лавеса.,,Complex Laves-phase from COST.
+LAVES_C36,,Фаза Лавеса.,,Complex Laves-phase from COST.
+LC14_ZN2MG,,"Фаза-выделение, связанная с дисперсионным упрочнением. Фаза Лавеса.",,Mg-Zn Laves-Phase with hexagonal C14 structure. Equilibrium precipitate in the overaging regime of AA7xxx alloys.
+LC15_CU2MG,,Фаза Лавеса.,,Cu2Mg Laves-phase.
+LC16_CUMG2,,Фаза Лавеса.,,Mg2Cu Laves-phase.
+LC16_NIMG2,,Фаза Лавеса.,,Mg2Ni Laves-phase.
+LC36_NI2MG,,Фаза Лавеса.,,Ni2Mg Laves-phase.
+LIQUID,расплав,расплав.,,Random substitutional model.
+MG2SI_B,равновесная фаза Mg₂Si,"равновесная фаза Mg₂Si. Гранецентрированная кубическая (ГЦК) структура. Равновесная фаза. Фаза-выделение, связанная с дисперсионным упрочнением.",,"Face-centered cubic equilibrium phase. Incoherent precipitates (plates or cubes) in the overaging regime, 6xxx alloys. [REF:C31,C32]"
+MG2ZN11,,Описание в исходной базе отсутствует.,,
+MG2ZN3,,Описание в исходной базе отсутствует.,,
+MG5SI6_B_DP,метастабильная β″-фаза Mg₅Si₆,метастабильная β″-фаза Mg₅Si₆. Метастабильная фаза.,,"Main metastable hardening phase in 6xxx, monoclinic with space group C2/m. Al-free Mg5Si6. Semicoherent needles. [REF:C31,C32,C35]."
+MG7ZN3,,Описание в исходной базе отсутствует.,,
+MGALCUZN_T,,"Фаза-выделение, связанная с дисперсионным упрочнением.",,"Cu-containing T-Phase, equilibrium precipitate in the overaging regime of AA7xxx alloys [REF:C39,C40]."
+MGALZN_PHI,,Описание в исходной базе отсутствует.,,
+MGSI_B_P,,"Гексагональная плотноупакованная (ГПУ) структура. Метастабильная фаза. Фаза-выделение, связанная с дисперсионным упрочнением.",,"Beta prime, metastable hexagonal close-packed rod-like Mg-Si precipitates in 6xxx alloys. [REF:C31,C32,C34]"
+MGZN,,Описание в исходной базе отсутствует.,,
+MN2ZR,,Описание в исходной базе отсутствует.,,
+MN3SI,,Описание в исходной базе отсутствует.,,
+MN3TI,,Описание в исходной базе отсутствует.,,
+MN4TI,,Описание в исходной базе отсутствует.,,
+MN6SI,,Описание в исходной базе отсутствует.,,
+MN9SI2,,Описание в исходной базе отсутствует.,,
+MNSI,,Описание в исходной базе отсутствует.,,
+PI_ALFEMGSI,,Гексагональная структура. Интерметаллидная фаза. Может охрупчивать сплав. Равновесная фаза.,,"Hexagonal equilibrium pi-phase. Occurs in Al-alloys with high contents of Si and Mg. Influencing ductility. [REF:C14,C15]"
+PRE_B_DP,,"Фаза-выделение, связанная с дисперсионным упрочнением.",,Pre-beta-double prime. Assumed stoichiometric pre-precipitate to beta-dp Mg5Si6
+Q_ALCUMG,,"Фаза-выделение, связанная с дисперсионным упрочнением.",,"Ternary Al-Cu-Mg compound of Q-Phase, not observed as precipitate."
+Q_PHASE_H,,Равновесная фаза.,,"Hexagonal equilibrium phase with 21 atoms per unit cell. Commonly precipitating as heterogeneous laths in Cu-containing Al-alloys, e.g. 6xxx and 2xxx. [REF:C10]"
+Q_PHASE_L,,Равновесная фаза.,,"Hexagonal equilibrium phase with 1 atom. Commonly precipitating in Cu-containing Al-alloys, e.g. 6xxx and 2xxx. [REF:C10] Low-T type reflecting lowest energy modification from 1st principles. [REF:C6] Use this phase for simulations of precursor phase to heterogeneous Q_PHASE_H."
+SC2AL,,Описание в исходной базе отсутствует.,,
+SI2TI,,Ромбическая структура. Силицидная фаза.,,oF24 Fddd TiSi2
+SI2ZR,,Описание в исходной базе отсутствует.,,
+SI2ZR3,,Описание в исходной базе отсутствует.,,
+SI3TI5,,Гексагональная структура. Силицидная фаза.,,hP16 P63_mcm Mn5Si3
+SI3ZR5,,Описание в исходной базе отсутствует.,,
+SI4TI5,,Тетрагональная структура. Силицидная фаза.,,tP36 P41212 Si4Zr5
+SI4ZR5_A,,Описание в исходной базе отсутствует.,,
+SI4ZR5_B,,Описание в исходной базе отсутствует.,,
+SIGMA,,Описание в исходной базе отсутствует.,,
+SITI,,Ромбическая структура. Силицидная фаза.,,oP8 Pnma FeB
+SITI3,,Тетрагональная структура. Силицидная фаза.,,tP30 P42_n PTi3
+SIZR2,,Описание в исходной базе отсутствует.,,
+SIZR3,,Описание в исходной базе отсутствует.,,
+SI_DIAMOND_A4,кремний,"кремний. Фаза-выделение, связанная с дисперсионным упрочнением.",,"Silicon precipitate. Space group Fd3m, prototype: C(diamond)"
+S_PHASE,,"Фаза-выделение, связанная с дисперсионным упрочнением.",,"Base-centered orthorhombic, space group Cmcm. 16 atoms per unit cell. Lath-shaped precipitates, often on dislocations. [REF:C12]"
+THETA_AL2CU,равновесная θ-фаза Al₂Cu,"равновесная θ-фаза Al₂Cu. Равновесная фаза. Фаза-выделение, связанная с дисперсионным упрочнением.",,"Equilibrium phase in Al-Cu. Tetragonal C16 structure, 4 formula units per unit cell. Commonly plate-like, heterogeneous precipitates at grain boundaries, over-aging regime. [REF:C8]"
+THETA_PRIME,метастабильная θ′-фаза,метастабильная θ′-фаза.,,"Important tetragonal hardening phase in Al-Cu. Commonly plate-like. [REF:C9,C10]"
+TH_DP_GPB,,Метастабильная фаза.,,"Metastable, coherent hardening phase Theta double-prime in Al-Cu and GPB zones in Al-Cu-Mg (composition set 1) alloys. GPB after Guinier-Preston-Bagaryatsky. Forming monatomic layers that agglomerate [REFS:C5,C6,C7]. Hypothetic solubilities of Mg and Si."
+TI17AL5SI14,,Ромбическая структура. Интерметаллидная фаза.,,orthorhombic.
+TIALSI_TAU,,Ромбическая структура. Интерметаллидная фаза.,,orthorhombic.
+U1_PHASE,,"Фаза-выделение, связанная с дисперсионным упрочнением.",,Needle-like precipitate with trigonal structure observed in 6xxx in the beta prime precipitation regime. [REF:C37]
+U2_PHASE,,"Фаза-выделение, связанная с дисперсионным упрочнением.",,Needle-like precipitate with orthorhombic structure in 6xxx in the beta' precipitation regime. [REF:C37]
+ZR_O,,Описание в исходной базе отсутствует.,,

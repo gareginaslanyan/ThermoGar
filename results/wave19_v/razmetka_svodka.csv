@@ -1,0 +1,81 @@
+faza,opisanie_en,klyuchi_ispolnitel,klyuchi_jev,sovpalo,tekst_ispolnitel,pusto_ispolnitel
+BETA_MN,Simple cubic Manganese modification between 1000 K and 1370 K.,S_CUB,S_CUB T_HIGH,нет,Кубическая структура.,нет
+BETA_RHOMBO_B,Rhombohedral Boron.,S_RHO,S_RHO,да,Ромбоэдрическая структура.,нет
+B_CHALC,"Cu2S, B-chalcosite.",C_SUL,C_SUL,да,Сульфидная фаза.,нет
+CHI_A12,"Alpha-Mn structure closely related to topologically close-packed sigma, Mu, and R-Phase. Unit cell contains 58 atoms plus interstitials (carbon).",,C_CAR,нет,,да
+CORUND,"corund-structured (Al,Cr,Fe)2O3",C_OX,C_OX,да,Оксидная фаза.,нет
+CR2B,Orthorhombic.,S_ORT C_BOR,S_ORT,нет,Ромбическая структура. Боридная фаза.,нет
+CR3MN5,"Also called ""alpha prime Phase""",C_INT,C_NIT,нет,Интерметаллидная фаза.,нет
+CRB,relevance in bracing filler alloy,C_BOR,,нет,Боридная фаза.,нет
+DIGENITE,Use for equilibrium calculation only.,SL_EQ,SL_EQ,да,Служебная фаза базы: только для расчёта равновесия.,нет
+DISULF,"Pyrite, FeS2.",C_SUL,C_SUL,да,Сульфидная фаза.,нет
+D_NIMO,Ni-Mo delta,C_INT,C_INT,да,Интерметаллидная фаза.,нет
+FC_MONO,Monoclinic sulfur (high T),S_MON T_HIGH,S_MON T_HIGH,да,Моноклинная структура. Высокотемпературная модификация.,нет
+FC_ORTHO,Orthorhombic Sulfur (low T).,S_ORT T_LOW,S_ORT T_LOW,да,Ромбическая структура. Низкотемпературная модификация.,нет
+HALITE,"halite-structured (Cr,Fe,Ni)O",C_OX,C_OX,да,Оксидная фаза.,нет
+HF1O2_C,cubic,S_CUB C_OX,S_CUB C_OX T_HIGH,нет,Кубическая структура. Оксидная фаза.,нет
+HF1O2_M,"monoclinic, strengthening dispersoid",S_MON C_OX R_DISPU,S_MON C_OX R_DISPU,да,Моноклинная структура. Оксидная фаза. Упрочняющий дисперсоид.,нет
+HF1O2_T,tetragonal,S_TET C_OX,S_TET C_OX T_HIGH,нет,Тетрагональная структура. Оксидная фаза.,нет
+LA2O3_A,"hexagonal, strengthening dispersoid",S_HEX C_OX R_DISPU,S_HEX C_OX R_DISPU,да,Гексагональная структура. Оксидная фаза. Упрочняющий дисперсоид.,нет
+LA2O3_C,cubic,S_CUB C_OX,S_CUB C_OX,да,Кубическая структура. Оксидная фаза.,нет
+M2B,Tetragonal.,S_TET C_BOR,S_TET C_BOR,да,Тетрагональная структура. Боридная фаза.,нет
+M6C_WY,M6C with physically correct sites according to Wyckoff positions.,C_CAR,C_CAR,да,Карбидная фаза.,нет
+MU_PHASE,can form as topologically close-packed structure in superalloys; affecting brittleness.,R_TPU R_OXR,R_TPU R_OXR,да,Топологически плотноупакованная (ТПУ) фаза. Может охрупчивать сплав.,нет
+O1_GAS,for thermodynamic properties calculations only,C_GAS SL_TD,C_GAS SL_TD,да,Газовая фаза. Служебная фаза базы: только для расчёта термодинамических свойств.,нет
+P_PHASE,closely related to Sigma. Can form as topologically close-packed structure in superalloys; affecting brittleness.,R_TPU R_OXR,C_INT R_TPU R_OXR,нет,Топологически плотноупакованная (ТПУ) фаза. Может охрупчивать сплав.,нет
+R_PHASE,closely related to Sigma and Mu-phase. Can form as topologically close-packed structure in superalloys; affecting brittleness.,R_TPU R_OXR,C_INT R_TPU R_OXR,нет,Топологически плотноупакованная (ТПУ) фаза. Может охрупчивать сплав.,нет
+SIO2,Low Quartz,C_OX,C_OX T_LOW,нет,Оксидная фаза.,нет
+TIO2,Note: fully oxidized compound without oxygen vacancies,C_OX,C_OX,да,Оксидная фаза.,нет
+TRID,Tridymite,,,да,,да
+AL12MG2CR,dispersoid in AA7xxx,C_INT R_DISP,C_INT R_DISP,да,Интерметаллидная фаза. Дисперсоид.,нет
+AL18CR2MG3,"E-phase, dispersoid in overaging regime in 7xxx Al-alloys [C42,C43]. Contains some Cu and Zn [C44]",C_INT R_DISP,C_INT R_DISP,да,Интерметаллидная фаза. Дисперсоид.,нет
+AL2CU3_D,delta phase,C_INT,C_INT,да,Интерметаллидная фаза.,нет
+AL3TI_H,Tetragonal high temperature modification with space group I4/mmm.,S_TET C_INT T_HIGH,S_TET T_HIGH,нет,Тетрагональная структура. Интерметаллидная фаза. Высокотемпературная модификация.,нет
+AL3TI_L,"Tetragonal low-temperature modification, space group I4/mmm.",S_TET C_INT T_LOW,S_TET T_LOW,нет,Тетрагональная структура. Интерметаллидная фаза. Низкотемпературная модификация.,нет
+AL4MN,Hexagonal,S_HEX C_INT,S_HEX C_INT,да,Гексагональная структура. Интерметаллидная фаза.,нет
+AL8FEMNSI2,"Intermetallic alpha_AlMnSi phase reported to crystallize during undercooling of Al-Si-Fe-Mn alloys. [REF:C18] Has higher Si than cubic alpha-phase ALCRFEMNSI_A. Relevant in simulations of high-Si Al-alloys, such as A356.",C_INT,C_INT,да,Интерметаллидная фаза.,нет
+AL9CU11_Z,zeta phase,C_INT,C_INT,да,Интерметаллидная фаза.,нет
+AL9CU11_ZP,zeta prime phase,C_INT,C_INT,да,Интерметаллидная фаза.,нет
+ALCUMN_T1,"T1-phase with orthorhombic crystal structure, space group Bbmm or Cmcm. Crystallizes during casting of Cu-Mn containing 2xxx alloys and as rodlike dispersoids. Previously discribed as AL20CU2MN3 [REF:C5,C22,C23,C41], however experiments support stoichiometries close to Al20Cu3Mn4.",S_ORT C_INT R_DISP,S_ORT C_INT R_DISP,да,Ромбическая структура. Интерметаллидная фаза. Дисперсоид.,нет
+ALCU_EPL,epsilon prime phase low T,C_INT T_LOW,T_LOW,нет,Интерметаллидная фаза. Низкотемпературная модификация.,нет
+ALCU_EPS,AlCu-epsilon,C_INT,C_INT,да,Интерметаллидная фаза.,нет
+ALCU_ETH,eta phase high T,C_INT T_HIGH,C_INT T_HIGH,да,Интерметаллидная фаза. Высокотемпературная модификация.,нет
+ALCU_ETL,eta prime phase low T,C_INT T_LOW,T_LOW,нет,Интерметаллидная фаза. Низкотемпературная модификация.,нет
+ALCU_G,stable as high T gamma spec in Al-Cu,C_INT T_HIGH,C_INT T_HIGH,да,Интерметаллидная фаза. Высокотемпературная модификация.,нет
+ALFENI_T1,"Ternary compound Al9FeNi. Al9Co2-type monoclinic structure with 22 atoms per form,ula unit. Contributes to hardening, reported for alloy 2618, with a high thermal stability of particles up to 600C. [REF:C19,C20,C21]",S_MON C_INT R_UPR,S_MON C_INT R_DISPU R_UPR T_HIGH,нет,Моноклинная структура. Интерметаллидная фаза. Упрочняющая фаза.,нет
+ALFESI_T5,hexagonal alpha-AlFeSi end-member,S_HEX C_INT,S_HEX C_SIL,нет,Гексагональная структура. Интерметаллидная фаза.,нет
+ALFESI_T6,"Monoclinic AlFeSi-Beta phase, roughly given as Al5FeSi. Important dispersoid in Fe-containing Al-alloys",S_MON C_INT R_DISP,S_MON C_SIL R_DISP,нет,Моноклинная структура. Интерметаллидная фаза. Дисперсоид.,нет
+BCC_A2,relevant in Al-Cu,S_BCC,C_INT,нет,Объёмно-центрированная кубическая (ОЦК) структура.,нет
+PI_ALFEMGSI,"Hexagonal equilibrium pi-phase. Occurs in Al-alloys with high contents of Si and Mg. Influencing ductility. [REF:C14,C15]",S_HEX C_INT R_OXR U_EQ,S_HEX C_INT R_OXR U_EQ,да,Гексагональная структура. Интерметаллидная фаза. Может охрупчивать сплав. Равновесная фаза.,нет
+SI2TI,oF24 Fddd TiSi2,S_ORT C_SIL,S_TET C_SIL,нет,Ромбическая структура. Силицидная фаза.,нет
+SI3TI5,hP16 P63_mcm Mn5Si3,S_HEX C_SIL,S_HEX C_SIL,да,Гексагональная структура. Силицидная фаза.,нет
+SI4TI5,tP36 P41212 Si4Zr5,S_TET C_SIL,S_TET C_SIL,да,Тетрагональная структура. Силицидная фаза.,нет
+SITI,oP8 Pnma FeB,S_ORT C_SIL,S_ORT C_BOR,нет,Ромбическая структура. Силицидная фаза.,нет
+SITI3,tP30 P42_n PTi3,S_TET C_SIL,S_TET C_NIT,нет,Тетрагональная структура. Силицидная фаза.,нет
+TI17AL5SI14,orthorhombic.,S_ORT C_INT,S_ORT C_INT,да,Ромбическая структура. Интерметаллидная фаза.,нет
+TIALSI_TAU,orthorhombic.,S_ORT C_INT,S_ORT,нет,Ромбическая структура. Интерметаллидная фаза.,нет
+BETA_MN,Simple cubic Manganese modification between around 1000 K and 1370 K.,S_CUB,S_CUB T_HIGH,нет,Кубическая структура.,нет
+CR3MN5,"Also named ""alpha Phase""",C_INT,C_NIT,нет,Интерметаллидная фаза.,нет
+CRB,"Orthorhombic, space group Cmcm.",S_ORT C_BOR,S_ORT,нет,Ромбическая структура. Боридная фаза.,нет
+FEB,"Orthorhombic, space group Pnma.",S_ORT C_BOR,S_ORT,нет,Ромбическая структура. Боридная фаза.,нет
+M5B6,"Orthorhombic, space group Cmmm.",S_ORT C_BOR,S_ORT C_BOR,да,Ромбическая структура. Боридная фаза.,нет
+MN3B4,"Orthorhombic, space group Immm.",S_ORT C_BOR,S_ORT C_BOR,да,Ромбическая структура. Боридная фаза.,нет
+MNB2,"Hexagonal, space group P6/mmm.",S_HEX C_BOR,S_HEX,нет,Гексагональная структура. Боридная фаза.,нет
+MNNI,cubic,S_CUB C_INT,S_CUB,нет,Кубическая структура. Интерметаллидная фаза.,нет
+MO2M1B2,"tetragonal, space group P4/mbm",S_TET C_BOR,S_TET C_OX,нет,Тетрагональная структура. Боридная фаза.,нет
+MU_PHASE,"Hard, brittle intermetallic compound. W6Fe7-type. Important hardening phase in Fe-Co-Mo alloys. Simplified description, model IV from ref 77 used. Use for multi-component systems.",C_INT R_UPR R_TVXR,C_INT R_UPR R_TVXR,да,Интерметаллидная фаза. Упрочняющая фаза. Твёрдая и хрупкая фаза.,нет
+MU_PHASE_I,"Hard, brittle intermetallic compound. W6Fe7-type. Important hardening phase in Fe-Co-Mo alloys. Advanced description, based on model V from ref 77. Use for Fe-Co-Mo-Si tool steel applications.",C_INT R_UPR R_TVXR,C_INT R_UPR R_TVXR,да,Интерметаллидная фаза. Упрочняющая фаза. Твёрдая и хрупкая фаза.,нет
+O_MN2B,Orthorhombic.,S_ORT C_BOR,S_ORT C_OX,нет,Ромбическая структура. Боридная фаза.,нет
+PD2MN,orthorhombic,S_ORT C_INT,S_ORT,нет,Ромбическая структура. Интерметаллидная фаза.,нет
+PD5MN3,orthorhombic,S_ORT C_INT,S_ORT,нет,Ромбическая структура. Интерметаллидная фаза.,нет
+PD6FE5MN2,observed in high-Pd Fe-Pd with Mn.,C_INT,C_INT,да,Интерметаллидная фаза.,нет
+R_PHASE,"Topologically close-packed structure, closely related to Sigma and Mu-Phase.",R_TPU,R_TPU,да,Топологически плотноупакованная (ТПУ) фаза.,нет
+SPINEL,Fe-Cr-Spinel,,,да,,да
+TI3B4,"Orthorhombic, space group Immm.",S_ORT C_BOR,S_ORT,нет,Ромбическая структура. Боридная фаза.,нет
+TIB,"Orthorhombic, space group Pnma.",S_ORT C_BOR,S_ORT,нет,Ромбическая структура. Боридная фаза.,нет
+TIB2,"Hexagonal, space group P6/mmm.",S_HEX C_BOR,S_HEX C_BOR,да,Гексагональная структура. Боридная фаза.,нет
+WC,simple hexagonal,S_HEX C_CAR,S_HEX,нет,Гексагональная структура. Карбидная фаза.,нет
+Y2TI2O7,"pyrochlore structure, strengthening dispersoid",C_OX R_DISPU,C_OX R_DISPU,да,Оксидная фаза. Упрочняющий дисперсоид.,нет
+Y2TIO5,"orthorhombic, strengthening dispersoid",S_ORT C_OX R_DISPU,S_ORT C_OX R_DISPU,да,Ромбическая структура. Оксидная фаза. Упрочняющий дисперсоид.,нет
+Y4AL2O9,monoclinic strengthening dispersoid,S_MON C_OX R_DISPU,S_MON C_OX R_DISPU,да,Моноклинная структура. Оксидная фаза. Упрочняющий дисперсоид.,нет
+YALO3,"strengthening dispersoid, perovskite structure",C_OX R_DISPU,R_DISPU,нет,Оксидная фаза. Упрочняющий дисперсоид.,нет
