@@ -1,0 +1,163 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0 -- D:\Pets\ThermoGar\.venv-windows\Scripts\python.exe
+rootdir: D:\Pets\ThermoGar
+plugins: anyio-4.15.1, cov-7.1.0, timeout-2.4.0
+collecting ... collected 9 items
+
+tools/test_phase_description_stub_keys.py::test_new_phrases_bytewise ERROR [ 11%]
+tools/test_phase_description_stub_keys.py::test_phrase_keys_and_order ERROR [ 22%]
+tools/test_phase_description_stub_keys.py::test_existing_phrases_are_translate_literals ERROR [ 33%]
+tools/test_phase_description_stub_keys.py::test_stub_keys_table ERROR    [ 44%]
+tools/test_phase_description_stub_keys.py::test_phrases_for ERROR        [ 55%]
+tools/test_phase_description_stub_keys.py::test_translate_uses_table FAILED [ 66%]
+tools/test_phase_description_stub_keys.py::test_translate_without_pair_keeps_stub[ZZZ-Orthorhombic.] PASSED [ 77%]
+tools/test_phase_description_stub_keys.py::test_translate_without_pair_keeps_stub[SPINEL-Fe-Cr-Spinel] PASSED [ 88%]
+tools/test_phase_description_stub_keys.py::test_translate_old_path_unchanged PASSED [100%]
+
+=================================== ERRORS ====================================
+_________________ ERROR at setup of test_new_phrases_bytewise _________________
+
+    @pytest.fixture(scope="module")
+    def module() -> Any:
+>       return importlib.import_module("thermogar_phase_descriptions")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools\test_phase_description_stub_keys.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+name = 'thermogar_phase_descriptions'
+import_ = <function _gcd_import at 0x0000013FF7AD3D80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'thermogar_phase_descriptions'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+________________ ERROR at setup of test_phrase_keys_and_order _________________
+
+    @pytest.fixture(scope="module")
+    def module() -> Any:
+>       return importlib.import_module("thermogar_phase_descriptions")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools\test_phase_description_stub_keys.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+name = 'thermogar_phase_descriptions'
+import_ = <function _gcd_import at 0x0000013FF7AD3D80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'thermogar_phase_descriptions'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+_______ ERROR at setup of test_existing_phrases_are_translate_literals ________
+
+    @pytest.fixture(scope="module")
+    def module() -> Any:
+>       return importlib.import_module("thermogar_phase_descriptions")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools\test_phase_description_stub_keys.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+name = 'thermogar_phase_descriptions'
+import_ = <function _gcd_import at 0x0000013FF7AD3D80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'thermogar_phase_descriptions'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+___________________ ERROR at setup of test_stub_keys_table ____________________
+
+    @pytest.fixture(scope="module")
+    def module() -> Any:
+>       return importlib.import_module("thermogar_phase_descriptions")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools\test_phase_description_stub_keys.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+name = 'thermogar_phase_descriptions'
+import_ = <function _gcd_import at 0x0000013FF7AD3D80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'thermogar_phase_descriptions'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+_____________________ ERROR at setup of test_phrases_for ______________________
+
+    @pytest.fixture(scope="module")
+    def module() -> Any:
+>       return importlib.import_module("thermogar_phase_descriptions")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools\test_phase_description_stub_keys.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+name = 'thermogar_phase_descriptions'
+import_ = <function _gcd_import at 0x0000013FF7AD3D80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'thermogar_phase_descriptions'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+================================== FAILURES ===================================
+__________________________ test_translate_uses_table __________________________
+
+translate = <function translate_phase_description at 0x0000013FFAB407C0>
+
+    def test_translate_uses_table(translate):
+>       assert translate("CR2B", "Orthorhombic.", "") == "Ромбическая структура. Боридная фаза."
+E       AssertionError: assert 'Русская расш...не добавлена.' == 'Ромбическая ...оридная фаза.'
+E         
+E         - Ромбическая структура. Боридная фаза.
+E         + Русская расшифровка для этой специализированной фазы ещё не добавлена.
+
+tools\test_phase_description_stub_keys.py:170: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/test_phase_description_stub_keys.py::test_translate_uses_table
+ERROR tools/test_phase_description_stub_keys.py::test_new_phrases_bytewise - ...
+ERROR tools/test_phase_description_stub_keys.py::test_phrase_keys_and_order
+ERROR tools/test_phase_description_stub_keys.py::test_existing_phrases_are_translate_literals
+ERROR tools/test_phase_description_stub_keys.py::test_stub_keys_table - Modul...
+ERROR tools/test_phase_description_stub_keys.py::test_phrases_for - ModuleNot...
+==================== 1 failed, 3 passed, 5 errors in 4.74s ====================
