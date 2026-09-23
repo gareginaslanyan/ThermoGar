@@ -1,0 +1,2 @@
+pre-check vs HEAD: files 1033 differ beyond CR 0
+after git checkout: byte-equal to HEAD blob 1033 of 1033
