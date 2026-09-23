@@ -1,0 +1,12 @@
+значение,после _steel_mode,в runner,Статус,Ошибка
+пусто,metastable,metastable,готово,
+metastable,metastable,metastable,готово,
+метастабильный,metastable,metastable,готово,
+практический,metastable,metastable,готово,
+цементит,metastable,metastable,готово,
+cementite,metastable,metastable,готово,
+stable,stable,stable,готово,
+стабильный,stable,stable,готово,
+графит,stable,stable,готово,
+graphite,stable,stable,готово,
+metastabe,metastabe,—,ошибка,Неизвестный режим стали: «metastabe». Используйте «стабильный» или «метастабильный».

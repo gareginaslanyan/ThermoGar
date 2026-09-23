@@ -271,6 +271,48 @@ class VerifiedStateTests(unittest.TestCase):
         alternate = state._parse_csv(raw.replace(b",", b";"))
         self.assertIsInstance(alternate, dict)
 
+    def test_batch_steel_mode_closed_list_on_ingress(self) -> None:
+        # BL-56 (19-А): приём файла сводит известное значение к stable/metastable
+        # сравнением на равенство после strip + casefold; неизвестное остаётся
+        # текстом ячейки после strip, файл не отклоняется.
+        cells = (
+            ("", "metastable"),
+            ("metastable", "metastable"),
+            ("метастабильный", "metastable"),
+            ("практический", "metastable"),
+            ("цементит", "metastable"),
+            ("cementite", "metastable"),
+            ("stable", "stable"),
+            ("стабильный", "stable"),
+            ("графит", "stable"),
+            ("graphite", "stable"),
+            (" METASTABLE ", "metastable"),
+            (" Стабильный ", "stable"),
+            ("metastabe", "metastabe"),
+            ("  Нестабильный  ", "Нестабильный"),
+        )
+        lines = ["name,database,balance,units,temperature_C,steel_mode"]
+        lines += [f"r{index},fe,FE,wt,700,{cell}" for index, (cell, _mode) in enumerate(cells)]
+        raw = ("\n".join(lines) + "\n").encode("utf-8")
+        store = self._store(FakeUI(FakeUpload(raw, "rows.csv")))
+        ticket = store.ingest_from_widget(_request("data_batch_request_import"), "batch-input-csv", "upload", state.BATCH_UI_TYPES, state.BATCH_UPLOAD_KEY)
+        self.assertIs(type(ticket), state.VerifiedArtifactRef)
+        value = store.canonical_value(ticket, ticket.source_envelope_digest)
+        column = value["columns"].index("steel_mode")
+        self.assertEqual([row[column] for row in value["rows"]], [mode for _cell, mode in cells])
+        for empty in (None, float("nan")):
+            with self.subTest(empty=empty):
+                self.assertEqual(state._steel_mode(empty), "metastable")
+        self.assertEqual(
+            dict(state.STEEL_MODE_ALIASES),
+            {
+                "metastable": "metastable", "метастабильный": "metastable",
+                "практический": "metastable", "цементит": "metastable",
+                "cementite": "metastable", "stable": "stable",
+                "стабильный": "stable", "графит": "stable", "graphite": "stable",
+            },
+        )
+
     def test_batch_xlsx_requires_single_visible_macro_free_external_link_free_formula_free_sheet(self) -> None:
         table = {"columns": list(state.BATCH_REQUIRED_HEADERS), "rows": [["r", "ni", "NI", "at", 700.0]]}
         raw = state._xlsx_bytes({"Input": table})

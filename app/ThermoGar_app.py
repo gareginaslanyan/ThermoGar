@@ -5582,9 +5582,9 @@ def translate_phase_description(
         parts.append("Фаза-выделение, связанная с дисперсионным упрочнением.")
     if "matrix" in lower:
         parts.append("Матричная фаза или модель твёрдого раствора.")
-    if "ordered" in lower:
+    if re.search(r"\bordered\b", lower):
         parts.append("Упорядоченная фаза.")
-    if "disordered" in lower:
+    if re.search(r"\bdisordered\b", lower):
         parts.append("Разупорядоченная фаза.")
 
     # Класс соединения.

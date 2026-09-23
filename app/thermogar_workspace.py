@@ -52,11 +52,13 @@ from thermogar_verified_state import (
     HISTORY_HEADERS,
     PROJECT_UI_TYPES,
     PROJECT_UPLOAD_KEY,
+    STEEL_MODE_ALIASES,
     StateStore,
     VerifiedArtifactRef,
     batch_result_value,
     batch_template_value,
     semantic_digest_for,
+    steel_mode_or_none,
 )
 from thermogar_secure_io import (
     MAX_WORKSPACE_FILE_BYTES,
@@ -2133,10 +2135,14 @@ def normalize_units(value: Any) -> str:
     raise ValueError(f"Неизвестные единицы состава: {value!r}.")
 
 def normalize_steel_mode(value: Any) -> str:
-    normalized = str(value or "").strip().lower()
-    if any(token in normalized for token in ("стаб", "граф", "stable", "graphite")):
-        return "stable"
-    return "metastable"
+    # Перечень один — STEEL_MODE_ALIASES из thermogar_verified_state (BL-56).
+    mode = steel_mode_or_none(value)
+    if mode is None:
+        raise ValueError(
+            f"Неизвестный режим стали: «{str(value).strip()}». "
+            "Используйте «стабильный» или «метастабильный»."
+        )
+    return mode
 
 def composition_from_row(
     row: pd.Series,
