@@ -92,7 +92,7 @@ def first_mention(relative: str) -> str | None:
 
 def test_payload_list_is_complete() -> None:
     payload = tracked(*PAYLOAD_TREES) + list(PAYLOAD_FILES)
-    assert len(payload) == 75, len(payload)
+    assert len(payload) == 76, len(payload)
     missing = [name for name in checked_files() if not (ROOT / name).is_file()]
     assert not missing, missing
 
