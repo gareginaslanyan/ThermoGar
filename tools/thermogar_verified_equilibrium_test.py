@@ -28,7 +28,29 @@ PYC_BEFORE = _pyc_manifest()
 
 import thermogar_verified_equilibrium as adapter
 import thermogar_verified_loaders as vl
+import thermogar_verified_state as verified_state
 import thermogar_workspace as workspace
+
+
+# BL-56 (19-А): закрытый перечень режима стали, таблица мастера 23.09.2026.
+STEEL_MODE_TABLE = (
+    ("metastable", "metastable"),
+    ("метастабильный", "metastable"),
+    ("практический", "metastable"),
+    ("цементит", "metastable"),
+    ("cementite", "metastable"),
+    ("stable", "stable"),
+    ("стабильный", "stable"),
+    ("графит", "stable"),
+    ("graphite", "stable"),
+)
+
+
+def _owner_steel_error(value: str) -> str:
+    return (
+        f"Неизвестный режим стали: «{value}». "
+        "Используйте «стабильный» или «метастабильный»."
+    )
 
 
 FIXED_TIME = "2026-08-29T12:34:56.123456Z"
@@ -558,6 +580,45 @@ class VerifiedEquilibriumTests(unittest.TestCase):
             with self.subTest(rejected=rejected):
                 with self.assertRaises(ValueError):
                     workspace.normalize_database_key(rejected)
+
+    def test_17_batch_steel_mode_is_one_closed_list_with_owner_error(self) -> None:
+        # BL-56 (19-А): перечень один — константа thermogar_verified_state,
+        # строка пакета её импортирует; сравнение на равенство, без подстрок.
+        self.assertIs(workspace.STEEL_MODE_ALIASES, verified_state.STEEL_MODE_ALIASES)
+        for value in (None, "", "  ", float("nan")):
+            with self.subTest(value=value):
+                self.assertEqual(workspace.normalize_steel_mode(value), "metastable")
+        for value, expected in STEEL_MODE_TABLE:
+            for variant in (value, f"  {value.upper()}  "):
+                with self.subTest(value=variant):
+                    self.assertEqual(workspace.normalize_steel_mode(variant), expected)
+        for value in ("metastabe", " Нестабильный ", "stable graphite", "метастабильный-2"):
+            with self.subTest(value=value):
+                with self.assertRaises(ValueError) as caught:
+                    workspace.normalize_steel_mode(value)
+                self.assertEqual(str(caught.exception), _owner_steel_error(value.strip()))
+
+    def test_18_batch_file_steel_mode_reaches_engine_row(self) -> None:
+        # Файл -> _parse_csv -> каноническая таблица -> run_batch_calculations:
+        # известное значение доходит до движка своим режимом, неизвестное даёт
+        # «ошибка» с текстом владельца, остальные строки считаются.
+        values = ("",) + tuple(value for value, _mode in STEEL_MODE_TABLE) + ("metastabe",)
+        lines = ['Название,База,Основа,Единицы,"Температура, °C",Добавки,Режим стали']
+        for index, value in enumerate(values, start=1):
+            lines.append(f"Fe-{index:02d},fe,FE,мас.%,700,C=0.8,{value}")
+        table = verified_state._parse_csv(("\n".join(lines) + "\n").encode("utf-8"))
+        source = workspace.batch_table_dataframe(table)
+        broker = FakeBatchBroker()
+        runner = FakeBatchRunner()
+        with mock.patch.object(workspace.st, "progress", return_value=FakeProgress()):
+            result = workspace.run_batch_calculations(source, broker, {}, runner)
+        expected = ["metastable"] + [mode for _value, mode in STEEL_MODE_TABLE]
+        self.assertEqual([row["steel_mode"] for row in runner.rows], expected)
+        self.assertEqual([row["row_index"] for row in runner.rows], list(range(1, len(values))))
+        summary = result["Сводка"]
+        self.assertEqual(list(summary["Статус"])[:-1], ["готово"] * (len(values) - 1))
+        self.assertEqual(summary.iloc[-1]["Статус"], "ошибка")
+        self.assertEqual(summary.iloc[-1]["Ошибка"], _owner_steel_error("metastabe"))
 
     def test_16_live_automatic_candidates_omit_c15_before_backend(self) -> None:
         context = _bind()
