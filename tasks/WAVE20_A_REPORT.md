@@ -323,7 +323,88 @@ re:(?<=[0-9a-f]{64},)[0-9a-f]{64}$ | */vygruzki/ThermoGar_history.csv, */ekran/*
 11. **Пилот до эталона.** До прогона 1 инструмент дважды прогнан на 11 случаях в scratchpad (вне дерева). По итогам исправлено: имена таблиц экрана — порядковые, а не по хэшу (метка времени в таблице меняла имя файла, поле нельзя было исключить); из `vygruzki.txt` и состава архивов убраны байты, размеры и CRC (в XLSX дата). Эталон снят исправленным кодом (`0620f43`), тем же сняты прогоны 2 и 3.
 12. **Мой байткод.** `py_compile` для проверки `tab_snapshot_compare.py` создал `tools/__pycache__/tab_snapshot_compare.cpython-311.pyc` (флаг `-B` на `py_compile` не действует). Перенесён в `_to_delete/20a_pycache/` с описью `opis_sha256.txt`. После трёх прогонов `__pycache__` и `*.pyc` в `app`, `tools`, `configs`, `packaging` нет.
 13. **Границы эталона.** Не снимаются: PNG картинок на экране (в `karkas.txt` — адрес media, это хэш PNG; байты PNG — в выгрузках), данные `st.line_chart`, переходные элементы (спиннер, прогресс). Значения редактора `st.data_editor` подставляются подменой, как в тестах.
+14. **`git status --short` не целиком в отчёте.** 2732 строки из 2792 — неотслеживаемые файлы прогонов: в `run*/<случай>/` отслеживается только `sha256.txt`, поэтому git перечисляет остальное поимённо. Полный вывод дословно — `results/wave20_a/git_status_konec.txt` (в git), в отчёте — строки вне `results/wave20_a/`.
 
 ## git
 
-`git ls-remote origin wave20-a`, `git log --oneline 5ed5d88..wave20-a` и `git status --short` — ниже, после пуша.
+Сняты после пуша коммита `2c74028`. Коммит, дописавший этот раздел, в них не виден — его хэш даёт `git log` ветки.
+
+`git ls-remote origin wave20-a`:
+
+```
+2c74028a862b632c91ee9914ff048a43b06189b8	refs/heads/wave20-a
+```
+
+`git log --oneline 5ed5d88..wave20-a`:
+
+```
+2c74028 results(20-А): эталон вкладок — три прогона, исключения, сверки; REGISTER волна 20; отчёт
+5caedd1 feat(tools): 20-А — правило пути в tab_snapshot_compare (поле в имени файла)
+0620f43 feat(tools): 20-А — tab_snapshot и tab_snapshot_compare (эталон вкладок)
+2f6c2c1 docs(tasks): 20-А задание (BL-57, шаг 0 — эталон вкладок)
+```
+
+`git status --short` — 2792 строк, полностью и дословно в `results/wave20_a/git_status_konec.txt`. Из них 2732 — неотслеживаемые файлы прогонов под `results/wave20_a/` (`run1`–`run3` кроме `sha256.txt`, `state`, `run*_logs`). Остальные 60 строк дословно (отслеживаемых изменений нет):
+
+```
+?? "Claude outputs/"
+?? PEREDACHA_MASTERA.md
+?? PRAVILA_VZAIMODEYSTVIYA_VLADELEC_MASTER.md
+?? _to_delete/
+?? results/wave17_b/
+?? results/wave18_a/p4/log_density_base_fecrc_off.txt
+?? results/wave18_a/p4/log_density_base_fecrc_on.txt
+?? results/wave18_a/p4/log_density_base_nialcr_off.txt
+?? results/wave18_a/p4/log_density_base_nialcr_on.txt
+?? results/wave18_a/p4/log_density_base_nicr_off.txt
+?? results/wave18_a/p4/log_density_base_nicr_on.txt
+?? results/wave18_a/p4/log_density_head_fecrc_off.txt
+?? results/wave18_a/p4/log_density_head_fecrc_on.txt
+?? results/wave18_a/p4/log_density_head_nialcr_off.txt
+?? results/wave18_a/p4/log_density_head_nialcr_on.txt
+?? results/wave18_a/p4/log_density_head_nicr_off.txt
+?? results/wave18_a/p4/log_density_head_nicr_on.txt
+?? results/wave18_a/p4/log_elastic_base_fecrc_off.txt
+?? results/wave18_a/p4/log_elastic_base_fecrc_on.txt
+?? results/wave18_a/p4/log_elastic_base_nialcr_off.txt
+?? results/wave18_a/p4/log_elastic_base_nialcr_on.txt
+?? results/wave18_a/p4/log_elastic_base_nicr_off.txt
+?? results/wave18_a/p4/log_elastic_base_nicr_on.txt
+?? results/wave18_a/p4/log_elastic_head_fecrc_off.txt
+?? results/wave18_a/p4/log_elastic_head_fecrc_on.txt
+?? results/wave18_a/p4/log_elastic_head_nialcr_off.txt
+?? results/wave18_a/p4/log_elastic_head_nialcr_on.txt
+?? results/wave18_a/p4/log_elastic_head_nicr_off.txt
+?? results/wave18_a/p4/log_elastic_head_nicr_on.txt
+?? results/wave18_a/p4_pervyj/log_density_base_fecrc_off.txt
+?? results/wave18_a/p4_pervyj/log_density_base_fecrc_on.txt
+?? results/wave18_a/p4_pervyj/log_density_base_nialcr_off.txt
+?? results/wave18_a/p4_pervyj/log_density_base_nialcr_on.txt
+?? results/wave18_a/p4_pervyj/log_density_base_nicr_off.txt
+?? results/wave18_a/p4_pervyj/log_density_base_nicr_off_r2.txt
+?? results/wave18_a/p4_pervyj/log_density_base_nicr_on.txt
+?? results/wave18_a/p4_pervyj/log_density_ctrl_nicr_off.txt
+?? results/wave18_a/p4_pervyj/log_density_head_fecrc_off.txt
+?? results/wave18_a/p4_pervyj/log_density_head_fecrc_on.txt
+?? results/wave18_a/p4_pervyj/log_density_head_nialcr_off.txt
+?? results/wave18_a/p4_pervyj/log_density_head_nialcr_on.txt
+?? results/wave18_a/p4_pervyj/log_density_head_nicr_off.txt
+?? results/wave18_a/p4_pervyj/log_density_head_nicr_on.txt
+?? results/wave18_a/p4_pervyj/log_elastic_base_fecrc_off.txt
+?? results/wave18_a/p4_pervyj/log_elastic_base_fecrc_on.txt
+?? results/wave18_a/p4_pervyj/log_elastic_base_nialcr_off.txt
+?? results/wave18_a/p4_pervyj/log_elastic_base_nialcr_on.txt
+?? results/wave18_a/p4_pervyj/log_elastic_base_nicr_off.txt
+?? results/wave18_a/p4_pervyj/log_elastic_base_nicr_on.txt
+?? results/wave18_a/p4_pervyj/log_elastic_head_fecrc_off.txt
+?? results/wave18_a/p4_pervyj/log_elastic_head_fecrc_on.txt
+?? results/wave18_a/p4_pervyj/log_elastic_head_nialcr_off.txt
+?? results/wave18_a/p4_pervyj/log_elastic_head_nialcr_on.txt
+?? results/wave18_a/p4_pervyj/log_elastic_head_nicr_off.txt
+?? results/wave18_a/p4_pervyj/log_elastic_head_nicr_on.txt
+?? tasks/WAVE17_A_REPORT.md
+?? tasks/WAVE17_B_REPORT.md
+?? tasks/WAVE17_V_REPORT.md
+?? tasks/WAVE17_ZH_OPUS.md
+?? tasks/WAVE17_ZH_REPORT.md
+```
