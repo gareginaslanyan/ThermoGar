@@ -137,6 +137,7 @@ def scheil_available() -> bool:
 
 from thermogar_palette import chart_roles, phase_styles
 import thermogar_parallel_ui as parallel_ui
+import thermogar_phase_descriptions as phase_descriptions
 from thermogar_workspace import (
     apply_pending_state,
     context_snapshot,
@@ -5661,6 +5662,9 @@ def translate_phase_description(
         return " ".join(unique_parts)
 
     if original:
+        phrases = phase_descriptions.phrases_for(phase_name, original)
+        if phrases is not None:
+            return phrases
         return (
             "Русская расшифровка для этой специализированной фазы "
             "ещё не добавлена."
