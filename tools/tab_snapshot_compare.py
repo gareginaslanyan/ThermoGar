@@ -15,8 +15,10 @@
 строки на ``#`` и пустые пропускаются. Правило ``re:<регулярное выражение>``:
 в каждой строке текстового файла совпадения заменяются на ``⟨исключено⟩`` с
 обеих сторон перед сравнением — то есть исключается поле или часть строки, а
-не файл. ``где`` — шаблоны пути относительно каталога (``fnmatch``, через
-запятую), например ``*/meta.json``.
+не файл. Правило ``путь:<регулярное выражение>`` делает то же с путём файла
+(поле в имени, например метка времени): файлы ставятся в пару по пути после
+замены, а их содержимое сравнивается как обычно. ``где`` — шаблоны пути
+относительно каталога (``fnmatch``, через запятую), например ``*/meta.json``.
 """
 
 from __future__ import annotations
@@ -39,6 +41,7 @@ class Rule:
     pattern: re.Pattern[str]
     where: tuple[str, ...]
     text: str
+    on_path: bool = False
 
     def applies(self, rel: str) -> bool:
         return any(fnmatch.fnmatchcase(rel, pattern) for pattern in self.where)
@@ -53,11 +56,12 @@ def load_rules(path: Path | None) -> list[Rule]:
         if not stripped or stripped.startswith("#"):
             continue
         parts = [part.strip() for part in stripped.split(" | ")]
-        if len(parts) < 4 or not parts[0].startswith("re:"):
+        if len(parts) < 4 or not parts[0].startswith(("re:", "путь:")):
             raise SystemExit(f"строка исключений не разобрана: {line}")
-        pattern = re.compile(parts[0][3:])
+        on_path = parts[0].startswith("путь:")
+        pattern = re.compile(parts[0].split(":", 1)[1])
         where = tuple(item.strip() for item in parts[1].split(",") if item.strip())
-        rules.append(Rule(len(rules) + 1, pattern, where, stripped))
+        rules.append(Rule(len(rules) + 1, pattern, where, stripped, on_path))
     return rules
 
 
@@ -113,18 +117,34 @@ def shorten(text: str, limit: int = 400) -> str:
     return text if len(text) <= limit else text[:limit] + "…"
 
 
+def pair_key(rel: str, rules: list[Rule]) -> str:
+    for rule in rules:
+        if rule.on_path and rule.applies(rel):
+            rel = rule.pattern.sub(MARK, rel)
+    return rel
+
+
 def compare(a_root: Path, b_root: Path, rules: list[Rule], limit: int) -> tuple[list[str], dict[str, int]]:
-    a_files = files_of(a_root)
-    b_files = files_of(b_root)
+    a_real = files_of(a_root)
+    b_real = files_of(b_root)
     report: list[str] = []
     counts = {"равны": 0, "равны с исключениями": 0, "различаются": 0, "нет пары": 0}
-    for side, root, files in (("A", a_root, a_files), ("B", b_root, b_files)):
+    for side, root, files in (("A", a_root, a_real), ("B", b_root, b_real)):
         problems = integrity(root, files)
         counts[f"целостность {side}"] = len(problems)
         for problem in problems:
             report.append(f"целостность {side} нарушена | {problem}")
+    a_files: dict[str, Path] = {}
+    b_files: dict[str, Path] = {}
+    for real, paired in ((a_real, a_files), (b_real, b_files)):
+        for rel, path in real.items():
+            key = pair_key(rel, rules)
+            if key in paired:
+                key = rel  # замена пути дала бы два файла в одну пару: ставим по настоящему имени
+            paired[key] = path
     names = sorted((set(a_files) | set(b_files)) - {rel for rel in set(a_files) | set(b_files)
                                                      if rel.endswith("/sha256.txt") or rel == "sha256.txt"})
+    pairs_renamed = {rel for rel in names if MARK in rel}
     for rel in names:
         if rel not in a_files or rel not in b_files:
             counts["нет пары"] += 1
@@ -132,9 +152,15 @@ def compare(a_root: Path, b_root: Path, rules: list[Rule], limit: int) -> tuple[
             continue
         a_data = a_files[rel].read_bytes()
         b_data = b_files[rel].read_bytes()
+        path_rules = {rule.number for rule in rules
+                      if rule.on_path and rule.applies(a_files[rel].relative_to(a_root).as_posix())}
         if a_data == b_data:
-            counts["равны"] += 1
-            report.append(f"равны | {rel}")
+            if rel in pairs_renamed:
+                counts["равны с исключениями"] += 1
+                report.append(f"равны с исключениями | {rel} | правила {','.join(map(str, sorted(path_rules)))}")
+            else:
+                counts["равны"] += 1
+                report.append(f"равны | {rel}")
             continue
         a_text = as_text(a_data)
         b_text = as_text(b_data)
@@ -142,12 +168,12 @@ def compare(a_root: Path, b_root: Path, rules: list[Rule], limit: int) -> tuple[
             counts["различаются"] += 1
             report.append(f"различаются | {rel} | двоичный, байт {len(a_data)} / {len(b_data)}")
             continue
-        active = [rule for rule in rules if rule.applies(rel)]
+        active = [rule for rule in rules if not rule.on_path and rule.applies(rel)]
         a_lines, used_a = normalized(a_text.splitlines(), active)
         b_lines, used_b = normalized(b_text.splitlines(), active)
         if a_lines == b_lines:
             counts["равны с исключениями"] += 1
-            used = ",".join(str(n) for n in sorted(used_a | used_b))
+            used = ",".join(str(n) for n in sorted(used_a | used_b | path_rules))
             report.append(f"равны с исключениями | {rel} | правила {used}")
             continue
         counts["различаются"] += 1
