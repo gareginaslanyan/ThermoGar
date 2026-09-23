@@ -1,0 +1,2 @@
+{"test": "tools/test_density_thermal_expansion.py::test_alloy_expansion_magnitude_is_physical", "seconds": 38.3, "rss_before_gib": 0.045, "rss_after_gib": 1.171, "growth_gib": 1.127, "peak_tree_gib": 1.389, "peak_wset_process_gib": 1.507, "open_figures": 0, "pool_workers": null}
+{"test": "tools/test_density_thermal_expansion.py::test_alloy_expansion_regression_anchor", "seconds": 0.0, "rss_before_gib": 1.171, "rss_after_gib": 1.171, "growth_gib": 0.0, "peak_tree_gib": 1.171, "peak_wset_process_gib": 1.507, "open_figures": 0, "pool_workers": null}

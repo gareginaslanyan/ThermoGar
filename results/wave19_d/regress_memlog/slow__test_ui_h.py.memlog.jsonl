@@ -1,0 +1,2 @@
+{"test": "tools/test_ui_h.py::test_batch_calculates_three_databases_and_exports_excel", "seconds": 42.2, "rss_before_gib": 0.104, "rss_after_gib": 1.4, "growth_gib": 1.296, "peak_tree_gib": 1.418, "peak_wset_process_gib": 1.423, "open_figures": 0, "pool_workers": 4}
+{"test": "tools/test_ui_h.py::test_batch_rejects_c15_for_steel_before_any_calculation", "seconds": 10.2, "rss_before_gib": 1.4, "rss_after_gib": 1.421, "growth_gib": 0.021, "peak_tree_gib": 1.427, "peak_wset_process_gib": 1.428, "open_figures": 0, "pool_workers": 4}
