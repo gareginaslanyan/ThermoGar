@@ -180,4 +180,29 @@ app/thermogar_release_policy.py:291:CALCULATION_BLOCK_REASON: Final = (
 
 ## Git
 
-`git log --oneline f909085..wave21-g` и `git status --short` на момент коммита отчёта — в разделе ниже. Вывод после пуша дописан следующим коммитом.
+`git push -u origin wave21-g` — ветка создана на GitHub. Вывод `git ls-remote origin main wave21-g` после пуша:
+
+```
+bc21c2487b1edd94968d7063e17115be967a5735	refs/heads/main
+984852018707af031e5d4e2d990978d7258ca896	refs/heads/wave21-g
+```
+
+После моего пуша `main` (`f909085`) в `origin/main` появилось слияние 21-Б: `bc21c24 Merge wave21-b: аудит дизайна по снимкам (21-Б принята)`. Его сделал не я. Проверено:
+
+- `git merge-base --is-ancestor f909085 origin/main` — да, слияние 21-В в `main` на месте;
+- 21-Б меняет только `results/wave21_b/` и `tasks/` (`DESIGN_AUDIT_21_B.md`, `WAVE21_B_OPUS.md`), `tasks/REGISTER.md` не трогает;
+- `git merge-tree --write-tree origin/main wave21-g` — без конфликтов.
+
+`git log --oneline f909085..wave21-g` (на момент коммита `9848520`):
+
+```
+9848520 docs(21-Г): отчёт; скрипт кандидатов — ключ --latin для второй выборки
+59a76a4 docs(REGISTER): приёмка 20-Б и 21-В, строка 21-Г, ошибки мастера, BL-62
+de084a7 docs(21-Г): единый список текстов на утверждение владельцу
+d977fb5 docs(21-Г): опись латиницы и служебных слов на экране вне списков 21-А и 21-В
+2853bcd docs(21-Г): задание мастера дословно
+```
+
+`git status --short` — пусто.
+
+Этот раздел дописан следующим коммитом «docs(21-Г): отчёт — вывод git после пуша»; он в список выше не попал.
