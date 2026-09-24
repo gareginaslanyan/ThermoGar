@@ -1,0 +1,18 @@
+# 20-А: исключения при сверке эталона вкладок (tools/tab_snapshot_compare.py --isklyucheniya).
+# Формат: правило | где | почему | пример различия (прогон 1 / прогон 2).
+# re:… — совпадение в строке заменяется с обеих сторон, остальная строка сравнивается.
+# путь:… — то же для поля в имени файла; содержимое файла сравнивается.
+# Правила выведены из sravnenie_1_2_syroe.txt: каждое различие прогонов 1 и 2 разобрано по исходнику.
+re:\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(Z|[+-]\d\d:\d\d) | * | метка времени ISO 8601: начало и конец случая (meta.json), created_at/updated_at/exported_at выгрузок и записей, время события истории и изменения проекта — часы в момент прогона | "начало": "2026-09-23T15:03:46+03:00" / "2026-09-23T16:20:56+03:00"
+re:"секунд": [0-9.]+ | */meta.json | длительность случая и шагов — время счёта | "секунд": 12.2 / 11.4
+re:state\\\\run\d+ | */meta.json, */karkas.txt, */sostoyanie/*.json | папка состояния своя на каждый прогон (results\wave20_a\state\<прогон>\<случай>) — временный путь | "project_selected_path": "…\\state\\run1\\h_project_ni\\…" / "…\\state\\run2\\h_project_ni\\…"
+re:\d{8}-\d{6}-[0-9a-f]{8} | * | код ошибки = дата-время + 8 случайных hex (app/thermogar_stage14.py:408, render_friendly_error); подпись «Код ошибки», ключ кнопки, JSON отчёта | Код ошибки: 20260923-155600-d0912443 / 20260923-170515-46c236b9
+путь:\d{8}-\d{6}-[0-9a-f]{8} | */vygruzki/ThermoGar_error_* | тот же код ошибки в имени файла отчёта (app/thermogar_stage14.py:419); файл ставится в пару, содержимое сравнивается | ThermoGar_error_20260923-155600-d0912443.json / ThermoGar_error_20260923-170515-46c236b9.json
+re:"sha256": ?"[0-9a-f]{64}" | */vygruzki/*.json | сумма конверта выгрузки считается по содержимому вместе с exported_at, то есть по времени; ключ ровно "sha256" (database_sha256 не затрагивается) | "sha256":"3a2b605a…" / "sha256":"51de92f1…"
+re:"id": ?"[0-9a-f]{32}" | */vygruzki/*.json | id записи марки — uuid.uuid4().hex (app/thermogar_workspace.py:948), случаен | "id":"472e9f36…" / другой
+re:alloy_(delete_confirm|delete_button)_[0-9a-f]{32} | */karkas.txt, */sostoyanie/*.json | ключи флажка и кнопки удаления марки несут тот же uuid записи | alloy_delete_button_7c36e321… / другой
+re:значение="[0-9a-f]{32}"$ | */karkas.txt | значение списка «Выберите запись» (alloy_selected_id) — uuid записи | значение="7c36e321d2884cc9baa7e75849fe9e1c" / другой
+re:"(receipt_digest|envelope_digest)": "[0-9a-f]{64}" | */sostoyanie/*.json | квитанция и конверт расчёта содержат время по системным часам (clock → _system_clock, app/thermogar_verified_properties.py:712 и загрузчики B3), поэтому их digest от прогона к прогону разный; числа результата лежат рядом и сравниваются | "receipt_digest": "ebee8e75…" / "a73f9ab3…"
+re:"(prepared_witness_digest|hill_witness_digest|request_digest)": "[0-9a-f]{64}" | *elastic*/sostoyanie/*.json | упругость: witness — digest от receipt_digest и envelope_digest (app/thermogar_verified_properties.py:1249-1260), request_digest VRH несёт prepared_witness_digest во входах; только случаи упругости | "prepared_witness_digest": "6399c479…" / "8acd1d78…"
+re:b4b2_elastic_(editor|update)_[0-9a-f]{64} | *elastic*/karkas.txt, *elastic*/sostoyanie/*.json | ключи редактора упругости и флажка «Обновить локальную библиотеку» несут prepared_witness_digest | ключ="b4b2_elastic_editor_6399c479…" / "b4b2_elastic_editor_8acd1d78…"
+re:(?<=[0-9a-f]{64},)[0-9a-f]{64}$ | */vygruzki/ThermoGar_history.csv, */ekran/*.csv | «Запись SHA-256» истории — цепочка сумм по записи с её временем; столбец «База SHA-256» перед ней не затрагивается | …,236ec4d9…,eb6ebc98… / …,236ec4d9…,<другой>
