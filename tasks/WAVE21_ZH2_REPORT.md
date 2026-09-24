@@ -116,3 +116,16 @@ RESULT: PASSED
 
 ## git
 
+
+```
+$ git log --oneline 02a5967..wave21-zh
+52ac830 docs(21-Ж2): отчёт
+a1bc57c fix(21-Ж2): строка 2 списка 21-Г, отказ KWN, символы в составах, своё сообщение через BACKEND_FAILED
+cb6db40 docs(21-Ж2): задание
+$ git status --short
+?? _to_delete/
+$ git ls-remote origin wave21-zh
+52ac8302e47a989f03b3796190787c873d34cd0f	refs/heads/wave21-zh
+```
+
+Выше — состояние после пуша коммита отчёта; следующий коммит только дописывает этот блок.
