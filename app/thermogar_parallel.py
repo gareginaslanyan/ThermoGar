@@ -38,6 +38,7 @@ import weakref
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping, Sequence
+from thermogar_user_errors import UserMessage, UserValueError
 
 DEFAULT_PRESSURE_PA = 101325.0
 DEFAULT_SYSTEM_SIZE = 1.0
@@ -59,7 +60,7 @@ MAX_AUTO_WORKERS = 6
 _SHA_CHUNK_BYTES = 1 << 20
 
 
-class ParallelEngineError(RuntimeError):
+class ParallelEngineError(UserMessage, RuntimeError):
     """Отказ движка до запуска расчёта (не ошибка отдельной точки)."""
 
 
@@ -102,7 +103,7 @@ def resolve_worker_count(workers: int | None = None) -> int:
         return max(1, (os.cpu_count() or 1) - 1)
     value = int(workers)
     if value < 1:
-        raise ValueError("Число воркеров не может быть меньше 1.")
+        raise UserValueError("Число одновременно считаемых точек не может быть меньше 1.")
     return value
 
 
@@ -208,15 +209,14 @@ def _verify_database(database_path: str | os.PathLike[str], sha256: str) -> Path
     expected = str(sha256).strip().lower()
     if len(expected) != 64 or any(symbol not in "0123456789abcdef" for symbol in expected):
         raise DatabaseIdentityError(
-            f"SHA-256 базы задан неверно: {sha256!r} (нужны 64 шестнадцатеричных символа)."
+            "Файл базы изменился во время загрузки. Повторите действие."
         )
     if not path.is_file():
         raise DatabaseIdentityError(f"Файл базы не найден: {path}")
     actual = file_sha256(path)
     if actual != expected:
         raise DatabaseIdentityError(
-            "SHA-256 базы не совпал: объявлено "
-            f"{expected}, у файла {actual} ({path})."
+            "Файл базы изменился во время загрузки. Повторите действие."
         )
     return path
 
@@ -323,7 +323,7 @@ def default_conditions_builder(
     from pycalphad import variables as v
 
     if "T" not in point:
-        raise ValueError("В описании точки нет температуры 'T' (К).")
+        raise UserValueError("В описании точки нет температуры 'T' (К).")
 
     conditions: dict[Any, float] = {
         v.N: float(point.get("N", DEFAULT_SYSTEM_SIZE)),
@@ -334,7 +334,7 @@ def default_conditions_builder(
     mole = point.get("X") or {}
     mass = point.get("W") or {}
     if mole and mass:
-        raise ValueError("В описании точки заданы сразу 'X' и 'W'.")
+        raise UserValueError("В описании точки заданы сразу 'X' и 'W'.")
 
     if mole:
         conditions.update(
@@ -343,7 +343,7 @@ def default_conditions_builder(
     elif mass:
         balance = str(point.get("balance", "")).strip().upper()
         if not balance:
-            raise ValueError("Для массовых долей 'W' нужен 'balance'.")
+            raise UserValueError("Для мас.% нужен элемент-основа.")
         mass_conditions = {
             v.W(str(element)): float(value) for element, value in mass.items()
         }
@@ -587,9 +587,11 @@ def _worker_solve(payload: tuple[str, _Job, int, Mapping[str, Any]]) -> PointRes
     """Задание воркера: SHA сверяется до расчёта, база уже разобрана инициализатором."""
     sha256, job, index, point = payload
     if _WORKER_DATABASE is None:
-        raise ParallelEngineError("Воркер не инициализирован: база не разобрана.")
+        raise ParallelEngineError("Параллельный расчёт прерван. Повторите действие.")
     if _WORKER_SHA256 != str(sha256).strip().lower():
-        raise DatabaseIdentityError("SHA-256 базы воркера не совпал с заданием.")
+        raise DatabaseIdentityError(
+            "Файл базы изменился во время загрузки. Повторите действие."
+        )
     return _solve_point(_WORKER_DATABASE, job, index, point, _worker_models(job))
 
 
@@ -672,7 +674,7 @@ class ParallelEquilibrium:
 
     def _ensure_pool(self) -> Any:
         if self._closed:
-            raise ParallelEngineError("Движок закрыт, пул больше не создаётся.")
+            raise ParallelEngineError("Параллельный расчёт прерван. Повторите действие.")
         if self._pool is None:
             # Затравка ставится на всё время жизни пула: spawn читает окружение
             # родителя при старте воркера, в том числе когда пул поднимает
@@ -799,7 +801,7 @@ class ParallelEquilibrium:
         точки при этом считаются.
         """
         if self._closed:
-            raise ParallelEngineError("Движок закрыт, новые расчёты не принимаются.")
+            raise ParallelEngineError("Параллельный расчёт прерван. Повторите действие.")
 
         job = _Job(
             components=tuple(str(item) for item in components),
@@ -810,9 +812,9 @@ class ParallelEquilibrium:
             capture=tuple(str(item) for item in capture),
         )
         if not job.components:
-            raise ValueError("Пустой список компонентов.")
+            raise UserValueError("Пустой список компонентов.")
         if not job.phases:
-            raise ValueError("Пустой список фаз.")
+            raise UserValueError("Пустой список фаз.")
 
         prepared = [dict(point) for point in points]
         total = len(prepared)
@@ -850,8 +852,9 @@ class ParallelEquilibrium:
                 # чтобы следующий вызов поднял новый.
                 self._drop_broken_pool()
                 raise WorkerLostError(
-                    "Воркер завершился, не вернув результат "
-                    f"(вероятно, не хватило памяти на {self._workers} процессов): {error}",
+                    "Параллельный расчёт прерван: вероятно, не хватило памяти. "
+                    "Выберите «выкл.» у переключателя «Параллельный расчёт» в "
+                    "боковой панели и повторите действие.",
                     [item for item in results if item is not None],
                 ) from error
 
@@ -893,14 +896,14 @@ def solve_points_in_process(
         capture=tuple(str(item) for item in capture),
     )
     if not job.components:
-        raise ValueError("Пустой список компонентов.")
+        raise UserValueError("Пустой список компонентов.")
     if not job.phases:
-        raise ValueError("Пустой список фаз.")
+        raise UserValueError("Пустой список фаз.")
 
     prepared = [dict(point) for point in points]
     numbers = list(indices) if indices is not None else list(range(len(prepared)))
     if len(numbers) != len(prepared):
-        raise ValueError("Число индексов не совпадает с числом точек.")
+        raise UserValueError("Число индексов не совпадает с числом точек.")
     if models is None and job.reuse_models:
         from pycalphad import Model
 

@@ -188,7 +188,7 @@ FOREIGN_ERRORS = (
     # The "at most four solutes" refusal was removed from this list in wave
     # 14-Б (BL-21): the limit is 10 now, and no composition here is that long.
     # thermogar_precipitation.py, render_precipitation_section
-    "Нет матричной фазы с полным набором мобильностей для состава.",
+    "Нет матричной фазы с полным набором параметров подвижности для состава.",
 )
 
 
@@ -495,7 +495,7 @@ def test_history_records_events_exports_csv_and_clears(app):
     widget(at.radio, "projects_history_mode").set_value("История расчётов")
     at.run()
     assert any(
-        message.value.startswith("Цепочка контрольных сумм")
+        message.value.startswith("История расчётов цела")
         for message in at.success
     )
     assert "history_download" in download_keys(at)
@@ -753,7 +753,8 @@ def test_quick_examples_cover_three_databases_and_carry_a_steel():
         )
 
     steel = next(context for context, _s, _l in captured if context["database_key"] == "fe")
-    assert steel["composition"] == "C=0.2, CR=11.5, NI=0.7"
+    # 21-Ж2: состав учебного примера — с символами Cr, Ni.
+    assert steel["composition"] == "C=0.2, Cr=11.5, Ni=0.7"
     assert steel["units"] == "wt"
     assert steel["steel_mode"] == "metastable"
 

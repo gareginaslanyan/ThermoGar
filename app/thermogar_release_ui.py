@@ -16,6 +16,32 @@ from thermogar_verified_loaders import FeatureRequest, RejectedFeatureReceipt
 from thermogar_verified_state import VerifiedArtifactRef
 
 
+# Подсказка недоступной кнопки — русская фраза по коду причины (21-Г, раздел
+# В; строки 80–81 CSV 21-В). Код и английская деталь на экран не выходят.
+REJECTION_HELP_TEXTS = {
+    "FEATURE_ID_UNKNOWN": "Это действие недоступно в текущей версии ThermoGar.",
+    "FEATURE_REVISION_UNSUPPORTED": "Это действие недоступно в текущей версии ThermoGar.",
+    "BINDING_IDENTITY_MISMATCH": "База не подключена. Выберите базу в боковой панели.",
+    "GENERATION_STALE": "Выбор базы изменился. Повторите действие.",
+    "BINDING_STALE": "Выбор базы изменился. Повторите действие.",
+    "INPUT_INVALID": "Введённые значения не проходят проверку.",
+    "RAW_PATH_REJECTED": "Введённые значения не проходят проверку.",
+    "SCHEMA_INVALID": "Набор фаз задан неверно. Выберите фазы заново.",
+    "PHASE_POLICY_MISMATCH": "Набор фаз задан неверно. Выберите фазы заново.",
+    "C15_PHASE_REJECTED": "Фаза C15_LAVES для стальной базы исключена. Уберите её из набора фаз.",
+    "PHASE_NOT_PRESENT": "Выбранная фаза недоступна для этого состава. Проверьте набор фаз.",
+    "PHASE_SET_EMPTY": "Нужно оставить хотя бы одну фазу.",
+}
+REJECTION_HELP_FALLBACK = "Действие недоступно: исходные данные не прошли проверку."
+
+
+def rejection_help_text(decision: RejectedFeatureReceipt) -> str:
+    """Подсказка недоступной кнопки словами, без кода причины."""
+
+    code = getattr(decision.reason_code, "value", decision.reason_code)
+    return REJECTION_HELP_TEXTS.get(str(code), REJECTION_HELP_FALLBACK)
+
+
 def release_download_button(*args: Any, **kwargs: Any) -> bool:
     """Render a download control."""
 
@@ -48,9 +74,7 @@ def verified_feature_button(
         return bool(st.button(*args, **kwargs))
     if type(decision) is RejectedFeatureReceipt:
         kwargs["disabled"] = True
-        kwargs["help"] = (
-            f"{decision.reason_code}: {decision.reason_detail}"
-        )
+        kwargs["help"] = rejection_help_text(decision)
         st.button(*args, **kwargs)
         return False
     raise TypeError(
@@ -122,7 +146,7 @@ def verified_state_uploader(
         st.button(
             label,
             disabled=True,
-            help=f"{decision.reason_code}: {decision.reason_detail}",
+            help=rejection_help_text(decision),
             key=f"{key}_rejected",
         )
         return decision

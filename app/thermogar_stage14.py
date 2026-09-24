@@ -40,6 +40,13 @@ from thermogar_release_ui import (
 )
 from thermogar_paths import ThermoGarPaths
 from thermogar_secure_io import atomic_update_bytes, ensure_plain_directory
+from thermogar_user_errors import (
+    UserRuntimeError,
+    UserValueError,
+    element_symbol,
+    is_user_message,
+    user_message_text,
+)
 
 
 VALIDATION_SCHEMA_VERSION = 1
@@ -94,24 +101,26 @@ def dataframe_excel_bytes(sheets: dict[str, pd.DataFrame]) -> bytes:
 
 
 EMPTY_SOLUTION_RE = re.compile(r"EMPTY_SOLUTION:.*?\bT=([0-9]+(?:\.[0-9]+)?) K")
-# Текст утверждён владельцем (15-Н2).
+# Текст утверждён владельцем (15-Н2; строка 97 списка 21-Г, 21-Ж).
 EMPTY_SOLUTION_TEXT = (
-    "Равновесие при {temperature_c:.1f} °C не найдено: pycalphad вернул пустое "
-    "решение (сумма долей фаз равна нулю), поэтому результата нет — попробуйте "
-    "другую температуру или состав; решатель не сходится на части составов, и "
-    "соседние точки тоже могут оказаться пустыми."
+    "Равновесие при {temperature_c:.1f} °C не найдено: pycalphad не нашёл ни "
+    "одной фазы (сумма долей фаз равна нулю), поэтому результата нет — "
+    "попробуйте другую температуру или состав; на части составов расчёт не "
+    "сходится, и соседние точки тоже могут оказаться пустыми."
 )
 
 
 def _friendly_error_text(error: Exception, context: str) -> tuple[str, str]:
     raw = str(error).strip()
     lower = raw.lower()
+    # 21-Ж: на экран идёт только своё сообщение ThermoGar; текст чужого
+    # исключения остаётся в «Технических сведениях» и в техническом отчёте.
+    own = user_message_text(error)
 
     if isinstance(error, FileNotFoundError):
         return (
             "Не найден необходимый файл.",
-            "Проверьте, что папки app и databases находятся внутри одной "
-            "папки ThermoGar, затем запустите программу снова.",
+            "Файлы ThermoGar не найдены. Переустановите программу.",
         )
 
     if isinstance(error, MemoryError):
@@ -130,7 +139,7 @@ def _friendly_error_text(error: Exception, context: str) -> tuple[str, str]:
     if "не удалось прочитать состав" in lower or "непонятный фрагмент" in lower:
         return (
             "ThermoGar не смог прочитать химический состав.",
-            "Используйте запись вида AL=15, CR=10, C=0,2. Элемент-основу "
+            "Используйте запись вида Al=15, Cr=10, C=0.2. Элемент-основу "
             "повторно указывать не нужно.",
         )
 
@@ -153,10 +162,8 @@ def _friendly_error_text(error: Exception, context: str) -> tuple[str, str]:
     ):
         return (
             "ThermoGar заблокировал недостоверный ликвидус стальной базы.",
-            raw + " Откройте «Проекты и данные → Паспорт базы», чтобы "
-            "посмотреть патч TG-FE-2062-C15-001 и двустороннюю приёмку. "
-            "Исходная TDB сохранена; непатченная копия доступна только для "
-            "диагностики.",
+            (own + " Откройте «Проекты и данные → Паспорт базы», чтобы "
+             "посмотреть поправку проекта к стальной базе.").strip(),
         )
 
     if "liquid" in lower and context.lower().startswith("затверд"):
@@ -183,7 +190,7 @@ def _friendly_error_text(error: Exception, context: str) -> tuple[str, str]:
         return (
             "Для выбранной матрицы не хватает данных о диффузионной подвижности.",
             "Выберите другую матричную фазу, уменьшите набор элементов или "
-            "проверьте, что используется база с подключённой DDB.",
+            "проверьте, что в базе есть параметры подвижности.",
         )
 
     if "grain boundary to interfacial energy ratio" in lower or "nucleation barrer" in lower:
@@ -213,26 +220,26 @@ def _friendly_error_text(error: Exception, context: str) -> tuple[str, str]:
     ):
         return (
             "Для упругой гомогенизации не хватает исходных данных.",
-            raw + " Задайте E и ν каждой равновесной фазы и убедитесь, что "
-            "physical_data.pdb покрывает все фазовые объёмные доли.",
+            (own + " Задайте E и ν каждой равновесной фазы и убедитесь, что "
+             "физическая база покрывает все равновесные фазы.").strip(),
         )
 
     if "коэффициент hall" in lower or "размер зерна" in lower:
         return (
             "Не удалось рассчитать вклад Hall–Petch.",
-            raw + " Проверьте alloy-specific k_y и положительный размер зерна.",
+            (own + " Проверьте k_y для этого сплава и положительный размер зерна.").strip(),
         )
 
     if "вектор бюргерса" in lower or "плотность дислокаций" in lower:
         return (
             "Не удалось рассчитать дислокационный вклад.",
-            raw + " Проверьте G, b, ρ_d, Taylor factor и коэффициент α.",
+            (own + " Проверьте G, b, ρ_d, M и коэффициент α.").strip(),
         )
 
     if "межчастичное расстояние" in lower or "радиус частицы" in lower:
         return (
             "Не удалось рассчитать вклад Orowan.",
-            raw + " Радиус должен быть больше b, а λ — положительным.",
+            (own + " Радиус должен быть больше b, а λ — положительным.").strip(),
         )
 
     if "precipitate" in lower and "phase" in lower:
@@ -245,14 +252,14 @@ def _friendly_error_text(error: Exception, context: str) -> tuple[str, str]:
     if "не заданы e и ν" in lower or "не заданы e и" in lower:
         return (
             "Не заданы упругие свойства всех фаз.",
-            raw + " Заполните E и ν в таблице фаз либо загрузите значения из "
-            "локальной библиотеки с указанием источника.",
+            (own + " Заполните E и ν в таблице фаз либо загрузите значения из "
+             "локальной библиотеки с указанием источника.").strip(),
         )
 
     if "объёмные доли" in lower and "100" in lower:
         return (
             "Для упругой гомогенизации не хватает полных объёмных долей.",
-            "Откройте «Свойства → Покрытие PDB» и проверьте, что каждая "
+            "Откройте «Свойства → Покрытие физической базы» и проверьте, что каждая "
             "равновесная фаза обеспечена плотностью.",
         )
 
@@ -269,7 +276,7 @@ def _friendly_error_text(error: Exception, context: str) -> tuple[str, str]:
     ):
         return (
             "Один из параметров свойств задан неверно.",
-            raw,
+            own,
         )
 
     # BL-24: пустое решение pycalphad. Метка и формат причины —
@@ -285,22 +292,29 @@ def _friendly_error_text(error: Exception, context: str) -> tuple[str, str]:
 
     if "converg" in lower or "solver" in lower or "сходим" in lower:
         return (
-            "Решатель не сошёлся для выбранной точки.",
+            "Равновесие в выбранной точке не найдено.",
             "Увеличьте плотность поиска, уменьшите шаг, верните автоматический "
             "набор фаз либо немного измените границы расчёта.",
         )
 
-    if isinstance(error, ValueError) and raw:
+    if isinstance(error, ValueError) and own:
         return (
             "Расчёт не выполнен из-за неверных исходных данных.",
-            raw,
+            own,
+        )
+
+    if own:
+        return (
+            "ThermoGar не завершил расчёт.",
+            "Проверьте состав, диапазон и набор фаз. Если ошибка повторяется, "
+            "скачайте технический отчёт ниже. Причина: " + own,
         )
 
     if raw:
         return (
             "ThermoGar не завершил расчёт.",
             "Проверьте состав, диапазон и набор фаз. Если ошибка повторяется, "
-            "скачайте технический отчёт ниже. Причина: " + raw,
+            "скачайте технический отчёт ниже.",
         )
 
     return (
@@ -364,7 +378,7 @@ def _write_error_log(
             json.dumps(payload, ensure_ascii=False, default=str) + "\n"
         ).encode("utf-8")
     if len(encoded_entry) > MAX_ERROR_LOG_ENTRY_BYTES:
-        raise RuntimeError("Технический отчёт превысил допустимый размер.")
+        raise UserRuntimeError("Технический отчёт превысил допустимый размер.")
 
     def append_bounded(existing_bytes: bytes) -> bytes:
         existing = existing_bytes
@@ -388,31 +402,48 @@ def _write_error_log(
     return error_id, payload
 
 
-def render_user_error(
+def render_error_details(
     error: Exception,
     *,
     context: str,
     paths: ThermoGarPaths,
     extra: dict[str, Any] | None = None,
-) -> None:
-    """Показать понятную ошибку и сохранить полный технический отчёт локально."""
-    title, action = _friendly_error_text(error, context)
-    error_id, payload = _write_error_log(
-        paths,
-        error,
-        context,
-        extra,
-    )
+) -> str:
+    """Записать технический отчёт и показать «Код ошибки» и «Технические сведения».
 
-    st.error(f"{title}\n\n{action}" if action else title)
+    Текст исключения на основной экран не выводится: он — в свёрнутом блоке
+    и в отчёте (решение владельца 24.09.2026, 21-Ж).
+    """
+    error_id, payload = log_user_error(
+        error,
+        context=context,
+        paths=paths,
+        extra=extra,
+    )
+    render_error_record(error_id, payload)
+    return error_id
+
+
+def log_user_error(
+    error: Exception,
+    *,
+    context: str,
+    paths: ThermoGarPaths,
+    extra: dict[str, Any] | None = None,
+) -> tuple[str, dict[str, Any]]:
+    """Записать технический отчёт, ничего не показывая (для показа из состояния)."""
+    return _write_error_log(paths, error, context, extra)
+
+
+def render_error_record(error_id: str, payload: dict[str, Any]) -> None:
+    """«Код ошибки» и свёрнутые «Технические сведения» по записанному отчёту."""
     st.caption(f"Код ошибки: {error_id}")
     with st.expander("Технические сведения", expanded=False):
         st.write(f"Тип: {payload['exception_type']}")
-        st.write(f"Раздел: {context}")
-        st.caption(
-            "Полный traceback не выводится на основной экран. Он сохранён "
-            "локально и доступен в отчёте ниже."
-        )
+        st.write(f"Раздел: {payload.get('context', '')}")
+        if payload.get("message"):
+            st.code(str(payload["message"]), language=None)
+        st.caption("Подробности ошибки — в техническом отчёте ниже.")
         release_download_button(
             "Скачать технический отчёт",
             data=json_bytes(payload),
@@ -420,6 +451,34 @@ def render_user_error(
             mime="application/json",
             key=f"download_error_{error_id}",
         )
+
+
+def render_user_error(
+    error: Exception,
+    *,
+    context: str,
+    paths: ThermoGarPaths,
+    extra: dict[str, Any] | None = None,
+    title: str | None = None,
+    details_for_own: bool = True,
+) -> None:
+    """Показать понятную ошибку и сохранить полный технический отчёт локально.
+
+    ``title`` — утверждённая фраза места («что случилось и что делать»); без
+    неё заголовок и подсказка берутся из ``_friendly_error_text``. Своё
+    сообщение ThermoGar (``is_user_message``) идёт следом как есть. При
+    ``details_for_own=False`` у своего сообщения нет «Кода ошибки» и
+    «Технических сведений» — они только у чужого исключения.
+    """
+    if title is None:
+        title, action = _friendly_error_text(error, context)
+    else:
+        action = user_message_text(error)
+
+    st.error(f"{title}\n\n{action}" if action else title)
+    if is_user_message(error) and not details_for_own:
+        return
+    render_error_details(error, context=context, paths=paths, extra=extra)
 
 
 # ---------------------------------------------------------------------------
@@ -477,7 +536,7 @@ def validate_single_equilibrium(
                 0,
                 "> 0",
                 False,
-                "Решатель не вернул фазовый состав.",
+                "Расчёт не дал фазового состава.",
             )
         )
         return _validation_report(
@@ -485,7 +544,7 @@ def validate_single_equilibrium(
             title="Проверка равновесия",
             limitations=(
                 "Это проверка численной целостности, а не сравнение с "
-                "открытым benchmark или независимым программным комплексом."
+                "опубликованным эталонным расчётом или другой программой."
             ),
         )
 
@@ -500,7 +559,7 @@ def validate_single_equilibrium(
             "да" if finite else "нет",
             "все конечны",
             finite,
-            "NaN или бесконечность указывают на незавершённый расчёт.",
+            "Пустые или бесконечные значения указывают на незавершённый расчёт.",
         )
     )
 
@@ -586,7 +645,7 @@ def validate_single_equilibrium(
                     "Материальный баланс по элементам",
                     (
                         f"макс. ошибка {max_balance_error:.3e} % "
-                        f"для {max_element}"
+                        f"для {element_symbol(max_element)}"
                     ),
                     f"≤ {composition_tolerance_percent:g} %",
                     max_balance_error <= composition_tolerance_percent,
@@ -679,7 +738,7 @@ def validate_phase_scan(
                 "да" if finite else "нет",
                 "все конечны",
                 finite,
-                "NaN или бесконечность указывают на незавершённую точку.",
+                "Пустые или бесконечные значения указывают на незавершённую точку.",
             )
         )
 
@@ -769,7 +828,7 @@ def validate_solidification_paths(
                 "да" if finite else "нет",
                 "все конечны",
                 finite,
-                "Траектория не должна содержать NaN или бесконечность.",
+                "Траектория не должна содержать пустых или бесконечных значений.",
             )
         )
 
@@ -858,8 +917,8 @@ def render_validation_report(
             st.dataframe(dataframe, width="stretch", hide_index=True)
         st.info(str(report.get("limitations", "")))
         st.caption(
-            "Неопределённость термодинамической базы и расхождение с "
-            "материальная точность находится вне текущей no-experiment программы."
+            "Погрешность термодинамической базы и расхождение с реальным "
+            "материалом эта проверка не оценивает."
         )
 
 
@@ -875,7 +934,7 @@ def environment_table(project_root: str | Path) -> pd.DataFrame:
         ("Python", platform.python_version()),
         ("Архитектура", platform.machine()),
         ("Операционная система", platform.platform()),
-        ("Корень проекта", str(root)),
+        ("Папка ThermoGar", str(root)),
         ("pycalphad", package_version("pycalphad")),
         ("Streamlit", package_version("streamlit")),
         ("scheil", package_version("scheil")),
@@ -939,6 +998,7 @@ def database_file_table(
 def database_diagnostic_table(
     project_root: str | Path,
     database_definitions: dict[str, dict[str, Any]],
+    errors: list[tuple[str, Exception]] | None = None,
 ) -> pd.DataFrame:
     root = Path(project_root)
     rows: list[dict[str, Any]] = []
@@ -968,7 +1028,11 @@ def database_diagnostic_table(
                 row["Фаз"] = len(db.phases)
                 row["Статус"] = "загружена"
             except Exception as error:
-                row["Статус"] = f"ошибка: {type(error).__name__}: {error}"
+                # 21-Ж: класс и текст — в технический отчёт, на экране —
+                # «ошибка чтения» и один код ошибки под таблицей.
+                row["Статус"] = "ошибка чтения"
+                if errors is not None:
+                    errors.append((key, error))
         rows.append(row)
 
     return pd.DataFrame(rows)
@@ -1118,12 +1182,12 @@ def render_quick_examples(queue_context_load: Callable[..., None]) -> None:
     examples = [
         (
             "Ni–15Al: γ/γ′ при 700 °C",
-            "Ni-база · основа NI · 15 ат.% AL.",
+            "Ni-база · основа Ni · 15 ат.% Al.",
             {
                 "database_key": "ni",
                 "balance": "NI",
                 "units": "at",
-                "composition": "AL=15",
+                "composition": "Al=15",
                 "pressure_pa": 101325.0,
                 "steel_mode": "stable",
             },
@@ -1131,26 +1195,26 @@ def render_quick_examples(queue_context_load: Callable[..., None]) -> None:
         ),
         (
             "Al–4Cu–1Mg при 500 °C",
-            "Al-база · основа AL · 4 мас.% CU · 1 мас.% MG.",
+            "Al-база · основа Al · 4 мас.% Cu · 1 мас.% Mg.",
             {
                 "database_key": "al",
                 "balance": "AL",
                 "units": "wt",
-                "composition": "CU=4, MG=1",
+                "composition": "Cu=4, Mg=1",
                 "pressure_pa": 101325.0,
                 "steel_mode": "stable",
             },
             {"single_temperature_al": 500.0},
         ),
         (
-            "Нержавеющая сталь Fe–0,2C–11,5Cr–0,7Ni при 700 °C",
-            "Fe-база · основа FE · мас.% · практический Fe–Fe₃C · "
+            "Нержавеющая сталь Fe–0.2C–11.5Cr–0.7Ni при 700 °C",
+            "Fe-база · основа Fe · мас.% · практический Fe–Fe₃C · "
             "C15_LAVES исключена.",
             {
                 "database_key": "fe",
                 "balance": "FE",
                 "units": "wt",
-                "composition": "C=0.2, CR=11.5, NI=0.7",
+                "composition": "C=0.2, Cr=11.5, Ni=0.7",
                 "pressure_pa": 101325.0,
                 "steel_mode": "metastable",
             },
@@ -1178,6 +1242,20 @@ def render_quick_examples(queue_context_load: Callable[..., None]) -> None:
                 st.rerun()
 
 
+# Столбцы таблиц баз, которые на экране уходят в «Технические сведения»
+# (21-Г, часть 2, строка 84).
+DIAGNOSTIC_TECHNICAL_COLUMNS = ("Ключ", "Файл", "SHA-256")
+
+
+def _render_table_with_technical_columns(table: pd.DataFrame) -> None:
+    technical = [name for name in DIAGNOSTIC_TECHNICAL_COLUMNS if name in table.columns]
+    st.dataframe(table.drop(columns=technical), width="stretch", hide_index=True)
+    if technical:
+        with st.expander("Технические сведения", expanded=False):
+            shown = (["База"] if "База" in table.columns else []) + technical
+            st.dataframe(table[shown], width="stretch", hide_index=True)
+
+
 def render_diagnostics(
     project_root: str | Path,
     database_definitions: dict[str, dict[str, Any]],
@@ -1188,14 +1266,15 @@ def render_diagnostics(
     kawin_import_error: str = "",
     precipitation_available: bool = False,
     precipitation_import_error: str = "",
+    paths: ThermoGarPaths | None = None,
 ) -> None:
     st.subheader("Проверка установки и контрольные расчёты")
     st.caption(
-        "Этот экран проверяет окружение, целостность release-баз и короткие "
-        "эталонных расчёта. Он не заменяет экспериментальную валидацию."
+        "Этот раздел проверяет установку и целостность баз и выполняет три "
+        "контрольных расчёта. Он не заменяет экспериментальную проверку."
     )
 
-    st.markdown("### Окружение")
+    st.markdown("### Программы и версии")
     env = environment_table(project_root)
     st.dataframe(env, width="stretch", hide_index=True)
 
@@ -1203,29 +1282,39 @@ def render_diagnostics(
         st.success("Модуль Scheil–Gulliver доступен.")
     else:
         st.warning(
-            "Модуль Scheil–Gulliver недоступен. Остальные функции работают. "
-            f"Причина: {scheil_import_error or 'пакет scheil не установлен'}"
+            "Модуль Scheil–Gulliver недоступен. Остальные функции работают."
         )
+        with st.expander("Технические сведения", expanded=False):
+            st.caption(
+                f"Причина: {scheil_import_error or 'пакет scheil не установлен'}"
+            )
 
     if kawin_available:
         st.success("Модуль диффузии Kawin доступен.")
     else:
         st.warning(
-            "Модуль диффузии Kawin недоступен. Равновесные функции работают. "
-            f"Причина: {kawin_import_error or 'пакет kawin не установлен'}"
+            "Модуль диффузии Kawin недоступен. Равновесные функции работают."
         )
+        with st.expander("Технические сведения", expanded=False):
+            st.caption(
+                f"Причина: {kawin_import_error or 'пакет kawin не установлен'}"
+            )
 
     if precipitation_available:
         st.success("Модуль кинетики выделений Kawin доступен.")
     else:
         st.warning(
-            "Модуль кинетики выделений недоступен. Остальные функции работают. "
-            f"Причина: {precipitation_import_error or 'Kawin precipitation не импортирован'}"
+            "Модуль кинетики выделений недоступен. Остальные функции работают."
         )
+        with st.expander("Технические сведения", expanded=False):
+            st.caption(
+                "Причина: "
+                f"{precipitation_import_error or 'Kawin precipitation не импортирован'}"
+            )
 
     st.markdown("### Файлы баз")
     file_table = database_file_table(project_root, database_definitions)
-    st.dataframe(file_table, width="stretch", hide_index=True)
+    _render_table_with_technical_columns(file_table)
 
     if release_calculation_button(
         "Проверить базы и запустить три контрольных расчёта",
@@ -1236,9 +1325,26 @@ def render_diagnostics(
             "Загружаем базы и выполняем контрольные расчёты…",
             expanded=True,
         ) as status:
+            database_errors: list[tuple[str, Exception]] = []
             database_table = database_diagnostic_table(
                 project_root,
                 database_definitions,
+                database_errors,
+            )
+            st.session_state["stage10_database_error_record"] = (
+                log_user_error(
+                    database_errors[0][1],
+                    context="проверка установки",
+                    paths=paths,
+                    extra={
+                        "databases": [
+                            f"{key}: {type(error).__name__}: {error}"
+                            for key, error in database_errors
+                        ]
+                    },
+                )
+                if database_errors and paths is not None
+                else None
             )
             smoke = run_smoke_tests(project_root, database_definitions)
             st.session_state["stage10_database_diagnostics"] = database_table
@@ -1260,7 +1366,12 @@ def render_diagnostics(
     database_table = st.session_state.get("stage10_database_diagnostics")
     if isinstance(database_table, pd.DataFrame):
         st.markdown("### Результат загрузки баз")
-        st.dataframe(database_table, width="stretch", hide_index=True)
+        _render_table_with_technical_columns(database_table)
+        database_error_record = st.session_state.get(
+            "stage10_database_error_record"
+        )
+        if database_error_record:
+            render_error_record(*database_error_record)
 
     smoke = st.session_state.get("stage10_smoke_tests")
     if isinstance(smoke, pd.DataFrame):
@@ -1374,7 +1485,7 @@ def validate_scan_result(
     coordinate_columns: list[str] | tuple[str, ...],
 ) -> dict[str, Any]:
     if not coordinate_columns:
-        raise ValueError("Не указана координата расчётной сетки.")
+        raise UserValueError("Не указана координата расчётной сетки.")
     return validate_phase_scan(dataframe, str(coordinate_columns[0]))
 
 
@@ -1387,11 +1498,15 @@ def render_friendly_error(
     *,
     context: str,
     paths: ThermoGarPaths,
+    title: str | None = None,
+    details_for_own: bool = True,
 ) -> None:
     render_user_error(
         error,
         context=context,
         paths=paths,
+        title=title,
+        details_for_own=details_for_own,
     )
 
 
@@ -1406,6 +1521,7 @@ def render_preflight(
     kawin_import_error: str = "",
     precipitation_available: bool = False,
     precipitation_import_error: str = "",
+    paths: ThermoGarPaths | None = None,
 ) -> None:
     render_diagnostics(
         project_root,
@@ -1420,4 +1536,5 @@ def render_preflight(
         kawin_import_error=kawin_import_error,
         precipitation_available=precipitation_available,
         precipitation_import_error=precipitation_import_error,
+        paths=paths,
     )

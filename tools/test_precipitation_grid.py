@@ -239,8 +239,8 @@ def test_check_warns_between_floor_and_refusal_ratio(grain_boundary_nucleation: 
     )
     assert len(warnings) == 1, warnings
     assert "меньше предела модели" in warnings[0]
-    assert "kawin считает зарождение от предела" in warnings[0]
-    assert "не соответствует классической" in warnings[0]
+    assert "модель считает зарождение от этого предела" in warnings[0]
+    assert "не классическая для этой движущей силы" in warnings[0]
     assert "может быть искажено" in warnings[0]
     for word in ("%", "занижен", "барьер", "порядки"):
         assert word not in warnings[0]
@@ -485,7 +485,7 @@ def test_run_precipitation_boundary_from_both_sides(monkeypatch: pytest.MonkeyPa
     with pytest.raises(_SolveReached):
         _run_demo(composition_text=A5_COMPOSITION, **dict(WAVE14_CASE, gamma=threshold_gamma * (1 + 1e-3)))
     assert len(seen["warnings"][-1]) == 1, seen["warnings"][-1]
-    assert "kawin считает зарождение от предела" in seen["warnings"][-1][0]
+    assert "модель считает зарождение от этого предела" in seen["warnings"][-1][0]
 
     with pytest.raises(ValueError, match="более чем в полтора раза"):
         _run_demo(composition_text=A5_COMPOSITION, **dict(WAVE14_CASE, gamma=threshold_gamma * (1 - 1e-3)))
@@ -501,7 +501,7 @@ def test_run_precipitation_warns_and_solves_on_the_ni_section_default() -> None:
         precip_vm=precip_vm, cmin_nm=0.2, cmax_nm=10.0, bins=80,
     )
     assert (result.quality["Статус"] == "пройдена").all(), result.quality
-    radius = [warning for warning in result.warnings if "kawin считает зарождение от предела" in warning]
+    radius = [warning for warning in result.warnings if "модель считает зарождение от этого предела" in warning]
     assert len(radius) == 1, result.warnings
     assert "800.0 °C" in radius[0]
 

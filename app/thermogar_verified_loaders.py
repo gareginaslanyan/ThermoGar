@@ -26,6 +26,7 @@ from thermogar_secure_io import (
     parse_verified_utf8_snapshot,
     read_verified_snapshot,
 )
+from thermogar_user_errors import user_message_text
 from thermogar_verified_artifact import duplicate_reject_json, strict_utf8_text
 
 
@@ -199,18 +200,49 @@ RESULT_ENVELOPE_FIELDS = (
 class VerifiedLoaderError(RuntimeError):
     """Fail-closed error carrying one frozen reason classification."""
 
-    def __init__(self, reason_code: ReasonCode, detail: str):
+    def __init__(
+        self,
+        reason_code: ReasonCode,
+        detail: str,
+        *,
+        user_message: bool = False,
+        user_text: str | None = None,
+    ):
         if type(reason_code) is not ReasonCode:
             raise TypeError("reason_code must be a ReasonCode.")
         if type(detail) is not str or not detail or len(detail) > MAX_REASON_DETAIL_CHARS:
             raise TypeError("detail must be bounded non-empty text.")
         self.reason_code = reason_code
         self.detail = detail
+        # 21-Ж: признак своего русского сообщения ThermoGar (is_user_message);
+        # на экран тогда выходит detail без кода причины либо отдельный
+        # русский ``user_text``, если detail остаётся служебным.
+        self.user_message = user_message is True or user_text is not None
+        if user_text is not None:
+            self.user_text = user_text
+        else:
+            self.user_text = detail if self.user_message else ""
         super().__init__(f"{reason_code.value}: {detail}")
 
 
 def _fail(reason_code: ReasonCode, detail: str) -> None:
     raise VerifiedLoaderError(reason_code, detail[:MAX_REASON_DETAIL_CHARS])
+
+
+def fail_backend(error: BaseException, detail: str) -> None:
+    """BACKEND_FAILED с прежним ``detail``; своё сообщение причины — на экран.
+
+    21-Ж2: если расчёт поднял своё сообщение ThermoGar (``is_user_message``),
+    у ``VerifiedLoaderError`` ставится признак своего и её текст; чужое
+    исключение — как раньше, только класс и текст в техническом отчёте.
+    """
+
+    own = user_message_text(error)
+    raise VerifiedLoaderError(
+        ReasonCode.BACKEND_FAILED,
+        detail[:MAX_REASON_DETAIL_CHARS],
+        user_text=own if own else None,
+    )
 
 
 def _validate_sha256(value: object, label: str) -> str:

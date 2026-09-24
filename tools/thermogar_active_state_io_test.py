@@ -201,6 +201,10 @@ class _FakeStreamlit:
     def write(self, _value):
         return None
 
+    def code(self, *_args, **_kwargs):
+        # 21-Ж: текст исключения — в «Технических сведениях» (st.code).
+        return None
+
     def expander(self, *_args, **_kwargs):
         return nullcontext()
 

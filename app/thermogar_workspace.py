@@ -25,6 +25,7 @@ from thermogar_release_policy import (
     APP_VERSION,
     PRODUCTION_USE,
     RELEASE_DATABASE_ELEMENTS,
+    RELEASE_DATABASE_LABELS,
     RELEASE_CLASS,
     RELEASE_DATABASE_KEYS,
     SCIENTIFIC_MATERIAL_STATUS,
@@ -69,6 +70,20 @@ from thermogar_secure_io import (
     read_verified_snapshot,
     secure_archive_and_clear,
     secure_move_no_overwrite,
+)
+from thermogar_stage14 import (
+    log_user_error,
+    render_error_record,
+    render_user_error,
+)
+from thermogar_user_errors import (
+    UserRuntimeError,
+    UserValueError,
+    composition_columns_for_display,
+    element_columns_for_display,
+    element_symbol,
+    is_user_message,
+    user_message_text,
 )
 
 
@@ -156,8 +171,8 @@ REJECTION_MESSAGES: dict[str, str] = {
         "Файл не соответствует ожидаемой структуре и не был принят."
     ),
     "C15_PHASE_REJECTED": (
-        "В файле указана фаза C15_LAVES. Для стального профиля "
-        "thermogar_patch она исключена; уберите её и повторите загрузку."
+        "В файле указана фаза C15_LAVES. Для стальной базы она исключена; "
+        "уберите её и повторите загрузку."
     ),
     "ARTIFACT_OVERSIZE": "Файл слишком большой и не был прочитан.",
     "ARTIFACT_MISSING": "Файл не найден.",
@@ -167,10 +182,10 @@ REJECTION_MESSAGES: dict[str, str] = {
     "SCHEMA_INVALID": "Структура файла не совпадает с ожидаемой.",
     "INPUT_INVALID": "Введённые значения не проходят проверку.",
     "DATABASE_KEY_REJECTED": "В файле указана база, которой нет в ThermoGar.",
-    "PROFILE_KEY_REJECTED": "В файле указан недопустимый профиль базы.",
-    "PATCH_ID_MISMATCH": "Профиль стальной базы в файле не совпадает с текущим.",
-    "TDB_HASH_MISMATCH": "Контрольная сумма базы в файле не совпадает с текущей.",
-    "PASSPORT_REQUIRED": "Для стальной базы требуется паспорт профиля.",
+    "PROFILE_KEY_REJECTED": "Стальная база в файле не совпадает с текущей.",
+    "PATCH_ID_MISMATCH": "Стальная база в файле не совпадает с текущей.",
+    "TDB_HASH_MISMATCH": "Файл сохранён на другой версии базы.",
+    "PASSPORT_REQUIRED": "В файле нет паспорта стальной базы.",
     "BINDING_STALE": (
         "Выбор базы изменился, пока готовился файл. Повторите действие."
     ),
@@ -208,18 +223,25 @@ def _flash_key(section: str) -> str:
     return f"_thermogar_flash_{section}"
 
 
-def flash(section: str, kind: str, message: str) -> None:
+def flash(
+    section: str,
+    kind: str,
+    message: str,
+    error_record: tuple[str, dict[str, Any]] | None = None,
+) -> None:
     """Запомнить сообщение, которое переживёт немедленный ``st.rerun``.
 
     Раздел указывается явно: Streamlit рисует все вкладки на каждом прогоне,
-    и общая очередь показала бы сообщение в чужой вкладке.
+    и общая очередь показала бы сообщение в чужой вкладке. ``error_record`` —
+    записанный технический отчёт (21-Ж): под сообщением появятся «Код ошибки»
+    и «Технические сведения».
     """
 
     key = _flash_key(section)
     pending = st.session_state.get(key)
     if not isinstance(pending, list):
         pending = []
-    pending.append({"kind": kind, "message": message})
+    pending.append({"kind": kind, "message": message, "error_record": error_record})
     st.session_state[key] = pending
 
 
@@ -240,6 +262,9 @@ def render_flash(section: str) -> None:
             continue
         renderer = renderers.get(str(item.get("kind", "info")), st.info)
         renderer(str(item.get("message", "")))
+        error_record = item.get("error_record")
+        if error_record:
+            render_error_record(*error_record)
 
 
 DEMO_ALLOYS: list[dict[str, Any]] = [
@@ -350,7 +375,7 @@ def read_json(paths: ThermoGarPaths, path: str | Path, default: Any) -> Any:
         )
         return json.loads(snapshot.data.decode("utf-8-sig"))
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
-        raise RuntimeError(
+        raise UserRuntimeError(
             f"Файл {source.name} не читается. "
             "Не заменяйте его пустым файлом: восстановите резервную копию "
             f"или исправьте JSON. Техническая причина: {error}"
@@ -369,21 +394,21 @@ def make_envelope(kind: str, payload: Any) -> dict[str, Any]:
 
 def validate_iso_timestamp(value: Any, field_name: str) -> str:
     if not isinstance(value, str) or not value.strip():
-        raise ValueError(f"Поле {field_name} должно быть ISO-датой со смещением.")
+        raise UserValueError("Структура файла не совпадает с ожидаемой.")
     try:
         parsed = datetime.fromisoformat(value)
     except ValueError as error:
-        raise ValueError(
-            f"Поле {field_name} должно быть ISO-датой со смещением."
+        raise UserValueError(
+            "Структура файла не совпадает с ожидаемой."
         ) from error
     if parsed.tzinfo is None or parsed.utcoffset() is None:
-        raise ValueError(f"Поле {field_name} должно содержать часовой пояс.")
+        raise UserValueError(f"Поле {field_name} должно содержать часовой пояс.")
     return value
 
 
 def validate_envelope(envelope: Any, expected_kind: str) -> Any:
     if not isinstance(envelope, dict):
-        raise ValueError("Файл должен содержать JSON-объект.")
+        raise UserValueError("Файл должен содержать JSON-объект.")
     required_keys = {
         "schema_version",
         "kind",
@@ -394,29 +419,18 @@ def validate_envelope(envelope: Any, expected_kind: str) -> Any:
     missing_keys = sorted(required_keys - set(envelope))
     extra_keys = sorted(set(envelope) - required_keys)
     if missing_keys:
-        raise ValueError(
-            "В envelope отсутствуют обязательные поля: "
-            + ", ".join(missing_keys)
-            + "."
-        )
+        raise UserValueError("Структура файла не совпадает с ожидаемой.")
     if extra_keys:
-        raise ValueError(
-            "Envelope содержит неизвестные поля: "
-            + ", ".join(extra_keys)
-            + "."
-        )
+        raise UserValueError("Структура файла не совпадает с ожидаемой.")
     if (
         type(envelope.get("schema_version")) is not int
         or envelope.get("schema_version") != STORAGE_SCHEMA_VERSION
     ):
-        raise ValueError(
-            "Неподдерживаемая версия схемы: ожидалась "
-            f"{STORAGE_SCHEMA_VERSION!r}, получена "
-            f"{envelope.get('schema_version')!r}. Автоматическая миграция "
-            "не выполняется."
+        raise UserValueError(
+            "Проект сохранён другой версией ThermoGar и не открывается."
         )
     if envelope.get("kind") != expected_kind:
-        raise ValueError(
+        raise UserValueError(
             f"Ожидался файл типа {expected_kind!r}, "
             f"получен {envelope.get('kind')!r}."
         )
@@ -425,12 +439,12 @@ def validate_envelope(envelope: Any, expected_kind: str) -> Any:
     if not isinstance(expected_hash, str) or not re.fullmatch(
         r"[0-9a-f]{64}", expected_hash
     ):
-        raise ValueError("Обязательная контрольная сумма SHA-256 отсутствует или неверна.")
+        raise UserValueError("Файл повреждён или изменён вручную.")
     content = dict(envelope)
     content.pop("sha256", None)
     actual_hash = payload_sha256(content)
     if expected_hash != actual_hash:
-        raise ValueError("Контрольная сумма файла не совпала.")
+        raise UserValueError("Файл повреждён или изменён вручную.")
     return envelope.get("payload")
 
 
@@ -438,7 +452,7 @@ def validate_context_payload(context: Any) -> dict[str, Any]:
     """Validate restorable inputs without inventing missing values."""
 
     if not isinstance(context, dict):
-        raise ValueError("Контекст должен быть JSON-объектом.")
+        raise UserValueError("Структура файла не совпадает с ожидаемой.")
     required = {
         "database_key",
         "balance",
@@ -456,55 +470,52 @@ def validate_context_payload(context: Any) -> dict[str, Any]:
     missing = sorted(required - set(context))
     extra = sorted(set(context) - required - known_optional)
     if missing:
-        raise ValueError(
-            "Контекст неполон; отсутствуют поля: " + ", ".join(missing) + "."
-        )
+        raise UserValueError("Структура файла не совпадает с ожидаемой.")
     if extra:
-        raise ValueError(
-            "Контекст содержит неизвестные поля: " + ", ".join(extra) + "."
-        )
+        raise UserValueError("Структура файла не совпадает с ожидаемой.")
     if not isinstance(context["database_key"], str):
-        raise ValueError("Ключ базы должен быть строкой.")
+        raise UserValueError("Структура файла не совпадает с ожидаемой.")
     database_key = context["database_key"].strip().casefold()
     if database_key not in PRODUCT_DATABASE_KEYS:
-        raise ValueError(
+        raise UserValueError(
             f"База {database_key!r} не входит в доступную поверхность ThermoGar."
         )
     if not isinstance(context["balance"], str):
-        raise ValueError("Элемент-основа должен быть строкой.")
+        raise UserValueError("Элемент-основа должен быть строкой.")
     balance = context["balance"].strip().upper()
     if not re.fullmatch(r"[A-Z][A-Z0-9_+-]*", balance):
-        raise ValueError("Основа состава отсутствует или имеет неверный формат.")
+        raise UserValueError("Основа состава отсутствует или имеет неверный формат.")
     allowed_elements = (
         FE_DATABASE_ELEMENTS
         if database_key == FE_DATABASE_KEY
         else RELEASE_DATABASE_ELEMENTS[database_key]
     )
     if balance not in allowed_elements:
-        raise ValueError(
-            f"Элемент-основа {balance!r} отсутствует в базе {database_key!r}."
+        raise UserValueError(
+            f"Элемента-основы {element_symbol(balance)} нет в базе "
+            f"«{RELEASE_DATABASE_LABELS[database_key]}»."
         )
     if not isinstance(context["units"], str):
-        raise ValueError("Единицы состава должны быть строкой.")
+        raise UserValueError("Единицы состава должны быть строкой.")
     units = context["units"].strip().casefold()
     if units not in {"at", "wt"}:
-        raise ValueError("Единицы должны быть строго 'at' или 'wt'.")
+        raise UserValueError("Структура файла не совпадает с ожидаемой.")
     if not isinstance(context["steel_mode"], str):
-        raise ValueError("Режим должен быть строкой.")
+        raise UserValueError("Режим должен быть строкой.")
     steel_mode = context["steel_mode"].strip().casefold()
     if steel_mode not in {"stable", "metastable"}:
-        raise ValueError("Режим должен быть строго 'stable' или 'metastable'.")
+        raise UserValueError("Структура файла не совпадает с ожидаемой.")
     if isinstance(context["pressure_pa"], bool):
-        raise ValueError("Давление должно быть конечным положительным числом.")
+        raise UserValueError("Давление должно быть конечным положительным числом.")
     try:
         pressure_pa = float(context["pressure_pa"])
     except (TypeError, ValueError) as error:
-        raise ValueError("Давление должно быть конечным положительным числом.") from error
+        raise UserValueError("Давление должно быть конечным положительным числом.") from error
     if not math.isfinite(pressure_pa) or pressure_pa <= 0.0:
-        raise ValueError("Давление должно быть конечным положительным числом.")
+        raise UserValueError("Давление должно быть конечным положительным числом.")
     composition = context["composition"]
     if not isinstance(composition, str):
-        raise ValueError("Состав должен быть строкой без автоматического преобразования.")
+        raise UserValueError("Состав должен быть строкой без автоматического преобразования.")
     composition = composition.strip()
     if composition:
         pattern = re.compile(
@@ -514,43 +525,46 @@ def validate_context_payload(context: Any) -> dict[str, Any]:
         remainder = pattern.sub("", composition)
         remainder = re.sub(r"[\s,;]+", "", remainder)
         if not matches or remainder:
-            raise ValueError("Состав имеет неверный формат; пример: AL=15, CR=10.")
+            raise UserValueError("Состав имеет неверный формат; пример: Al=15, Cr=10.")
         values: dict[str, float] = {}
         for match in matches:
             element = match.group(1).upper()
             if element in values:
-                raise ValueError(f"Элемент {element} указан более одного раза.")
+                raise UserValueError(
+                    f"Элемент {element_symbol(element)} указан более одного раза."
+                )
             if element not in allowed_elements:
-                raise ValueError(
-                    f"Элемент {element!r} отсутствует в базе {database_key!r}."
+                raise UserValueError(
+                    f"Элемента {element_symbol(element)} нет в базе "
+                    f"«{RELEASE_DATABASE_LABELS[database_key]}»."
                 )
             if element == balance:
-                raise ValueError(
-                    f"{balance} выбран как основа и не должен повторяться в добавках."
+                raise UserValueError(
+                    f"{element_symbol(balance)} выбран как основа и не должен "
+                    "повторяться в добавках."
                 )
             value = float(match.group(2).replace(",", "."))
             if not math.isfinite(value) or value <= 0.0:
-                raise ValueError(f"Содержание {element} должно быть больше нуля.")
+                raise UserValueError(
+                    f"Содержание {element_symbol(element)} должно быть больше нуля."
+                )
             values[element] = value
         if sum(values.values()) >= 100.0:
-            raise ValueError("Сумма добавок должна быть меньше 100 %.")
+            raise UserValueError("Сумма добавок должна быть меньше 100 %.")
     if "database_path" in context and (
         not isinstance(context["database_path"], str)
         or not context["database_path"].strip()
     ):
-        raise ValueError("Путь базы в контексте должен быть непустой строкой.")
+        raise UserValueError("Структура файла не совпадает с ожидаемой.")
     if "database_label" in context and (
         not isinstance(context["database_label"], str)
         or not context["database_label"].strip()
     ):
-        raise ValueError("Название базы в контексте должно быть непустой строкой.")
+        raise UserValueError("Структура файла не совпадает с ожидаемой.")
     fe_profile_key = context.get("fe_profile_key")
     if database_key == FE_DATABASE_KEY:
         if fe_profile_key != FE_PROFILE_CANONICAL:
-            raise ValueError(
-                "Fe-контекст отклонён: требуется единственный профиль "
-                f"{FE_PROFILE_CANONICAL!r}; получен {fe_profile_key!r}."
-            )
+            raise UserValueError("Стальная база в файле не совпадает с текущей.")
         database_path = context.get("database_path")
         if database_path:
             normalized_path = str(database_path).replace("\\", "/").casefold()
@@ -559,22 +573,20 @@ def validate_context_payload(context: Any) -> dict[str, Any]:
                 normalized_path == expected_path
                 or normalized_path.endswith("/" + expected_path)
             ):
-                raise ValueError(
-                    "Fe-контекст отклонён: путь базы не соответствует "
-                    "каноническому профилю thermogar_patch."
+                raise UserValueError(
+                    "Стальная база в файле не совпадает с текущей."
                 )
     elif fe_profile_key is not None:
-        raise ValueError("Fe-профиль не допускается для Ni/Al-контекста.")
+        raise UserValueError("Стальная база в файле не совпадает с текущей.")
     database_sha256 = context.get("database_sha256", "")
     if not isinstance(database_sha256, str) or (
         database_sha256
         and not re.fullmatch(r"[0-9a-f]{64}", database_sha256)
     ):
-        raise ValueError("SHA-256 базы в контексте имеет неверный формат.")
+        raise UserValueError("Стальная база в файле не совпадает с текущей.")
     if database_key == FE_DATABASE_KEY and database_sha256 != FE_DATABASE_SHA256:
-        raise ValueError(
-            "Fe-контекст отклонён: SHA-256 базы отсутствует или не совпадает "
-            "с каноническим профилем thermogar_patch."
+        raise UserValueError(
+            "Стальная база в файле не совпадает с текущей."
         )
     clean = {
         "database_key": database_key,
@@ -595,7 +607,7 @@ def context_from_history_entry(entry: Any) -> dict[str, Any]:
     """Extract only the restorable context from an authenticated history row."""
 
     if not isinstance(entry, dict):
-        raise ValueError("Запись истории должна быть JSON-объектом.")
+        raise UserValueError("Запись истории должна быть JSON-объектом.")
     fields = {
         "database_key",
         "balance",
@@ -616,7 +628,7 @@ def validate_project_payload(payload: Any) -> dict[str, Any]:
     """Проверить схему проекта целиком; автоматическая миграция не делается."""
 
     if not isinstance(payload, dict):
-        raise ValueError("Данные проекта должны быть JSON-объектом.")
+        raise UserValueError("Данные проекта должны быть JSON-объектом.")
     required = {
         "schema_version",
         "kind",
@@ -641,7 +653,9 @@ def validate_project_payload(payload: Any) -> dict[str, Any]:
             parts.append("отсутствуют: " + ", ".join(missing))
         if extra:
             parts.append("неизвестны: " + ", ".join(extra))
-        raise ValueError("Схема проекта не совпадает (" + "; ".join(parts) + ").")
+        raise UserValueError(
+            "Проект сохранён другой версией ThermoGar и не открывается."
+        )
     expected_identity = {
         "schema_version": STORAGE_SCHEMA_VERSION,
         "kind": "thermogar_project_payload",
@@ -653,9 +667,8 @@ def validate_project_payload(payload: Any) -> dict[str, Any]:
         "production_use": PRODUCTION_USE,
     }
     if type(payload.get("schema_version")) is not int:
-        raise ValueError(
-            "Версия схемы проекта должна быть целым числом; "
-            "автоматическое приведение типа отключено."
+        raise UserValueError(
+            "Проект сохранён другой версией ThermoGar и не открывается."
         )
     drift = {
         key: (expected, payload.get(key))
@@ -663,16 +676,16 @@ def validate_project_payload(payload: Any) -> dict[str, Any]:
         if payload.get(key) != expected
     }
     if drift:
-        raise ValueError(
+        raise UserValueError(
             "Проект сохранён другой версией ThermoGar; автоматическое "
             "приведение не выполняется: " + repr(drift)
         )
     name = payload.get("name")
     description = payload.get("description")
     if not isinstance(name, str) or not name.strip() or len(name.strip()) > 200:
-        raise ValueError("Название проекта должно содержать от 1 до 200 символов.")
+        raise UserValueError("Название проекта должно содержать от 1 до 200 символов.")
     if not isinstance(description, str):
-        raise ValueError("Описание проекта должно быть строкой.")
+        raise UserValueError("Описание проекта должно быть строкой.")
     validate_iso_timestamp(payload.get("created_at"), "created_at")
     validate_iso_timestamp(payload.get("updated_at"), "updated_at")
     clean = dict(payload)
@@ -814,7 +827,7 @@ def capture_widget_state() -> dict[str, Any]:
         elif isinstance(value, float) and math.isfinite(value):
             result[key] = float(value)
         if len(result) > MAX_WIDGET_STATE_KEYS:
-            raise ValueError(
+            raise UserValueError(
                 "Настроек расчётных разделов больше, чем допускает проект."
             )
     return result
@@ -824,18 +837,18 @@ def validate_widget_state(widget_state: Any) -> dict[str, Any]:
     """Принять только текущую версию набора настроек и только её ключи."""
 
     if not isinstance(widget_state, dict):
-        raise ValueError("Настройки проекта должны быть JSON-объектом.")
+        raise UserValueError("Настройки проекта должны быть JSON-объектом.")
     if not widget_state:
         return {}
     version = widget_state.get(WIDGET_STATE_VERSION_FIELD)
     if type(version) is not int or version != WIDGET_STATE_VERSION:
-        raise ValueError(
+        raise UserValueError(
             "Настройки расчётных разделов сохранены другой версией "
             f"({version!r}); ожидается {WIDGET_STATE_VERSION!r}. "
             "Материал проекта загружается, настройки — нет."
         )
     if len(widget_state) - 1 > MAX_WIDGET_STATE_KEYS:
-        raise ValueError(
+        raise UserValueError(
             "Настроек расчётных разделов больше, чем допускает проект."
         )
     clean: dict[str, Any] = {WIDGET_STATE_VERSION_FIELD: WIDGET_STATE_VERSION}
@@ -843,7 +856,7 @@ def validate_widget_state(widget_state: Any) -> dict[str, Any]:
         if key == WIDGET_STATE_VERSION_FIELD:
             continue
         if not is_restorable_widget_key(key):
-            raise ValueError(
+            raise UserValueError(
                 f"Настройка {key!r} не входит в восстанавливаемый набор."
             )
         if isinstance(value, bool):
@@ -853,7 +866,7 @@ def validate_widget_state(widget_state: Any) -> dict[str, Any]:
         elif type(value) is float and math.isfinite(value):
             clean[key] = value
         else:
-            raise ValueError(
+            raise UserValueError(
                 f"Настройка {key!r} должна быть числом или флажком."
             )
     return clean
@@ -881,8 +894,8 @@ def _decode_user_alloys_bytes(data: bytes) -> list[dict[str, Any]]:
     try:
         payload = json.loads(data.decode("utf-8-sig"))
     except (UnicodeError, json.JSONDecodeError) as error:
-        raise RuntimeError(
-            "Файл alloys.json не читается; изменение библиотеки отклонено."
+        raise UserRuntimeError(
+            "Файл библиотеки не читается; изменение библиотеки отклонено."
         ) from error
     alloys = payload.get("alloys", []) if isinstance(payload, dict) else []
     return [dict(item) for item in alloys if isinstance(item, dict)]
@@ -921,7 +934,7 @@ def upsert_user_alloy(
     clean_context = validate_context_payload(context)
     clean_name = name.strip()
     if not clean_name:
-        raise ValueError("Введите название марки или состава.")
+        raise UserValueError("Введите название марки или состава.")
 
     saved: dict[str, Any] = {}
 
@@ -1019,9 +1032,9 @@ def merge_user_alloys(
         }
         conflicts = [item["id"] for item in clean_imported if item["id"] in merged]
         if conflicts and not overwrite:
-            raise ValueError(
-                "Найдены совпадающие ID. Включите разрешение на замену "
-                "либо импортируйте файл без конфликтующих записей."
+            raise UserValueError(
+                "В файле есть записи, которые уже есть в библиотеке. Включите "
+                "разрешение на замену либо импортируйте файл без этих записей."
             )
         for item in clean_imported:
             merged[item["id"]] = item
@@ -1105,7 +1118,7 @@ def render_alloy_library(
         ]
     )
     st.markdown("### Текущий состав")
-    st.dataframe(current, width="stretch", hide_index=True)
+    st.dataframe(composition_columns_for_display(current), width="stretch", hide_index=True)
 
     user_alloys = load_user_alloys(paths)
     with st.form("alloy_save_form", clear_on_submit=False):
@@ -1146,12 +1159,21 @@ def render_alloy_library(
                 flash(
                     "alloys",
                     "warning",
-                    "Состав сохранён, но запись в историю не добавлена: "
-                    f"{history_warning}",
+                    "Состав сохранён, но запись в историю не добавлена.",
+                    error_record=log_user_error(
+                        history_warning,
+                        context="Марки и составы",
+                        paths=paths,
+                    ),
                 )
             st.rerun()
         except Exception as error:
-            st.error(str(error))
+            render_user_error(
+                error,
+                context="Марки и составы",
+                paths=paths,
+                title="Состав не сохранён.",
+            )
 
     user_alloys = load_user_alloys(paths)
     all_alloys = DEMO_ALLOYS + user_alloys
@@ -1162,7 +1184,7 @@ def render_alloy_library(
         return
 
     st.dataframe(
-        alloy_table(all_alloys, database_definitions),
+        composition_columns_for_display(alloy_table(all_alloys, database_definitions)),
         width="stretch",
         hide_index=True,
     )
@@ -1182,8 +1204,8 @@ def render_alloy_library(
     )
     if not selected_database_available:
         st.warning(
-            "В этой записи нет допустимого контекста базы; она остаётся "
-            "данными библиотеки и не может запускать расчёт."
+            "В этой записи не указана допустимая база; она остаётся в "
+            "библиотеке, но расчёт по ней не запускается."
         )
 
     action_col1, action_col2 = st.columns(2)
@@ -1211,7 +1233,12 @@ def render_alloy_library(
                 )
                 st.rerun()
             except Exception as error:
-                st.error(f"Состав не загружен: {error}")
+                render_user_error(
+                    error,
+                    context="Марки и составы",
+                    paths=paths,
+                    title="Состав не загружен.",
+                )
 
     with action_col2:
         if selected.get("origin") == "user":
@@ -1228,8 +1255,8 @@ def render_alloy_library(
                 flash(
                     "alloys",
                     "success",
-                    "Запись удалена; предыдущая версия файла библиотеки "
-                    "сохранена как alloys.json.bak.",
+                    "Запись удалена; предыдущая версия библиотеки сохранена "
+                    "в резервной копии.",
                 )
                 st.rerun()
         else:
@@ -1294,7 +1321,7 @@ def render_alloy_library(
             "«Скачать пользовательскую библиотеку»."
         )
     allow_import_overwrite = st.checkbox(
-        "Разрешить заменить записи с совпадающим ID",
+        "Разрешить заменить записи, которые уже есть в библиотеке",
         key="alloy_import_overwrite",
         disabled=type(imported_library) is not VerifiedArtifactRef,
     )
@@ -1315,7 +1342,12 @@ def render_alloy_library(
             flash("alloys", "success", f"Импортировано записей: {imported_count}.")
             st.rerun()
         except Exception as error:
-            st.error(f"Библиотеку импортировать не удалось: {error}")
+            render_user_error(
+                error,
+                context="Марки и составы",
+                paths=paths,
+                title="Библиотеку импортировать не удалось.",
+            )
 
 # ---------------------------------------------------------------------------
 # История с цепочкой контрольных сумм
@@ -1340,9 +1372,9 @@ def record_history(
     def append_entry(existing_bytes: bytes) -> bytes:
         existing_entries, chain_ok = _parse_history_bytes(existing_bytes)
         if not chain_ok:
-            raise RuntimeError(
-                "Новая запись не добавлена: цепочка history.jsonl повреждена. "
-                "Сначала сохраните повреждённый файл отдельно и начните новую историю."
+            raise UserRuntimeError(
+                "Новая запись не добавлена: история расчётов повреждена. "
+                "Сохраните её файл отдельно и начните новую историю."
             )
         previous_hash = (
             str(existing_entries[-1]["entry_sha256"])
@@ -1390,13 +1422,17 @@ def record_history_nonfatal(
     label: str,
     context: dict[str, Any],
     details: dict[str, Any] | None = None,
-) -> str | None:
-    """Record provenance without turning a completed durable write into failure."""
+) -> Exception | None:
+    """Record provenance without turning a completed durable write into failure.
+
+    Возвращает исключение (21-Ж): его текст уходит в технический отчёт, а не
+    на экран.
+    """
 
     try:
         record_history(paths, event_type, label, context, details)
     except Exception as error:
-        return f"{type(error).__name__}: {error}"
+        return error
     return None
 
 
@@ -1471,6 +1507,49 @@ def load_history(paths: ThermoGarPaths) -> tuple[list[dict[str, Any]], bool]:
         canonical_root=_workspace_canonical_root(paths),
     )
     return _parse_history_bytes(snapshot.data)
+
+
+# Подписи величин в столбце «Подробности» на экране (21-Г, часть 1, строка 50):
+# как в таблицах результатов. В выгрузке истории — прежние ключи.
+HISTORY_DETAIL_LABELS = {
+    "temperature_c": "Температура, °C",
+    "temperature_from_c": "Температура от, °C",
+    "temperature_to_c": "Температура до, °C",
+    "points": "Точек расчёта",
+    "mass_coverage_pct": "Покрытие физической базы по массе, %",
+    "E_Hill_GPa": "E_Hill, ГПа",
+    "G_Hill_GPa": "G_Hill, ГПа",
+    "nu_Hill": "ν_Hill",
+    "summation_rule": "Правило объединения",
+    "total_mpa": "Итог, МПа",
+}
+# Столбцы только для выгрузки истории (21-Г, часть 2, строка 77).
+HISTORY_EXPORT_ONLY_COLUMNS = ("База SHA-256", "Запись SHA-256")
+
+
+def _history_details_display(text: object) -> object:
+    try:
+        details = json.loads(str(text))
+    except (TypeError, ValueError):
+        return text
+    if not isinstance(details, dict):
+        return text
+    return json.dumps(
+        {HISTORY_DETAIL_LABELS.get(key, key): value for key, value in details.items()},
+        ensure_ascii=False,
+        separators=(", ", ": "),
+    )
+
+
+def history_display_dataframe(history: pd.DataFrame) -> pd.DataFrame:
+    """Таблица истории на экране: подписи величин, без контрольных сумм."""
+
+    display = history.drop(
+        columns=[name for name in HISTORY_EXPORT_ONLY_COLUMNS if name in history.columns]
+    )
+    if "Подробности" in display.columns:
+        display["Подробности"] = display["Подробности"].map(_history_details_display)
+    return composition_columns_for_display(display)
 
 
 def history_dataframe(entries: list[dict[str, Any]]) -> pd.DataFrame:
@@ -1596,7 +1675,7 @@ def scan_projects(
                     (path, validate_project_payload(payload), snapshot.data)
                 )
         except Exception as error:
-            errors.append(f"{path.name}: {type(error).__name__}: {error}")
+            errors.append((path.name, error))
     return result, errors
 
 
@@ -1631,7 +1710,8 @@ def render_projects_and_history(
     st.subheader("Проекты и история")
     st.caption(
         "Проект сохраняет материал и числовые настройки расчётных разделов. "
-        "История хранит отпечаток базы и цепочку контрольных сумм."
+        "История хранит версию базы каждого расчёта и позволяет проверить, "
+        "что записи не менялись после сохранения."
     )
     render_flash("projects")
 
@@ -1684,19 +1764,60 @@ def render_projects_and_history(
                     flash(
                         "projects",
                         "warning",
-                        "Проект сохранён, но запись в историю не добавлена: "
-                        f"{history_warning}",
+                        "Проект сохранён, но запись в историю не добавлена.",
+                        error_record=log_user_error(
+                            history_warning,
+                            context="Проекты и история",
+                            paths=paths,
+                        ),
                     )
                 st.rerun()
             except Exception as error:
-                st.error(str(error))
+                render_user_error(
+                    error,
+                    context="Проекты и история",
+                    paths=paths,
+                    title="Проект не сохранён.",
+                )
 
         projects, project_errors = scan_projects(paths)
         if project_errors:
+            own_texts = [
+                user_message_text(error)
+                for _name, error in project_errors
+                if is_user_message(error)
+            ]
             st.error(
-                "Некоторые локальные проекты отклонены без применения: "
-                + " | ".join(project_errors)
+                "Некоторые файлы проектов не прочитаны: "
+                + ", ".join(name for name, _error in project_errors)
+                + "."
+                + ("\n\n" + "\n\n".join(dict.fromkeys(own_texts)) if own_texts else "")
             )
+            project_error_key = "_thermogar_project_scan_error_record"
+            project_error_names = tuple(name for name, _error in project_errors)
+            stored_record = st.session_state.get(project_error_key)
+            if (
+                not isinstance(stored_record, dict)
+                or stored_record.get("names") != project_error_names
+            ):
+                # Отчёт пишется один раз на набор непрочитанных файлов, а не на
+                # каждый прогон страницы.
+                stored_record = {
+                    "names": project_error_names,
+                    "record": log_user_error(
+                        project_errors[0][1],
+                        context="Проекты и история",
+                        paths=paths,
+                        extra={
+                            "files": [
+                                f"{name}: {type(error).__name__}: {error}"
+                                for name, error in project_errors
+                            ]
+                        },
+                    ),
+                }
+                st.session_state[project_error_key] = stored_record
+            render_error_record(*stored_record["record"])
         if not projects:
             st.info("Сохранённых проектов пока нет.")
         else:
@@ -1719,7 +1840,11 @@ def render_projects_and_history(
                     for path, payload, _snapshot_bytes in projects
                 ]
             )
-            st.dataframe(table, width="stretch", hide_index=True)
+            st.dataframe(
+                composition_columns_for_display(table),
+                width="stretch",
+                hide_index=True,
+            )
 
             project_map = {
                 str(path): (path, payload, snapshot_bytes)
@@ -1765,7 +1890,12 @@ def render_projects_and_history(
                         )
                         st.rerun()
                     except Exception as error:
-                        st.error(f"Проект не открыт: {error}")
+                        render_user_error(
+                            error,
+                            context="Проекты и история",
+                            paths=paths,
+                            title="Проект не открыт.",
+                        )
 
                 portable_payload = portable_project_payload(selected_payload)
                 project_export_request = state_broker.state_decision(
@@ -1830,12 +1960,17 @@ def render_projects_and_history(
                         flash(
                             "projects",
                             "success",
-                            "Проект убран из списка; исходный файл сохранён "
-                            "с окончанием .deleted.",
+                            "Проект убран из списка; файл проекта не удалён и "
+                            "остаётся в папке ThermoGar.",
                         )
                         st.rerun()
                     except Exception as error:
-                        st.error(f"Проект не удалён: {error}")
+                        render_user_error(
+                            error,
+                            context="Проекты и история",
+                            paths=paths,
+                            title="Проект не удалён.",
+                        )
 
         project_import_request = state_broker.state_decision(
             "data_project_transfer",
@@ -1893,17 +2028,24 @@ def render_projects_and_history(
                 flash("projects", "success", f"Проект импортирован: {imported_path.name}")
                 st.rerun()
             except Exception as error:
-                st.error(f"Проект импортировать не удалось: {error}")
+                render_user_error(
+                    error,
+                    context="Проекты и история",
+                    paths=paths,
+                    title="Проект импортировать не удалось.",
+                )
 
     else:
         entries, chain_ok = load_history(paths)
         if chain_ok:
-            st.success("Цепочка контрольных сумм истории совпала.")
+            st.success(
+                "История расчётов цела: записи не менялись после сохранения."
+            )
         else:
             st.error(
-                "Цепочка истории повреждена или редактировалась вручную. "
-                "Сами расчёты это не меняет, но родословную следует считать "
-                "неподтверждённой."
+                "История расчётов повреждена или изменена вручную. На сами "
+                "расчёты это не влияет, но происхождение записей не "
+                "подтверждено."
             )
 
         history_df = history_dataframe(entries)
@@ -1923,7 +2065,11 @@ def render_projects_and_history(
             filtered = history_df[
                 history_df["Событие"].isin(selected_events)
             ].head(250)
-            st.dataframe(filtered, width="stretch", hide_index=True)
+            st.dataframe(
+                history_display_dataframe(filtered),
+                width="stretch",
+                hide_index=True,
+            )
 
             restorable_entries: list[tuple[int, dict[str, Any]]] = []
             for index, entry in enumerate(entries):
@@ -1968,7 +2114,12 @@ def render_projects_and_history(
                             )
                             st.rerun()
                         except Exception as error:
-                            st.error(f"Запись истории не восстановлена: {error}")
+                            render_user_error(
+                                error,
+                                context="Проекты и история",
+                                paths=paths,
+                                title="Запись истории не восстановлена.",
+                            )
             with download_col:
                 history_rows = [
                     {
@@ -2037,7 +2188,12 @@ def render_projects_and_history(
                     )
                     st.rerun()
                 except Exception as error:
-                    st.error(f"История не очищена: {error}")
+                    render_user_error(
+                        error,
+                        context="Проекты и история",
+                        paths=paths,
+                        title="История не очищена.",
+                    )
 
 # ---------------------------------------------------------------------------
 # Пакетный расчёт
@@ -2046,6 +2202,61 @@ def render_projects_and_history(
 
 
 BATCH_COLUMN_ALIASES: dict[str, str] = dict(BATCH_ALIAS_PAIRS)
+
+
+def batch_row_error_text(error: Exception, row_errors: list[Exception]) -> str:
+    """Столбец «Ошибка»: своё сообщение как есть, чужое — в технический отчёт."""
+
+    if is_user_message(error):
+        return user_message_text(error)
+    row_errors.append(error)
+    return "расчёт строки не выполнен"
+
+
+# Заголовки предпросмотра пакетного файла — словами «Требуемых столбцов»
+# (дополнение мастера 21-Ж). Только показ: данные и разбор файла прежние.
+BATCH_PREVIEW_LABELS = {
+    "name": "Название",
+    "database": "База",
+    "balance": "Основа",
+    "units": "Единицы",
+    "temperature_C": "Температура, °C",
+    "composition": "Добавки",
+    "pressure_Pa": "Давление, Па",
+    "steel_mode": "Режим стали",
+    "phases": "Список фаз",
+}
+
+
+def batch_preview_dataframe(source: pd.DataFrame) -> pd.DataFrame:
+    """Предпросмотр: подписи столбцов словами, символы элементов — Ni, Al, Cr."""
+
+    return source.rename(
+        columns=lambda column: BATCH_PREVIEW_LABELS.get(
+            str(column),
+            element_symbol(column)
+            if re.fullmatch(r"[A-Z][A-Z0-9]{0,2}", str(column))
+            else column,
+        )
+    )
+
+
+def batch_summary_display(summary: pd.DataFrame) -> pd.DataFrame:
+    """Сводка на экране (21-Г, часть 2, строка 82): подпись базы, «ат.%» или
+    «мас.%», без контрольной суммы. Выгрузка — прежняя."""
+
+    display = composition_columns_for_display(
+        summary.drop(columns=["База SHA-256"], errors="ignore")
+    )
+    if "База" in display.columns:
+        display["База"] = display["База"].map(
+            lambda key: RELEASE_DATABASE_LABELS.get(key, key)
+        )
+    if "Единицы" in display.columns:
+        display["Единицы"] = display["Единицы"].map(
+            lambda value: {"at": "ат.%", "wt": "мас.%"}.get(value, value)
+        )
+    return display
 
 
 def canonicalize_batch_columns(source: pd.DataFrame) -> pd.DataFrame:
@@ -2063,11 +2274,11 @@ def batch_table_dataframe(value: Mapping[str, object]) -> pd.DataFrame:
     """Build display scalars from the StateStore's canonical table value."""
 
     if type(value) is not dict or set(value) != {"columns", "rows"}:
-        raise ValueError("Каноническая пакетная таблица повреждена.")
+        raise UserValueError("Таблица пакетного расчёта повреждена.")
     columns = value["columns"]
     rows = value["rows"]
     if type(columns) is not list or type(rows) is not list:
-        raise ValueError("Каноническая пакетная таблица повреждена.")
+        raise UserValueError("Таблица пакетного расчёта повреждена.")
     return canonicalize_batch_columns(pd.DataFrame(rows, columns=columns))
 
 
@@ -2108,7 +2319,7 @@ def dataframe_state_value(source: pd.DataFrame) -> dict[str, object]:
 def normalize_database_key(value: Any) -> str:
     text = str(value).strip().lower()
     if text not in {"ni", "al", "fe"}:
-        raise ValueError(f"Неизвестная база: {value!r}. Используйте ni, al или fe.")
+        raise UserValueError(f"Неизвестная база: {value!r}. Используйте ni, al или fe.")
     return text
 
 
@@ -2132,13 +2343,13 @@ def normalize_units(value: Any) -> str:
         "mass",
     }:
         return "wt"
-    raise ValueError(f"Неизвестные единицы состава: {value!r}.")
+    raise UserValueError(f"Неизвестные единицы состава: {value!r}.")
 
 def normalize_steel_mode(value: Any) -> str:
     # Перечень один — STEEL_MODE_ALIASES из thermogar_verified_state (BL-56).
     mode = steel_mode_or_none(value)
     if mode is None:
-        raise ValueError(
+        raise UserValueError(
             f"Неизвестный режим стали: «{str(value).strip()}». "
             "Используйте «стабильный» или «метастабильный»."
         )
@@ -2158,10 +2369,10 @@ def composition_from_row(
             element = match.group(1).upper()
             value = float(match.group(2).replace(",", "."))
             if element in entered:
-                raise ValueError(f"Элемент {element} указан повторно.")
+                raise UserValueError(f"Элемент {element_symbol(element)} указан повторно.")
             entered[element] = value
         if not entered:
-            raise ValueError("Строка «Добавки» не содержит пар ЭЛЕМЕНТ=ЧИСЛО.")
+            raise UserValueError("Строка «Добавки» не содержит пар ЭЛЕМЕНТ=ЧИСЛО.")
         entered.pop(balance, None)
         text = ", ".join(
             f"{element}={value:g}"
@@ -2187,7 +2398,7 @@ def composition_from_row(
             entered[element] = float(value)
 
     if not entered:
-        raise ValueError(
+        raise UserValueError(
             "Не задана колонка «Добавки» и не найдены числовые столбцы элементов."
         )
 
@@ -2242,9 +2453,9 @@ def run_batch_calculations(
 ) -> dict[str, Any]:
     source = canonicalize_batch_columns(source)
     if source.empty:
-        raise ValueError("Таблица пуста.")
+        raise UserValueError("Таблица пуста.")
     if len(source) > 100:
-        raise ValueError(
+        raise UserValueError(
             "В одном запуске допускается не более 100 составов. "
             "Разделите файл на несколько частей."
         )
@@ -2252,7 +2463,7 @@ def run_batch_calculations(
     required = {"name", "database", "balance", "units", "temperature_C"}
     missing = sorted(required - set(source.columns))
     if missing:
-        raise ValueError("Не хватает столбцов: " + ", ".join(missing))
+        raise UserValueError("Не хватает столбцов: " + ", ".join(missing))
 
     summary_rows: list[dict[str, Any]] = []
     phase_rows: list[dict[str, Any]] = []
@@ -2266,6 +2477,8 @@ def run_batch_calculations(
     # остальные» остаются прежними.
     canonical_rows: list[dict[str, Any]] = []
     contexts: list[dict[str, Any]] = []
+    # Чужие исключения строк (21-Ж): их текст — в технический отчёт.
+    row_errors: list[Exception] = []
 
     for position, (_, row) in enumerate(source.iterrows(), start=1):
         name = str(row.get("name", f"Строка {position}")).strip() or f"Строка {position}"
@@ -2328,7 +2541,7 @@ def run_batch_calculations(
                 }
             )
         except Exception as error:
-            base_summary["Ошибка"] = str(error)
+            base_summary["Ошибка"] = batch_row_error_text(error, row_errors)
 
     progress = st.progress(0.0, text="Подготовка пакетного расчёта…")
 
@@ -2343,7 +2556,7 @@ def run_batch_calculations(
     finally:
         progress.empty()
     if len(outcomes) != len(canonical_rows):
-        raise RuntimeError("Движок вернул не столько строк, сколько получил.")
+        raise UserRuntimeError("Пакетный расчёт не выполнен.")
 
     for context in contexts:
         base_summary = context["summary"]
@@ -2362,8 +2575,10 @@ def run_batch_calculations(
         try:
             child = outcomes[context["row"]]
             if type(child) is not dict:
-                raise RuntimeError("Движок вернул строку неизвестного вида.")
+                raise UserRuntimeError("Пакетный расчёт не выполнен.")
             if child.get("status") != "success":
+                # Текст ошибки строки даёт движок: он чужой (21-Ж), на экран —
+                # «расчёт строки не выполнен», текст — в технический отчёт.
                 raise RuntimeError(str(child.get("error") or "Строка не рассчитана."))
             phase_fractions = child.get("phase_fractions")
             phase_at = child.get("phase_atomic")
@@ -2375,7 +2590,7 @@ def run_batch_calculations(
                 or type(phase_wt) is not list
                 or type(database_sha256) is not str
             ):
-                raise RuntimeError("Движок вернул строку без обязательных полей.")
+                raise UserRuntimeError("Пакетный расчёт не выполнен.")
             fraction_sum = sum(float(item[1]) * 100.0 for item in phase_fractions)
             phase_text = "; ".join(
                 f"{item[0]}={float(item[1]) * 100.0:.6g}%"
@@ -2425,7 +2640,7 @@ def run_batch_calculations(
                 phase_wt_rows.append(current)
 
         except Exception as error:
-            base_summary["Ошибка"] = str(error)
+            base_summary["Ошибка"] = batch_row_error_text(error, row_errors)
 
         summary_rows.append(base_summary)
 
@@ -2435,6 +2650,7 @@ def run_batch_calculations(
         "Составы фаз ат": pd.DataFrame(phase_at_rows),
         "Составы фаз мас": pd.DataFrame(phase_wt_rows),
         "Исходные данные": source.copy(),
+        "_row_errors": row_errors,
     }
     # Квитанция запуска остаётся: она описывает сам пакетный прогон.
     # Дочерних квитанций у него больше нет — точки считает движок, а не
@@ -2456,6 +2672,7 @@ def render_batch_calculation(
         [list[dict[str, Any]], Callable[[int, int], None]],
         list[dict[str, Any]],
     ],
+    paths: ThermoGarPaths | None = None,
 ) -> None:
     st.subheader("Пакетный расчёт составов")
     st.caption(
@@ -2480,7 +2697,7 @@ def render_batch_calculation(
                 state_store.render_download(
                     template_xlsx,
                     template_xlsx.source_envelope_digest,
-                    "Скачать подготовленный XLSX",
+                    "Скачать подготовленный шаблон Excel",
                     key="batch_template_xlsx_download",
                 )
             else:
@@ -2514,9 +2731,9 @@ def render_batch_calculation(
             "- **Основа** — элемент, заполняющий остаток до 100 %;  \n"
             "- **Единицы** — `ат.%` или `мас.%`;  \n"
             "- **Температура, °C** — обязательна;  \n"
-            "- **Добавки** — строка вида `CR=18, NI=8, C=0,1`.  \n"
+            "- **Добавки** — строка вида `Cr=18, Ni=8, C=0.1`.  \n"
             "Необязательно: давление, режим стали и список фаз. Вместо "
-            "«Добавки» можно использовать отдельные столбцы `C`, `CR`, `NI`."
+            "«Добавки» можно использовать отдельные столбцы `C`, `Cr`, `Ni`."
         )
 
     batch_import_decision = broker.import_decision()
@@ -2554,7 +2771,11 @@ def render_batch_calculation(
                 )
             )
             st.markdown("### Предварительный просмотр")
-            st.dataframe(source.head(25), width="stretch", hide_index=True)
+            st.dataframe(
+                batch_preview_dataframe(source.head(25)),
+                width="stretch",
+                hide_index=True,
+            )
             st.caption(f"Строк в файле: {len(source)}. Максимум за один запуск: 100.")
 
             decision = broker.execute_decision(
@@ -2573,18 +2794,46 @@ def render_batch_calculation(
                     phase_explanations,
                     runner,
                 )
+                row_errors = result.get("_row_errors") or []
                 st.session_state["workspace_batch_result"] = {
                     "display": {
                         key: value
                         for key, value in result.items()
                         if not key.startswith("_")
                     },
+                    "error_record": (
+                        log_user_error(
+                            row_errors[0],
+                            context="Пакетный расчёт",
+                            paths=paths,
+                            extra={
+                                "rows": [
+                                    f"{type(item).__name__}: {item}"
+                                    for item in row_errors
+                                ]
+                            },
+                        )
+                        if row_errors and paths is not None
+                        else None
+                    ),
                     "receipt_digest": result["_receipt_digest"],
                     "envelope_digest": result["_envelope_digest"],
                     "children": result["_children"],
                 }
         except Exception as error:
-            st.error(f"Файл прочитать или рассчитать не удалось: {error}")
+            if paths is None:
+                own_text = user_message_text(error)
+                st.error(
+                    "Файл прочитать или рассчитать не удалось."
+                    + (f"\n\n{own_text}" if own_text else "")
+                )
+            else:
+                render_user_error(
+                    error,
+                    context="Пакетный расчёт",
+                    paths=paths,
+                    title="Файл прочитать или рассчитать не удалось.",
+                )
 
     stored = st.session_state.get("workspace_batch_result")
     if isinstance(stored, dict) and isinstance(stored.get("display"), dict):
@@ -2597,11 +2846,13 @@ def render_batch_calculation(
         else:
             st.success(f"Все составы рассчитаны: {completed}.")
 
-        st.dataframe(summary, width="stretch", hide_index=True)
+        st.dataframe(batch_summary_display(summary), width="stretch", hide_index=True)
+        if stored.get("error_record"):
+            render_error_record(*stored["error_record"])
         if failed:
             with st.expander("Строки с ошибками", expanded=True):
                 st.dataframe(
-                    summary[summary["Статус"] != "готово"],
+                    batch_summary_display(summary[summary["Статус"] != "готово"]),
                     width="stretch",
                     hide_index=True,
                 )
@@ -2633,7 +2884,7 @@ def render_batch_calculation(
                 state_store.render_download(
                     batch_export,
                     batch_export.source_envelope_digest,
-                    "Скачать подготовленный результат XLSX",
+                    "Скачать подготовленный результат Excel",
                     key="batch_result_export_download",
                 )
             else:

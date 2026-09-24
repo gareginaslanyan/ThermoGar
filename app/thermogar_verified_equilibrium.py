@@ -526,7 +526,7 @@ def execute_verified_equilibrium(
         except verified_loaders.VerifiedLoaderError:
             raise
         except Exception as error:
-            _fail(verified_loaders.ReasonCode.BACKEND_FAILED, type(error).__name__)
+            verified_loaders.fail_backend(error, type(error).__name__)
         fractions, phase_atomic, phase_mass, display_value = _validate_backend_result(raw_result, phases)
         points.append(
             EquilibriumPoint(

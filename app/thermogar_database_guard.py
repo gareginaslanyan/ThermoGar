@@ -19,6 +19,7 @@ from typing import Any, Final
 import numpy as np
 import pandas as pd
 from pycalphad import Database, equilibrium, variables as v
+from thermogar_user_errors import UserMessage, UserValueError
 
 
 FE_DATABASE_MAX_T_K = 2000.0
@@ -36,7 +37,7 @@ FE_PROFILE_CANONICAL = FE_PROFILE_WORKING
 FE_PROFILE_EXPERIMENTAL = FE_PROFILE_UPSTREAM
 
 FE_PROFILE_LABELS = {
-    FE_PROFILE_WORKING: "mc_fe 2.062, профиль thermogar_patch (патч TG-FE-2062-C15-001, C15_LAVES исключена)",
+    FE_PROFILE_WORKING: "Стали и Fe-сплавы — mc_fe 2.062",
     FE_PROFILE_UPSTREAM: (
         "Исходная mc_fe 2.062 без патча (не используется в расчётах)"
     ),
@@ -99,7 +100,7 @@ class FeHighTemperatureCheck:
         )
 
 
-class KnownFeDatabaseIssue(ValueError):
+class KnownFeDatabaseIssue(UserMessage, ValueError):
     """Blocking high-temperature issue in the selected Fe profile."""
 
     def __init__(
@@ -234,7 +235,7 @@ def normalize_profile_key(value: str | None) -> str:
         FE_PROFILE_UPSTREAM: FE_PROFILE_UPSTREAM,
     }
     if value not in mapping:
-        raise ValueError(f"Неизвестный диагностический Fe-профиль: {value!r}.")
+        raise UserValueError(f"Неизвестный диагностический Fe-профиль: {value!r}.")
     return mapping[value]
 
 
@@ -417,6 +418,29 @@ UPSTREAM_NOT_SHIPPED: Final = (
     "сверка невозможна: нет ни эталонной базы, ни её отпечатка"
 )
 UPSTREAM_FROM_FINGERPRINT_SUFFIX: Final = " (из отпечатка)"
+
+# Значения паспорта на экране (21-Г, часть 1, строки 46–47): в паспорте
+# остаются служебные коды, таблица показывает их словами.
+PASSPORT_VALUE_LABELS: Final = {
+    "pending_upstream_confirmation": "ждёт подтверждения автора базы",
+    "disable_exact_thermodynamic_parameter": "отключён один параметр фазы C15_LAVES",
+}
+
+# Строки паспорта, которые на экране уходят в «Технические сведения» под
+# таблицей (21-Г, часть 2, строки 68–70): пути, контрольные суммы, код
+# поправки и сверка с эталоном.
+PASSPORT_TECHNICAL_FIELDS: Final = (
+    "Рабочая база (thermogar_patch)",
+    "SHA-256 рабочей базы",
+    "Патч",
+    "Активна команда -9e6 в рабочей базе",
+    "Исходная база без патча (в расчётах не используется)",
+    "Источник сверки с эталоном",
+    "SHA-256 непатченной базы",
+    "Активных G-параметров C15_LAVES в непатченной базе",
+    "Активна команда -9e6 в непатченной базе",
+    "LAVES_PHASE не изменена",
+)
 MATCHED: Final = "да"
 NOT_MATCHED: Final = "нет"
 
@@ -544,7 +568,7 @@ def passport_dataframe(
 
     rows = [
         (
-            "Выбранный профиль",
+            "База",
             FE_PROFILE_LABELS.get(
                 normalize_profile_key(selected_profile), selected_profile
             ),
@@ -554,9 +578,20 @@ def passport_dataframe(
             "SHA-256 рабочей базы",
             file_sha256(working) if working.is_file() else "не найдена",
         ),
+        ("Поправка проекта", "фаза C15_LAVES исключена из расчёта"),
         ("Патч", PATCH_ID),
-        ("Статус патча", patch.get("status", "не найден")),
-        ("Действие", patch.get("action", "не найдено")),
+        (
+            "Статус поправки",
+            PASSPORT_VALUE_LABELS.get(
+                patch.get("status", "не найден"), patch.get("status", "не найден")
+            ),
+        ),
+        (
+            "Действие",
+            PASSPORT_VALUE_LABELS.get(
+                patch.get("action", "не найдено"), patch.get("action", "не найдено")
+            ),
+        ),
         ("Совпавших активных команд", patch.get("matched_active_commands", "—")),
         (
             "Активных G-параметров C15_LAVES в рабочей базе",
@@ -575,6 +610,6 @@ def passport_dataframe(
         ),
         ("Активна команда -9e6 в непатченной базе", upstream_suspect),
         ("LAVES_PHASE не изменена", laves_unchanged),
-        ("Проверка в нативном MatCalc", "не проводилась"),
+        ("Проверка в MatCalc", "не проводилась"),
     ]
     return pd.DataFrame([(k, str(v)) for k, v in rows], columns=["Поле", "Значение"])

@@ -16,6 +16,8 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Final
 
+from thermogar_user_errors import UserMessage
+
 
 APP_NAME: Final = "ThermoGar"
 APP_LINEAGE: Final = "SWR"
@@ -120,7 +122,7 @@ PHASE_MODE_HELP: Final = (
 )
 
 
-class PhasePresetError(RuntimeError):
+class PhasePresetError(UserMessage, RuntimeError):
     """Файл быстрых наборов фаз отсутствует или не соответствует схеме."""
 
 

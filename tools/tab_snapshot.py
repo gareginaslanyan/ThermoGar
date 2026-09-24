@@ -589,9 +589,12 @@ def case_f_cscan(d: Driver, key: str) -> None:
     c_min, c_max, c_step = f.BASES[key]["concentration"]
     variable = f.BASES[key]["variable"]
     app = f_start(d, key, prepare=lambda a: f.set_select(a.at, "Изменяемый элемент", variable))
-    f.set_number(app.at, f"{variable}: от, %", c_min)
-    f.set_number(app.at, f"{variable}: до, %", c_max)
-    f.set_number(app.at, f"{variable}: шаг, %", c_step)
+    # 21-Ж: символ элемента и единицы — в подписи поля.
+    symbol = variable[:1] + variable[1:].lower()
+    suffix = "ат.%" if f.BASES[key]["units"] == "атомные %" else "мас.%"
+    f.set_number(app.at, f"{symbol}: от, {suffix}", c_min)
+    f.set_number(app.at, f"{symbol}: до, {suffix}", c_max)
+    f.set_number(app.at, f"{symbol}: шаг, {suffix}", c_step)
     app.run("задать диапазон состава")
     app.click("concentration_calculate")
 

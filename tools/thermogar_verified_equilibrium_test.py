@@ -569,9 +569,12 @@ class VerifiedEquilibriumTests(unittest.TestCase):
         # Токен доходит до расчётного слоя как есть, а строка отказывает.
         self.assertEqual(runner.rows[0]["requested_phases"], ["LIQUID", "C15_LAVES"])
         self.assertEqual(result["Сводка"].iloc[0]["Статус"], "ошибка")
+        # 21-Ж (часть 1, строка 40 списка 21-Г): на экране и в «Ошибке» —
+        # «расчёт строки не выполнен»; код причины — в техническом отчёте.
+        self.assertEqual(result["Сводка"].iloc[0]["Ошибка"], "расчёт строки не выполнен")
         self.assertIn(
             vl.ReasonCode.C15_PHASE_REJECTED.value,
-            str(result["Сводка"].iloc[0]["Ошибка"]),
+            " ".join(str(error) for error in result["_row_errors"]),
         )
 
     def test_15_batch_database_keys_are_exact_without_steel_alias(self) -> None:

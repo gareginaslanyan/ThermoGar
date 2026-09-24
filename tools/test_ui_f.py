@@ -40,7 +40,7 @@ from streamlit.testing.v1 import AppTest  # noqa: E402
 # Отказ «не более четырёх добавок» отсюда убран волной 14-Б (BL-21): предел
 # поднят до 10, а составов длиннее трёх добавок в этом файле нет.
 KNOWN_FOREIGN_ERRORS = (
-    "Нет матричной фазы с полным набором мобильностей",
+    "Нет матричной фазы с полным набором параметров подвижности",
 )
 
 BASES: dict[str, dict[str, Any]] = {
@@ -366,9 +366,12 @@ def test_concentration_scan(database_key: str) -> None:
         set_select(app_test, "Изменяемый элемент", variable)
 
     session = start(database_key, prepare=prepare)
-    set_number(session.at, f"{variable}: от, %", c_min)
-    set_number(session.at, f"{variable}: до, %", c_max)
-    set_number(session.at, f"{variable}: шаг, %", c_step)
+    # 21-Ж: символ элемента — Cu, Al, C; единицы — по боковой панели.
+    symbol = variable[:1] + variable[1:].lower()
+    suffix = "ат.%" if profile["units"] == "атомные %" else "мас.%"
+    set_number(session.at, f"{symbol}: от, {suffix}", c_min)
+    set_number(session.at, f"{symbol}: до, {suffix}", c_max)
+    set_number(session.at, f"{symbol}: шаг, {suffix}", c_step)
     session.at.run()
 
     session.click("concentration_calculate")

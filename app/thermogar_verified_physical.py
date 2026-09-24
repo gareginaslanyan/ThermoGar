@@ -11,6 +11,7 @@ from typing import Any, Callable, Mapping, Sequence
 
 import thermogar_physical as physical
 import thermogar_verified_loaders as verified_loaders
+from thermogar_user_errors import element_symbols
 
 
 PHYSICAL_FEATURE_IDS = (
@@ -63,6 +64,12 @@ class VerifiedPhysicalResult:
 
 def _fail(reason: verified_loaders.ReasonCode, detail: str) -> None:
     raise verified_loaders.VerifiedLoaderError(reason, detail)
+
+
+def _fail_user(reason: verified_loaders.ReasonCode, detail: str) -> None:
+    """Как ``_fail``, но ``detail`` — своё русское сообщение для экрана (21-Ж)."""
+
+    raise verified_loaders.VerifiedLoaderError(reason, detail, user_message=True)
 
 
 def _plain_float(value: object, label: str, *, positive: bool = False) -> float:
@@ -357,15 +364,15 @@ def _default_backend(
         # Без этой проверки pycalphad уронил бы расчёт своим «Number of degrees
         # of freedom is not zero»: условия по составу он принял бы, а
         # компоненты молча отбросил. Пользователю надо назвать элементы.
-        _fail(
+        _fail_user(
             verified_loaders.ReasonCode.INPUT_INVALID,
-            "Выбранная база не описывает элементы: " + ", ".join(missing)
+            "Выбранная база не описывает элементы: " + element_symbols(missing)
             + ". Посчитать плотность на этом составе нельзя — возьмите базу, "
             "в которой эти элементы есть, или уберите их из состава.",
         )
     phases, removed = buildable_phases(database, call.components, call.phases)
     if not phases:
-        _fail(
+        _fail_user(
             verified_loaders.ReasonCode.INPUT_INVALID,
             "На выбранном наборе элементов не осталось допустимых фаз: "
             + excluded_phases_note(removed),
@@ -676,13 +683,10 @@ def execute_verified_physical(
             except verified_loaders.VerifiedLoaderError:
                 raise
             except Exception as error:
-                # Пользователю уходит текст исключения, а не только его класс:
-                # «BACKEND_FAILED: ValueError» ничего не говорит ни ему, ни
-                # разбору. Текст движка хотя бы называет фазу или условие.
-                _fail(
-                    verified_loaders.ReasonCode.BACKEND_FAILED,
-                    _backend_failure_detail(error),
-                )
+                # В технический отчёт уходит текст исключения, а не только его
+                # класс: «BACKEND_FAILED: ValueError» ничего не говорит разбору.
+                # На экран — только своё сообщение ThermoGar (21-Ж2).
+                verified_loaders.fail_backend(error, _backend_failure_detail(error))
             projection = _validate_density_projection(raw)
             projection["temperature_k"] = float(temperature)
             points.append(
