@@ -910,7 +910,11 @@ def test_screens_store_builders_not_pictures():
     assert re.search(r"ThemedFigure\(_phase_figure,", diffusion_source)
     precipitation_source = (ROOT / "app" / "thermogar_precipitation.py").read_text("utf-8")
     assert precipitation_source.count("ThemedFigure(_") == 5
-    assert not re.search(r"st\.pyplot\(\s*(?!\s|resolve_figure\()", diffusion_source + precipitation_source)
+    assert not re.search(r"st\.pyplot\(\s*(?!\s|resolve_figure\()", precipitation_source)
+    # Диффузия: результат на экране пересобирается из построителей в теме
+    # прогона до показа и выгрузок.
+    assert "result = replace(" in diffusion_source
+    assert "resolve_figure(result.phase_chart, theme)" in diffusion_source
 
 
 def test_theme_watch_asks_for_a_rerun_only_on_a_change():

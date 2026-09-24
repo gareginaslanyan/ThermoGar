@@ -261,23 +261,26 @@ def test_legend_colours_follow_theme_and_text_reads(app, themed, name, theme):
 
 
 def test_light_legend_keeps_matplotlib_look():
-    """Светлая тема: те же цвета, что давал matplotlib по умолчанию."""
+    """Светлая тема: белая плашка, рамка — роль legend_edge холодной шкалы.
+
+    21-Е: роли светлой темы #FFFFFF / #CCCCCC (как у matplotlib) заменены
+    ролями новой шкалы #FFFFFF / #CFD1D5 (решение владельца 24.09.2026,
+    замечание 2 приёмки 21-Д).
+    """
 
     roles = chart_roles("light")
-    assert matplotlib.rcParams["legend.facecolor"] == "inherit"
-    assert to_rgb(roles["legend_fill"]) == to_rgb(matplotlib.rcParams["axes.facecolor"])
-    assert to_rgb(roles["legend_edge"]) == to_rgb(matplotlib.rcParams["legend.edgecolor"])
+    assert roles["legend_fill"] == "#FFFFFF"
+    assert roles["legend_edge"] == "#CFD1D5"
 
     figure, axes = plt.subplots()
     try:
         axes.plot([0, 1], [0, 1], label="FCC_A1")
         before = axes.legend()
         face = before.get_frame().get_facecolor()
-        edge = before.get_frame().get_edgecolor()
         style_legend(before, roles)
         after = before.get_frame()
         assert after.get_facecolor() == pytest.approx(face)
-        assert after.get_edgecolor() == pytest.approx(edge)
+        assert to_rgb(after.get_edgecolor()) == to_rgb(roles["legend_edge"])
     finally:
         plt.close(figure)
 

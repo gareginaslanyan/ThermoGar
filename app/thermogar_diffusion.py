@@ -8,7 +8,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 import hashlib
@@ -170,14 +170,18 @@ class DiffusionResult:
     profile_table: pd.DataFrame
     balance_table: pd.DataFrame
     settings: pd.DataFrame
-    # Графики хранятся как построитель с данными (решение 7Б): при смене
-    # темы фигура строится заново без повторного расчёта.
-    profile_figure: ThemedFigure
-    phase_figure: ThemedFigure | None
+    # Фигуры в теме расчёта — для выгрузок и проверок, которые берут их
+    # напрямую; экран берёт фигуры из построителей *_chart ниже.
+    profile_figure: plt.Figure
+    phase_figure: plt.Figure | None
     max_balance_error: float
     actual_time_s: float
     quality: pd.DataFrame
-    profile_figure_wt: ThemedFigure | None = None
+    # Построители с данными (решение 7Б): при смене темы фигура строится
+    # заново без повторного расчёта, по теме — кэш.
+    profile_chart: ThemedFigure | None = None
+    profile_chart_wt: ThemedFigure | None = None
+    phase_chart: ThemedFigure | None = None
 
 
 def _sha256(path: Path) -> str:
@@ -994,7 +998,7 @@ def _run_model(
         columns=["Параметр", "Значение"],
     )
 
-    profile_figure = ThemedFigure(
+    profile_chart = ThemedFigure(
         _profile_figure,
         z_um,
         couple.elements,
@@ -1003,8 +1007,8 @@ def _run_model(
         "ат.%",
         f"{method_label}: профиль состава",
     )
-    profile_figure.figure(_theme_type())
-    profile_figure_wt = ThemedFigure(
+    profile_figure = profile_chart.figure(_theme_type())
+    profile_chart_wt = ThemedFigure(
         _profile_figure,
         z_um,
         couple.elements,
@@ -1013,13 +1017,14 @@ def _run_model(
         "мас.%",
         f"{method_label}: профиль состава",
     )
-    phase_figure = (
+    phase_chart = (
         ThemedFigure(_phase_figure, phase_table, phases)
         if not phase_table.empty and phases
         else None
     )
-    if phase_figure is not None:
-        phase_figure.figure(_theme_type())
+    phase_figure = (
+        phase_chart.figure(_theme_type()) if phase_chart is not None else None
+    )
     composition_sum_error = float(
         np.max(np.abs(np.sum(final_at, axis=1) - 1.0))
     )
@@ -1084,7 +1089,9 @@ def _run_model(
         max_balance_error=max_balance_error,
         actual_time_s=float(model.currentTime),
         quality=quality,
-        profile_figure_wt=profile_figure_wt,
+        profile_chart=profile_chart,
+        profile_chart_wt=profile_chart_wt,
+        phase_chart=phase_chart,
     )
 
 
@@ -1187,6 +1194,19 @@ def _result_display(
     dataframe_to_excel: Callable[[dict[str, pd.DataFrame]], bytes],
     figure_to_png: Callable[[plt.Figure], bytes],
 ) -> None:
+    # Фигуры — в теме текущего прогона, из сохранённых данных (решение 7Б).
+    theme = _theme_type()
+    result = replace(
+        result,
+        profile_figure=resolve_figure(
+            result.profile_chart or result.profile_figure, theme
+        ),
+        phase_figure=(
+            resolve_figure(result.phase_chart, theme)
+            if result.phase_chart is not None
+            else result.phase_figure
+        ),
+    )
     metric_col1, metric_col2, metric_col3 = st.columns(3)
     with metric_col1:
         st.metric("Метод", result.method_label)
@@ -1219,20 +1239,24 @@ def _result_display(
             column for column in result.profile_table.columns if "ат.%" in column
         ]
     else:
-        figure = result.profile_figure_wt or ThemedFigure(
-            _profile_figure,
-            result.z_um,
-            result.elements,
-            result.initial_wt,
-            result.final_wt,
-            "мас.%",
-            f"{result.method_label}: профиль состава",
+        figure = resolve_figure(
+            result.profile_chart_wt
+            or ThemedFigure(
+                _profile_figure,
+                result.z_um,
+                result.elements,
+                result.initial_wt,
+                result.final_wt,
+                "мас.%",
+                f"{result.method_label}: профиль состава",
+            ),
+            theme,
         )
         table_columns = ["Расстояние, мкм"] + [
             column for column in result.profile_table.columns if "мас.%" in column
         ]
 
-    st.pyplot(resolve_figure(figure, _theme_type()), width="content")
+    st.pyplot(figure, width="content")
     st.dataframe(
         result.profile_table[table_columns],
         width="stretch",
@@ -1241,7 +1265,7 @@ def _result_display(
 
     if result.phase_figure is not None:
         st.markdown("### Локальные равновесные доли фаз")
-        st.pyplot(resolve_figure(result.phase_figure, _theme_type()), width="content")
+        st.pyplot(result.phase_figure, width="content")
         st.dataframe(result.phase_fractions, width="stretch", hide_index=True)
 
     with st.expander("Проверка баланса и параметры расчёта"):
