@@ -1,0 +1,103 @@
+free memory 6.06 GiB
+[start] free 5.63 GiB
+  01_zapusk_svet: 1 part(s), h=1939, charts=0, alerts=['success']
+  -- 8 s
+[raschety] free 5.66 GiB
+  02_raschety_odna_temperatura_svet: 1 part(s), h=1636, charts=0, alerts=['success', 'warning', 'success', 'info']
+  03_raschety_upravlenie_fazami_svet: 1 part(s), h=1974, charts=0, alerts=['success', 'warning', 'success', 'info']
+  04_raschety_temperaturnyi_diapazon_svet: 1 part(s), h=2108, charts=1, alerts=['success', 'warning', 'warning', 'success']
+  [Изменение состава] «Построить график по составу» 8 s
+  05_raschety_izmenenie_sostava_svet: 1 part(s), h=2423, charts=1, alerts=['success', 'warning', 'warning', 'success']
+  -- 70 s
+[svoystva] free 3.85 GiB
+  06_svoystva_plotnost_svet: 1 part(s), h=2547, charts=0, alerts=['success', 'warning', 'warning']
+  07_svoystva_uprugie_svet: 1 part(s), h=2446, charts=0, alerts=['success', 'warning', 'warning']
+  [Плотность по T] «Построить плотность по температуре» 22 s
+  08_svoystva_plotnost_po_t_svet: 1 part(s), h=2800, charts=1, alerts=['success', 'warning', 'warning']
+  [Вклады упрочнения] «Рассчитать вклады» 2 s
+  09_svoystva_vklady_svet: 1 part(s), h=2038, charts=0, alerts=['success', 'error']
+  [Покрытие PDB] «Обновить проверенное покрытие PDB» 8 s
+  10_svoystva_pokrytie_pdb_svet: 1 part(s), h=1486, charts=0, alerts=['success']
+  -- 93 s
+[zatverdevanie] free 4.75 GiB
+  11_zatverdevanie_svodka_svet: 1 part(s), h=2524, charts=1, alerts=['success', 'success', 'info', 'warning', 'success', 'info']
+  12_zatverdevanie_tvyordye_fazy_svet: 1 part(s), h=2600, charts=1, alerts=['success', 'success', 'info', 'warning']
+  13_zatverdevanie_ostatochnyi_rasplav_svet: 1 part(s), h=2839, charts=1, alerts=['success', 'success', 'info', 'warning']
+  14_zatverdevanie_vygruzka_svet: 1 part(s), h=1681, charts=0, alerts=['success', 'success', 'info', 'warning']
+  -- 100 s
+[diagrammy] free 5.71 GiB
+  15_diagrammy_binarnaya_svet: 1 part(s), h=2605, charts=1, alerts=['success', 'warning', 'info']
+  [Многокомпонентное T–X] «Построить многокомпонентное сечение» 73 s
+  16_diagrammy_mnogokomponentnoe_svet: 1 part(s), h=2594, charts=1, alerts=['success', 'warning', 'info']
+  [Тройная при T = const] «Построить тройную диаграмму» 34 s
+  17_diagrammy_troynaya_svet: 1 part(s), h=2801, charts=1, alerts=['success', 'info', 'warning', 'info']
+  [Карта доли фазы] «Построить карту доли фазы» 16 s
+  18_diagrammy_karta_svet: 2 part(s), h=3262, charts=1, alerts=['success', 'info', 'warning']
+  -- 168 s
+[energii] free 4.09 GiB
+  19_energii_dvizhushchaya_sila_svet: 1 part(s), h=2386, charts=1, alerts=['success', 'info']
+  [Энергии фаз] «Рассчитать энергии фаз» 7 s
+  20_energii_energii_faz_svet: 1 part(s), h=2331, charts=1, alerts=['success', 'info']
+  [T₀] «Рассчитать T₀» 9 s
+  21_energii_t0_svet: 2 part(s), h=3343, charts=1, alerts=['success', 'warning', 'info']
+  -- 64 s
+[kinetika] free 4.01 GiB
+  22_kinetika_vydeleniya_itogi_svet: 2 part(s), h=4705, charts=2, alerts=['success', 'warning', 'warning', 'success']
+  23_kinetika_vydeleniya_kinetika_svet: 2 part(s), h=4429, charts=2, alerts=['success', 'warning', 'warning', 'success']
+  24_kinetika_vydeleniya_raspredelenie_svet: 2 part(s), h=3837, charts=1, alerts=['success', 'warning', 'warning', 'success']
+  25_kinetika_vydeleniya_eksport_svet: 2 part(s), h=3464, charts=0, alerts=['success', 'warning', 'warning', 'success']
+  guide wait for stMetric cut short; waiting with wait_idle
+  26_kinetika_diffuziya_odnofaznaya_svet: 2 part(s), h=4396, charts=2, alerts=['success', 'info', 'success']
+  [Многофазная гомогенизация] «Рассчитать гомогенизацию» 11 s
+  27_kinetika_diffuziya_mnogofaznaya_svet: 1 part(s), h=2249, charts=0, alerts=['success', 'info', 'error']
+  28_kinetika_diffuziya_pokrytie_svet: 1 part(s), h=1600, charts=0, alerts=['success']
+  -- 177 s
+[proekty] free 3.80 GiB
+  29_proekty_marki_svet: 1 part(s), h=1872, charts=0, alerts=['success', 'success']
+  30_proekty_paketnyi_svet: 1 part(s), h=1811, charts=0, alerts=['success', 'success', 'success']
+  31_proekty_proekty_istoriya_svet: 1 part(s), h=1737, charts=0, alerts=['success', 'success', 'success']
+  32_proekty_pasport_svet: 1 part(s), h=940, charts=0, alerts=['success', 'info']
+  33_proekty_kak_polzovatsya_svet: 2 part(s), h=4723, charts=0, alerts=['success', 'success']
+  34_proekty_spravochnik_faz_svet: 1 part(s), h=1218, charts=0, alerts=['success']
+  [Проверка установки] «Проверить базы и запустить три контрольных расчёта» 37 s
+  35_proekty_proverka_ustanovki_svet: 1 part(s), h=2327, charts=0, alerts=['success', 'success', 'success', 'success', 'success', 'success']
+  -- 207 s
+[soobshcheniya]
+  36_soobshchenie_error_svet: 1 part(s), h=1536, charts=0, alerts=['success', 'error']
+[izmer]
+  izmer Расчёты / Одна температура
+  izmer Расчёты / Температурный диапазон
+  izmer Расчёты / Изменение состава
+  izmer Диаграммы / Бинарная T–X
+  izmer Диаграммы / Многокомпонентное T–X
+  izmer Диаграммы / Тройная при T = const
+  izmer Диаграммы / Карта доли фазы
+  izmer Затвердевание
+  izmer Энергии / Энергии фаз
+  izmer Энергии / Движущая сила
+  izmer Энергии / T₀
+  izmer Свойства / Плотность
+  izmer Свойства / Плотность по T
+  izmer Свойства / Упругие свойства
+  izmer Свойства / Вклады упрочнения
+  izmer Свойства / Покрытие PDB
+  izmer Кинетика / Диффузия и гомогенизация
+  izmer Кинетика / Выделения
+  izmer Проекты и данные / Марки и составы
+  izmer Проекты и данные / Пакетный расчёт
+  izmer Проекты и данные / Проекты и история
+  izmer Проекты и данные / Паспорт базы
+  izmer Проекты и данные / Как пользоваться
+  izmer Проекты и данные / Справочник фаз
+  izmer Проекты и данные / Проверка установки
+[s5]
+  s5 Light Расчёты: 900/900 main 600/600
+  s5 Light Диаграммы: 900/900 main 600/600
+  s5 Light Затвердевание: 900/900 main 600/600
+  s5 Light Энергии: 900/900 main 600/600
+  s5 Light Свойства: 900/900 main 600/600
+  s5 Light Кинетика: 900/900 main 600/600
+  s5 Light Проекты и данные: 900/900 main 600/600
+  s5 Light collapse: visible=True box={'x': 20.25, 'y': 18, 'width': 31.5, 'height': 31.5}
+done in 1009 s; frames 36
+EXIT_L=0
