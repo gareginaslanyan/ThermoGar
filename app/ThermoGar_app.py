@@ -6277,6 +6277,8 @@ def plot_ternary_thermogar(
         ),
         fontsize=13,
         color=roles["text"],
+        # Над подписью верхней вершины, а не поверх неё.
+        pad=40,
     )
     axes.set_xlabel(
         f"Содержание {x_element}, ат.%",
@@ -6771,6 +6773,8 @@ def plot_ternary_phase_fraction_map(
         ),
         fontsize=13,
         color=roles["text"],
+        # Над подписью верхней вершины, а не поверх неё.
+        pad=40,
     )
     axes.set_xlabel(
         f"Содержание {x_element}, {units_label}",

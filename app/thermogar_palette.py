@@ -222,6 +222,9 @@ def annotate_line_ends(
                 color=colors[name],
                 fontsize=fontsize,
                 va="center",
+                # Конец линии лежит на краю поля (в том числе на стороне
+                # треугольника): подпись не прячется вместе с точкой.
+                annotation_clip=False,
             )
         )
     return annotations
