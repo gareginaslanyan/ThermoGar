@@ -142,4 +142,25 @@
 
 ## Git
 
-(Заполняется после пуша — см. раздел ниже.)
+Правок кода нет. Все коммиты — на `wave21-a` в `D:\Pets\ThermoGar-w21a`, в `main` ничего не вливалось.
+
+`git push -u origin wave21-a` выполнен. Проверка:
+
+```
+$ git ls-remote origin wave21-a
+10ed30831525cdcd51946c11024c64d5cbee71eb	refs/heads/wave21-a
+```
+
+```
+$ git log --oneline 5ed5d88..wave21-a
+10ed308 docs(tasks): 21-A design audit report
+209158e docs(results): 21-A design audit tables
+ae0efad docs(tasks): 21-A task text
+```
+
+```
+$ git status --short
+(пусто)
+```
+
+Этот раздел записан в следующем коммите, поэтому в выводе выше его ещё нет. Итоговый журнал приведён в сообщении о сдаче задания.
