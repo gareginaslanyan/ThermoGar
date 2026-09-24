@@ -1,0 +1,103 @@
+﻿файл,строка,функция,достижимо,вызов,подпись,глагол результата (W-2),замечание
+app/ThermoGar_app.py,1541,_b4b_render_result_downloads,да,release_download_button,Скачать Excel,да,
+app/ThermoGar_app.py,1555,_b4b_render_result_downloads,да,release_download_button,Скачать PNG,да,
+app/ThermoGar_app.py,1566,_b4b_render_result_downloads,да,button,Сохранить в историю,да,
+app/ThermoGar_app.py,1600,render_b4b_density_single,да,button,Рассчитать плотность и объёмные доли,да,
+app/ThermoGar_app.py,1633,render_b4b_density_single,да,verified_physical_button,Рассчитать плотность и объёмные доли,да,"при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/ThermoGar_app.py,1761,render_b4b_density_temperature,да,button,Построить плотность по температуре,да,
+app/ThermoGar_app.py,1804,render_b4b_density_temperature,да,verified_physical_button,Построить плотность по температуре,да,"при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/ThermoGar_app.py,1946,render_b4b_pdb_self_test,да,verified_physical_button,Проверить парсер физической базы,да,"при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/ThermoGar_app.py,1979,render_b4b_coverage,да,verified_physical_button,Обновить проверенное покрытие PDB,да,"латиница/аббревиатура: PDB (W-1); при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/ThermoGar_app.py,2087,render_b4b2_elastic_properties,да,verified_physical_button,Получить фазовые доли,да,"при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/ThermoGar_app.py,2175,render_b4b2_elastic_properties,да,verified_physical_button,Рассчитать Voigt–Reuss–Hill,да,"имя метода вместо результата; при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/ThermoGar_app.py,2356,render_b4b2_strengthening,да,verified_physical_button,Рассчитать вклады,да,"при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/ThermoGar_app.py,7286,,да,verified_equilibrium_button,Рассчитать равновесие,да,"при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/ThermoGar_app.py,7293,,да,button,Рассчитать равновесие,да,
+app/ThermoGar_app.py,7484,,да,release_download_button,Скачать результат в Excel,да,
+app/ThermoGar_app.py,7634,,да,verified_equilibrium_button,Построить график по температуре,да,"при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/ThermoGar_app.py,7641,,да,button,Построить график по температуре,да,
+app/ThermoGar_app.py,7781,,да,release_download_button,Excel,нет,нет глагола результата (W-2)
+app/ThermoGar_app.py,7792,,да,release_download_button,CSV,нет,нет глагола результата (W-2)
+app/ThermoGar_app.py,7800,,да,release_download_button,PNG,нет,нет глагола результата (W-2)
+app/ThermoGar_app.py,7980,,да,verified_equilibrium_button,Построить график по составу,да,"при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/ThermoGar_app.py,7987,,да,button,Построить график по составу,да,
+app/ThermoGar_app.py,8138,,да,release_download_button,Excel,нет,нет глагола результата (W-2)
+app/ThermoGar_app.py,8149,,да,release_download_button,CSV,нет,нет глагола результата (W-2)
+app/ThermoGar_app.py,8157,,да,release_download_button,PNG,нет,нет глагола результата (W-2)
+app/ThermoGar_app.py,8323,,да,release_calculation_button,Построить диаграмму состояния,да,
+app/ThermoGar_app.py,8520,,да,release_download_button,Скачать Excel,да,
+app/ThermoGar_app.py,8530,,да,release_download_button,Скачать PNG,да,
+app/ThermoGar_app.py,8725,,да,release_calculation_button,Построить многокомпонентное сечение,да,
+app/ThermoGar_app.py,9006,,да,release_download_button,Скачать Excel,да,
+app/ThermoGar_app.py,9018,,да,release_download_button,Скачать PNG,да,
+app/ThermoGar_app.py,9167,,да,release_calculation_button,Построить тройную диаграмму,да,
+app/ThermoGar_app.py,9372,,да,release_download_button,Скачать Excel,да,
+app/ThermoGar_app.py,9382,,да,release_download_button,Скачать PNG,да,
+app/ThermoGar_app.py,9591,,да,release_calculation_button,Построить карту доли фазы,да,
+app/ThermoGar_app.py,9901,,да,release_download_button,Скачать Excel,да,
+app/ThermoGar_app.py,9911,,да,release_download_button,Скачать CSV,да,
+app/ThermoGar_app.py,9918,,да,release_download_button,Скачать PNG,да,
+app/ThermoGar_app.py,10126,,да,release_calculation_button,Рассчитать затвердевание,да,
+app/ThermoGar_app.py,10650,,да,release_download_button,Скачать Excel,да,
+app/ThermoGar_app.py,10659,,да,release_download_button,"Скачать график доли расплава, PNG",да,
+app/ThermoGar_app.py,10665,,да,release_download_button,Скачать полный архив ZIP,да,
+app/ThermoGar_app.py,10762,,да,release_calculation_button,Рассчитать энергии фаз,да,
+app/ThermoGar_app.py,10901,,да,release_download_button,Скачать Excel,да,
+app/ThermoGar_app.py,10911,,да,release_download_button,Скачать PNG,да,
+app/ThermoGar_app.py,10999,,да,release_calculation_button,Рассчитать движущую силу,да,
+app/ThermoGar_app.py,11117,,да,release_download_button,Скачать Excel,да,
+app/ThermoGar_app.py,11127,,да,release_download_button,Скачать PNG,да,
+app/ThermoGar_app.py,11277,,да,release_calculation_button,Рассчитать T₀,да,
+app/ThermoGar_app.py,11392,,да,release_download_button,Скачать Excel,да,
+app/ThermoGar_app.py,11402,,да,release_download_button,Скачать PNG,да,
+app/ThermoGar_app.py,12100,,да,release_download_button,Скачать краткое руководство,да,
+app/ThermoGar_app.py,12176,,да,release_download_button,Скачать справочник в Excel,да,
+app/thermogar_diffusion.py,1204,_result_display,да,release_download_button,Скачать Excel,да,
+app/thermogar_diffusion.py,1212,_result_display,да,release_download_button,Скачать профиль PNG,да,
+app/thermogar_diffusion.py,1221,_result_display,да,release_download_button,Скачать фазы PNG,да,
+app/thermogar_diffusion.py,1449,render_kinetics_section,да,release_calculation_button,Рассчитать однофазную диффузию,да,
+app/thermogar_diffusion.py,1597,render_kinetics_section,да,release_calculation_button,Рассчитать гомогенизацию,да,
+app/thermogar_precipitation.py,1563,render_precipitation_section,да,release_calculation_button,Рассчитать кинетику выделений,да,
+app/thermogar_precipitation.py,1642,render_precipitation_section,да,release_download_button,Excel,нет,нет глагола результата (W-2)
+app/thermogar_precipitation.py,1643,render_precipitation_section,да,release_download_button,Состояние модели NPZ,нет,нет глагола результата (W-2); латиница/аббревиатура: NPZ (W-1)
+app/thermogar_precipitation.py,1644,render_precipitation_section,да,release_download_button,Происхождение JSON,нет,нет глагола результата (W-2)
+app/thermogar_precipitation.py,1645,render_precipitation_section,да,release_download_button,PNG: доля,нет,нет глагола результата (W-2)
+app/thermogar_precipitation.py,1646,render_precipitation_section,да,release_download_button,PNG: размер и плотность,нет,нет глагола результата (W-2)
+app/thermogar_precipitation.py,1647,render_precipitation_section,да,release_download_button,PNG: PSD,нет,нет глагола результата (W-2); латиница/аббревиатура: PSD (W-1)
+app/thermogar_properties.py,1508,render_elastic_section,нет,release_calculation_button,Подготовить равновесные фазы,да,
+app/thermogar_properties.py,1632,render_elastic_section,нет,release_calculation_button,Рассчитать Voigt–Reuss–Hill,да,имя метода вместо результата
+app/thermogar_properties.py,1743,render_elastic_section,нет,release_download_button,Скачать Excel,да,
+app/thermogar_properties.py,1753,render_elastic_section,нет,release_download_button,Скачать PNG,да,
+app/thermogar_properties.py,1761,render_elastic_section,нет,release_download_button,"Скачать библиотеку фаз, JSON",да,
+app/thermogar_properties.py,1825,render_strengthening_section,нет,button,Подставить G_Hill и ν_Hill из последнего упругого расчёта,да,
+app/thermogar_properties.py,1835,render_strengthening_section,нет,button,"Загрузить учебный пример Fe–0,20C",да,
+app/thermogar_properties.py,2042,render_strengthening_section,нет,release_calculation_button,Рассчитать вклады упрочнения,да,
+app/thermogar_properties.py,2168,render_strengthening_section,нет,release_download_button,Скачать Excel,да,
+app/thermogar_properties.py,2178,render_strengthening_section,нет,release_download_button,Скачать PNG,да,
+app/thermogar_stage14.py,416,render_user_error,да,release_download_button,Скачать технический отчёт,да,
+app/thermogar_stage14.py,1169,render_quick_examples,да,button,"Загрузить пример {label.split(':', 1)[0]}",да,
+app/thermogar_stage14.py,1230,render_diagnostics,да,release_calculation_button,Проверить базы и запустить три контрольных расчёта,да,
+app/thermogar_stage14.py,1297,render_diagnostics,да,release_download_button,Скачать отчёт диагностики,да,
+app/thermogar_workspace.py,1123,render_alloy_library,да,form_submit_button,Сохранить текущий состав,да,
+app/thermogar_workspace.py,1191,render_alloy_library,да,button,Загрузить состав в программу,да,
+app/thermogar_workspace.py,1222,render_alloy_library,да,button,"Удалить «{selected.get('name', selected_id)}»",да,
+app/thermogar_workspace.py,1256,render_alloy_library,да,render_download,Скачать пользовательскую библиотеку,да,
+app/thermogar_workspace.py,1271,render_alloy_library,да,verified_state_uploader,Импортировать библиотеку JSON,да,"при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/thermogar_workspace.py,1301,render_alloy_library,да,button,Импортировать выбранную библиотеку,да,
+app/thermogar_workspace.py,1658,render_projects_and_history,да,form_submit_button,Сохранить проект в папке ThermoGar,да,
+app/thermogar_workspace.py,1743,render_projects_and_history,да,button,Открыть проект,да,
+app/thermogar_workspace.py,1789,render_projects_and_history,да,render_download,Скачать выбранный проект,да,
+app/thermogar_workspace.py,1814,render_projects_and_history,да,button,"Удалить «{selected_payload.get('name', 'проект')}»",да,
+app/thermogar_workspace.py,1844,render_projects_and_history,да,verified_state_uploader,Импортировать проект,да,"при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/thermogar_workspace.py,1872,render_projects_and_history,да,button,Импортировать выбранный проект,да,
+app/thermogar_workspace.py,1957,render_projects_and_history,да,button,Восстановить материал из записи,да,
+app/thermogar_workspace.py,1998,render_projects_and_history,да,render_download,Скачать историю CSV,да,
+app/thermogar_workspace.py,2013,render_projects_and_history,да,button,Очистить всю историю,да,
+app/thermogar_workspace.py,2469,render_batch_calculation,да,verified_batch_export_button,Скачать шаблон Excel,да,"при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/thermogar_workspace.py,2480,render_batch_calculation,да,render_download,Скачать подготовленный XLSX,да,латиница/аббревиатура: XLSX (W-1)
+app/thermogar_workspace.py,2490,render_batch_calculation,да,verified_batch_export_button,Скачать шаблон CSV,да,"при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/thermogar_workspace.py,2501,render_batch_calculation,да,render_download,Скачать подготовленный CSV,да,
+app/thermogar_workspace.py,2523,render_batch_calculation,да,verified_state_uploader,Файл составов,не применимо (поле выбора файла),"при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/thermogar_workspace.py,2564,render_batch_calculation,да,verified_batch_execute_button,Рассчитать все составы,да,"при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/thermogar_workspace.py,2610,render_batch_calculation,да,verified_batch_export_button,Скачать пакетный результат Excel,да,"при отказе подсказка help = «{reason_code}: {reason_detail}» (release_ui:51, :125) — код причины на экране (W-1)"
+app/thermogar_workspace.py,2633,render_batch_calculation,да,render_download,Скачать подготовленный результат XLSX,да,латиница/аббревиатура: XLSX (W-1)

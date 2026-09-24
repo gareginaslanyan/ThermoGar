@@ -1,0 +1,25 @@
+﻿где,вывод,"что может выйти на экран (W-1, А-7)",примечание
+app/thermogar_stage14.py:407,render_user_error → st.error,"подсказка = str(exception) в ветвях: ValueError (:293), «не завершил… Причина: » (:299), C15 (:156), упругие (:216, :248), Hall–Petch (:223), Taylor (:229), Orowan (:235), параметры (:272)",21 вызов render_friendly_error/render_error
+app/thermogar_stage14.py:410,st.write в «Технических сведениях»,"имя класса исключения (KeyError, ValueError…)","там же «Раздел: {context}» — «проверка physical PDB», «Voigt–Reuss–Hill»"
+app/thermogar_stage14.py:99,EMPTY_SOLUTION_TEXT,«pycalphad вернул пустое решение» — имя движка,текст утверждён владельцем (15-Н2)
+"app/ThermoGar_app.py:8488, :8962, :9326, :9811",st.error «Техническая причина: {error}»,str(exception) движка построения диаграмм (часто английский),
+"app/ThermoGar_app.py:7241, :7566, :7911, :8309, :8710, :9152, :9541, :10711, :10936, :11209, :10103",st.warning/st.error с {preview_error},str(exception) разбора состава/фаз,
+"app/thermogar_diffusion.py:1427, :1530",st.warning с {preview_error},str(exception),
+"app/ThermoGar_app.py:2078, :2172, :6948, :6959, :11451, :11466, :11483, :11498, :11508",st.error(str(error)),str(exception) проверенной привязки,
+"app/ThermoGar_app.py:6824, :6916, :11429",st.error f-строка с {error},str(exception),
+app/ThermoGar_app.py:10545 (из :10252),st.warning метод: {error_text},str(method_error) scheil/равновесия,
+"app/ThermoGar_app.py:10253, :10316",status.write,"str(method_error), str(liquidus_error) в ленте хода расчёта",
+app/ThermoGar_app.py:10857 (из :3837),st.warning «Некоторые фазы пропущены»,f'{phase}: {error}' — текст исключения Workspace,
+app/ThermoGar_app.py:6571,"таблица карты доли фазы, столбец «Статус»",«не рассчитано: {error}»,таблица на экране и в выгрузке
+app/ThermoGar_app.py:9950,st.caption,«Причина импорта: {_SCHEIL_STATE['error']}» — текст ImportError,
+app/thermogar_diffusion.py:1391,st.caption,«Техническая причина: {KAWIN_IMPORT_ERROR}» — текст ImportError,
+app/thermogar_precipitation.py:1310,st.code,PRECIPITATION_IMPORT_ERROR — текст ImportError моноширинным блоком,
+app/thermogar_precipitation.py:1366,st.error(str(error)),str(exception),
+app/thermogar_precipitation.py:1618,st.warning(result.stop_note),_solver_failure_note — возможна строка решателя,проверить путь
+"app/thermogar_stage14.py:1205, :1213, :1221",st.warning «Причина: …»,"текст ImportError (scheil, kawin, precipitation)",вкладка «Проверка установки»
+app/thermogar_stage14.py:971,таблица баз в «Проверке установки»,«ошибка: {type(error).__name__}: {error}»,
+"app/thermogar_workspace.py:1154, :1214, :1318, :1692, :1696, :1768, :1838, :1896, :1971, :2040, :2587",st.error с {error}/str(error),str(exception) хранилища/импорта,
+"app/thermogar_workspace.py:1146, :1684 (из :1399)",flash warning,f'{type(error).__name__}: {error}' — имя класса и текст,
+"app/thermogar_workspace.py:2331, :2428","таблица пакетного расчёта, столбец «Ошибка»",str(error) по строке,"на экране :2600, :2603 и в выгрузке"
+"app/thermogar_release_ui.py:51, :125",help у недоступной кнопки,«{reason_code}: {reason_detail}» — служебный код причины,все verified_*-кнопки (17)
+app/thermogar_release_ui.py:90,help у кнопки,«StateStore owns the verified upload boundary.» — английская строка,функция verified_batch_file_uploader в приложении не вызывается

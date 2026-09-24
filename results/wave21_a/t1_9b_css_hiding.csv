@@ -1,0 +1,8 @@
+﻿где,селектор / ключ,что задаёт,сверка с версией 1.62,скрытие элементов (S-4),проверка
+app/style.css:4,.main .block-container,max-width 1150px; padding 24/32px,"класса «main» в бандле 1.62 нет (главная область — className stMain); block-container есть (stMainBlockContainer block-container) — правило, вероятно, не срабатывает",нет (не скрытие),снимок 21-Б: ширина контейнера
+app/style.css:11,".stMarkdown p, .stCaption, div[data-testid=""stAlert""] p",max-width 60ch,классы и testid есть в бандле 1.62,нет,
+app/style.css:18,.stCaption color,"var(--st-gray-text-color, var(--st-text-color))","строк «--st-» в JS-бандле 1.62 нет — переменные, вероятно, не определены, цвет подписи тогда наследуется (не серый)",нет,снимок 21-Б: цвет st.caption
+app/style.css:23,"div[data-testid=""stWidgetLabel""]",margin-bottom 4px,testid есть,нет,
+app/style.css:28,"div[data-testid=""stVerticalBlock""]",row-gap 16px,testid есть,нет,
+.streamlit/config.toml:61,client.toolbarMode = minimal,штатный параметр,известен,скрытие меню — штатно ✓ S-4,
+.streamlit/config.toml:62,client.disableDataExport = true,штатный параметр,известен,скрытие выгрузки таблиц — штатно ✓ S-4,

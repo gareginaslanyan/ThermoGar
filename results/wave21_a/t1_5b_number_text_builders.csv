@@ -1,0 +1,80 @@
+﻿файл,строка,функция,достижимость,подстановка,единица рядом,текст (литеральная часть)
+app/ThermoGar_app.py,1704,render_b4b_density_single,проверить путь,{projection['mass_coverage_pct']:.2f},да,"Плотность сплава не рассчитана: покрытие физической базы % по массе, то есть плотность есть не у всех равновесных фаз."
+app/ThermoGar_app.py,4323,resolve_solidification_start_temperature,проверить путь,{last_liquid:.3f},да,Начальная температура не даёт практически однофазный расплав. Последняя проверенная доля LIQUID: %. Увеличьте начальную 
+app/ThermoGar_app.py,4591,equilibrium_liquidus_c,проверить путь,{ceiling:.1f},да,Ликвидус не найден: твёрдая фаза остаётся вплоть до °C.
+app/ThermoGar_app.py,4605,equilibrium_liquidus_c,проверить путь,{floor:.1f},да,Ликвидус не найден: расплав остаётся полностью жидким вплоть до °C.
+app/ThermoGar_app.py,4712,equilibrium_solidus_c,проверить путь,{float(lower_limit_c):.1f},да,Солидус не найден: жидкость остаётся вплоть до °C.
+app/ThermoGar_app.py,4932,solidification_summary_row,проверить путь,{100.0 * appearance_threshold_fraction:g},да,"T при доле твёрдого % по траектории, °C"
+app/ThermoGar_app.py,6180,plot_ternary_thermogar,проверить путь,{temperature_c:.1f},да,Изотермическая диаграмма –– при °C
+app/ThermoGar_app.py,6686,plot_ternary_phase_fraction_map,проверить путь,{temperature_c:.1f},да,Мольная доля в системе –– при °C
+app/ThermoGar_app.py,6790,plot_ternary_phase_fraction_map,проверить путь,{threshold:g},да,Граница = мол.%
+app/ThermoGar_app.py,8059,,проверить путь,{concentration_temperature:.1f},да,ThermoGar: фазовые доли от концентрации при °C
+app/ThermoGar_app.py,8862,,проверить путь,{value:g},да,= ат.%
+app/ThermoGar_app.py,9505,,проверить путь,{actual_step:.3g},да,Будет рассчитано узлов: . Фактический равномерный шаг: %. Один узел — это отдельное равновесие: от нескольких секунд на 
+app/ThermoGar_app.py,10181,,проверить путь,{actual_start_k - 273.15:.2f},да,Расчётная начальная температура: °C.
+app/ThermoGar_app.py,10303,,проверить путь,{temperature_c:.2f},да,"Ликвидус, равновесие из примерно : °C, твёрдого %."
+app/ThermoGar_app.py,10303,,проверить путь,{100.0 * solid:.4f},да,"Ликвидус, равновесие из примерно : °C, твёрдого %."
+app/ThermoGar_app.py,10310,,проверить путь,{computed_liquidus_c:.2f},да,Ликвидус: °C (точность °C).
+app/ThermoGar_app.py,10310,,проверить путь,{LIQUIDUS_TOLERANCE_C:g},да,Ликвидус: °C (точность °C).
+app/ThermoGar_app.py,10529,,проверить путь,{LIQUIDUS_TOLERANCE_C:g},да,"Ликвидус ищется половинным делением по равновесиям с точностью °C и не зависит ни от метода, ни от порога появления фазы"
+app/thermogar_database_guard.py,375,check_fe_high_temperature_behavior,проверить путь,{liquid_threshold:.4f},нет,LIQUID < и C15_LAVES > при K
+app/thermogar_database_guard.py,375,check_fe_high_temperature_behavior,проверить путь,{c15_threshold:.1e},нет,LIQUID < и C15_LAVES > при K
+app/thermogar_database_guard.py,375,check_fe_high_temperature_behavior,проверить путь,{temperature_k:.1f},да,LIQUID < и C15_LAVES > при K
+app/thermogar_database_guard.py,393,assert_fe_solidification_safe,проверить путь,{check.temperature_k:.0f},да,"Исходная mc_fe 2.062 воспроизвела известную аномалию: при K LIQUID = %, C15_LAVES = %. ThermoGar не выдаёт такой ликвиду"
+app/thermogar_database_guard.py,393,assert_fe_solidification_safe,проверить путь,{100.0 * check.liquid_fraction:.4f},да,"Исходная mc_fe 2.062 воспроизвела известную аномалию: при K LIQUID = %, C15_LAVES = %. ThermoGar не выдаёт такой ликвиду"
+app/thermogar_database_guard.py,393,assert_fe_solidification_safe,проверить путь,{100.0 * check.c15_laves_fraction:.4f},да,"Исходная mc_fe 2.062 воспроизвела известную аномалию: при K LIQUID = %, C15_LAVES = %. ThermoGar не выдаёт такой ликвиду"
+app/thermogar_diffusion.py,882,_run_model,проверить путь,{float(temperature_C):.6g},да,"Решатель Kawin не смог продолжить расчёт для фаз при °C. Чаще всего это значит, что выбранная фаза при этой температуре "
+app/thermogar_physical.py,615,function_value,проверить путь,{float(temperature_k):.2f},да,Температура K вне диапазона функции : – K.
+app/thermogar_physical.py,615,function_value,проверить путь,{definition.lower_temperature:.2f},нет,Температура K вне диапазона функции : – K.
+app/thermogar_physical.py,615,function_value,проверить путь,{definition.upper_temperature:.2f},да,Температура K вне диапазона функции : – K.
+app/thermogar_physical.py,637,parameter_value,проверить путь,{float(temperature_k):.2f},да,Температура K вне диапазона DP-параметра : – K.
+app/thermogar_physical.py,637,parameter_value,проверить путь,{parameter.lower_temperature:.2f},нет,Температура K вне диапазона DP-параметра : – K.
+app/thermogar_physical.py,637,parameter_value,проверить путь,{parameter.upper_temperature:.2f},да,Температура K вне диапазона DP-параметра : – K.
+app/thermogar_physical.py,1174,density_from_site_fractions,проверить путь,{100.0 * covered_weight:.3f},да,Покрытие эндмемберов модели: %.
+app/thermogar_physical.py,1629,calculate_physical_properties,проверить путь,{estimated_share:.2f},да,с оценкой по правилу смеси для % мольной доли фаз
+app/thermogar_physical.py,1656,calculate_physical_properties,проверить путь,{estimated_share:.2f},да, оценена по правилу смеси; их суммарная мольная доля % — влияние на плотность сплава пренебрежимо.
+app/thermogar_physical.py,1663,calculate_physical_properties,проверить путь,{estimated_share:.2f},да, оценена по правилу смеси; погрешность до 10 %. Суммарная мольная доля таких фаз %.
+app/thermogar_precipitation.py,224,_time_text,проверить путь,{time_s:.4g},да, с модельного времени ( ч)
+app/thermogar_precipitation.py,224,_time_text,проверить путь,{time_s / 3600:.4g},да, с модельного времени ( ч)
+app/thermogar_precipitation.py,229,_composition_stop_note,проверить путь,{100 * value:.4g},нет,"Расчёт остановлен на : доля в матрице стала ат. %, баланс масс нарушен. Показана часть расчёта до остановки. "
+app/thermogar_precipitation.py,632,_quality,проверить путь,{width_nm:.4g},да,Ширина класса начальной сетки нм
+app/thermogar_precipitation.py,635,_quality,проверить путь,{np.min(rcrit_nm[coarse]):.4g},да,", критический радиус на шагах зарождения — от нм: зародыши шире не разрешены."
+app/thermogar_precipitation.py,641,_quality,проверить путь,{float(cmin_nm):.4g},да,Минимальный радиус сетки нм
+app/thermogar_precipitation.py,644,_quality,проверить путь,{np.min(rnuc_nm[below]):.4g},да,", радиус зародыша — от нм: kawin кладёт такие зародыши в последний, самый крупный класс сетки."
+app/thermogar_precipitation.py,766,_check_critical_radius_floor,проверить путь,{free_nm:.3g},да,Критический радиус зародыша нм (оценка при °C по начальному составу) меньше предела модели нм
+app/thermogar_precipitation.py,766,_check_critical_radius_floor,проверить путь,{temperature_c:.1f},да,Критический радиус зародыша нм (оценка при °C по начальному составу) меньше предела модели нм
+app/thermogar_precipitation.py,766,_check_critical_radius_floor,проверить путь,{floor_nm:.3g},да,Критический радиус зародыша нм (оценка при °C по начальному составу) меньше предела модели нм
+app/thermogar_precipitation.py,769,_check_critical_radius_floor,проверить путь,{temperature_c:.1f},да,Критический радиус зародыша (оценка при °C по начальному составу) не положителен и меньше предела модели нм
+app/thermogar_precipitation.py,769,_check_critical_radius_floor,проверить путь,{floor_nm:.3g},да,Критический радиус зародыша (оценка при °C по начальному составу) не положителен и меньше предела модели нм
+app/thermogar_precipitation.py,817,_check_size_grid,проверить путь,{rnuc_nm:.3g},да,Сетка размеров не принимает зародыши: радиус зародыша нм (оценка при °C по начальному составу) меньше минимального радиу
+app/thermogar_precipitation.py,817,_check_size_grid,проверить путь,{temperature_k - 273.15:.1f},да,Сетка размеров не принимает зародыши: радиус зародыша нм (оценка при °C по начальному составу) меньше минимального радиу
+app/thermogar_precipitation.py,817,_check_size_grid,проверить путь,{float(cmin_nm):.3g},да,Сетка размеров не принимает зародыши: радиус зародыша нм (оценка при °C по начальному составу) меньше минимального радиу
+app/thermogar_precipitation.py,817,_check_size_grid,проверить путь,{rnuc_nm:.3g},да,Сетка размеров не принимает зародыши: радиус зародыша нм (оценка при °C по начальному составу) меньше минимального радиу
+app/thermogar_precipitation.py,830,_check_size_grid,проверить путь,{width_nm:.3g},да,Сетка размеров слишком грубая: ширина класса нм не меньше критического радиуса зародыша нм (оценка при °C по начальному 
+app/thermogar_precipitation.py,830,_check_size_grid,проверить путь,{rcrit_nm:.3g},да,Сетка размеров слишком грубая: ширина класса нм не меньше критического радиуса зародыша нм (оценка при °C по начальному 
+app/thermogar_precipitation.py,830,_check_size_grid,проверить путь,{temperature_k - 273.15:.1f},да,Сетка размеров слишком грубая: ширина класса нм не меньше критического радиуса зародыша нм (оценка при °C по начальному 
+app/thermogar_precipitation.py,862,_check_nucleus_above_grid,проверить путь,{rnuc_nm:.3g},да,"Радиус зародыша нм (оценка при °C) больше начального максимального радиуса сетки нм, поэтому первые зародыши записываютс"
+app/thermogar_precipitation.py,862,_check_nucleus_above_grid,проверить путь,{temperature_k - 273.15:.1f},да,"Радиус зародыша нм (оценка при °C) больше начального максимального радиуса сетки нм, поэтому первые зародыши записываютс"
+app/thermogar_precipitation.py,862,_check_nucleus_above_grid,проверить путь,{float(cmax_nm):.3g},да,"Радиус зародыша нм (оценка при °C) больше начального максимального радиуса сетки нм, поэтому первые зародыши записываютс"
+app/thermogar_precipitation.py,862,_check_nucleus_above_grid,проверить путь,{rnuc_nm:.3g},да,"Радиус зародыша нм (оценка при °C) больше начального максимального радиуса сетки нм, поэтому первые зародыши записываютс"
+app/thermogar_properties.py,1021,calculate_strengthening,проверить путь,{hall_petch_inputs['k_y_mpa_sqrt_m']:.6g},да,k_y= МПа·м^1/2; d= мкм
+app/thermogar_properties.py,1021,calculate_strengthening,проверить путь,{hall_petch_inputs['grain_size_um']:.6g},да,k_y= МПа·м^1/2; d= мкм
+app/thermogar_properties.py,1047,calculate_strengthening,проверить путь,{taylor_inputs['taylor_factor']:.6g},нет,M=; α=; G= ГПа; b= нм; ρ_d= м⁻²
+app/thermogar_properties.py,1047,calculate_strengthening,проверить путь,{taylor_inputs['alpha']:.6g},нет,M=; α=; G= ГПа; b= нм; ρ_d= м⁻²
+app/thermogar_properties.py,1047,calculate_strengthening,проверить путь,{taylor_inputs['shear_gpa']:.6g},да,M=; α=; G= ГПа; b= нм; ρ_d= м⁻²
+app/thermogar_properties.py,1047,calculate_strengthening,проверить путь,{taylor_inputs['burgers_nm']:.6g},да,M=; α=; G= ГПа; b= нм; ρ_d= м⁻²
+app/thermogar_properties.py,1047,calculate_strengthening,проверить путь,{taylor_inputs['dislocation_density_m2']:.6g},да,M=; α=; G= ГПа; b= нм; ρ_d= м⁻²
+app/thermogar_properties.py,1103,calculate_strengthening,проверить путь,{orowan_inputs['taylor_factor']:.6g},нет,M=; G= ГПа; b= нм; ν=; r= нм; λ= нм
+app/thermogar_properties.py,1103,calculate_strengthening,проверить путь,{orowan_inputs['shear_gpa']:.6g},да,M=; G= ГПа; b= нм; ν=; r= нм; λ= нм
+app/thermogar_properties.py,1103,calculate_strengthening,проверить путь,{orowan_inputs['burgers_nm']:.6g},да,M=; G= ГПа; b= нм; ν=; r= нм; λ= нм
+app/thermogar_properties.py,1103,calculate_strengthening,проверить путь,{orowan_inputs['poisson']:.6g},нет,M=; G= ГПа; b= нм; ν=; r= нм; λ= нм
+app/thermogar_properties.py,1103,calculate_strengthening,проверить путь,{orowan_inputs['particle_radius_nm']:.6g},да,M=; G= ГПа; b= нм; ν=; r= нм; λ= нм
+app/thermogar_properties.py,1103,calculate_strengthening,проверить путь,{orowan_inputs['spacing_nm']:.6g},да,M=; G= ГПа; b= нм; ν=; r= нм; λ= нм
+app/thermogar_properties.py,1303,_calculate_elastic_from_editor,проверить путь,{float(reference_temperature):.1f},да,": свойства заданы при °C, расчёт выполняется при °C."
+app/thermogar_properties.py,1303,_calculate_elastic_from_editor,проверить путь,{calculation_temperature_c:.1f},да,": свойства заданы при °C, расчёт выполняется при °C."
+app/thermogar_properties.py,1716,render_elastic_section,нет (код не вызывается из приложения),{result.volume_coverage_pct:.2f},да,Покрытие объёмных долей: %. Покрытие записей указанным происхождением и источником: %. Статус плотности: .
+app/thermogar_properties.py,1716,render_elastic_section,нет (код не вызывается из приложения),{result.source_coverage_pct:.2f},да,Покрытие объёмных долей: %. Покрытие записей указанным происхождением и источником: %. Статус плотности: .
+app/thermogar_stage14.py,549,validate_single_equilibrium,проверить путь,{max_phase_sum_error:.3e},да,макс. ошибка %
+app/thermogar_stage14.py,588,validate_single_equilibrium,проверить путь,{max_balance_error:.3e},да,макс. ошибка % для 
+app/thermogar_stage14.py,709,validate_phase_scan,проверить путь,{max_error:.3e},да,макс. ошибка %
+app/thermogar_stage14.py,813,validate_solidification_paths,проверить путь,{max_sum_error:.3e},да,макс. ошибка %

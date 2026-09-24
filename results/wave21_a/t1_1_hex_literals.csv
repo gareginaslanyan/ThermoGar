@@ -1,0 +1,194 @@
+﻿файл,строка,код,место,роль,текущее,целевое по нормам,сверка,класс
+.streamlit/config.toml,4,#0D2768,три места: .streamlit/config.toml,[theme] chartCategoricalColors[0],#0D2768,#0D2768,совпадает,в шкале
+.streamlit/config.toml,4,#4587DE,три места: .streamlit/config.toml,[theme] chartCategoricalColors[1],#4587DE,#4587DE,совпадает,в шкале
+.streamlit/config.toml,4,#000000,три места: .streamlit/config.toml,[theme] chartCategoricalColors[2],#000000,#000000,совпадает,в шкале
+.streamlit/config.toml,4,#D55E00,три места: .streamlit/config.toml,[theme] chartCategoricalColors[3],#D55E00,#D55E00,совпадает,в шкале
+.streamlit/config.toml,4,#009E73,три места: .streamlit/config.toml,[theme] chartCategoricalColors[4],#009E73,#009E73,совпадает,в шкале
+.streamlit/config.toml,4,#CC79A7,три места: .streamlit/config.toml,[theme] chartCategoricalColors[5],#CC79A7,#CC79A7,совпадает,в шкале
+.streamlit/config.toml,4,#0072B2,три места: .streamlit/config.toml,[theme] chartCategoricalColors[6],#0072B2,#0072B2,совпадает,в шкале
+.streamlit/config.toml,5,#00224E,три места: .streamlit/config.toml,[theme] chartSequentialColors[0] (cividis),#00224E,#00224E,совпадает,шкала cividis (G-6)
+.streamlit/config.toml,5,#123570,три места: .streamlit/config.toml,[theme] chartSequentialColors[1] (cividis),#123570,#123570,совпадает,шкала cividis (G-6)
+.streamlit/config.toml,5,#3B496C,три места: .streamlit/config.toml,[theme] chartSequentialColors[2] (cividis),#3B496C,#3B496C,совпадает,шкала cividis (G-6)
+.streamlit/config.toml,5,#575D6D,три места: .streamlit/config.toml,[theme] chartSequentialColors[3] (cividis),#575D6D,#575D6D,совпадает,шкала cividis (G-6)
+.streamlit/config.toml,5,#707173,три места: .streamlit/config.toml,[theme] chartSequentialColors[4] (cividis),#707173,#707173,совпадает,шкала cividis (G-6)
+.streamlit/config.toml,5,#8A8678,три места: .streamlit/config.toml,[theme] chartSequentialColors[5] (cividis),#8A8678,#8A8678,совпадает,шкала cividis (G-6)
+.streamlit/config.toml,5,#A59C74,три места: .streamlit/config.toml,[theme] chartSequentialColors[6] (cividis),#A59C74,#A59C74,совпадает,шкала cividis (G-6)
+.streamlit/config.toml,5,#C3B369,три места: .streamlit/config.toml,[theme] chartSequentialColors[7] (cividis),#C3B369,#C3B369,совпадает,шкала cividis (G-6)
+.streamlit/config.toml,5,#E1CC55,три места: .streamlit/config.toml,[theme] chartSequentialColors[8] (cividis),#E1CC55,#E1CC55,совпадает,шкала cividis (G-6)
+.streamlit/config.toml,5,#FEE838,три места: .streamlit/config.toml,[theme] chartSequentialColors[9] (cividis),#FEE838,#FEE838,совпадает,шкала cividis (G-6)
+.streamlit/config.toml,9,#1F60C1,три места: .streamlit/config.toml,[theme.light] primaryColor,#1F60C1,#1F60C1,совпадает,в шкале
+.streamlit/config.toml,10,#FFFFFF,три места: .streamlit/config.toml,[theme.light] backgroundColor,#FFFFFF,#F8F8F9,расходится,в шкале
+.streamlit/config.toml,11,#F1EFEA,три места: .streamlit/config.toml,[theme.light] secondaryBackgroundColor,#F1EFEA,#ECEDEF,расходится,тёплая нейтраль
+.streamlit/config.toml,12,#2A2722,три места: .streamlit/config.toml,[theme.light] textColor,#2A2722,#232529,расходится,тёплая нейтраль
+.streamlit/config.toml,13,#133B8B,три места: .streamlit/config.toml,[theme.light] linkColor,#133B8B,#133B8B,совпадает,в шкале
+.streamlit/config.toml,14,#D8D4CC,три места: .streamlit/config.toml,[theme.light] borderColor,#D8D4CC,#CFD1D5,расходится,тёплая нейтраль
+.streamlit/config.toml,15,#D8D4CC,три места: .streamlit/config.toml,[theme.light] dataframeBorderColor,#D8D4CC,#CFD1D5,расходится,тёплая нейтраль
+.streamlit/config.toml,16,#F1EFEA,три места: .streamlit/config.toml,[theme.light] codeBackgroundColor,#F1EFEA,#ECEDEF,расходится,тёплая нейтраль
+.streamlit/config.toml,17,#C93425,три места: .streamlit/config.toml,[theme.light] redColor,#C93425,#C93425,совпадает,в шкале
+.streamlit/config.toml,18,#FDF0EE,три места: .streamlit/config.toml,[theme.light] redBackgroundColor,#FDF0EE,#FDF0EE,совпадает,в шкале
+.streamlit/config.toml,19,#A62A1E,три места: .streamlit/config.toml,[theme.light] redTextColor,#A62A1E,#A62A1E,совпадает,в шкале
+.streamlit/config.toml,20,#5A4500,три места: .streamlit/config.toml,[theme.light] yellowColor,#5A4500,#5A4500,совпадает,в шкале
+.streamlit/config.toml,21,#FFF6D6,три места: .streamlit/config.toml,[theme.light] yellowBackgroundColor,#FFF6D6,#FFF6D6,совпадает,в шкале
+.streamlit/config.toml,22,#2A2722,три места: .streamlit/config.toml,[theme.light] yellowTextColor,#2A2722,#232529,расходится,тёплая нейтраль
+.streamlit/config.toml,23,#146C33,три места: .streamlit/config.toml,[theme.light] greenColor,#146C33,#146C33,совпадает,в шкале
+.streamlit/config.toml,24,#EFFAF4,три места: .streamlit/config.toml,[theme.light] greenBackgroundColor,#EFFAF4,#EFFAF4,совпадает,в шкале
+.streamlit/config.toml,25,#146C33,три места: .streamlit/config.toml,[theme.light] greenTextColor,#146C33,#146C33,совпадает,в шкале
+.streamlit/config.toml,26,#1F60C1,три места: .streamlit/config.toml,[theme.light] blueColor,#1F60C1,#1F60C1,совпадает,в шкале
+.streamlit/config.toml,27,#EFF6FA,три места: .streamlit/config.toml,[theme.light] blueBackgroundColor,#EFF6FA,#EFF6FA,совпадает,в шкале
+.streamlit/config.toml,28,#133B8B,три места: .streamlit/config.toml,[theme.light] blueTextColor,#133B8B,#133B8B,совпадает,в шкале
+.streamlit/config.toml,29,#8A857A,три места: .streamlit/config.toml,[theme.light] grayColor,#8A857A,#79808B,расходится,тёплая нейтраль
+.streamlit/config.toml,30,#F1EFEA,три места: .streamlit/config.toml,[theme.light] grayBackgroundColor,#F1EFEA,#ECEDEF,расходится,тёплая нейтраль
+.streamlit/config.toml,31,#57534A,три места: .streamlit/config.toml,[theme.light] grayTextColor,#57534A,#4B4F56,расходится,тёплая нейтраль
+.streamlit/config.toml,35,#5C97E8,три места: .streamlit/config.toml,[theme.dark] primaryColor,#5C97E8,#5C97E8,совпадает,в шкале
+.streamlit/config.toml,36,#1A1816,три места: .streamlit/config.toml,[theme.dark] backgroundColor,#1A1816,#17181B,расходится,тёплая нейтраль
+.streamlit/config.toml,37,#24211D,три места: .streamlit/config.toml,[theme.dark] secondaryBackgroundColor,#24211D,#1F2226,расходится,тёплая нейтраль
+.streamlit/config.toml,38,#F1EFEA,три места: .streamlit/config.toml,[theme.dark] textColor,#F1EFEA,#ECEDEF,расходится,тёплая нейтраль
+.streamlit/config.toml,39,#9CC0F2,три места: .streamlit/config.toml,[theme.dark] linkColor,#9CC0F2,#9CC0F2,совпадает,в шкале
+.streamlit/config.toml,40,#3A362F,три места: .streamlit/config.toml,[theme.dark] borderColor,#3A362F,#33373E,расходится,тёплая нейтраль
+.streamlit/config.toml,41,#3A362F,три места: .streamlit/config.toml,[theme.dark] dataframeBorderColor,#3A362F,#33373E,расходится,тёплая нейтраль
+.streamlit/config.toml,42,#2C2822,три места: .streamlit/config.toml,[theme.dark] codeBackgroundColor,#2C2822,#25292F,расходится,тёплая нейтраль
+.streamlit/config.toml,43,#F06157,три места: .streamlit/config.toml,[theme.dark] redColor,#F06157,#F06157,совпадает,в шкале
+.streamlit/config.toml,44,#2E1512,три места: .streamlit/config.toml,[theme.dark] redBackgroundColor,#2E1512,#2E1512,совпадает,в шкале
+.streamlit/config.toml,45,#F5A79F,три места: .streamlit/config.toml,[theme.dark] redTextColor,#F5A79F,#F5A79F,совпадает,в шкале
+.streamlit/config.toml,46,#E8B200,три места: .streamlit/config.toml,[theme.dark] yellowColor,#E8B200,#E8B200,совпадает,в шкале
+.streamlit/config.toml,47,#2E2609,три места: .streamlit/config.toml,[theme.dark] yellowBackgroundColor,#2E2609,#2E2609,совпадает,в шкале
+.streamlit/config.toml,48,#F1EFEA,три места: .streamlit/config.toml,[theme.dark] yellowTextColor,#F1EFEA,#ECEDEF,расходится,тёплая нейтраль
+.streamlit/config.toml,49,#3FBE77,три места: .streamlit/config.toml,[theme.dark] greenColor,#3FBE77,#3FBE77,совпадает,в шкале
+.streamlit/config.toml,50,#15281E,три места: .streamlit/config.toml,[theme.dark] greenBackgroundColor,#15281E,#15281E,совпадает,в шкале
+.streamlit/config.toml,51,#8FE0B4,три места: .streamlit/config.toml,[theme.dark] greenTextColor,#8FE0B4,#8FE0B4,совпадает,в шкале
+.streamlit/config.toml,52,#5C97E8,три места: .streamlit/config.toml,[theme.dark] blueColor,#5C97E8,#5C97E8,совпадает,в шкале
+.streamlit/config.toml,53,#16233B,три места: .streamlit/config.toml,[theme.dark] blueBackgroundColor,#16233B,#16233B,совпадает,в шкале
+.streamlit/config.toml,54,#9CC0F2,три места: .streamlit/config.toml,[theme.dark] blueTextColor,#9CC0F2,#9CC0F2,совпадает,в шкале
+.streamlit/config.toml,55,#8A857A,три места: .streamlit/config.toml,[theme.dark] grayColor,#8A857A,#8A92A0,расходится,тёплая нейтраль
+.streamlit/config.toml,56,#2C2822,три места: .streamlit/config.toml,[theme.dark] grayBackgroundColor,#2C2822,#25292F,расходится,тёплая нейтраль
+.streamlit/config.toml,57,#C7C1B6,три места: .streamlit/config.toml,[theme.dark] grayTextColor,#C7C1B6,#BCC2CD,расходится,тёплая нейтраль
+app/thermogar_palette.py,15,#FFFFFF,три места: app/thermogar_palette.py,"LIGHT[""background""]",#FFFFFF,#FFFFFF,совпадает,в шкале
+app/thermogar_palette.py,16,#F1EFEA,три места: app/thermogar_palette.py,"LIGHT[""surface""]",#F1EFEA,#ECEDEF,расходится,тёплая нейтраль
+app/thermogar_palette.py,17,#D8D4CC,три места: app/thermogar_palette.py,"LIGHT[""grid""]",#D8D4CC,#CFD1D5,расходится,тёплая нейтраль
+app/thermogar_palette.py,18,#57534A,три места: app/thermogar_palette.py,"LIGHT[""axis""]",#57534A,#4B4F56,расходится,тёплая нейтраль
+app/thermogar_palette.py,19,#2A2722,три места: app/thermogar_palette.py,"LIGHT[""text""]",#2A2722,#232529,расходится,тёплая нейтраль
+app/thermogar_palette.py,20,#1F60C1,три места: app/thermogar_palette.py,"LIGHT[""primary""]",#1F60C1,#1F60C1,совпадает,в шкале
+app/thermogar_palette.py,21,#0D2768,три места: app/thermogar_palette.py,"LIGHT[""primary_dark""]",#0D2768,#0D2768,совпадает,в шкале
+app/thermogar_palette.py,22,#4587DE,три места: app/thermogar_palette.py,"LIGHT[""primary_light""]",#4587DE,#4587DE,совпадает,в шкале
+app/thermogar_palette.py,23,#8A857A,три места: app/thermogar_palette.py,"LIGHT[""muted""]",#8A857A,#79808B,расходится,тёплая нейтраль
+app/thermogar_palette.py,24,#A62A1E,три места: app/thermogar_palette.py,"LIGHT[""danger""]",#A62A1E,#A62A1E,совпадает,в шкале
+app/thermogar_palette.py,25,#C93425,три места: app/thermogar_palette.py,"LIGHT[""danger_sign""]",#C93425,#C93425,совпадает,в шкале
+app/thermogar_palette.py,26,#EFF6FA,три места: app/thermogar_palette.py,"LIGHT[""info_fill""]",#EFF6FA,#EFF6FA,совпадает,в шкале
+app/thermogar_palette.py,31,#1A1816,три места: app/thermogar_palette.py,"DARK[""background""]",#1A1816,#1F2226,расходится,тёплая нейтраль
+app/thermogar_palette.py,32,#24211D,три места: app/thermogar_palette.py,"DARK[""surface""]",#24211D,#25292F,расходится,тёплая нейтраль
+app/thermogar_palette.py,33,#3A362F,три места: app/thermogar_palette.py,"DARK[""grid""]",#3A362F,#33373E,расходится,тёплая нейтраль
+app/thermogar_palette.py,34,#C7C1B6,три места: app/thermogar_palette.py,"DARK[""axis""]",#C7C1B6,#BCC2CD,расходится,тёплая нейтраль
+app/thermogar_palette.py,35,#F1EFEA,три места: app/thermogar_palette.py,"DARK[""text""]",#F1EFEA,#ECEDEF,расходится,тёплая нейтраль
+app/thermogar_palette.py,36,#5C97E8,три места: app/thermogar_palette.py,"DARK[""primary""]",#5C97E8,#5C97E8,совпадает,в шкале
+app/thermogar_palette.py,37,#4587DE,три места: app/thermogar_palette.py,"DARK[""primary_dark""]",#4587DE,#4587DE,совпадает,в шкале
+app/thermogar_palette.py,38,#B4D1EE,три места: app/thermogar_palette.py,"DARK[""primary_light""]",#B4D1EE,#B4D1EE,совпадает,в шкале
+app/thermogar_palette.py,39,#8A857A,три места: app/thermogar_palette.py,"DARK[""muted""]",#8A857A,#8A92A0,расходится,тёплая нейтраль
+app/thermogar_palette.py,40,#F06157,три места: app/thermogar_palette.py,"DARK[""danger""]",#F06157,#F06157,совпадает,в шкале
+app/thermogar_palette.py,41,#F06157,три места: app/thermogar_palette.py,"DARK[""danger_sign""]",#F06157,#F06157,совпадает,в шкале
+app/thermogar_palette.py,42,#16233B,три места: app/thermogar_palette.py,"DARK[""info_fill""]",#16233B,#16233B,совпадает,в шкале
+app/thermogar_palette.py,48,#0D2768,три места: app/thermogar_palette.py,LIGHT_SERIES[0],#0D2768,#0D2768,совпадает,в шкале
+app/thermogar_palette.py,49,#4587DE,три места: app/thermogar_palette.py,LIGHT_SERIES[1],#4587DE,#4587DE,совпадает,в шкале
+app/thermogar_palette.py,50,#000000,три места: app/thermogar_palette.py,LIGHT_SERIES[2],#000000,#000000,совпадает,в шкале
+app/thermogar_palette.py,51,#D55E00,три места: app/thermogar_palette.py,LIGHT_SERIES[3],#D55E00,#D55E00,совпадает,в шкале
+app/thermogar_palette.py,52,#009E73,три места: app/thermogar_palette.py,LIGHT_SERIES[4],#009E73,#009E73,совпадает,в шкале
+app/thermogar_palette.py,53,#CC79A7,три места: app/thermogar_palette.py,LIGHT_SERIES[5],#CC79A7,#CC79A7,совпадает,в шкале
+app/thermogar_palette.py,54,#0072B2,три места: app/thermogar_palette.py,LIGHT_SERIES[6],#0072B2,#0072B2,совпадает,в шкале
+app/thermogar_palette.py,58,#4587DE,три места: app/thermogar_palette.py,DARK_SERIES[0],#4587DE,#4587DE,совпадает,в шкале
+app/thermogar_palette.py,59,#B4D1EE,три места: app/thermogar_palette.py,DARK_SERIES[1],#B4D1EE,#B4D1EE,совпадает,в шкале
+app/thermogar_palette.py,60,#F1EFEA,три места: app/thermogar_palette.py,DARK_SERIES[2],#F1EFEA,"норма не задана (C-2d: только ряд 1, ряд 2)",,тёплая нейтраль
+app/thermogar_palette.py,61,#F5A79F,три места: app/thermogar_palette.py,DARK_SERIES[3],#F5A79F,"норма не задана (C-2d: только ряд 1, ряд 2)",,в шкале
+app/thermogar_palette.py,62,#8FE0B4,три места: app/thermogar_palette.py,DARK_SERIES[4],#8FE0B4,"норма не задана (C-2d: только ряд 1, ряд 2)",,в шкале
+app/thermogar_palette.py,63,#E8B200,три места: app/thermogar_palette.py,DARK_SERIES[5],#E8B200,"норма не задана (C-2d: только ряд 1, ряд 2)",,в шкале
+app/thermogar_palette.py,64,#9CC0F2,три места: app/thermogar_palette.py,DARK_SERIES[6],#9CC0F2,"норма не задана (C-2d: только ряд 1, ряд 2)",,в шкале
+docs/guide/ThermoGar_Guide_0.4.1.html,11,#FFFFFF,четвёртый адрес: документ (руководство HTML),,,,,в шкале
+docs/guide/ThermoGar_Guide_0.4.1.html,11,#2A2722,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.1.html,15,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.1.html,17,#133B8B,четвёртый адрес: документ (руководство HTML),,,,,в шкале
+docs/guide/ThermoGar_Guide_0.4.1.html,19,#133B8B,четвёртый адрес: документ (руководство HTML),,,,,в шкале
+docs/guide/ThermoGar_Guide_0.4.1.html,21,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.1.html,23,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.1.html,24,#F1EFEA,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.1.html,25,#F1EFEA,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.1.html,27,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.1.html,28,#F1EFEA,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.2.html,11,#FFFFFF,четвёртый адрес: документ (руководство HTML),,,,,в шкале
+docs/guide/ThermoGar_Guide_0.4.2.html,11,#2A2722,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.2.html,15,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.2.html,17,#133B8B,четвёртый адрес: документ (руководство HTML),,,,,в шкале
+docs/guide/ThermoGar_Guide_0.4.2.html,19,#133B8B,четвёртый адрес: документ (руководство HTML),,,,,в шкале
+docs/guide/ThermoGar_Guide_0.4.2.html,21,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.2.html,23,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.2.html,24,#F1EFEA,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.2.html,25,#F1EFEA,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.2.html,27,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.2.html,28,#F1EFEA,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.3.html,11,#FFFFFF,четвёртый адрес: документ (руководство HTML),,,,,в шкале
+docs/guide/ThermoGar_Guide_0.4.3.html,11,#2A2722,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.3.html,15,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.3.html,17,#133B8B,четвёртый адрес: документ (руководство HTML),,,,,в шкале
+docs/guide/ThermoGar_Guide_0.4.3.html,19,#133B8B,четвёртый адрес: документ (руководство HTML),,,,,в шкале
+docs/guide/ThermoGar_Guide_0.4.3.html,21,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.3.html,23,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.3.html,24,#F1EFEA,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.3.html,25,#F1EFEA,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.3.html,27,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.3.html,28,#F1EFEA,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.4.html,11,#FFFFFF,четвёртый адрес: документ (руководство HTML),,,,,в шкале
+docs/guide/ThermoGar_Guide_0.4.4.html,11,#2A2722,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.4.html,15,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.4.html,17,#133B8B,четвёртый адрес: документ (руководство HTML),,,,,в шкале
+docs/guide/ThermoGar_Guide_0.4.4.html,19,#133B8B,четвёртый адрес: документ (руководство HTML),,,,,в шкале
+docs/guide/ThermoGar_Guide_0.4.4.html,21,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.4.html,23,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.4.html,24,#F1EFEA,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.4.html,25,#F1EFEA,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.4.html,27,#D8D4CC,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+docs/guide/ThermoGar_Guide_0.4.4.html,28,#F1EFEA,четвёртый адрес: документ (руководство HTML),,,,,тёплая нейтраль
+scripts/thermogar_diagnostic_panel_snapshot.py,118,#C8CCD0,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+scripts/thermogar_diagnostic_panel_snapshot.py,120,#E8EAED,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+scripts/thermogar_diagnostic_panel_snapshot.py,126,#F7F8F9,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/make_guide_screens.py,56,#C93425,четвёртый адрес: инструмент вне приложения,,,,,в шкале
+tools/make_guide_screens.py,199,#FFFFFF,четвёртый адрес: инструмент вне приложения,,,,,в шкале
+tools/make_guide_screens.py,199,#FFFFFF,четвёртый адрес: инструмент вне приложения,,,,,в шкале
+tools/make_guide_screens.py,1052,#FFFFFF,четвёртый адрес: инструмент вне приложения,,,,,в шкале
+tools/make_guide_screens.py,1052,#2A2722,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
+tools/make_guide_screens.py,1056,#D8D4CC,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
+tools/make_guide_screens.py,1058,#133B8B,четвёртый адрес: инструмент вне приложения,,,,,в шкале
+tools/make_guide_screens.py,1060,#133B8B,четвёртый адрес: инструмент вне приложения,,,,,в шкале
+tools/make_guide_screens.py,1062,#D8D4CC,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
+tools/make_guide_screens.py,1064,#D8D4CC,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
+tools/make_guide_screens.py,1065,#F1EFEA,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
+tools/make_guide_screens.py,1066,#F1EFEA,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
+tools/make_guide_screens.py,1068,#D8D4CC,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
+tools/make_guide_screens.py,1069,#F1EFEA,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
+tools/study_hn62m.py,1945,#B03A2E,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_hn62m_tech.py,552,#B03A2E,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_hn62m_tech.py,650,#2E86C1,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_hn62m_wave11.py,902,#B03A2E,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_hn62m_wave12_tolerance.py,768,#1F77B4,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_hn62m_wave12_tolerance.py,768,#D62728,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_hn62m_wave12_tolerance.py,782,#1F77B4,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_hn62m_wave12_tolerance.py,782,#D62728,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_hn62m_wave12_volume.py,914,#1F77B4,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_hn62m_wave12_volume.py,914,#2CA02C,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_hn62m_wave12_volume.py,914,#D62728,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_wave15_v_718.py,1244,#9EC5F4,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_wave15_v_718.py,1249,#2A78D6,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_wave15_v_718.py,1254,#0B0B0B,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_wave15_v_718.py,1262,#2A78D6,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_wave15_v_718.py,1267,#52514E,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
+tools/study_wave15_v_718.py,1273,#8A6D3B,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_wave15_v_718.py,1283,#D9D7D2,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
+tools/study_wave15_v_718.py,1291,#E4E3DF,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
+tools/study_wave15_v_718.py,1323,#9EC5F4,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_wave15_v_718.py,1327,#2A78D6,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_wave15_v_718.py,1332,#0B0B0B,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_wave15_v_718.py,1341,#D9D7D2,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
+tools/study_wave15_v_718.py,1354,#E4E3DF,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
+tools/study_wave15_validation.py,695,#9EC5F4,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_wave15_validation.py,698,#2A78D6,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_wave15_validation.py,700,#0B0B0B,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_wave15_validation.py,704,#52514E,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
+tools/study_wave15_validation.py,705,#52514E,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
+tools/study_wave15_validation.py,708,#2A78D6,четвёртый адрес: инструмент вне приложения,,,,,вне шкалы
+tools/study_wave15_validation.py,720,#E4E3DF,четвёртый адрес: инструмент вне приложения,,,,,тёплая нейтраль
