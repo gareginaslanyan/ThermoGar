@@ -280,3 +280,28 @@
 - `D:\Pets\ThermoGar-w21a` и `D:\Pets\Lilith` не открывались.
 
 ## Git
+
+Состояние после пуша коммита с результатами (перед этим, последним коммитом, который дописывает только раздел «Git»).
+
+`git push -u origin wave21-b`: `* [new branch] wave21-b -> wave21-b`, `branch 'wave21-b' set up to track 'origin/wave21-b'`.
+
+`git ls-remote origin wave21-b`:
+
+```
+93098b7ddac57614703da6416ccd1aec77b352ad	refs/heads/wave21-b
+```
+
+`git log --oneline 5ed5d88..wave21-b`:
+
+```
+93098b7 docs(21-B): design audit of ThermoGar from screenshots, light and dark theme
+7557e82 docs(tasks): 21-B task text
+```
+
+`git status --short`:
+
+```
+?? _to_delete/
+```
+
+В main ничего не вливалось. Вершину ветки после этого коммита исполнитель сообщает в ответе мастеру.
