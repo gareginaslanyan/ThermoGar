@@ -38,6 +38,13 @@ from thermogar_release_ui import (
     release_calculation_button,
     release_download_button,
 )
+from thermogar_user_errors import (
+    UserRuntimeError,
+    UserValueError,
+    element_columns_for_display,
+    element_symbol,
+    element_symbols,
+)
 
 try:
     from kawin.precipitation import (
@@ -56,6 +63,7 @@ except Exception as import_error:  # pragma: no cover
     PRECIPITATION_IMPORT_ERROR = str(import_error)
 
 
+PRESET_NI_DISPLAY_LABEL = "Учебный Ni–9.8Al–8.3Cr / γ′"
 PRESET_NI = {
     "label": "Учебный Ni–9,8Al–8,3Cr / γ′",
     "composition": "AL=9.8, CR=8.3",
@@ -81,7 +89,7 @@ EXCLUDED_PHASES = {"fe": ("C15_LAVES",)}
 # Строка происхождения физических входов по умолчанию. Поле остаётся
 # редактируемым и попадает в Excel, историю расчётов и JSON происхождения,
 # но пустое поле больше не выключает кнопку расчёта.
-DEFAULT_INPUT_PROVENANCE = "DECLARED_SCENARIO_INPUT_NOT_MATERIAL_QUALIFICATION"
+DEFAULT_INPUT_PROVENANCE = "Объявленный сценарий, не данные материала"
 
 NUCLEATION_TYPES = {
     "Объёмные центры": "BULK",
@@ -146,7 +154,7 @@ class PrecipitationResult:
 KWN_COMPOSITION_STOP_CAUSE = (
     "Причина: при движущей силе по базе зарождение практически безбарьерное, "
     "и выделение вычерпывает добавки из матрицы быстрее, чем модель это "
-    "выдерживает; см. docs/LIMITS_OF_APPLICABILITY.md."
+    "выдерживает."
 )
 
 
@@ -226,22 +234,25 @@ def _time_text(time_s: float) -> str:
 
 def _composition_stop_note(time_s: float, element: str, value: float) -> str:
     return (
-        f"Расчёт остановлен на {_time_text(time_s)}: доля {element} в матрице "
-        f"стала {100*value:.4g} ат. %, баланс масс нарушен. Показана часть "
+        f"Расчёт остановлен на {_time_text(time_s)}: доля {element_symbol(element)} в матрице "
+        f"стала {100*value:.4g} ат.%, баланс масс нарушен. Показана часть "
         f"расчёта до остановки. {KWN_COMPOSITION_STOP_CAUSE}"
     )
 
 
 def _solver_failure_note(time_s: float, composition: Any, solutes: list[str], balance: str) -> str:
     x = np.asarray(composition, float).ravel()
-    parts = [f"{element} {100*value:.4g}" for element, value in zip(solutes, x.tolist())]
-    parts.append(f"{balance} {100*(1.0 - float(np.sum(x))):.4g}")
+    parts = [
+        f"{element_symbol(element)} {100*value:.4g}"
+        for element, value in zip(solutes, x.tolist())
+    ]
+    parts.append(f"{element_symbol(balance)} {100*(1.0 - float(np.sum(x))):.4g}")
     return (
-        f"Расчёт прерван после {_time_text(time_s)}: на следующем шаге pycalphad "
-        "не смог посчитать локальное равновесие для состава матрицы, "
-        "полученного из баланса масс (деление на ноль). Последний посчитанный "
-        f"состав матрицы, ат. %: {', '.join(parts)}. Показана часть "
-        f"расчёта до обрыва. {KWN_COMPOSITION_STOP_CAUSE}"
+        f"Расчёт прерван после {_time_text(time_s)}: на следующем шаге не "
+        "удалось посчитать локальное равновесие для состава матрицы из "
+        "баланса масс. Последний посчитанный состав матрицы, ат.%: "
+        f"{', '.join(parts)}. Показана часть расчёта до обрыва. "
+        f"{KWN_COMPOSITION_STOP_CAUSE}"
     )
 
 
@@ -269,18 +280,20 @@ def _parse_composition(text: str) -> dict[str, float]:
     )
     matches = list(pattern.finditer(text))
     if not matches:
-        raise ValueError("Не удалось прочитать состав. Пример: AL=9,8, CR=8,3")
+        raise UserValueError("Не удалось прочитать состав. Пример: Al=9.8, Cr=8.3")
     remainder = re.sub(r"[\s,;]+", "", pattern.sub("", text))
     if remainder:
-        raise ValueError(f"Непонятный фрагмент в составе: {remainder!r}")
+        raise UserValueError(f"Непонятный фрагмент в составе: {remainder!r}")
     result: dict[str, float] = {}
     for match in matches:
         element = match.group(1).upper()
         value = float(match.group(2).replace(",", "."))
         if element in result:
-            raise ValueError(f"Элемент {element} указан повторно.")
+            raise UserValueError(f"Элемент {element_symbol(element)} указан повторно.")
         if value <= 0:
-            raise ValueError(f"Содержание {element} должно быть больше нуля.")
+            raise UserValueError(
+                f"Содержание {element_symbol(element)} должно быть больше нуля."
+            )
         result[element] = value
     return result
 
@@ -294,19 +307,21 @@ def _composition_vectors(
     balance = str(balance).upper()
     entered = _parse_composition(text)
     if balance in entered:
-        raise ValueError(f"Не указывайте элемент-основу {balance} в добавках.")
+        raise UserValueError(
+            f"Не указывайте элемент-основу {element_symbol(balance)} в добавках."
+        )
     available = {str(e).upper() for e in db.elements if str(e).upper() != "VA"}
     unknown = sorted(set(entered) - available)
     if unknown:
-        raise ValueError("В базе отсутствуют: " + ", ".join(unknown))
+        raise UserValueError("В базе отсутствуют: " + ", ".join(unknown))
     total = float(sum(entered.values()))
     if total >= 100:
-        raise ValueError("Сумма добавок должна быть меньше 100 %.")
+        raise UserValueError("Сумма добавок должна быть меньше 100 %.")
     solutes = sorted(entered)
     if not solutes:
-        raise ValueError("Укажите хотя бы одну добавку.")
+        raise UserValueError("Укажите хотя бы одну добавку.")
     if len(solutes) > KWN_MAX_SOLUTES:
-        raise ValueError(
+        raise UserValueError(
             f"Расчёт выделений KWN принимает не более {KWN_MAX_SOLUTES} добавок "
             f"одновременно, в составе {len(solutes)}. Это предел измеренного, а не "
             f"физический: больше {KWN_MAX_SOLUTES} добавок расчёт не проверялся."
@@ -323,7 +338,7 @@ def _composition_vectors(
         moles = x_wt / masses
         x_at = moles / moles.sum()
     else:
-        raise ValueError("Неизвестные единицы состава.")
+        raise UserValueError("Неизвестные единицы состава.")
     return elements, x_at, x_wt
 
 
@@ -350,7 +365,7 @@ def _build_precipitation_thermodynamics(
     методов роста и межфазных составов, которые вызывает PrecipitateModel.
     """
     if len(elements) < 2:
-        raise ValueError("Для кинетики выделений нужны как минимум два элемента.")
+        raise UserValueError("Для кинетики выделений нужны как минимум два элемента.")
     if len(elements) == 2:
         therm = BinaryThermodynamics(database, elements, phases)
         required = ("getInterfacialComposition", "getInterdiffusivity")
@@ -361,7 +376,7 @@ def _build_precipitation_thermodynamics(
         class_label = "MulticomponentThermodynamics"
     missing = [name for name in required if not hasattr(therm, name)]
     if missing:
-        raise RuntimeError(
+        raise UserRuntimeError(
             f"Класс {class_label} не содержит обязательные методы Kawin: "
             + ", ".join(missing)
         )
@@ -377,7 +392,7 @@ def _phase_order_disorder_role(db: Any, phase: str) -> dict[str, str]:
     """
     phase = str(phase)
     if phase not in db.phases:
-        raise ValueError(f"Фаза {phase} отсутствует в базе.")
+        raise UserValueError(f"Фаза {phase} отсутствует в базе.")
     raw_hints = getattr(db.phases[phase], "model_hints", {}) or {}
     ordered = str(raw_hints.get("ordered_phase", "") or "")
     disordered = str(raw_hints.get("disordered_phase", "") or "")
@@ -433,10 +448,9 @@ def _validate_matrix_phase_role(db: Any, matrix_phase: str) -> dict[str, str]:
     info = _phase_order_disorder_role(db, matrix_phase)
     if info["role"] == "ordered":
         disordered = info["disordered_phase"] or "разупорядоченную фазу"
-        raise ValueError(
-            f"Фаза {matrix_phase} является ordered-частью order/disorder-модели "
-            f"и не может быть передана Kawin как матрица. Выберите {disordered}. "
-            "Автоматическая подмена фазы не выполняется."
+        raise UserValueError(
+            f"Фаза {matrix_phase} — упорядоченная половина модели "
+            f"порядок/беспорядок и не может быть матрицей. Выберите {disordered}."
         )
     return info
 
@@ -463,17 +477,17 @@ def _temperature_profile(text: str) -> tuple[np.ndarray, np.ndarray]:
             continue
         parts = [p.strip().replace(",", ".") for p in re.split(r"[;\t ]+", line) if p.strip()]
         if len(parts) != 2:
-            raise ValueError(f"Строка {number}: нужны время, ч и температура, °C.")
+            raise UserValueError(f"Строка {number}: нужны время, ч и температура, °C.")
         rows.append((float(parts[0]), float(parts[1])))
     if len(rows) < 2:
-        raise ValueError("Нужно не менее двух точек температурного цикла.")
+        raise UserValueError("Нужно не менее двух точек температурного цикла.")
     rows.sort(key=lambda item: item[0])
     times = np.array([r[0] for r in rows], float)
     temperatures = np.array([r[1] for r in rows], float)
     if not np.isclose(times[0], 0):
-        raise ValueError("Первая точка должна иметь время 0 ч.")
+        raise UserValueError("Первая точка должна иметь время 0 ч.")
     if np.any(np.diff(times) <= 0):
-        raise ValueError("Время должно строго возрастать.")
+        raise UserValueError("Время должно строго возрастать.")
     return times, temperatures
 
 
@@ -771,19 +785,19 @@ def _check_critical_radius_floor(
     )
     if u >= CRITICAL_RADIUS_REFUSAL_RATIO:
         if grain_boundary_nucleation:
-            raise ValueError(
+            raise UserValueError(
                 f"{radius_text} более чем в полтора раза. При таком радиусе барьер "
                 "зарождения на границах зёрен обращается в ноль, и скорость зарождения "
                 "расходится. Поднимите межфазную энергию либо температуру."
             )
-        raise ValueError(
+        raise UserValueError(
             f"{radius_text} более чем в полтора раза. На таких входах расчёт в наших "
             "опытах не сходился. Поднимите межфазную энергию либо температуру."
         )
     if u > 1.0:
         return [
-            f"{radius_text}, и kawin считает зарождение от предела. Скорость "
-            "зарождения на начальной стадии поэтому не соответствует классической для "
+            f"{radius_text}, и модель считает зарождение от этого предела. "
+            "Поэтому скорость зарождения на начальной стадии не классическая для "
             "этой движущей силы, и начало выделения на графиках может быть искажено."
         ]
     return []
@@ -813,7 +827,7 @@ def _check_size_grid(
     lowest_nucleus = min(estimates, key=lambda item: item[2])
     temperature_k, rnuc_nm = lowest_nucleus[0], lowest_nucleus[2]
     if rnuc_nm < float(cmin_nm):
-        raise ValueError(
+        raise UserValueError(
             f"Сетка размеров не принимает зародыши: радиус зародыша {rnuc_nm:.3g} нм "
             f"(оценка при {temperature_k - 273.15:.1f} °C по начальному составу) "
             f"меньше минимального радиуса сетки {float(cmin_nm):.3g} нм. kawin "
@@ -826,7 +840,7 @@ def _check_size_grid(
     temperature_k, rcrit_nm = lowest_radius[0], lowest_radius[1]
     if width_nm >= rcrit_nm:
         needed_bins = int(np.floor((float(cmax_nm) - float(cmin_nm)) / rcrit_nm)) + 1
-        raise ValueError(
+        raise UserValueError(
             f"Сетка размеров слишком грубая: ширина класса {width_nm:.3g} нм не "
             f"меньше критического радиуса зародыша {rcrit_nm:.3g} нм (оценка при "
             f"{temperature_k - 273.15:.1f} °C по начальному составу). Зародыши "
@@ -861,8 +875,8 @@ def _check_nucleus_above_grid(
     return [
         f"Радиус зародыша {rnuc_nm:.3g} нм (оценка при {temperature_k - 273.15:.1f} °C) "
         f"больше начального максимального радиуса сетки {float(cmax_nm):.3g} нм, поэтому "
-        "первые зародыши записываются мельче своего размера, пока kawin не достроит "
-        "сетку. Итоговые доля, радиус и число частиц от этого почти не меняются, но "
+        "первые зародыши записываются мельче своего размера, пока модель не расширит "
+        "сетку размеров. Итоговые доля, радиус и число частиц от этого почти не меняются, но "
         "начало зарождения на графиках искажено: доля и радиус занижены, число частиц "
         f"завышено. Задайте «Начальный максимальный радиус» больше {rnuc_nm:.3g} нм."
     ]
@@ -949,13 +963,13 @@ def _bind_release_database(
     """Load exactly one canonical hash-pinned SWR database into memory."""
 
     if not isinstance(database_label, str):
-        raise ValueError("Название базы KWN должно быть строкой.")
+        raise UserValueError("Название базы KWN должно быть строкой.")
     supplied_label = database_label.strip()
     canonical_label = RELEASE_DATABASE_LABELS[database_key]
     if supplied_label and supplied_label != canonical_label:
-        raise RuntimeError(
-            "KWN отклонён: название базы не соответствует закреплённому "
-            f"профилю {database_key!r}."
+        raise UserRuntimeError(
+            "Расчёт выделений не запущен: файл базы не совпадает с поставкой "
+            "ThermoGar."
         )
     candidate_path = Path(database_path).resolve()
     expected_path = (
@@ -967,21 +981,21 @@ def _bind_release_database(
         or candidate_path.name != RELEASE_DATABASE_FILENAMES[database_key]
         or not candidate_path.is_file()
     ):
-        raise RuntimeError(
-            "KWN отклонён: путь базы не соответствует закреплённому "
-            f"профилю {database_key!r}."
+        raise UserRuntimeError(
+            "Расчёт выделений не запущен: файл базы не совпадает с поставкой "
+            "ThermoGar."
         )
     expected_sha256 = RELEASE_DATABASE_SHA256[database_key]
     database_sha256 = _sha256(candidate_path)
     if database_sha256 != expected_sha256:
-        raise RuntimeError(
-            "KWN отклонён: SHA-256 базы не соответствует закреплённому "
-            f"профилю {database_key!r}."
+        raise UserRuntimeError(
+            "Расчёт выделений не запущен: файл базы не совпадает с поставкой "
+            "ThermoGar."
         )
     database = Database(str(candidate_path))
     _repair_loaded_database(database)
     if _sha256(candidate_path) != expected_sha256:
-        raise RuntimeError("KWN отклонён: файл базы изменился во время загрузки.")
+        raise UserRuntimeError("KWN отклонён: файл базы изменился во время загрузки.")
     return database_key, candidate_path, database_sha256, canonical_label, database
 
 
@@ -995,32 +1009,31 @@ def run_precipitation(
     bins: int, input_provenance: str, input_confirmation: bool,
 ) -> PrecipitationResult:
     if not isinstance(database_key, str):
-        raise ValueError("Ключ базы KWN должен быть строкой.")
+        raise UserValueError("База не подключена. Выберите базу в боковой панели.")
     database_key = database_key.strip().casefold()
     if database_key not in RELEASE_DATABASE_KEYS:
-        raise ValueError(f"База {database_key!r} не входит в SWR release surface.")
+        raise UserValueError("База не подключена. Выберите базу в боковой панели.")
     if not isinstance(input_provenance, str) or not input_provenance.strip():
-        raise ValueError(
-            "Для KWN обязателен источник или явная маркировка declared "
-            "scenario inputs."
+        raise UserValueError(
+            "Укажите источник физических входов."
         )
     if input_confirmation is not True:
-        raise ValueError(
+        raise UserValueError(
             "Для KWN требуется явное подтверждение исследовательского сценария."
         )
     if not isinstance(schedule_mode, str) or schedule_mode not in {
         "isothermal",
         "profile",
     }:
-        raise ValueError(
-            "Температурный режим KWN должен быть строго 'isothermal' или 'profile'."
+        raise UserValueError(
+            "Введённые значения не проходят проверку."
         )
     allowed_nucleation_types = set(NUCLEATION_TYPES.values())
     if (
         not isinstance(nucleation_type, str)
         or nucleation_type not in allowed_nucleation_types
     ):
-        raise ValueError("Неизвестный тип центров зарождения KWN.")
+        raise UserValueError("Неизвестный тип центров зарождения KWN.")
     # Bind composition and mobility inspection to the verified bytes rather
     # than trusting an independently supplied Database object.
     (
@@ -1035,25 +1048,30 @@ def run_precipitation(
         database_label,
     )
     if not PRECIPITATION_AVAILABLE:
-        raise RuntimeError("Kawin precipitation недоступен: " + PRECIPITATION_IMPORT_ERROR)
+        raise UserRuntimeError(
+            "Модуль кинетики выделений недоступен."
+        ) from ImportError(PRECIPITATION_IMPORT_ERROR)
     elements, x_at, _x_wt = _composition_vectors(db, balance, composition_text, units)
     solutes = elements[1:]
     database_warnings = _database_override_warnings(db, elements)
     if matrix_phase == precipitate_phase:
-        raise ValueError("Матрица и выделение должны различаться.")
+        raise UserValueError("Матрица и выделение должны различаться.")
     if matrix_phase not in db.phases or precipitate_phase not in db.phases:
-        raise ValueError("Выбранная фаза отсутствует в базе.")
+        raise UserValueError("Выбранная фаза отсутствует в базе.")
     matrix_role = _validate_matrix_phase_role(db, matrix_phase)
     coverage = _phase_mobility_coverage(db).get(matrix_phase, set())
     missing = sorted(set(elements) - coverage)
     if missing:
-        raise ValueError(f"Для матрицы {matrix_phase} нет мобильностей: " + ", ".join(missing))
+        raise UserValueError(
+            f"Для матрицы {matrix_phase} нет параметров подвижности: "
+            + element_symbols(missing)
+        )
     if gamma <= 0 or matrix_vm <= 0 or precip_vm <= 0:
-        raise ValueError("Межфазная энергия и молярные объёмы должны быть больше нуля.")
+        raise UserValueError("Межфазная энергия и молярные объёмы должны быть больше нуля.")
     if cmin_nm <= 0 or cmax_nm <= cmin_nm:
-        raise ValueError("Проверьте диапазон радиусов.")
+        raise UserValueError("Проверьте диапазон радиусов.")
     if bins < 20:
-        raise ValueError("Нужно не менее 20 классов размеров.")
+        raise UserValueError("Нужно не менее 20 классов размеров.")
     ratio_limit = HETEROGENEOUS_RATIO_LIMITS.get(nucleation_type)
     if ratio_limit is not None:
         ratio = float(gb_energy) / (2.0 * float(gamma))
@@ -1065,7 +1083,7 @@ def run_precipitation(
 
     if schedule_mode == "isothermal":
         if duration_h <= 0:
-            raise ValueError("Время выдержки должно быть больше нуля.")
+            raise UserValueError("Время выдержки должно быть больше нуля.")
         final_time = float(duration_h)*3600
         profile = [{"time_h": 0.0, "temperature_c": float(temperature_c)}, {"time_h": float(duration_h), "temperature_c": float(temperature_c)}]
     else:
@@ -1306,12 +1324,13 @@ def render_precipitation_section(
     st.subheader("Кинетика выделений")
     st.caption("Зарождение, рост, растворение и укрупнение одной фазы по модели KWN.")
     if not PRECIPITATION_AVAILABLE:
-        st.error("Модуль Kawin precipitation не загрузился.")
-        st.code(PRECIPITATION_IMPORT_ERROR or "kawin не установлен")
+        st.error("Модуль кинетики выделений недоступен. Остальные функции работают.")
+        with st.expander("Технические сведения", expanded=False):
+            st.code(PRECIPITATION_IMPORT_ERROR or "kawin не установлен")
         return
-    st.warning(
-        "TDB/DDB не содержат всех параметров KWN. Межфазная энергия, молярные "
-        "объёмы и центры зарождения должны быть заданы или откалиброваны."
+    st.info(
+        "Межфазную энергию, молярные объёмы и центры зарождения база не "
+        "задаёт: введите их ниже по источнику или по калибровке."
     )
 
     default = DEFAULTS.get(database_key, DEFAULTS["ni"])
@@ -1322,20 +1341,25 @@ def render_precipitation_section(
     preset_label = st.selectbox(
         "Набор исходных параметров",
         preset_options,
+        # Название набора — значение виджета (ключ session_state), поэтому
+        # точка вместо запятой только при показе (21-Ж, шаг 2 д).
+        format_func=lambda option: (
+            PRESET_NI_DISPLAY_LABEL if option == PRESET_NI["label"] else option
+        ),
         key=f"{widget_prefix}_preset",
     )
     demo = database_key == "ni" and preset_label == PRESET_NI["label"]
     mode_key = "demo" if demo else "user"
     if demo:
         st.info(
-            "Учебный пример автоматически использует Ni–9,8Al–8,3Cr, "
-            "800 °C, γ=0,023 Дж/м² и Vm=6,566 см³/моль. "
+            "Учебный пример автоматически использует Ni–9.8Al–8.3Cr, "
+            "800 °C, γ=0.023 Дж/м² и Vm=6.566 см³/моль. "
             "Он нужен для проверки программы и не является паспортом материала."
         )
     else:
         st.caption(
             "Начальные числа в полях — только удобные стартовые значения. "
-            "Перед интерпретацией задайте их как явные scenario inputs с источником."
+            "Перед интерпретацией укажите их источник."
         )
 
     # Учебный набор должен быть воспроизводимым и не зависеть от того,
@@ -1363,22 +1387,22 @@ def render_precipitation_section(
         elements, _x_at, _x_wt = _composition_vectors(db, balance, composition, units)
         matrices = _selectable_phases(database_key, _matrix_candidates(db, elements))
     except Exception as error:
-        st.error(str(error))
+        render_error(error, context="кинетика выделений", title="Состав не принят.")
         st.caption(
             "Состав раздела берётся из поля «Добавки» в боковой панели. "
             f"KWN-модель принимает не более {KWN_MAX_SOLUTES} добавок одновременно. "
             "Это предел измеренного, а не физический: больше "
             f"{KWN_MAX_SOLUTES} добавок расчёт не проверялся. Если добавок больше, "
             "оставьте в составе только элементы, определяющие выделение "
-            "(например, C и CR для карбида M23C6 в стали)."
+            "(например, C и Cr для карбида M23C6 в стали)."
         )
         return
     if not matrices:
-        st.error("Нет матричной фазы с полным набором мобильностей для состава.")
+        st.error("Нет матричной фазы с полным набором параметров подвижности для состава.")
         st.caption(
             "Матрицей может быть только фаза, у которой в базе есть "
-            "MQ/MF-параметры для всех элементов состава: "
-            + ", ".join(elements)
+            "параметры подвижности для всех элементов состава: "
+            + element_symbols(elements)
             + ". Сократите состав в боковой панели до элементов, "
             "покрытых параметрами подвижности."
         )
@@ -1396,7 +1420,7 @@ def render_precipitation_section(
     if matrix_partner:
         st.caption(
             f"{matrix_phase} и {matrix_partner} — разупорядоченная и "
-            "упорядоченная половины одной order/disorder-модели. Kawin "
+            "упорядоченная половины одной модели порядок/беспорядок. Kawin "
             f"принимает матрицей только {matrix_phase}; {matrix_partner} "
             "поэтому не предлагается как отдельная фаза-выделение."
         )
@@ -1548,7 +1572,7 @@ def render_precipitation_section(
                 "Строка попадает в Excel, в JSON происхождения и в историю "
                 "расчётов. Впишите DOI, таблицу или страницу, откуда взяты "
                 "γ, Vm и параметры зарождения; значение по умолчанию помечает "
-                "их как объявленный сценарий без привязки к материалу."
+                "их как объявленный сценарий, не данные материала."
             ),
             key=f"{widget_prefix}_{mode_key}_input_provenance",
         )
@@ -1615,7 +1639,7 @@ def render_precipitation_section(
         st.warning(warning)
     # BL-35. Текст отказа — и над вкладками, и строкой в таблице проверок.
     if getattr(result, "stop_note", ""):
-        st.warning(result.stop_note)
+        st.error(result.stop_note)
     if (result.quality["Статус"] == "пройдена").all():
         st.success("Внутренние численные проверки пройдены.")
     else:
@@ -1624,35 +1648,35 @@ def render_precipitation_section(
         ["Итоги", "Кинетика и состав", "Распределение размеров", "Экспорт и ограничения"]
     )
     with overview:
-        st.dataframe(result.summary, width="stretch", hide_index=True)
+        st.dataframe(element_columns_for_display(result.summary), width="stretch", hide_index=True)
         st.pyplot(result.figures["fraction"])
         st.pyplot(result.figures["radius_density"])
         st.dataframe(result.quality, width="stretch", hide_index=True)
     with kinetics_tab:
         st.pyplot(result.figures["nucleation"])
         st.pyplot(result.figures["composition"])
-        st.dataframe(result.kinetics, width="stretch", hide_index=True)
+        st.dataframe(element_columns_for_display(result.kinetics), width="stretch", hide_index=True)
         with st.expander("Составы матрицы и межфазного равновесия"):
-            st.dataframe(result.matrix_composition, width="stretch", hide_index=True)
-            st.dataframe(result.interface_composition, width="stretch", hide_index=True)
+            st.dataframe(element_columns_for_display(result.matrix_composition), width="stretch", hide_index=True)
+            st.dataframe(element_columns_for_display(result.interface_composition), width="stretch", hide_index=True)
     with psd_tab:
         st.pyplot(result.figures["psd"])
         st.dataframe(result.psd, width="stretch", hide_index=True)
     with export_tab:
-        release_download_button("Excel", data=_excel(result), file_name=f"ThermoGar_precipitation_{result.phase}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", key=f"{widget_prefix}_download_excel")
-        release_download_button("Состояние модели NPZ", data=result.npz, file_name=f"ThermoGar_precipitation_{result.phase}.npz", mime="application/octet-stream", key=f"{widget_prefix}_download_npz")
-        release_download_button("Происхождение JSON", data=result.provenance, file_name=f"ThermoGar_precipitation_{result.phase}_provenance.json", mime="application/json", key=f"{widget_prefix}_download_json")
-        release_download_button("PNG: доля", data=_png(result.figures["fraction"]), file_name=f"ThermoGar_{result.phase}_fraction.png", mime="image/png", key=f"{widget_prefix}_download_fraction_png")
-        release_download_button("PNG: размер и плотность", data=_png(result.figures["radius_density"]), file_name=f"ThermoGar_{result.phase}_size_density.png", mime="image/png", key=f"{widget_prefix}_download_size_png")
-        release_download_button("PNG: PSD", data=_png(result.figures["psd"]), file_name=f"ThermoGar_{result.phase}_PSD.png", mime="image/png", key=f"{widget_prefix}_download_psd_png")
+        release_download_button("Скачать Excel", data=_excel(result), file_name=f"ThermoGar_precipitation_{result.phase}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", key=f"{widget_prefix}_download_excel")
+        release_download_button("Скачать состояние модели, NPZ", data=result.npz, file_name=f"ThermoGar_precipitation_{result.phase}.npz", mime="application/octet-stream", key=f"{widget_prefix}_download_npz")
+        release_download_button("Скачать происхождение, JSON", data=result.provenance, file_name=f"ThermoGar_precipitation_{result.phase}_provenance.json", mime="application/json", key=f"{widget_prefix}_download_json")
+        release_download_button("Скачать график доли, PNG", data=_png(result.figures["fraction"]), file_name=f"ThermoGar_{result.phase}_fraction.png", mime="image/png", key=f"{widget_prefix}_download_fraction_png")
+        release_download_button("Скачать график размера и плотности, PNG", data=_png(result.figures["radius_density"]), file_name=f"ThermoGar_{result.phase}_size_density.png", mime="image/png", key=f"{widget_prefix}_download_size_png")
+        release_download_button("Скачать график распределения размеров, PNG", data=_png(result.figures["psd"]), file_name=f"ThermoGar_{result.phase}_PSD.png", mime="image/png", key=f"{widget_prefix}_download_psd_png")
         st.markdown(
             """
-### Ограничения исследовательского KWN mode
+### Ограничения расчёта выделений (KWN)
 
 - Одна однородная матрица и одна сферическая фаза-выделение.
 - Межфазная энергия, молярные объёмы и центры зарождения задаются пользователем.
 - Нет автоматической калибровки, упругой энергии, изменения формы и градиентов состава.
 - Зелёная проверка означает численную согласованность, а не совпадение с экспериментом.
-- Автоматический прогноз прочности, твёрдости и пластичности отключён; KWN-результат не является material validation.
+- Автоматический прогноз прочности, твёрдости и пластичности отключён; результат KWN не заменяет проверку на материале.
 """
         )

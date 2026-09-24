@@ -163,6 +163,12 @@ def _fail(reason: verified_loaders.ReasonCode, detail: str) -> None:
     raise verified_loaders.VerifiedLoaderError(reason, detail)
 
 
+def _fail_user(reason: verified_loaders.ReasonCode, detail: str) -> None:
+    """Как ``_fail``, но ``detail`` — своё русское сообщение для экрана (21-Ж)."""
+
+    raise verified_loaders.VerifiedLoaderError(reason, detail, user_message=True)
+
+
 def clear_property_witnesses() -> None:
     """Clear only process-local B4B2 evidence after binding invalidation."""
 
@@ -442,12 +448,12 @@ def _mixture_molar_volumes_cm3(
             )
             if missing:
                 # BL-39: плотности элемента в базе нет — объём фазы не выдумывается.
-                _fail(
+                _fail_user(
                     verified_loaders.ReasonCode.DATA_UNAVAILABLE,
                     physical.mixture_unavailable_message(phase, missing),
                 )
             if density is None or not math.isfinite(density) or density <= 0.0:
-                _fail(
+                _fail_user(
                     verified_loaders.ReasonCode.DATA_UNAVAILABLE,
                     f"Объём фазы {phase} не получен ни по физической базе, ни по "
                     "правилу смеси: объёмные доли фаз для VRH посчитать нельзя.",
@@ -460,7 +466,7 @@ def _mixture_molar_volumes_cm3(
                 if note not in notes:
                     notes.append(note)
         if amount_total <= 0.0 or volume_total <= 0.0:
-            _fail(
+            _fail_user(
                 verified_loaders.ReasonCode.DATA_UNAVAILABLE,
                 f"Объём фазы {phase} не получен: объёмные доли фаз для VRH "
                 "посчитать нельзя.",
@@ -1066,7 +1072,13 @@ def _strengthening_inputs(
 ) -> tuple[dict[str, Any], _HillWitness | None]:
     raw = _exact_dict(value, STRENGTHENING_INPUT_FIELDS, "strengthening inputs")
     if raw["input_provenance"] is None:
-        _fail(verified_loaders.ReasonCode.USER_INPUT_REQUIRED, "Strengthening input provenance is required.")
+        # На экране — существующая фраза раздела (thermogar_properties),
+        # английский текст остаётся для технического отчёта (21-Ж).
+        raise verified_loaders.VerifiedLoaderError(
+            verified_loaders.ReasonCode.USER_INPUT_REQUIRED,
+            "Strengthening input provenance is required.",
+            user_text="Укажите источник и область применимости всех коэффициентов.",
+        )
     provenance = _trimmed(raw["input_provenance"], "input_provenance", maximum=2048)
     if type(raw["input_confirmation"]) is not bool:
         _fail(verified_loaders.ReasonCode.INPUT_INVALID, "input_confirmation must be bool.")
@@ -1189,7 +1201,7 @@ def execute_verified_properties(
         # уносит всю подготовку (BL-40).
         phases, removed = verified_physical.buildable_phases(database, components, policy_phases)
         if not phases:
-            _fail(
+            _fail_user(
                 verified_loaders.ReasonCode.INPUT_INVALID,
                 "На выбранном наборе элементов не осталось допустимых фаз: "
                 + verified_physical.excluded_phases_note(removed),

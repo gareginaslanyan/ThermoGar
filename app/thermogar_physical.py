@@ -34,6 +34,7 @@ from typing import Any, Iterable, Mapping
 
 import numpy as np
 import pandas as pd
+from thermogar_user_errors import UserValueError, element_symbol, element_symbols
 
 
 PHYSICAL_DATABASE_VERSION = "1.03"
@@ -81,7 +82,7 @@ PHASE_ALIASES: dict[str, tuple[str, str, str]] = {
     "LAVES": (
         "LAVES_PHASE",
         "structural",
-        "Использована общая модель фазы Лавеса из physical_data.pdb.",
+        "Использована общая модель фазы Лавеса из физической базы.",
     ),
     "LAV_C14": (
         "LAVES_PHASE",
@@ -231,7 +232,7 @@ class _SafeExpression:
         tree = ast.parse(expression, mode="eval")
         for node in ast.walk(tree):
             if not isinstance(node, self._allowed_nodes):
-                raise ValueError(
+                raise UserValueError(
                     "Неподдерживаемая конструкция в физической базе: "
                     f"{expression!r} ({type(node).__name__})"
                 )
@@ -338,11 +339,11 @@ def load_physical_overrides(path: str | Path) -> PhysicalOverrideSet:
     data = path.read_bytes()
     document = json.loads(data.decode("utf-8"))
     if document.get("format") != PHYSICAL_OVERRIDES_FORMAT:
-        raise ValueError(
+        raise UserValueError(
             "Не файл перекрытий физической базы: " + str(path)
         )
     if int(document.get("format_version", 0)) != 1:
-        raise ValueError(
+        raise UserValueError(
             "Неизвестная версия формата перекрытий: "
             f"{document.get('format_version')!r}"
         )
@@ -410,11 +411,10 @@ OVERRIDES_OFF_BY_USER = _OverridesOffByUser()
 # Текст для пользователя, когда поправки выключены галочкой раздела «Свойства».
 # Стоит там же, где текст применённой поправки: первым в warnings результата.
 OVERRIDES_OFF_BY_USER_NOTE = (
-    "Поправки проекта ThermoGar к физической базе выключены пользователем: "
-    "плотность посчитана строго по данным physical_data_v103.pdb. "
-    "Не применены: {names}. У сплавов с хромом плотность при нагреве выходит "
-    "ниже, чем с поправкой, — до 1 % при 700 °C и до 2 % при 1300 °C. "
-    "Подробности: docs/DATABASES.md, раздел «Поправки проекта к физической базе»."
+    "Поправки проекта ThermoGar к физической базе выключены: плотность "
+    "посчитана строго по данным базы. Не применены: {names}. У сплавов с "
+    "хромом плотность при нагреве ниже, чем с поправкой: до 1 % при 700 °C и "
+    "до 2 % при 1300 °C."
 )
 
 
@@ -485,7 +485,7 @@ class PhysicalDensityDatabase:
             path = default_overrides_path()
             return load_physical_overrides(path) if path.is_file() else None
         raise TypeError(
-            "Непонятный аргумент overrides: " + type(overrides).__name__
+            "Файл поправок проекта к физической базе повреждён. Переустановите программу."
         )
 
     def _apply_overrides(self, overrides: Any) -> None:
@@ -510,23 +510,22 @@ class PhysicalDensityDatabase:
             self.overrides.target_sha256
             and self.overrides.target_sha256 != self.sha256
         ):
-            raise ValueError(
-                "Файл перекрытий рассчитан на другую физическую базу: "
-                f"ожидался SHA-256 {self.overrides.target_sha256}, "
-                f"загружена база {self.sha256}."
+            raise UserValueError(
+                "Файл поправок проекта к физической базе повреждён. "
+                "Переустановите программу."
             )
 
         applied: list[DensityOverride] = []
         for entry in self.overrides.filled:
             if entry.kind != "function":
-                raise ValueError(
-                    f"Перекрытие {entry.identifier}: неизвестный вид "
-                    f"{entry.kind!r}; поддержан только 'function'."
+                raise UserValueError(
+                    "Файл поправок проекта к физической базе повреждён. "
+                    "Переустановите программу."
                 )
             key = entry.name.upper()
             definition = self.functions.get(key)
             if definition is None:
-                raise ValueError(
+                raise UserValueError(
                     f"Перекрытие {entry.identifier} ссылается на функцию "
                     f"{entry.name}, которой нет в физической базе."
                 )
@@ -591,8 +590,8 @@ class PhysicalDensityDatabase:
                 self.parameters_by_phase[parameter.phase].append(parameter)
 
         if not self.functions or not self.parameters:
-            raise ValueError(
-                "Физическая база не содержит распознанных FUNCTION/DP параметров."
+            raise UserValueError(
+                "Физическая база не прочитана. Переустановите программу."
             )
 
     def expression(self, expression: str) -> _SafeExpression:
@@ -606,12 +605,12 @@ class PhysicalDensityDatabase:
             return self._function_value_cache[key]
         definition = self.functions.get(key[0])
         if definition is None:
-            raise KeyError(f"В physical_data.pdb не найдена функция {name}.")
+            raise KeyError("Физическая база не прочитана. Переустановите программу.")
         if not (
             definition.lower_temperature <= float(temperature_k)
             <= definition.upper_temperature
         ):
-            raise ValueError(
+            raise UserValueError(
                 f"Температура {float(temperature_k):.2f} K вне диапазона "
                 f"функции {definition.name}: "
                 f"{definition.lower_temperature:.2f}–"
@@ -633,9 +632,9 @@ class PhysicalDensityDatabase:
             parameter.lower_temperature <= float(temperature_k)
             <= parameter.upper_temperature
         ):
-            raise ValueError(
+            raise UserValueError(
                 f"Температура {float(temperature_k):.2f} K вне диапазона "
-                f"DP-параметра {parameter.phase}: "
+                f"модели плотности {parameter.phase}: "
                 f"{parameter.lower_temperature:.2f}–"
                 f"{parameter.upper_temperature:.2f} K."
             )
@@ -824,18 +823,18 @@ class PhysicalDensityDatabase:
             )
         if kind == "phase":
             return (
-                f"Плотность элемента {element} в правиле смеси взята по "
+                f"Плотность элемента {element_symbol(element)} в правиле смеси взята по "
                 f"модели {label} физической базы."
             )
         if "+" in label:
             return (
-                f"Плотность элемента {element} в правиле смеси взята по "
+                f"Плотность элемента {element_symbol(element)} в правиле смеси взята по "
                 f"функциям {label} физической базы: модели фазы для него в "
                 "базе нет."
             )
         return (
-            f"Плотность элемента {element} в правиле смеси взята по функции "
-            f"{label} физической базы — это плотность при 298,15 K; теплового "
+            f"Плотность элемента {element_symbol(element)} в правиле смеси взята по функции "
+            f"{label} физической базы — это плотность при 298.15 K; теплового "
             "расширения этого элемента в базе нет, и при других температурах "
             "оно не учтено; при рабочих температурах ошибка объёма может "
             "превышать 10 %."
@@ -897,7 +896,7 @@ class PhysicalDensityDatabase:
         warnings: list[str] = []
         if unknown:
             warnings.append(
-                "Нет плотности элементов: " + ", ".join(sorted(unknown))
+                "Нет плотности элементов: " + element_symbols(sorted(unknown))
             )
             return None, coverage, warnings
         if volume <= 0.0 or coverage < 0.9:
@@ -956,7 +955,7 @@ class PhysicalDensityDatabase:
                 requested_phase=phase_name,
                 physical_phase=phase_name,
                 quality="direct",
-                note="Прямая DP-модель из physical_data.pdb.",
+                note="Прямая модель плотности из физической базы.",
             )
 
         phase_obj = getattr(thermodynamic_db, "phases", {}).get(phase_name)
@@ -989,7 +988,7 @@ class PhysicalDensityDatabase:
             requested_phase=phase_name,
             physical_phase=None,
             quality="missing",
-            note="В physical_data.pdb нет модели плотности для этой фазы.",
+            note="В физической базе нет модели плотности для этой фазы.",
         )
 
     def density_from_site_fractions(
@@ -1007,7 +1006,7 @@ class PhysicalDensityDatabase:
         physical_phase = physical_phase.upper()
         parameters = self.parameters_by_phase.get(physical_phase, [])
         if not parameters:
-            return None, 0.0, ["DP-параметры отсутствуют."]
+            return None, 0.0, ["В базе нет модели плотности этой фазы."]
 
         n_sublattices = _phase_sublattice_count(physical_phase, parameters)
         if len(site_fractions) != n_sublattices:
@@ -1183,7 +1182,7 @@ class PhysicalDensityDatabase:
             return None, covered_weight, warnings
 
         if not math.isfinite(density) or density <= 0:
-            warnings.append("DP-модель вернула неположительную плотность.")
+            warnings.append("Модель плотности фазы дала неположительное значение.")
             return None, covered_weight, warnings
 
         return float(density), float(covered_weight), warnings
@@ -1235,7 +1234,7 @@ def mixture_unavailable_message(phase: str, elements: Iterable[str]) -> str:
     return MIXTURE_UNAVAILABLE_TEMPLATE.format(
         phase=phase,
         noun="элемента" if len(names) == 1 else "элементов",
-        elements=", ".join(names),
+        elements=element_symbols(names),
     )
 
 
@@ -1460,7 +1459,7 @@ def calculate_physical_properties(
 
         if site_fractions is None:
             aggregate["warnings"].add(
-                "Не удалось восстановить подрешёточный состав для DP-модели."
+                "Не удалось восстановить подрешёточный состав для модели плотности."
             )
             continue
 
@@ -1632,7 +1631,7 @@ def calculate_physical_properties(
         elif inherited_phase_amount > 1e-8:
             quality_label = "оценочная: есть плотности связанных фаз"
         else:
-            quality_label = "полная по доступным прямым DP-моделям"
+            quality_label = "полная по прямым моделям плотности"
     else:
         alloy_density = None
         quality_label = "неполная: не все равновесные фазы обеспечены плотностью"
@@ -1763,7 +1762,7 @@ def _parse_function(command: str) -> FunctionDefinition:
         flags=re.IGNORECASE,
     )
     if match is None:
-        raise ValueError("Не удалось разобрать FUNCTION: " + command)
+        raise UserValueError("Физическая база не прочитана. Переустановите программу.")
     name, lower, expression, upper = match.groups()
     return FunctionDefinition(
         name=name.upper(),
@@ -1793,7 +1792,7 @@ def _parse_density_parameter(command: str) -> DensityParameter:
         flags=re.IGNORECASE,
     )
     if match is None:
-        raise ValueError("Не удалось разобрать PARAMETER DP: " + command)
+        raise UserValueError("Физическая база не прочитана. Переустановите программу.")
     lower, expression, upper = match.groups()
     phase, constituent_text = signature.split(",", 1)
     order = 0
@@ -1872,7 +1871,7 @@ def _site_fractions_from_equilibrium(
     model = Model(thermodynamic_db, model_components, phase_name)
     symbols = list(model.site_fractions)
     if len(symbols) > len(y_row):
-        raise ValueError("В результате недостаточно внутренних степеней свободы.")
+        raise UserValueError("В результате недостаточно внутренних степеней свободы.")
 
     result: list[dict[str, float]] = [
         {} for _ in range(len(model.constituents))
@@ -1895,13 +1894,13 @@ def _site_fractions_from_equilibrium(
             # Подрешётка разобрана не полностью — нормировать по неполному
             # набору нельзя, доли получатся завышенными. Пусть сработает
             # запасной путь по составу фазы.
-            raise ValueError(
+            raise UserValueError(
                 "В Y-координатах нет составляющих подрешётки "
                 f"{sublattice_index + 1}: {', '.join(sorted(missing))}."
             )
         total = sum(max(0.0, value) for value in sublattice.values())
         if total <= 0:
-            raise ValueError("Пустая подрешётка в Y-координатах.")
+            raise UserValueError("Пустая подрешётка в Y-координатах.")
         normalized.append(
             {
                 species: max(0.0, value) / total

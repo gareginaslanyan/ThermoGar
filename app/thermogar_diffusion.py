@@ -36,6 +36,13 @@ from thermogar_release_ui import (
     release_calculation_button,
     release_download_button,
 )
+from thermogar_user_errors import (
+    UserRuntimeError,
+    UserValueError,
+    element_columns_for_display,
+    element_symbol,
+    element_symbols,
+)
 
 
 try:
@@ -120,7 +127,7 @@ EXCLUDED_PHASES = {"fe": ("C15_LAVES",)}
 # Строка происхождения входов по умолчанию. Поле остаётся редактируемым и
 # попадает в Excel, историю расчётов и JSON происхождения, но пустое поле
 # больше не выключает кнопку расчёта.
-DEFAULT_INPUT_PROVENANCE = "DECLARED_SCENARIO_INPUT_NOT_MATERIAL_QUALIFICATION"
+DEFAULT_INPUT_PROVENANCE = "Объявленный сценарий, не данные материала"
 
 HOMOGENIZATION_FUNCTIONS = {
     "Нижняя граница Хашина—Штрикмана": "hashin lower",
@@ -193,6 +200,21 @@ def _repair_loaded_database(database: Any) -> None:
         pass
 
 
+# Строки таблицы параметров только для выгрузки (21-Г, часть 2, строка 109):
+# на экране вместо них — «База» с подписью базы.
+SETTINGS_EXPORT_ONLY_ROWS = (
+    "Ключ release-базы",
+    "Термодинамическая база и подвижности",
+    "SHA-256 release-базы",
+)
+
+
+def _settings_display(settings: pd.DataFrame) -> pd.DataFrame:
+    display = settings[~settings["Параметр"].isin(SETTINGS_EXPORT_ONLY_ROWS)].copy()
+    display["Параметр"] = display["Параметр"].replace({"Название release-базы": "База"})
+    return display
+
+
 def _bind_release_database(
     database_key: str,
     database_path: str | Path,
@@ -201,20 +223,20 @@ def _bind_release_database(
     """Resolve and reload exactly one hash-pinned SWR release database."""
 
     if not isinstance(database_key, str):
-        raise ValueError("Ключ базы diffusion должен быть строкой.")
+        raise UserValueError("База не подключена. Выберите базу в боковой панели.")
     canonical_key = database_key.strip().casefold()
     if canonical_key not in RELEASE_DATABASE_KEYS:
-        raise ValueError(
-            f"База {canonical_key!r} не входит в SWR release surface."
+        raise UserValueError(
+            "База не подключена. Выберите базу в боковой панели."
         )
     if not isinstance(database_label, str):
-        raise ValueError("Название базы diffusion должно быть строкой.")
+        raise UserValueError("База не подключена. Выберите базу в боковой панели.")
     supplied_label = database_label.strip()
     canonical_label = RELEASE_DATABASE_LABELS[canonical_key]
     if supplied_label and supplied_label != canonical_label:
-        raise RuntimeError(
-            "Diffusion отклонён: название базы не соответствует закреплённому "
-            f"профилю {canonical_key!r}."
+        raise UserRuntimeError(
+            "Расчёт диффузии не запущен: файл базы не совпадает с поставкой "
+            "ThermoGar."
         )
 
     candidate_path = Path(database_path).resolve()
@@ -227,24 +249,24 @@ def _bind_release_database(
         or candidate_path.name != RELEASE_DATABASE_FILENAMES[canonical_key]
         or not candidate_path.is_file()
     ):
-        raise RuntimeError(
-            "Diffusion отклонён: путь базы не соответствует закреплённому "
-            f"профилю {canonical_key!r}."
+        raise UserRuntimeError(
+            "Расчёт диффузии не запущен: файл базы не совпадает с поставкой "
+            "ThermoGar."
         )
 
     expected_sha256 = RELEASE_DATABASE_SHA256[canonical_key]
     database_sha256 = _sha256(candidate_path)
     if database_sha256 != expected_sha256:
-        raise RuntimeError(
-            "Diffusion отклонён: SHA-256 базы не соответствует закреплённому "
-            f"профилю {canonical_key!r}."
+        raise UserRuntimeError(
+            "Расчёт диффузии не запущен: файл базы не совпадает с поставкой "
+            "ThermoGar."
         )
 
     database = Database(str(candidate_path))
     _repair_loaded_database(database)
     if _sha256(candidate_path) != expected_sha256:
-        raise RuntimeError(
-            "Diffusion отклонён: файл базы изменился во время загрузки."
+        raise UserRuntimeError(
+            "Расчёт диффузии не запущен: файл базы изменился во время загрузки."
         )
     return (
         canonical_key,
@@ -286,21 +308,25 @@ def _parse_percent_text(text: str) -> dict[str, float]:
     )
     matches = list(pattern.finditer(text))
     if not matches:
-        raise ValueError("Не удалось прочитать состав. Пример: CR=18, NI=8")
+        raise UserValueError("Не удалось прочитать состав. Пример: Cr=18, Ni=8")
 
     remainder = pattern.sub("", text)
     remainder = re.sub(r"[\s,;]+", "", remainder)
     if remainder:
-        raise ValueError(f"Непонятный фрагмент в составе: {remainder!r}")
+        raise UserValueError(f"Непонятный фрагмент в составе: {remainder!r}")
 
     result: dict[str, float] = {}
     for match in matches:
         element = match.group(1).upper()
         value = float(match.group(2).replace(",", "."))
         if element in result:
-            raise ValueError(f"Элемент {element} указан более одного раза.")
+            raise UserValueError(
+                f"Элемент {element_symbol(element)} указан более одного раза."
+            )
         if value < 0:
-            raise ValueError(f"Содержание {element} не может быть отрицательным.")
+            raise UserValueError(
+                f"Содержание {element_symbol(element)} не может быть отрицательным."
+            )
         result[element] = value
     return result
 
@@ -311,8 +337,8 @@ def _atomic_masses(db: Any, elements: list[str]) -> np.ndarray:
         try:
             masses.append(float(db.refstates[element]["mass"]))
         except Exception as error:
-            raise ValueError(
-                f"В базе не найдена атомная масса для {element}."
+            raise UserValueError(
+                f"В базе не найдена атомная масса для {element_symbol(element)}."
             ) from error
     return np.asarray(masses, dtype=float)
 
@@ -325,17 +351,17 @@ def _percent_to_vectors(
     units: str,
 ) -> tuple[np.ndarray, np.ndarray]:
     if balance in entered:
-        raise ValueError(
-            f"{balance} выбран как элемент-основа; не указывайте его в добавках."
+        raise UserValueError(
+            f"{element_symbol(balance)} выбран как элемент-основа; не указывайте его в добавках."
         )
 
     unknown = sorted(set(entered) - set(elements))
     if unknown:
-        raise ValueError("Элементы отсутствуют в выбранной базе: " + ", ".join(unknown))
+        raise UserValueError("Элементы отсутствуют в выбранной базе: " + ", ".join(unknown))
 
     total_added = float(sum(entered.values()))
     if total_added >= 100.0:
-        raise ValueError("Сумма добавок на каждой стороне должна быть меньше 100 %.")
+        raise UserValueError("Сумма добавок на каждой стороне должна быть меньше 100 %.")
 
     percentages = np.zeros(len(elements), dtype=float)
     for index, element in enumerate(elements):
@@ -355,7 +381,7 @@ def _percent_to_vectors(
         moles = x_wt / masses
         x_at = moles / np.sum(moles)
     else:
-        raise ValueError("Неизвестные единицы состава.")
+        raise UserValueError("Неизвестные единицы состава.")
 
     return x_at, x_wt
 
@@ -370,25 +396,27 @@ def _build_couple(
     balance = str(balance).upper()
     available = {str(element).upper() for element in db.elements if str(element) != "VA"}
     if balance not in available:
-        raise ValueError(f"Элемент-основа {balance} отсутствует в базе.")
+        raise UserValueError(
+            f"Элемент-основа {element_symbol(balance)} отсутствует в базе."
+        )
 
     left_entered = _parse_percent_text(left_text)
     right_entered = _parse_percent_text(right_text)
     used = sorted((set(left_entered) | set(right_entered)) - {balance})
 
     if not used:
-        raise ValueError("Левая и правая стороны должны различаться хотя бы одной добавкой.")
+        raise UserValueError("Левая и правая стороны должны различаться хотя бы одной добавкой.")
 
     elements = [balance] + used
     if len(elements) > 4:
-        raise ValueError(
-            "В исследовательском diffusion mode разрешено не более четырёх элементов одновременно "
-            "(основа + три добавки). Это ограничение первого кинетического релиза."
+        raise UserValueError(
+            "В расчёте диффузии допускается не более четырёх элементов одновременно "
+            "(основа + три добавки)."
         )
 
     unknown = sorted(set(elements) - available)
     if unknown:
-        raise ValueError("Элементы отсутствуют в базе: " + ", ".join(unknown))
+        raise UserValueError("Элементы отсутствуют в базе: " + element_symbols(unknown))
 
     left_at, left_wt = _percent_to_vectors(
         db,
@@ -406,7 +434,7 @@ def _build_couple(
     )
 
     if np.allclose(left_at, right_at, atol=1e-12):
-        raise ValueError("Левый и правый составы совпадают — диффузионной пары нет.")
+        raise UserValueError("Левый и правый составы совпадают — диффузионной пары нет.")
 
     return CoupleDefinition(
         elements=elements,
@@ -501,8 +529,8 @@ def _validate_mobility_coverage(
 ) -> None:
     missing = [element for element in couple.elements if element not in species]
     if missing:
-        raise ValueError(
-            "В базе подвижностей нет параметров для: " + ", ".join(missing)
+        raise UserValueError(
+            "В базе подвижностей нет параметров для: " + element_symbols(missing)
         )
 
     if db is not None and phases:
@@ -513,7 +541,7 @@ def _validate_mobility_coverage(
             if missing_in_phase:
                 incomplete.append(f"{phase}: {', '.join(missing_in_phase)}")
         if incomplete:
-            raise ValueError(
+            raise UserValueError(
                 "Не все выбранные фазы имеют полный набор параметров подвижности: "
                 + "; ".join(incomplete)
             )
@@ -784,19 +812,19 @@ def _run_model(
     labyrinth_factor: float = 1.5,
 ) -> DiffusionResult:
     if not KAWIN_AVAILABLE:
-        raise RuntimeError(
-            "Пакет kawin не установлен или не загрузился: " + KAWIN_IMPORT_ERROR
-        )
+        raise UserRuntimeError(
+            "Модуль диффузии Kawin недоступен."
+        ) from ImportError(KAWIN_IMPORT_ERROR)
     if length_um <= 0:
-        raise ValueError("Длина области должна быть больше нуля.")
+        raise UserValueError("Длина области должна быть больше нуля.")
     if not (1.0 <= interface_pct <= 99.0):
-        raise ValueError("Граница пары должна находиться между 1 и 99 % длины.")
+        raise UserValueError("Граница пары должна находиться между 1 и 99 % длины.")
     if time_h <= 0:
-        raise ValueError("Время выдержки должно быть больше нуля.")
+        raise UserValueError("Время выдержки должно быть больше нуля.")
     if not (12 <= int(nodes) <= 160):
-        raise ValueError("Число ячеек должно быть от 12 до 160.")
+        raise UserValueError("Число ячеек должно быть от 12 до 160.")
     if not phases:
-        raise ValueError("Выберите хотя бы одну фазу.")
+        raise UserValueError("Выберите хотя бы одну фазу.")
 
     length_m = float(length_um) * 1e-6
     interface_m = length_m * float(interface_pct) / 100.0
@@ -816,8 +844,8 @@ def _run_model(
     mesh.setResponseProfile(profile)
 
     if _sha256(database_path) != database_sha256:
-        raise RuntimeError(
-            "Diffusion отклонён: release-база изменилась перед запуском Kawin."
+        raise UserRuntimeError(
+            "Расчёт диффузии не запущен: файл базы изменился во время загрузки."
         )
     thermodynamics = GeneralThermodynamics(
         db,
@@ -825,13 +853,13 @@ def _run_model(
         phases,
     )
     if _sha256(database_path) != database_sha256:
-        raise RuntimeError(
-            "Diffusion отклонён: release-база изменилась при загрузке Kawin."
+        raise UserRuntimeError(
+            "Расчёт диффузии не запущен: файл базы изменился во время загрузки."
         )
 
     if method_key == "single":
         if len(phases) != 1:
-            raise ValueError("Однофазная модель требует ровно одну фазу.")
+            raise UserValueError("Однофазная модель требует ровно одну фазу.")
         model = SinglePhaseModel(
             mesh,
             couple.elements,
@@ -859,7 +887,7 @@ def _run_model(
         )
         method_label = "Многофазная гомогенизация"
     else:
-        raise ValueError("Неизвестный метод диффузии.")
+        raise UserValueError("Неизвестный метод диффузии.")
 
     if hasattr(model, "useCache"):
         model.useCache(True)
@@ -878,13 +906,12 @@ def _run_model(
         # Отказ приходит из pycalphad/kawin («Singular matrix», отсутствие
         # равновесия) и означает не ошибку ввода, а то, что выбранная фаза
         # при этой температуре и этих составах не решается.
-        raise RuntimeError(
-            "Решатель Kawin не смог продолжить расчёт для фаз "
+        raise UserRuntimeError(
+            "Kawin не смог продолжить расчёт для фаз "
             f"{', '.join(phases)} при {float(temperature_C):.6g} °C. "
             "Чаще всего это значит, что выбранная фаза при этой температуре "
             "не устойчива в заданных составах: проверьте температуру, состав "
-            "сторон пары и выбор фазы. Сообщение решателя: "
-            f"{solver_error}"
+            "сторон пары и выбор фазы."
         ) from solver_error
 
     z_m = np.asarray(model.mesh.z, dtype=float).reshape(-1)
@@ -938,13 +965,13 @@ def _run_model(
         ("Фазы", ", ".join(phases)),
         ("Источник/назначение входов", input_provenance),
         ("Класс расчёта", "исследовательский сценарий, не прогноз материала"),
-        ("Материальная квалификация", f"не проводилась; production use — {PRODUCTION_USE}"),
+        ("Материальная квалификация", "не проводилась"),
     ]
     if method_key == "homogenization":
         settings_rows.extend(
             [
                 ("Усреднение подвижности", homogenization_function),
-                ("Сглаживающий коэффициент eps", float(eps)),
+                ("Сглаживающий коэффициент ε", float(eps)),
                 ("Лабиринтный фактор", float(labyrinth_factor)),
             ]
         )
@@ -1058,24 +1085,22 @@ def run_diffusion(
     """Run a declared SWR scenario against one canonical, hash-pinned database."""
 
     if not isinstance(input_provenance, str):
-        raise ValueError("Источник/назначение diffusion inputs должен быть строкой.")
+        raise UserValueError("Укажите источник исходных данных диффузии.")
     input_provenance = input_provenance.strip()
     if not input_provenance:
-        raise ValueError(
-            "Для diffusion обязателен источник или явная маркировка declared "
-            "scenario inputs."
+        raise UserValueError(
+            "Укажите источник исходных данных диффузии."
         )
     if input_confirmation is not True:
-        raise ValueError(
-            "Для diffusion требуется явное подтверждение research-only сценария."
+        raise UserValueError(
+            "Подтвердите исследовательский характер расчёта диффузии."
         )
     if not isinstance(model_kind, str) or model_kind not in {
         "single",
         "homogenization",
     }:
-        raise ValueError(
-            "model_kind diffusion должен быть строго 'single' или "
-            "'homogenization'."
+        raise UserValueError(
+            "Введённые значения не проходят проверку."
         )
     if (
         model_kind == "homogenization"
@@ -1084,7 +1109,7 @@ def run_diffusion(
             or homogenization_function not in set(HOMOGENIZATION_FUNCTIONS.values())
         )
     ):
-        raise ValueError("Неизвестная модель эффективной подвижности diffusion.")
+        raise UserValueError("Введённые значения не проходят проверку.")
 
     # Never trust the independently supplied Database object: reload the
     # canonical bytes after key/path/SHA validation and bind every downstream
@@ -1141,9 +1166,7 @@ def _result_display(
 
     if result.max_balance_error <= 1e-6:
         st.success(
-            "Численная проверка сохранения среднего состава пройдена. "
-            "Невязка считается по u-долям — величине, которую сохраняет "
-            "объёмно-фиксированная система отсчёта решателя."
+            "Численная проверка сохранения среднего состава пройдена."
         )
     elif result.max_balance_error <= 1e-4:
         st.warning("Баланс состава выполнен с повышенной численной погрешностью.")
@@ -1177,7 +1200,7 @@ def _result_display(
 
     st.pyplot(figure, use_container_width=False)
     st.dataframe(
-        result.profile_table[table_columns],
+        element_columns_for_display(result.profile_table[table_columns]),
         width="stretch",
         hide_index=True,
     )
@@ -1185,11 +1208,15 @@ def _result_display(
     if result.phase_figure is not None:
         st.markdown("### Локальные равновесные доли фаз")
         st.pyplot(result.phase_figure, use_container_width=False)
-        st.dataframe(result.phase_fractions, width="stretch", hide_index=True)
+        st.dataframe(element_columns_for_display(result.phase_fractions), width="stretch", hide_index=True)
 
     with st.expander("Проверка баланса и параметры расчёта"):
         st.dataframe(result.balance_table, width="stretch", hide_index=True)
-        st.dataframe(result.settings, width="stretch", hide_index=True)
+        st.dataframe(
+            _settings_display(result.settings),
+            width="stretch",
+            hide_index=True,
+        )
 
     excel_bytes = dataframe_to_excel(
         {
@@ -1246,6 +1273,7 @@ def _common_inputs(
     balance = st.selectbox(
         "Элемент-основа",
         available,
+        format_func=element_symbol,
         index=available.index(default_balance),
         key=f"{prefix}_balance_{database_key}",
     )
@@ -1292,7 +1320,7 @@ def _common_inputs(
         )
     with interface_col:
         interface_pct = st.number_input(
-            "Граница пары, %",
+            "Граница пары, % (1–99)",
             min_value=1.0,
             max_value=99.0,
             value=float(defaults["interface_pct"]),
@@ -1309,7 +1337,7 @@ def _common_inputs(
         )
     with nodes_col:
         nodes = st.number_input(
-            "Ячеек",
+            "Ячеек (12–160)",
             min_value=12,
             max_value=160,
             value=int(defaults["nodes"]),
@@ -1318,13 +1346,13 @@ def _common_inputs(
         )
 
     input_provenance = st.text_area(
-        "Источник и назначение diffusion inputs",
+        "Источник и назначение исходных данных диффузии",
         value=DEFAULT_INPUT_PROVENANCE,
         help=(
             "Строка попадает в лист «Параметры» Excel, в историю расчётов и "
             "в JSON происхождения. Укажите источник состава, температуры и "
             "времени; значение по умолчанию помечает их как объявленный "
-            "software-сценарий без экспериментальной валидации."
+            "сценарий без экспериментальной проверки."
         ),
         key=f"{prefix}_input_provenance_{database_key}",
     )
@@ -1372,23 +1400,23 @@ def render_kinetics_section(
 
     st.subheader("Диффузия и гомогенизация")
     st.caption(
-        "ThermoGar использует параметры диффузионной подвижности текущей базы и открытый "
-        "решатель Kawin. Исследовательский режим рассчитывает изотермическую одномерную "
+        "ThermoGar использует параметры диффузионной подвижности текущей базы и открытую "
+        "программу Kawin. Исследовательский режим рассчитывает изотермическую одномерную "
         "диффузию; это модель, а не экспериментально аттестованная технология."
     )
 
     if not KAWIN_AVAILABLE:
         st.error(
-            "Для этого раздела не установлен пакет kawin. Установите его в "
-            "окружение ThermoGar и перезапустите приложение."
+            "Модуль диффузии Kawin недоступен. Равновесные функции работают."
         )
-        st.code(
-            "./.venv-mac/bin/python -m pip install 'kawin==0.5.0' 'espei==0.9.1'\n"
-            ".\\.venv-windows\\Scripts\\python.exe -m pip install kawin==0.5.0 espei==0.9.1",
-            language="bash",
-        )
-        if KAWIN_IMPORT_ERROR:
-            st.caption(f"Техническая причина: {KAWIN_IMPORT_ERROR}")
+        with st.expander("Технические сведения", expanded=False):
+            st.code(
+                "./.venv-mac/bin/python -m pip install 'kawin==0.5.0' 'espei==0.9.1'\n"
+                ".\\.venv-windows\\Scripts\\python.exe -m pip install kawin==0.5.0 espei==0.9.1",
+                language="bash",
+            )
+            if KAWIN_IMPORT_ERROR:
+                st.caption(f"Техническая причина: {KAWIN_IMPORT_ERROR}")
         return
 
     kinetics_table, diffusing_species, kinetic_phases = _kinetic_summary(db)
@@ -1424,12 +1452,17 @@ def render_kinetics_section(
         except Exception as preview_error:
             preview_couple = None
             phase_options = []
-            st.warning(f"Исправьте составы пары: {preview_error}")
+            render_error(
+                preview_error,
+                context="однофазная диффузионная пара",
+                title="Исправьте составы пары.",
+                details_for_own=False,
+            )
 
         if not phase_options:
             st.error(
-                "Для выбранной системы нет фазы с полным набором "
-                "MQ/MF/DQ/DF-параметров."
+                "Для выбранных элементов в базе нет фазы с полным набором "
+                "параметров подвижности."
             )
         else:
             preferred = defaults["single_phase"]
@@ -1443,7 +1476,7 @@ def render_kinetics_section(
 
             st.info(
                 "Границы закрыты: поток через левый и правый торцы равен нулю. "
-                "Составы задаются в ат.% или мас.%, внутри решателя используются атомные доли."
+                "Составы задаются в ат.% или мас.%, в расчёте используются атомные доли."
             )
 
             if release_calculation_button(
@@ -1527,7 +1560,12 @@ def render_kinetics_section(
         except Exception as preview_error:
             preview_couple = None
             phase_options = []
-            st.warning(f"Исправьте составы пары: {preview_error}")
+            render_error(
+                preview_error,
+                context="многофазная гомогенизация",
+                title="Исправьте составы пары.",
+                details_for_own=False,
+            )
 
         # Гомогенизация требует минимум две фазы с полным набором MQ/MF для
         # всех элементов пары. В mc_al такая фаза одна (FCC_A1), поэтому
@@ -1536,7 +1574,7 @@ def render_kinetics_section(
         if phase_options and not homogenization_possible:
             st.warning(
                 "Для элементов "
-                + ", ".join(preview_couple.elements if preview_couple else [])
+                + element_symbols(preview_couple.elements if preview_couple else [])
                 + " в этой базе есть параметры подвижности только у фазы "
                 + phase_options[0]
                 + ". Многофазная гомогенизация требует минимум две такие фазы, "
@@ -1569,7 +1607,7 @@ def render_kinetics_section(
         parameter_col1, parameter_col2 = st.columns(2)
         with parameter_col1:
             eps = st.number_input(
-                "Сглаживающий коэффициент ε",
+                "Сглаживающий коэффициент ε (0–0.2)",
                 min_value=0.0,
                 max_value=0.2,
                 value=0.01,
@@ -1579,7 +1617,7 @@ def render_kinetics_section(
             )
         with parameter_col2:
             labyrinth_factor = st.number_input(
-                "Лабиринтный фактор",
+                "Лабиринтный фактор (1–2)",
                 min_value=1.0,
                 max_value=2.0,
                 value=1.5,
@@ -1602,7 +1640,7 @@ def render_kinetics_section(
         ):
             try:
                 if len(phases) < 2:
-                    raise ValueError("Для многофазной гомогенизации выберите минимум две фазы.")
+                    raise UserValueError("Для многофазной гомогенизации выберите минимум две фазы.")
                 with st.spinner("Расчёт локально-равновесной гомогенизации…"):
                     result = run_diffusion(
                         db=db,
@@ -1670,14 +1708,14 @@ def render_kinetics_section(
             st.metric("Фаз с параметрами подвижности", len(kinetic_phases))
 
         st.markdown("#### Элементы")
-        st.write(", ".join(diffusing_species) if diffusing_species else "Нет данных")
+        st.write(element_symbols(diffusing_species) if diffusing_species else "Нет данных")
         st.markdown("#### Параметры по фазам")
         if kinetics_table.empty:
-            st.warning("Параметры подвижности MQ/MF/DQ/DF не найдены.")
+            st.info("В базе нет параметров подвижности для этих элементов.")
         else:
             st.dataframe(kinetics_table, width="stretch", hide_index=True)
 
-        st.markdown("#### Ограничения исследовательского diffusion mode")
+        st.markdown("#### Ограничения расчёта диффузии")
         st.markdown(
             """
 - только **одномерная декартова область** и постоянная температура;
@@ -1686,7 +1724,7 @@ def render_kinetics_section(
 - нет диффузии по границам зёрен, конвекции, напряжений и пористости;
 - однофазная модель не меняет фазу автоматически;
 - гомогенизация предполагает локальное равновесие и усреднённую геометрию;
-- численный результат требует открытого benchmark или независимого
-  программного сопоставления; это не квалифицирует материал.
+- численный результат нужно сверить с опубликованным эталонным расчётом или
+  другой программой; это не квалифицирует материал.
             """
         )

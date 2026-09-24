@@ -151,6 +151,8 @@ from thermogar_workspace import (
 )
 from thermogar_stage14 import (
     APP_VERSION,
+    log_user_error,
+    render_error_record,
     render_friendly_error as _render_friendly_error,
     render_preflight,
     render_quality_panel,
@@ -182,6 +184,7 @@ from thermogar_precipitation import (
 from thermogar_database_guard import (
     FE_DATABASE_MAX_T_C,
     FE_PROFILE_CANONICAL,
+    PASSPORT_TECHNICAL_FIELDS,
     load_profile_manifest,
     passport_dataframe,
 )
@@ -235,6 +238,15 @@ from thermogar_release_ui import (
     verified_equilibrium_button,
     verified_feature_button,
 )
+from thermogar_user_errors import (
+    UserRuntimeError,
+    UserValueError,
+    element_columns_for_display,
+    element_symbol,
+    element_symbols,
+    is_user_message,
+    user_message_text,
+)
 
 acquire_b3_execution = verified_loaders.acquire_execution
 acquire_b4b_execution = verified_loaders.acquire_execution
@@ -243,8 +255,35 @@ verified_physical_button = verified_feature_button
 B4BPhysicalContext = verified_loaders.BoundDatabaseContext
 
 
-def render_friendly_error(error: Exception, *, context: str) -> None:
-    _render_friendly_error(error, context=context, paths=THERMOGAR_PATHS)
+def render_friendly_error(
+    error: Exception,
+    *,
+    context: str,
+    title: str | None = None,
+    details_for_own: bool = True,
+) -> None:
+    _render_friendly_error(
+        error,
+        context=context,
+        paths=THERMOGAR_PATHS,
+        title=title,
+        details_for_own=details_for_own,
+    )
+
+
+def log_error(
+    error: Exception,
+    *,
+    context: str,
+    extra: dict[str, Any] | None = None,
+) -> tuple[str, dict[str, Any]]:
+    """Записать технический отчёт; показать его потом ``render_error_record``."""
+    return log_user_error(
+        error,
+        context=context,
+        paths=THERMOGAR_PATHS,
+        extra=extra,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -267,9 +306,7 @@ st.set_page_config(
 # render any application data unless the effective runtime option is active.
 if st.get_option("client.disableDataExport") is not True:
     st.error(
-        "Запуск остановлен fail-closed: встроенный экспорт таблиц/графиков "
-        "не отключён. Запускайте ThermoGar из корня проекта, где находится "
-        ".streamlit/config.toml."
+        "ThermoGar запущен не из своей папки. Откройте ThermoGar ярлыком."
     )
     st.stop()
 
@@ -281,7 +318,7 @@ DATABASE_DEFINITIONS = {
             "mc_ni_v2036_with_mobility.garcalc.tdb"
         ),
         "default_balance": "NI",
-        "default_composition": "AL=15",
+        "default_composition": "Al=15",
         "default_units": "at",
         "default_temperature": 700.0,
         "default_t_min": 500.0,
@@ -296,7 +333,7 @@ DATABASE_DEFINITIONS = {
         ),
         "default_balance": "FE",
         "default_composition": (
-            "C=0.20, CR=11.5, NI=0.7"
+            "C=0.20, Cr=11.5, Ni=0.7"
         ),
         "default_units": "wt",
         "default_temperature": 700.0,
@@ -311,7 +348,7 @@ DATABASE_DEFINITIONS = {
             "mc_al_v2037_with_mobility.thermogar.tdb"
         ),
         "default_balance": "AL",
-        "default_composition": "CU=4",
+        "default_composition": "Cu=4",
         "default_units": "at",
         "default_temperature": 500.0,
         "default_t_min": 200.0,
@@ -604,8 +641,7 @@ def find_project_root() -> Path:
         if (candidate / "databases").exists():
             return candidate
     raise FileNotFoundError(
-        "Не найдена папка databases. "
-        "Положите приложение в папку ThermoGar/app."
+        "Файлы ThermoGar не найдены. Переустановите программу."
     )
 
 
@@ -696,17 +732,17 @@ def load_database(
     fe_profile_key: str = FE_PROFILE_CANONICAL,
 ) -> tuple[Database, Path]:
     if not isinstance(database_key, str):
-        raise ValueError("Ключ базы должен быть строкой.")
+        raise UserValueError("База не подключена. Выберите базу в боковой панели.")
     database_key = database_key.strip().casefold()
     if database_key not in DATABASE_DEFINITIONS:
-        raise ValueError(
+        raise UserValueError(
             f"База {database_key!r} не входит в список доступных баз."
         )
     definition = DATABASE_DEFINITIONS[database_key]
     if database_key == "fe":
         if fe_profile_key not in FE_PROFILE_RELATIVE_PATHS:
-            raise ValueError(
-                f"Неизвестный профиль Fe-базы: {fe_profile_key!r}."
+            raise UserValueError(
+                "База не подключена. Выберите базу в боковой панели."
             )
         expected_relative_path = FE_PROFILE_RELATIVE_PATHS[fe_profile_key]
         database_path = lexical_absolute(PROJECT_ROOT / expected_relative_path)
@@ -729,8 +765,8 @@ def load_database(
             and database_path.name != RELEASE_DATABASE_FILENAMES[database_key]
         )
     ):
-        raise RuntimeError(
-            f"Путь базы {database_key!r} не соответствует закреплённому профилю."
+        raise UserRuntimeError(
+            "Файл базы не совпадает с поставкой ThermoGar. Переустановите программу."
         )
     with held_verified_snapshot(
         database_path,
@@ -859,7 +895,7 @@ def restricted_fe_store_result(
 ) -> None:
     receipt = execution.core1_receipt
     if receipt.outcome != "success":
-        raise RuntimeError(
+        raise UserRuntimeError(
             "Fe-расчёт остановлен: "
             + (receipt.error_code or "UNKNOWN_FAILURE")
         )
@@ -1227,7 +1263,9 @@ def _load_physical_database_cached(
 ) -> PhysicalDensityDatabase:
     database_path = Path(database_path_text)
     if file_sha256(database_path) != expected_sha256:
-        raise RuntimeError("Файл physical database изменился до загрузки.")
+        raise UserRuntimeError(
+            "Файл физической базы изменился во время загрузки. Повторите действие."
+        )
     if physical_overrides:
         database = PhysicalDensityDatabase(database_path)
     else:
@@ -1236,7 +1274,9 @@ def _load_physical_database_cached(
             overrides=OVERRIDES_OFF_BY_USER,
         )
     if file_sha256(database_path) != expected_sha256:
-        raise RuntimeError("Файл physical database изменился во время загрузки.")
+        raise UserRuntimeError(
+            "Файл физической базы изменился во время загрузки. Повторите действие."
+        )
     return database
 
 
@@ -1246,12 +1286,12 @@ def load_physical_database(
     database_path = PHYSICAL_DATABASE_PATH.resolve()
     expected_path = (PROJECT_ROOT / PHYSICAL_DATABASE_RELATIVE_PATH).resolve()
     if database_path != expected_path or not database_path.is_file():
-        raise RuntimeError(
-            "Путь physical database не соответствует SWR release policy."
+        raise UserRuntimeError(
+            "Файл базы не совпадает с поставкой ThermoGar. Переустановите программу."
         )
     if file_sha256(database_path) != PHYSICAL_DATABASE_SHA256:
-        raise RuntimeError(
-            "SHA-256 physical database не соответствует SWR release policy."
+        raise UserRuntimeError(
+            "Файл базы не совпадает с поставкой ThermoGar. Переустановите программу."
         )
     database = _load_physical_database_cached(
         str(database_path),
@@ -1259,8 +1299,8 @@ def load_physical_database(
         bool(physical_overrides),
     )
     if file_sha256(database_path) != PHYSICAL_DATABASE_SHA256:
-        raise RuntimeError(
-            "Файл physical database изменился после загрузки; повторите запуск."
+        raise UserRuntimeError(
+            "Файл физической базы изменился во время загрузки. Повторите действие."
         )
     return database
 
@@ -1293,23 +1333,29 @@ def density_below_pdb_text(
     )
 
 
+# Строка 34 части 1 списка 21-Г: код ошибки — один, у сообщения над вкладками.
+PHYSICAL_BINDING_ERROR_TITLE = (
+    "Физическая база не подключена: файлы не прошли проверку."
+)
 PHYSICAL_OVERRIDES_TOGGLE_KEY = "physical_overrides_enabled"
 PHYSICAL_OVERRIDES_TOGGLE_LABEL = (
     "Применять поправки проекта ThermoGar к физической базе"
 )
 PHYSICAL_OVERRIDES_TOGGLE_HELP = (
-    "Поправка проекта заменяет в physical_data_v103.pdb тепловую функцию "
-    "хрома DTCRBCC коэффициентами из статьи, на которую ссылается сама база "
-    "(REF 14): перенос этих чисел в базу сломан. Снимите галочку, чтобы "
-    "считать плотность строго по данным базы, — у сплавов с хромом она выйдет "
-    "ниже, до 1 % при 700 °C и до 2 % при 1300 °C. Действует на вкладки "
-    "«Плотность», «Плотность по T» и «Упругие свойства» (через объёмные "
-    "доли фаз). Подробности: docs/DATABASES.md, раздел 8."
+    "Поправка проекта заменяет в физической базе тепловое расширение хрома "
+    "коэффициентами из статьи, на которую ссылается сама база: перенос этих "
+    "чисел в базу сломан. Снимите галочку, чтобы считать плотность строго по "
+    "данным базы, — у сплавов с хромом она выйдет ниже, до 1 % при 700 °C и "
+    "до 2 % при 1300 °C. Действует на вкладки «Плотность», «Плотность по T» "
+    "и «Упругие свойства» (через объёмные доли фаз)."
 )
 PHYSICAL_OVERRIDES_ENV_LOCKED_NOTE = (
-    "Поправки выключены переменной окружения "
-    f"{PHYSICAL_OVERRIDES_ENV}: она сильнее галочки. Чтобы включить их, "
-    "запустите программу без этой переменной."
+    "Поправки выключены при запуске ThermoGar, поэтому галочка сейчас не "
+    "действует."
+)
+PHYSICAL_OVERRIDES_ENV_LOCKED_DETAILS = (
+    f"Переменная окружения {PHYSICAL_OVERRIDES_ENV}=off. Чтобы включить "
+    "поправки, запустите ThermoGar без неё."
 )
 
 
@@ -1320,6 +1366,17 @@ ELASTIC_VOLUME_FRACTION_LABEL = "Объёмная доля фаз"
 ELASTIC_FRACTION_LABELS = {
     "mole_fraction": ELASTIC_MOLE_FRACTION_LABEL,
     "volume_fraction": ELASTIC_VOLUME_FRACTION_LABEL,
+}
+# Заголовки редактора упругих свойств (утверждены владельцем 24.09.2026,
+# 21-Ж): только показ, ключи данных те же.
+ELASTIC_EDITOR_COLUMN_LABELS = {
+    "phase": "Фаза",
+    "young_gpa": "E, ГПа",
+    "poisson": "ν",
+    "origin": "Происхождение",
+    "source": "Источник",
+    "reference_temperature_c": "Температура источника, °C",
+    "note": "Примечание",
 }
 
 
@@ -1340,6 +1397,8 @@ def render_physical_overrides_toggle() -> bool:
             key=f"{PHYSICAL_OVERRIDES_TOGGLE_KEY}_env_locked",
         )
         st.caption(PHYSICAL_OVERRIDES_ENV_LOCKED_NOTE)
+        with st.expander("Технические сведения", expanded=False):
+            st.caption(PHYSICAL_OVERRIDES_ENV_LOCKED_DETAILS)
         return True
     return bool(
         st.checkbox(
@@ -1670,11 +1729,11 @@ def render_b4b_density_single(
             [
                 ("Температура, °C", f"{float(temperature_c):.1f}"),
                 (
-                    "Покрытие PDB по массе, %",
+                    "Покрытие физической базы по массе, %",
                     f'{projection["mass_coverage_pct"]:.2f}',
                 ),
                 (
-                    "Покрытие PDB по молям, %",
+                    "Покрытие физической базы по молям, %",
                     f'{projection["mole_coverage_pct"]:.2f}',
                 ),
                 ("Качество оценки", projection["quality_label"]),
@@ -1700,7 +1759,7 @@ def render_b4b_density_single(
                     - {""}
                 )
             )
-            st.info(
+            st.error(
                 "Плотность сплава не рассчитана: покрытие физической базы "
                 f'{projection["mass_coverage_pct"]:.2f} % по массе, '
                 "то есть плотность есть не у всех равновесных фаз."
@@ -1713,9 +1772,9 @@ def render_b4b_density_single(
             )
         for warning_text in projection["warnings"]:
             st.warning(warning_text)
-        st.dataframe(pd.DataFrame(projection["phase_rows"]), width="stretch", hide_index=True)
+        st.dataframe(element_columns_for_display(pd.DataFrame(projection["phase_rows"])), width="stretch", hide_index=True)
         if projection["missing_rows"]:
-            st.dataframe(pd.DataFrame(projection["missing_rows"]), width="stretch", hide_index=True)
+            st.dataframe(element_columns_for_display(pd.DataFrame(projection["missing_rows"])), width="stretch", hide_index=True)
         _b4b_render_result_downloads(
             "physical_single",
             {
@@ -1767,7 +1826,7 @@ def render_b4b_density_temperature(
         return
     try:
         if maximum_c <= minimum_c:
-            raise ValueError("Конечная температура должна быть выше начальной.")
+            raise UserValueError("Конечная температура должна быть выше начальной.")
         temperatures_c = tuple(
             float(value)
             for value in np.arange(
@@ -1945,7 +2004,7 @@ def render_b4b_pdb_self_test(
     _b4b_refresh_result(state_key, decision)
     if verified_physical_button(
         decision,
-        "Проверить парсер физической базы",
+        "Проверить чтение физической базы",
         key="physical_database_self_test",
     ):
         try:
@@ -1958,7 +2017,7 @@ def render_b4b_pdb_self_test(
                 )
             _b4b_store_result(state_key, database_key, execution)
         except Exception as error:
-            render_friendly_error(error, context="проверка physical PDB")
+            render_friendly_error(error, context="проверка физической базы")
     state = st.session_state.get(state_key)
     if type(state) is dict and state.get("database_key") == database_key:
         st.dataframe(pd.DataFrame(state["projections"][0]["rows"]), width="stretch", hide_index=True)
@@ -1978,7 +2037,7 @@ def render_b4b_coverage(
     _b4b_refresh_result(state_key, decision)
     if verified_physical_button(
         decision,
-        "Обновить проверенное покрытие PDB",
+        "Обновить покрытие физической базы",
         key="physical_coverage_view",
     ):
         try:
@@ -1991,7 +2050,7 @@ def render_b4b_coverage(
                 )
             _b4b_store_result(state_key, database_key, execution)
         except Exception as error:
-            render_friendly_error(error, context="покрытие physical PDB")
+            render_friendly_error(error, context="покрытие физической базы")
     state = st.session_state.get(state_key)
     if type(state) is dict and state.get("database_key") == database_key:
         coverage_rows = pd.DataFrame(state["projections"][0]["rows"])
@@ -2075,7 +2134,11 @@ def render_b4b2_elastic_properties(
     except Exception as error:
         prepare_decision = None
         prepare_error = error
-        st.error(str(error))
+        render_friendly_error(
+            error,
+            context="подготовка упругих свойств",
+            title="Исходные данные для упругих свойств не приняты.",
+        )
     prepare_state_key = "_thermogar_vlb_b4b_result_property_elastic_prepare"
     vrh_state_key = "_thermogar_vlb_b4b_result_property_elastic_vrh"
     # Объёмные доли фаз зависят от поправок к физической базе (BL-38):
@@ -2137,8 +2200,11 @@ def render_b4b2_elastic_properties(
         # Мольные доли даёт равновесие (NP); объёмные — они же, пересчитанные
         # через молярные объёмы фаз из физической базы. VRH берёт объёмные.
         column_config={
-            field: st.column_config.NumberColumn(label)
-            for field, label in ELASTIC_FRACTION_LABELS.items()
+            **{
+                field: st.column_config.NumberColumn(label)
+                for field, label in ELASTIC_FRACTION_LABELS.items()
+            },
+            **ELASTIC_EDITOR_COLUMN_LABELS,
         },
         key=f"b4b2_elastic_editor_{prepared_digest}",
     )
@@ -2169,7 +2235,11 @@ def render_b4b2_elastic_properties(
             (),
         )
     except Exception as error:
-        st.error(str(error))
+        render_friendly_error(
+            error,
+            context="Voigt–Reuss–Hill",
+            title="Таблица упругих свойств не принята. Проверьте E и ν каждой фазы.",
+        )
         return
     _b4b_refresh_result(vrh_state_key, vrh_decision)
     if verified_physical_button(
@@ -2303,7 +2373,7 @@ def render_b4b2_strengthening(
         orowan_m = st.number_input("M (Orowan)", min_value=1e-12, value=3.0, key=f"b4b2_orowan_m_{database_key}")
         orowan_g = st.number_input("G, ГПа (Orowan)", min_value=1e-12, value=80.0, disabled=use_hill, key=f"b4b2_orowan_g_{database_key}")
         orowan_b = st.number_input("b, нм (Orowan)", min_value=1e-12, value=0.25, key=f"b4b2_orowan_b_{database_key}")
-        orowan_nu = st.number_input("ν (Orowan)", min_value=-0.999, max_value=0.499, value=0.3, disabled=use_hill, key=f"b4b2_orowan_nu_{database_key}")
+        orowan_nu = st.number_input("ν (Orowan) (-0.999–0.499)", min_value=-0.999, max_value=0.499, value=0.3, disabled=use_hill, key=f"b4b2_orowan_nu_{database_key}")
         radius = st.number_input("Радиус частиц, нм", min_value=1e-12, value=10.0, key=f"b4b2_orowan_radius_{database_key}")
         spacing = st.number_input("Расстояние между частицами, нм", min_value=1e-12, value=100.0, key=f"b4b2_orowan_spacing_{database_key}")
     other_enabled = st.checkbox("Другой вклад", key=f"b4b2_other_use_{database_key}")
@@ -2415,21 +2485,28 @@ def parse_composition(text: str) -> dict[str, float]:
     )
     matches = list(pattern.finditer(text))
     if not matches:
-        raise ValueError("Не удалось прочитать состав. Пример: AL=15, CR=10")
+        raise UserValueError("Не удалось прочитать состав. Пример: Al=15, Cr=10")
 
     remainder = pattern.sub("", text)
     remainder = re.sub(r"[\s,;]+", "", remainder)
     if remainder:
-        raise ValueError(f"Непонятный фрагмент в составе: {remainder!r}")
+        raise UserValueError(f"Непонятный фрагмент в составе: {remainder!r}")
 
     result: dict[str, float] = {}
     for match in matches:
         element = match.group(1).upper()
         value = float(match.group(2).replace(",", "."))
         if element in result:
-            raise ValueError(f"Элемент {element} указан более одного раза.")
+            raise UserValueError(
+                f"Элемент {element_symbol(element)} указан более одного раза."
+            )
         result[element] = value
     return result
+
+
+def units_suffix(units: str) -> str:
+    """Единицы состава в подписи поля: «ат.%» или «мас.%» (21-Г, Д1–Д10)."""
+    return "ат.%" if units == "at" else "мас.%"
 
 
 def normalize(values: dict[str, float]) -> dict[str, float]:
@@ -2457,7 +2534,7 @@ def mole_to_mass(
         for element in mole_fractions
     )
     if denominator <= 0:
-        raise ValueError("Не удалось пересчитать состав в массовые доли.")
+        raise UserValueError("Не удалось пересчитать состав в массовые доли.")
     return {
         element: mole_fractions[element] * masses[element] / denominator
         for element in mole_fractions
@@ -2478,16 +2555,19 @@ def build_input(
 ]:
     unknown = sorted(set(entered) - set(available_elements))
     if unknown:
-        raise ValueError("В базе отсутствуют элементы: " + ", ".join(unknown))
+        raise UserValueError("В базе отсутствуют элементы: " + element_symbols(unknown))
     if balance in entered:
-        raise ValueError(
-            f"{balance} выбран как основа; не указывайте его в строке добавок."
+        raise UserValueError(
+            f"{element_symbol(balance)} выбран как основа; не указывайте его в "
+            "строке добавок."
         )
     for element, value in entered.items():
         if value <= 0:
-            raise ValueError(f"Содержание {element} должно быть больше нуля.")
+            raise UserValueError(
+                f"Содержание {element_symbol(element)} должно быть больше нуля."
+            )
     if sum(entered.values()) >= 100:
-        raise ValueError("Сумма добавок должна быть меньше 100 %.")
+        raise UserValueError("Сумма добавок должна быть меньше 100 %.")
 
     components = sorted(set(entered) | {balance}) + ["VA"]
 
@@ -2510,7 +2590,7 @@ def build_input(
         }
         overall_x[balance] = 1.0 - sum(overall_x.values())
     else:
-        raise ValueError(f"Неизвестные единицы состава: {units}")
+        raise UserValueError(f"Неизвестные единицы состава: {units}")
 
     overall_x = normalize(overall_x)
     overall_w = mole_to_mass(db, overall_x)
@@ -2546,7 +2626,7 @@ def excluded_phase_message(rejected: list[str]) -> str:
     """Понятное сообщение об отклонённом ручном выборе фазы."""
     return (
         ", ".join(rejected)
-        + " исключена для стали thermogar_patch и не может быть выбрана."
+        + " исключена для стальной базы и не может быть выбрана."
     )
 
 
@@ -2902,7 +2982,7 @@ def release_exclusion_note(database_key: str) -> str:
         else f"Из расчёта исключены фазы {names}"
     )
     return (
-        f"{head} (решение о составе поставки, FE_EXCLUDED_PHASES). "
+        f"{head} (решение о составе поставки). "
         "Автор базы вводил фазы Лавеса под дуплексные нержавеющие и "
         "корпусные стали — для таких марок результат может быть неполным."
     )
@@ -2959,13 +3039,12 @@ def render_database_attribution(database_key: str) -> None:
         for title, relative_path in LICENSE_FILES:
             path = PROJECT_ROOT / relative_path
             st.markdown(f"**{title}**")
-            st.code(str(path), language=None)
             try:
                 text = path.read_text(encoding="utf-8")
             except OSError:
                 st.warning(
-                    f"Файл лицензии не найден: {relative_path}. "
-                    "Поставка неполна — сообщите разработчику."
+                    "Файл лицензии не найден: поставка неполна — сообщите "
+                    "разработчику."
                 )
                 continue
             if st.checkbox(
@@ -2973,6 +3052,11 @@ def render_database_attribution(database_key: str) -> None:
                 key=f"_thermogar_license_{relative_path}",
             ):
                 st.text(text)
+    # Путь к файлам лицензий — не на основном экране (21-Г, часть 2, стр. 60);
+    # вложить блок в «Лицензии базы данных» Streamlit не позволяет.
+    with st.sidebar.expander("Технические сведения", expanded=False):
+        for _title, relative_path in LICENSE_FILES:
+            st.code(str(PROJECT_ROOT / relative_path), language=None)
 
 
 def render_release_exclusion_note(settings: Any) -> None:
@@ -3113,7 +3197,7 @@ def prepare_calculation(
     if selected_phases is not None:
         rejected = rejected_release_phases(database_key, selected_phases)
         if rejected:
-            raise RuntimeError(excluded_phase_message(rejected))
+            raise UserRuntimeError(excluded_phase_message(rejected))
         selected_set = set(selected_phases)
         phases = [
             phase
@@ -3122,7 +3206,7 @@ def prepare_calculation(
         ]
 
     if not phases:
-        raise RuntimeError(
+        raise UserRuntimeError(
             "Для выбранного состава и набора галочек "
             "не осталось допустимых фаз."
         )
@@ -3266,7 +3350,7 @@ def scan_axis_conditions(
             for element, value in entered.items()
         }
         return dict(v.get_mole_fractions(mass_conditions, balance, db))
-    raise ValueError(f"Неизвестные единицы состава: {units}")
+    raise UserValueError(f"Неизвестные единицы состава: {units}")
 
 
 def mole_fraction_map(conditions: Mapping[Any, float]) -> dict[str, float]:
@@ -3285,7 +3369,7 @@ def mole_fraction_map(conditions: Mapping[Any, float]) -> dict[str, float]:
             # Массовые доли сюда попасть не должны: их переводит build_input
             # и scan_axis_conditions. Молча принять W_* значило бы посчитать
             # массовую долю как мольную.
-            raise ValueError(
+            raise UserValueError(
                 f"Условие состава {label!r} не является мольной долей."
             )
         species = getattr(variable, "species", None)
@@ -3738,12 +3822,12 @@ def temperature_step_condition(
 ) -> tuple[float, float, float]:
     """Преобразовать диапазон °C в условие Workspace в K."""
     if float(t_step_c) <= 0.0:
-        raise ValueError("Шаг температуры должен быть больше нуля.")
+        raise UserValueError("Шаг температуры должен быть больше нуля.")
     if float(t_max_c) <= float(t_min_c):
-        raise ValueError("Конечная температура должна быть выше начальной.")
+        raise UserValueError("Конечная температура должна быть выше начальной.")
     point_count = int(np.floor((float(t_max_c) - float(t_min_c)) / float(t_step_c))) + 1
     if point_count > 250:
-        raise ValueError(
+        raise UserValueError(
             "Слишком много температурных точек. Увеличьте шаг или уменьшите диапазон."
         )
     return (
@@ -3815,12 +3899,17 @@ def isolated_phase_energy_tables(
     t_min_c: float,
     t_max_c: float,
     t_step_c: float,
+    skipped_errors: list[Exception] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, list[str]]:
-    """Рассчитать GM(T) каждой фазы при одном и том же общем составе."""
+    """Рассчитать GM(T) каждой фазы при одном и том же общем составе.
+
+    Чужие исключения пропущенных фаз (21-Ж) складываются в ``skipped_errors``:
+    их текст — в технический отчёт, на экране — «энергия не рассчитана».
+    """
     if not phases:
-        raise ValueError("Выберите хотя бы одну фазу.")
+        raise UserValueError("Выберите хотя бы одну фазу.")
     if len(phases) > 8:
-        raise ValueError("Для одного графика выберите не более восьми фаз.")
+        raise UserValueError("Для одного графика выберите не более восьми фаз.")
 
     conditions: dict[Any, Any] = {
         v.N: 1.0,
@@ -3845,7 +3934,7 @@ def isolated_phase_energy_tables(
             gm = workspace_values(phase_workspace, "GM")
 
             if gm.size != temperature_c.size:
-                raise RuntimeError("размеры T и GM не совпали")
+                raise UserRuntimeError("размеры T и GM не совпали")
             if np.all(~np.isfinite(gm)):
                 skipped.append(
                     f"{phase_name}: нет допустимого однофазного решения "
@@ -3858,10 +3947,15 @@ def isolated_phase_energy_tables(
             absolute[phase_name] = gm
             valid_phases.append(phase_name)
         except Exception as error:
-            skipped.append(f"{phase_name}: {error}")
+            if is_user_message(error):
+                skipped.append(f"{phase_name}: {user_message_text(error)}")
+            else:
+                skipped.append(f"{phase_name}: энергия не рассчитана")
+                if skipped_errors is not None:
+                    skipped_errors.append(error)
 
     if not valid_phases:
-        raise RuntimeError(
+        raise UserRuntimeError(
             "Ни для одной выбранной фазы не удалось рассчитать энергию "
             "при этом составе. Попробуйте другие фазы или состав."
         )
@@ -3971,7 +4065,7 @@ def dormant_phase_driving_force_table(
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Рассчитать движущую силу образования подавленной фазы."""
     if not reference_phases:
-        raise ValueError("Для исходного равновесия нужно оставить хотя бы одну фазу.")
+        raise UserValueError("Для исходного равновесия нужно оставить хотя бы одну фазу.")
 
     conditions: dict[Any, Any] = {
         v.N: 1.0,
@@ -4005,7 +4099,7 @@ def dormant_phase_driving_force_table(
         driving_force_property,
     )
     if driving_force.size != temperature_c.size:
-        raise RuntimeError("Размеры T и движущей силы не совпали.")
+        raise UserRuntimeError("Размеры T и движущей силы не совпали.")
 
     state = np.full(driving_force.shape, "нет решения", dtype=object)
     state[np.isfinite(driving_force) & (driving_force > 1.0e-3)] = (
@@ -4117,23 +4211,23 @@ def tzero_path_table(
 ) -> pd.DataFrame:
     """Рассчитать T0 двух фаз вдоль концентрационного пути."""
     if phase_one == phase_two:
-        raise ValueError("Для T₀ выберите две разные фазы.")
+        raise UserValueError("Для T₀ выберите две разные фазы.")
     if variable_element == balance:
-        raise ValueError("Изменяемый элемент не может быть элементом-основой.")
+        raise UserValueError("Изменяемый элемент не может быть элементом-основой.")
     if float(c_step) <= 0.0 or float(c_max) <= float(c_min):
-        raise ValueError("Проверьте диапазон и шаг состава.")
+        raise UserValueError("Проверьте диапазон и шаг состава.")
     point_count = int(np.floor((float(c_max) - float(c_min)) / float(c_step))) + 1
     if point_count > 150:
-        raise ValueError("Слишком много точек состава. Увеличьте шаг.")
+        raise UserValueError("Слишком много точек состава. Увеличьте шаг.")
 
     fixed = parse_composition(fixed_composition_text)
     fixed.pop(variable_element, None)
     if balance in fixed:
-        raise ValueError(
-            f"{balance} — основа; не указывайте её в постоянных добавках."
+        raise UserValueError(
+            f"{element_symbol(balance)} — основа; не указывайте её в постоянных добавках."
         )
     if sum(fixed.values()) + float(c_max) >= 100.0:
-        raise ValueError(
+        raise UserValueError(
             "Постоянные добавки вместе с максимальным содержанием "
             "изменяемого элемента должны быть меньше 100 %."
         )
@@ -4141,7 +4235,7 @@ def tzero_path_table(
     available = sorted(element for element in db.elements if element != "VA")
     unknown = sorted((set(fixed) | {variable_element, balance}) - set(available))
     if unknown:
-        raise ValueError("В базе отсутствуют элементы: " + ", ".join(unknown))
+        raise UserValueError("В базе отсутствуют элементы: " + ", ".join(unknown))
 
     components = sorted(set(fixed) | {variable_element, balance}) + ["VA"]
     candidate_phases = compatible_phases_for_components(
@@ -4152,7 +4246,7 @@ def tzero_path_table(
     )
     for phase_name in (phase_one, phase_two):
         if phase_name not in candidate_phases:
-            raise ValueError(
+            raise UserValueError(
                 f"Фаза {phase_name} несовместима с выбранными компонентами."
             )
 
@@ -4203,12 +4297,12 @@ def tzero_path_table(
     )
 
     if first_composition_set is None:
-        raise RuntimeError(
+        raise UserRuntimeError(
             f"Не удалось получить допустимое состояние фазы {phase_one} "
             "в выбранном диапазоне состава."
         )
     if second_composition_set is None:
-        raise RuntimeError(
+        raise UserRuntimeError(
             f"Не удалось получить допустимое состояние фазы {phase_two} "
             "в выбранном диапазоне состава."
         )
@@ -4340,7 +4434,7 @@ def resolve_solidification_start_temperature(
         if not check_table.empty
         else 0.0
     )
-    raise ValueError(
+    raise UserValueError(
         "Начальная температура не даёт практически однофазный расплав. "
         f"Последняя проверенная доля LIQUID: {last_liquid:.3f} %. "
         "Увеличьте начальную температуру или разрешите автоматический поиск."
@@ -4554,7 +4648,7 @@ def _step_bracket_edge(
     while not holds(temperature_c):
         temperature_c += step_c
         if temperature_c > limit_c if step_c > 0 else temperature_c < limit_c:
-            raise ValueError(failure)
+            raise UserValueError(failure)
     return temperature_c
 
 
@@ -4678,7 +4772,7 @@ def database_lower_temperature_c(db: Database) -> float:
         if bounds:
             lowest.append(min(bounds))
     if not lowest:
-        raise ValueError("В базе не заданы температурные интервалы.")
+        raise UserValueError("В базе не заданы температурные интервалы.")
     return max(lowest) - 273.15
 
 
@@ -5718,7 +5812,7 @@ def phase_reference_dataframe(
 
         if ordered == phase_name and disordered:
             model_note = (
-                f"Связанная order/disorder-модель с {disordered}; "
+                f"Связанная модель порядок/беспорядок с {disordered}; "
                 "одно имя фазы не всегда означает полное упорядочение."
             )
         elif disordered == phase_name and ordered:
@@ -6405,7 +6499,7 @@ def ternary_grid_definition(
 ) -> tuple[int, float, int]:
     """Вернуть число интервалов, фактический шаг и число узлов треугольника."""
     if requested_step_percent <= 0:
-        raise ValueError("Шаг сетки должен быть больше нуля.")
+        raise UserValueError("Шаг сетки должен быть больше нуля.")
 
     interval_count = max(
         2,
@@ -6438,14 +6532,14 @@ def ternary_display_to_mole_fractions(
         return display_fractions
 
     if units != "wt":
-        raise ValueError(f"Неизвестные единицы тройной карты: {units}")
+        raise UserValueError(f"Неизвестные единицы тройной карты: {units}")
 
     mole_amounts: dict[str, float] = {}
     for element, mass_fraction in display_fractions.items():
         atomic_mass = float(db.refstates[element]["mass"])
         if atomic_mass <= 0:
-            raise ValueError(
-                f"Для {element} в базе отсутствует корректная атомная масса."
+            raise UserValueError(
+                f"Для {element_symbol(element)} в базе отсутствует корректная атомная масса."
             )
         mole_amounts[element] = mass_fraction / atomic_mass
 
@@ -6465,10 +6559,15 @@ def calculate_ternary_phase_fraction_map(
     units: str,
     interval_count: int,
     progress_callback: Any | None = None,
+    node_errors: list[Exception] | None = None,
 ) -> tuple[pd.DataFrame, int]:
-    """Посчитать мольную долю выбранной фазы в узлах тройной сетки."""
+    """Посчитать мольную долю выбранной фазы в узлах тройной сетки.
+
+    Исключения узлов (21-Ж) складываются в ``node_errors``: их текст — в
+    технический отчёт, в столбце «Статус» — «не рассчитано».
+    """
     if target_phase not in phases:
-        raise ValueError(
+        raise UserValueError(
             "Выбранная для карты фаза исключена галочками. "
             "Верните её в список разрешённых фаз."
         )
@@ -6575,12 +6674,14 @@ def calculate_ternary_phase_fraction_map(
             )
         except Exception as error:
             failure_count += 1
+            if node_errors is not None:
+                node_errors.append(error)
             row.update(
                 {
                     f"{target_phase}, мольная доля, %": np.nan,
                     "Устойчивые фазы": "",
                     "Преобладающая фаза": "",
-                    "Статус": f"не рассчитано: {error}",
+                    "Статус": "не рассчитано",
                 }
             )
 
@@ -6613,13 +6714,13 @@ def plot_ternary_phase_fraction_map(
     )
 
     if int(valid_points.sum()) < 3:
-        raise RuntimeError(
+        raise UserRuntimeError(
             "Для построения карты получено меньше трёх корректных точек."
         )
 
     triangulation = mtri.Triangulation(x_values, y_values)
     if triangulation.triangles.size == 0:
-        raise RuntimeError("Не удалось сформировать треугольную сетку карты.")
+        raise UserRuntimeError("Не удалось сформировать треугольную сетку карты.")
 
     invalid_points = ~valid_points
     if np.any(invalid_points):
@@ -6832,16 +6933,17 @@ except Exception as pending_context_error:
     # user-facing widget key. A rejected queued context therefore leaves the
     # currently active inputs untouched.
     st.session_state.pop("_thermogar_loaded_context", None)
-    st.error(
-        "Отложенный контекст отклонён и не был применён: "
-        f"{pending_context_error}"
+    render_friendly_error(
+        pending_context_error,
+        context="загруженные настройки",
+        title="Загруженные настройки не применены.",
     )
 
 st.title(DISPLAY_APP_NAME)
 
 st.sidebar.caption(
     "ThermoGar 0.4.4 — исследовательское ПО. "
-    "Экспериментальная квалификация: NOT_PERFORMED."
+    "Экспериментальная квалификация не проводилась."
 )
 
 st.sidebar.header("Настройки расчётных разделов")
@@ -6851,9 +6953,9 @@ st.sidebar.caption(
 
 if st.session_state.get("thermogar_database_key") not in DATABASE_DEFINITIONS:
     if "thermogar_database_key" in st.session_state:
-        st.warning(
-            "Сохранённый выбор базы не распознан. Выбран канонический "
-            "Fe-профиль thermogar_patch."
+        st.error(
+            "Сохранённый выбор базы не распознан. Выбрана база "
+            f"«{DATABASE_DEFINITIONS['fe']['label']}»."
         )
     st.session_state["thermogar_database_key"] = "fe"
     st.session_state["thermogar_fe_profile"] = FE_PROFILE_CANONICAL
@@ -6876,9 +6978,8 @@ if database_key == "fe":
     if st.session_state.get("thermogar_fe_profile") != FE_PROFILE_CANONICAL:
         clear_restricted_fe_session_results()
         st.error(
-            "Fe-контекст отклонён: сохранённый профиль базы не совпадает "
-            "с каноническим thermogar_patch. Автоматическая подмена профиля "
-            "не выполняется."
+            "Сохранённая стальная база не совпадает с текущей и не применена. "
+            "Обновите страницу браузера и выберите базу заново."
         )
         st.stop()
     fe_profile_key = st.session_state["thermogar_fe_profile"]
@@ -6924,7 +7025,11 @@ try:
         )
 except Exception as error:
     clear_restricted_fe_session_results()
-    st.error(f"Проверенная привязка базы отклонена: {error}")
+    render_friendly_error(
+        error,
+        context="база материалов",
+        title="База не подключена: файлы базы не прошли проверку.",
+    )
     st.stop()
 
 vlb_active_context = vlb_bound_context
@@ -6956,7 +7061,11 @@ try:
     db, database_path = load_database(database_key, fe_profile_key)
 except Exception as error:
     clear_restricted_fe_session_results()
-    st.error(str(error))
+    render_friendly_error(
+        error,
+        context="база материалов",
+        title="Базу прочитать не удалось.",
+    )
     st.stop()
 
 if database_key == "fe":
@@ -6967,9 +7076,13 @@ if database_key == "fe":
         )
     except Exception as error:
         clear_restricted_fe_session_results()
-        st.error(str(error))
+        render_friendly_error(
+            error,
+            context="паспорт стальной базы",
+            title="Паспорт стальной базы не прошёл проверку.",
+        )
         st.stop()
-    st.sidebar.caption("Fe-база thermogar_patch · C15_LAVES исключена")
+    st.sidebar.caption("Стальная база: фаза C15_LAVES исключена из расчёта.")
 
 available_elements = sorted(
     element for element in db.elements if element != "VA"
@@ -6981,7 +7094,7 @@ default_balance = (
     else available_elements[0]
 )
 
-st.sidebar.success(
+st.sidebar.info(
     f"Элементов: {len(available_elements)} · Фаз: {len(db.phases)}"
 )
 
@@ -7031,16 +7144,16 @@ if st.session_state.get(balance_key) not in available_elements:
         ):
             st.session_state.pop(rejected_key, None)
         st.error(
-            "Загруженный контекст отклонён: элемент-основа "
-            f"{rejected_balance!r} отсутствует в выбранной базе {database_key!r}. "
-            "Весь загруженный набор удалён без частичного применения. "
-            "Выберите или загрузите контекст заново."
+            "Загруженные настройки не применены: элемента-основы "
+            f"{element_symbol(rejected_balance)} нет в базе "
+            f"«{definition['label']}». Выберите элемент-основу и состав заново."
         )
         st.stop()
     st.session_state[balance_key] = default_balance
 balance = st.sidebar.selectbox(
     "Элемент-основа",
     available_elements,
+    format_func=element_symbol,
     key=balance_key,
 )
 
@@ -7065,7 +7178,7 @@ if composition_key not in st.session_state:
 composition_text = st.sidebar.text_area(
     "Добавки",
     help=(
-        "Пример: AL=15, CR=10. "
+        "Пример: Al=15, Cr=10. "
         "Остаток до 100 % считается элементом-основой."
     ),
     key=composition_key,
@@ -7084,7 +7197,7 @@ pressure_pa = st.sidebar.number_input(
 parallel_ui.render_sidebar_control()
 
 with st.sidebar.expander("Доступные элементы"):
-    st.write(", ".join(available_elements))
+    st.write(element_symbols(available_elements))
 
 # BL-63: a wrong "Добавки" line is an input error, not a crash. The
 # validator's own message goes to the main area and the page stops there.
@@ -7105,7 +7218,16 @@ try:
         fe_profile_key if database_key == "fe" else None,
     )
 except ValueError as error:
-    st.error(str(error))
+    # 21-Ж: своё сообщение разбора состава — как есть; текст чужого
+    # исключения — в «Технические сведения» (строка 35 части 1 списка 21-Г).
+    if is_user_message(error):
+        st.error(user_message_text(error))
+    else:
+        render_friendly_error(
+            error,
+            context="Добавки",
+            title="Состав не принят.",
+        )
     st.stop()
 CURRENT_CONTEXT["database_label"] = definition["label"]
 
@@ -7159,20 +7281,20 @@ if context_or_release_changed:
     )
     if previous_context_signature and stale_result_keys:
         st.sidebar.info(
-            "Глобальный контекст изменился: прежние результаты скрыты. "
+            "Параметры в боковой панели изменились: прежние результаты скрыты. "
             "Выполните расчёт заново."
         )
 
 
 loaded_context = st.session_state.get("_thermogar_loaded_context")
 if isinstance(loaded_context, dict):
-    loaded_label = loaded_context.get("label") or "загруженный контекст"
+    loaded_label = loaded_context.get("label") or "набор настроек"
     loaded_database_key = loaded_context.get("database_key")
     expected_hash = loaded_context.get("database_sha256", "")
     if loaded_database_key == database_key:
         if expected_hash and expected_hash != CURRENT_CONTEXT["database_sha256"]:
             st.sidebar.warning(
-                f"Открыт {loaded_label}, но отпечаток базы изменился. "
+                f"Открыт {loaded_label}, но база изменилась после его сохранения. "
                 "Пересчитайте результаты на текущей базе."
             )
         else:
@@ -7255,9 +7377,11 @@ with single_tab:
             PHASE_MODE_ALL,
         )
     except Exception as preview_error:
-        st.warning(
-            "Список фаз появится после исправления состава: "
-            f"{preview_error}"
+        render_friendly_error(
+            preview_error,
+            context="равновесие при одной температуре",
+            title="Список фаз появится после исправления состава.",
+            details_for_own=False,
         )
         single_component_candidates = ()
         single_selected_phases = None
@@ -7319,7 +7443,7 @@ with single_tab:
     if single_clicked:
         try:
             if type(single_feature_decision) is not verified_loaders.FeatureRequest:
-                raise ValueError("Параметры расчёта некорректны.")
+                raise UserValueError("Параметры расчёта некорректны.")
             single_execution = None
             with st.spinner("Расчёт равновесия…"):
                 with acquire_b3_execution(
@@ -7462,7 +7586,7 @@ with single_tab:
         render_release_exclusion_note(result["settings"])
         st.markdown("#### Фазовые доли")
         st.dataframe(
-            result["summary"],
+            element_columns_for_display(result["summary"]),
             width="stretch",
             hide_index=True,
         )
@@ -7482,7 +7606,7 @@ with single_tab:
             else result["phase_wt"]
         )
         st.dataframe(
-            phase_table,
+            element_columns_for_display(phase_table),
             width="stretch",
             hide_index=True,
         )
@@ -7580,9 +7704,11 @@ with temperature_tab:
             PHASE_MODE_FAST,
         )
     except Exception as preview_error:
-        st.warning(
-            "Список фаз появится после исправления состава: "
-            f"{preview_error}"
+        render_friendly_error(
+            preview_error,
+            context="сканирование по температуре",
+            title="Список фаз появится после исправления состава.",
+            details_for_own=False,
         )
         temperature_component_candidates = ()
         temperature_selected_phases = None
@@ -7599,7 +7725,7 @@ with temperature_tab:
     temperature_points_c: tuple[float, ...] = ()
     try:
         if t_max <= t_min:
-            raise ValueError("Конечная температура должна быть выше начальной.")
+            raise UserValueError("Конечная температура должна быть выше начальной.")
         temperature_points_c = tuple(
             float(value)
             for value in np.arange(
@@ -7609,7 +7735,7 @@ with temperature_tab:
             )
         )
         if len(temperature_points_c) > 150:
-            raise ValueError(
+            raise UserValueError(
                 "Слишком много точек. Увеличьте шаг или уменьшите диапазон."
             )
         temperature_requested_phases = requested_phase_tuple(
@@ -7667,7 +7793,7 @@ with temperature_tab:
     if temperature_clicked:
         try:
             if type(temperature_feature_decision) is not verified_loaders.FeatureRequest:
-                raise ValueError("Параметры температурного скана некорректны.")
+                raise UserValueError("Параметры температурного скана некорректны.")
             # Многоточечный расчёт идёт в движок напрямую: verified-лиза
             # сериализует бэкенд по одному вызову и параллелить его не даёт.
             # SHA-256 базы движок сверяет сам, до создания процессов.
@@ -7774,7 +7900,7 @@ with temperature_tab:
         render_engine_note(result["settings"])
         st.pyplot(result["figure"])
         st.dataframe(
-            result["data"],
+            element_columns_for_display(result["data"]),
             width="stretch",
             hide_index=True,
         )
@@ -7796,7 +7922,7 @@ with temperature_tab:
 
         with download_col1:
             release_download_button(
-                "Excel",
+                "Скачать Excel",
                 data=excel_bytes,
                 file_name="ThermoGar_temperature_scan.xlsx",
                 mime=(
@@ -7807,7 +7933,7 @@ with temperature_tab:
 
         with download_col2:
             release_download_button(
-                "CSV",
+                "Скачать CSV",
                 data=csv_bytes,
                 file_name="ThermoGar_temperature_scan.csv",
                 mime="text/csv",
@@ -7815,7 +7941,7 @@ with temperature_tab:
 
         with download_col3:
             release_download_button(
-                "PNG",
+                "Скачать PNG",
                 data=png_bytes,
                 file_name="ThermoGar_temperature_scan.png",
                 mime="image/png",
@@ -7838,17 +7964,18 @@ with concentration_tab:
     variable_element = st.selectbox(
         "Изменяемый элемент",
         variable_candidates,
+        format_func=element_symbol,
     )
 
     st.caption(
         "В строке добавок указывайте только постоянные элементы. "
-        f"{variable_element} программа будет менять сама."
+        f"{element_symbol(variable_element)} программа будет менять сама."
     )
 
     fixed_composition_text = st.text_area(
-        "Постоянные добавки",
+        f"Постоянные добавки, {units_suffix(units)}",
         value="",
-        placeholder="Например: CR=15, CO=10",
+        placeholder="Например: Cr=15, Co=10",
         key=f"fixed_composition_{database_key}",
     )
 
@@ -7856,7 +7983,7 @@ with concentration_tab:
 
     with concentration_col1:
         c_min = st.number_input(
-            f"{variable_element}: от, %",
+            f"{element_symbol(variable_element)}: от, {units_suffix(units)}",
             min_value=0.0,
             value=0.0,
             step=1.0,
@@ -7864,7 +7991,7 @@ with concentration_tab:
 
     with concentration_col2:
         c_max = st.number_input(
-            f"{variable_element}: до, %",
+            f"{element_symbol(variable_element)}: до, {units_suffix(units)}",
             min_value=0.0,
             value=20.0,
             step=1.0,
@@ -7872,7 +7999,7 @@ with concentration_tab:
 
     with concentration_col3:
         c_step = st.number_input(
-            f"{variable_element}: шаг, %",
+            f"{element_symbol(variable_element)}: шаг, {units_suffix(units)}",
             min_value=0.01,
             value=10.0 if database_key == "fe" else 1.0,
             step=0.5,
@@ -7925,9 +8052,11 @@ with concentration_tab:
             PHASE_MODE_FAST,
         )
     except Exception as preview_error:
-        st.warning(
-            "Список фаз появится после исправления постоянного состава: "
-            f"{preview_error}"
+        render_friendly_error(
+            preview_error,
+            context="сканирование по составу",
+            title="Список фаз появится после исправления постоянного состава.",
+            details_for_own=False,
         )
         concentration_component_candidates = ()
         fixed_entered_preview = {}
@@ -7945,7 +8074,7 @@ with concentration_tab:
     concentration_points: tuple[float, ...] = ()
     try:
         if c_max <= c_min:
-            raise ValueError("Конечная концентрация должна быть выше начальной.")
+            raise UserValueError("Конечная концентрация должна быть выше начальной.")
         concentration_points = tuple(
             float(value)
             for value in np.arange(
@@ -7955,7 +8084,7 @@ with concentration_tab:
             )
         )
         if len(concentration_points) > 150:
-            raise ValueError(
+            raise UserValueError(
                 "Слишком много точек. Увеличьте шаг или уменьшите диапазон."
             )
         concentration_requested_phases = requested_phase_tuple(
@@ -8013,7 +8142,7 @@ with concentration_tab:
     if concentration_clicked:
         try:
             if type(concentration_feature_decision) is not verified_loaders.FeatureRequest:
-                raise ValueError("Параметры скана по составу некорректны.")
+                raise UserValueError("Параметры скана по составу некорректны.")
             x_column = f"{variable_element}, {units_label}"
             # Как и температурный скан: точки независимы и идут в движок
             # напрямую, мимо verified-лизы.
@@ -8131,7 +8260,7 @@ with concentration_tab:
         render_engine_note(result["settings"])
         st.pyplot(result["figure"])
         st.dataframe(
-            result["data"],
+            element_columns_for_display(result["data"]),
             width="stretch",
             hide_index=True,
         )
@@ -8153,7 +8282,7 @@ with concentration_tab:
 
         with download_col1:
             release_download_button(
-                "Excel",
+                "Скачать Excel",
                 data=excel_bytes,
                 file_name="ThermoGar_concentration_scan.xlsx",
                 mime=(
@@ -8164,7 +8293,7 @@ with concentration_tab:
 
         with download_col2:
             release_download_button(
-                "CSV",
+                "Скачать CSV",
                 data=csv_bytes,
                 file_name="ThermoGar_concentration_scan.csv",
                 mime="text/csv",
@@ -8172,7 +8301,7 @@ with concentration_tab:
 
         with download_col3:
             release_download_button(
-                "PNG",
+                "Скачать PNG",
                 data=png_bytes,
                 file_name="ThermoGar_concentration_scan.png",
                 mime="image/png",
@@ -8214,6 +8343,7 @@ with phase_diagram_tab:
         left_element = st.selectbox(
             "Первый элемент системы",
             available_elements,
+            format_func=element_symbol,
             index=available_elements.index(
                 diagram_defaults["left"]
                 if diagram_defaults["left"] in available_elements
@@ -8235,6 +8365,7 @@ with phase_diagram_tab:
         right_element = st.selectbox(
             "Второй элемент; его содержание идёт по горизонтальной оси",
             right_options,
+            format_func=element_symbol,
             index=right_options.index(default_right),
             key=f"binary_right_{database_key}_{left_element}",
         )
@@ -8249,7 +8380,7 @@ with phase_diagram_tab:
         binary_units = "at" if binary_units_label == "атомные %" else "wt"
 
         c_min = st.number_input(
-            f"{right_element}: от, %",
+            f"{element_symbol(right_element)}: от, {units_suffix(binary_units)} (0–99.999)",
             min_value=0.0,
             max_value=99.999,
             value=float(diagram_defaults["c_min"]),
@@ -8257,7 +8388,7 @@ with phase_diagram_tab:
             key=f"binary_c_min_{database_key}_{right_element}",
         )
         c_max = st.number_input(
-            f"{right_element}: до, %",
+            f"{element_symbol(right_element)}: до, {units_suffix(binary_units)} (0.001–100)",
             min_value=0.001,
             max_value=100.0,
             value=float(diagram_defaults["c_max"]),
@@ -8265,7 +8396,7 @@ with phase_diagram_tab:
             key=f"binary_c_max_{database_key}_{right_element}",
         )
         c_step = st.number_input(
-            f"Шаг по составу, {binary_units_label}",
+            f"Шаг по составу, {units_suffix(binary_units)}",
             min_value=0.001,
             value=float(diagram_defaults["c_step"]),
             step=float(diagram_defaults["c_step"]),
@@ -8323,9 +8454,11 @@ with phase_diagram_tab:
                 PHASE_MODE_FAST,
             )
         except Exception as preview_error:
-            st.warning(
-                "Список фаз появится после исправления параметров системы: "
-                f"{preview_error}"
+            render_friendly_error(
+                preview_error,
+                context="Бинарная T–X",
+                title="Список фаз появится после исправления параметров системы.",
+                details_for_own=False,
             )
             binary_selected_phases = None
             binary_phase_mode = "Автоматически"
@@ -8344,17 +8477,17 @@ with phase_diagram_tab:
         ):
             try:
                 if c_max <= c_min:
-                    raise ValueError(
+                    raise UserValueError(
                         "Конечная концентрация должна быть выше начальной."
                     )
                 if c_step <= 0:
-                    raise ValueError("Шаг состава должен быть больше нуля.")
+                    raise UserValueError("Шаг состава должен быть больше нуля.")
                 if diagram_t_max <= diagram_t_min:
-                    raise ValueError(
+                    raise UserValueError(
                         "Конечная температура должна быть выше начальной."
                     )
                 if diagram_t_step <= 0:
-                    raise ValueError(
+                    raise UserValueError(
                         "Шаг температуры должен быть больше нуля."
                     )
 
@@ -8369,7 +8502,7 @@ with phase_diagram_tab:
                     selected_set = set(binary_selected_phases)
                     phases = [phase for phase in phases if phase in selected_set]
                 if not phases:
-                    raise ValueError("Нужно оставить хотя бы одну фазу.")
+                    raise UserValueError("Нужно оставить хотя бы одну фазу.")
 
                 display_x_min = float(c_min) / 100.0
                 display_x_max = float(c_max) / 100.0
@@ -8401,7 +8534,7 @@ with phase_diagram_tab:
                     internal_x_max - internal_x_min
                 ) / interval_count
                 if internal_x_step <= 0:
-                    raise ValueError(
+                    raise UserValueError(
                         "После пересчёта состава получился нулевой диапазон."
                     )
 
@@ -8502,9 +8635,13 @@ with phase_diagram_tab:
                 )
 
             except Exception as error:
-                st.error(
-                    "Диаграмму построить не удалось. Проверьте диапазоны "
-                    f"и набор фаз. Техническая причина: {error}"
+                render_friendly_error(
+                    error,
+                    context="Бинарная T–X",
+                    title=(
+                        "Диаграмму построить не удалось. Проверьте диапазоны "
+                        "и набор фаз."
+                    ),
                 )
 
         binary_result_key = f"binary_result_{database_key}"
@@ -8519,7 +8656,7 @@ with phase_diagram_tab:
                     st.info("Таблица границ для этой карты пуста.")
                 else:
                     st.dataframe(
-                        result["boundaries"],
+                        element_columns_for_display(result["boundaries"]),
                         width="stretch",
                         hide_index=True,
                     )
@@ -8576,6 +8713,7 @@ with phase_diagram_tab:
         variable_element = st.selectbox(
             "Изменяемый элемент",
             variable_options,
+            format_func=element_symbol,
             index=variable_options.index(default_variable),
             key=f"isopleth_variable_{database_key}_{balance}",
         )
@@ -8589,7 +8727,7 @@ with phase_diagram_tab:
         default_fixed_values.pop(balance, None)
         default_fixed_values.pop(variable_element, None)
         default_fixed_text = ", ".join(
-            f"{element}={value:g}"
+            f"{element_symbol(element)}={value:g}"
             for element, value in default_fixed_values.items()
         )
 
@@ -8608,7 +8746,7 @@ with phase_diagram_tab:
         )
 
         isopleth_c_min = st.number_input(
-            f"{variable_element}: от, ат.%",
+            f"{element_symbol(variable_element)}: от, ат.% (0–99.999)",
             min_value=0.0,
             max_value=99.999,
             value=float(isopleth_defaults["c_min"]),
@@ -8619,7 +8757,7 @@ with phase_diagram_tab:
             ),
         )
         isopleth_c_max = st.number_input(
-            f"{variable_element}: до, ат.%",
+            f"{element_symbol(variable_element)}: до, ат.% (0.001–99.999)",
             min_value=0.001,
             max_value=99.999,
             value=float(isopleth_defaults["c_max"]),
@@ -8671,18 +8809,18 @@ with phase_diagram_tab:
                 fixed_composition_text
             )
             if balance in fixed_preview:
-                raise ValueError(
-                    f"{balance} выбран как основа и не должен быть "
+                raise UserValueError(
+                    f"{element_symbol(balance)} выбран как основа и не должен быть "
                     "указан среди постоянных добавок."
                 )
             if variable_element in fixed_preview:
-                raise ValueError(
-                    f"{variable_element} является изменяемым элементом "
+                raise UserValueError(
+                    f"{element_symbol(variable_element)} является изменяемым элементом "
                     "и не должен быть указан среди постоянных добавок."
                 )
 
             if not fixed_preview:
-                raise ValueError(
+                raise UserValueError(
                     "Укажите хотя бы одну постоянную добавку. "
                     "Для системы только из двух элементов используйте "
                     "вкладку «Бинарная система»."
@@ -8692,14 +8830,14 @@ with phase_diagram_tab:
                 set(fixed_preview) - set(available_elements)
             )
             if unknown_fixed:
-                raise ValueError(
+                raise UserValueError(
                     "В базе отсутствуют элементы: "
-                    + ", ".join(unknown_fixed)
+                    + element_symbols(unknown_fixed)
                 )
 
             fixed_sum = sum(fixed_preview.values())
             if fixed_sum + float(isopleth_c_max) >= 100.0:
-                raise ValueError(
+                raise UserValueError(
                     "Сумма постоянных добавок и максимального содержания "
                     "изменяемого элемента должна быть меньше 100 ат.%."
                 )
@@ -8724,9 +8862,11 @@ with phase_diagram_tab:
                 PHASE_MODE_FAST,
             )
         except Exception as preview_error:
-            st.warning(
-                "Список фаз появится после исправления состава: "
-                f"{preview_error}"
+            render_friendly_error(
+                preview_error,
+                context="Многокомпонентное T–X",
+                title="Список фаз появится после исправления состава.",
+                details_for_own=False,
             )
             fixed_preview = {}
             isopleth_selected_phases = None
@@ -8749,18 +8889,18 @@ with phase_diagram_tab:
                     fixed_composition_text
                 )
                 if balance in fixed_entered:
-                    raise ValueError(
-                        f"{balance} выбран как основа. Удалите его "
+                    raise UserValueError(
+                        f"{element_symbol(balance)} выбран как основа. Удалите его "
                         "из постоянных добавок."
                     )
                 if variable_element in fixed_entered:
-                    raise ValueError(
-                        f"Удалите {variable_element} из постоянных "
+                    raise UserValueError(
+                        f"Удалите {element_symbol(variable_element)} из постоянных "
                         "добавок: его содержание задаётся диапазоном."
                     )
 
                 if not fixed_entered:
-                    raise ValueError(
+                    raise UserValueError(
                         "Укажите хотя бы одну постоянную добавку. "
                         "Для системы только из двух элементов используйте "
                         "вкладку «Бинарная система»."
@@ -8770,31 +8910,31 @@ with phase_diagram_tab:
                     set(fixed_entered) - set(available_elements)
                 )
                 if unknown_fixed:
-                    raise ValueError(
+                    raise UserValueError(
                         "В базе отсутствуют элементы: "
-                        + ", ".join(unknown_fixed)
+                        + element_symbols(unknown_fixed)
                     )
 
                 if isopleth_c_max <= isopleth_c_min:
-                    raise ValueError(
+                    raise UserValueError(
                         "Конечная концентрация должна быть выше начальной."
                     )
                 if isopleth_c_step <= 0:
-                    raise ValueError(
+                    raise UserValueError(
                         "Шаг состава должен быть больше нуля."
                     )
                 if isopleth_t_max <= isopleth_t_min:
-                    raise ValueError(
+                    raise UserValueError(
                         "Конечная температура должна быть выше начальной."
                     )
                 if isopleth_t_step <= 0:
-                    raise ValueError(
+                    raise UserValueError(
                         "Шаг температуры должен быть больше нуля."
                     )
 
                 fixed_sum = sum(fixed_entered.values())
                 if fixed_sum + float(isopleth_c_max) >= 100.0:
-                    raise ValueError(
+                    raise UserValueError(
                         "При максимальном содержании изменяемого элемента "
                         "для элемента-основы не остаётся положительной доли."
                     )
@@ -8824,11 +8964,11 @@ with phase_diagram_tab:
                     ),
                 )
                 if composition_intervals > 250:
-                    raise ValueError(
+                    raise UserValueError(
                         "Слишком много шагов по составу. Увеличьте шаг."
                     )
                 if temperature_intervals > 300:
-                    raise ValueError(
+                    raise UserValueError(
                         "Слишком много шагов по температуре. Увеличьте шаг."
                     )
 
@@ -8852,7 +8992,7 @@ with phase_diagram_tab:
                         if phase in selected_set
                     ]
                 if not phases:
-                    raise ValueError(
+                    raise UserValueError(
                         "Нужно оставить хотя бы одну фазу."
                     )
 
@@ -8976,10 +9116,13 @@ with phase_diagram_tab:
                 )
 
             except Exception as error:
-                st.error(
-                    "Сечение построить не удалось. Проверьте состав, "
-                    "диапазоны и набор фаз. "
-                    f"Техническая причина: {error}"
+                render_friendly_error(
+                    error,
+                    context="Многокомпонентное T–X",
+                    title=(
+                        "Сечение построить не удалось. Проверьте состав, "
+                        "диапазоны и набор фаз."
+                    ),
                 )
 
         isopleth_result_key = (
@@ -9003,7 +9146,7 @@ with phase_diagram_tab:
                     )
                 else:
                     st.dataframe(
-                        result["boundaries"],
+                        element_columns_for_display(result["boundaries"]),
                         width="stretch",
                         hide_index=True,
                     )
@@ -9056,6 +9199,7 @@ with phase_diagram_tab:
         x_element = st.selectbox(
             "Элемент A — нижняя правая вершина",
             available_elements,
+            format_func=element_symbol,
             index=available_elements.index(
                 ternary_defaults["x"]
                 if ternary_defaults["x"] in available_elements
@@ -9077,6 +9221,7 @@ with phase_diagram_tab:
         y_element = st.selectbox(
             "Элемент B — верхняя вершина",
             y_options,
+            format_func=element_symbol,
             index=y_options.index(default_y),
             key=f"ternary_y_{database_key}_{x_element}",
         )
@@ -9094,6 +9239,7 @@ with phase_diagram_tab:
         dependent_element = st.selectbox(
             "Элемент C — нижняя левая вершина; остаток до 100 %",
             dependent_options,
+            format_func=element_symbol,
             index=dependent_options.index(default_dependent),
             key=(
                 f"ternary_dependent_{database_key}_"
@@ -9108,7 +9254,7 @@ with phase_diagram_tab:
             key=f"ternary_temperature_{database_key}",
         )
         ternary_step = st.number_input(
-            "Шаг поиска границ, ат.%",
+            "Шаг поиска границ, ат.% (0.5–10)",
             min_value=0.5,
             max_value=10.0,
             value=float(ternary_defaults["step"]),
@@ -9116,7 +9262,7 @@ with phase_diagram_tab:
             key=f"ternary_step_{database_key}",
             help=(
                 "Меньший шаг точнее, но расчёт длится дольше. "
-                "Для первого запуска используйте 2,5–5 ат.%."
+                "Для первого запуска используйте 2.5–5 ат.%."
             ),
         )
         ternary_show_tielines = st.checkbox(
@@ -9125,7 +9271,7 @@ with phase_diagram_tab:
             key=f"ternary_tielines_{database_key}",
         )
         ternary_tieline_every = st.number_input(
-            "Показывать каждую N-ю линию связи",
+            "Показывать каждую N-ю линию связи (1–50)",
             min_value=1,
             max_value=50,
             value=int(ternary_defaults["tieline_every"]),
@@ -9166,9 +9312,11 @@ with phase_diagram_tab:
                 PHASE_MODE_FAST,
             )
         except Exception as preview_error:
-            st.warning(
-                "Список фаз появится после исправления параметров системы: "
-                f"{preview_error}"
+            render_friendly_error(
+                preview_error,
+                context="Тройная при T = const",
+                title="Список фаз появится после исправления параметров системы.",
+                details_for_own=False,
             )
             ternary_selected_phases = None
             ternary_phase_mode = "Автоматически"
@@ -9188,7 +9336,7 @@ with phase_diagram_tab:
         ):
             try:
                 if ternary_step <= 0:
-                    raise ValueError(
+                    raise UserValueError(
                         "Шаг поиска границ должен быть больше нуля."
                     )
 
@@ -9212,13 +9360,13 @@ with phase_diagram_tab:
                         if phase in selected_set
                     ]
                 if not phases:
-                    raise ValueError(
+                    raise UserValueError(
                         "Нужно оставить хотя бы одну фазу."
                     )
 
                 step_fraction = float(ternary_step) / 100.0
                 if step_fraction >= 0.25:
-                    raise ValueError(
+                    raise UserValueError(
                         "Шаг слишком крупный для тройной диаграммы. "
                         "Используйте не более 10 ат.%."
                     )
@@ -9340,10 +9488,13 @@ with phase_diagram_tab:
                 )
 
             except Exception as error:
-                st.error(
-                    "Тройную диаграмму построить не удалось. "
-                    "Проверьте три элемента, температуру, шаг и набор фаз. "
-                    f"Техническая причина: {error}"
+                render_friendly_error(
+                    error,
+                    context="Тройная при T = const",
+                    title=(
+                        "Тройную диаграмму построить не удалось. "
+                        "Проверьте три элемента, температуру, шаг и набор фаз."
+                    ),
                 )
 
         ternary_result_key = f"ternary_result_{database_key}"
@@ -9371,7 +9522,7 @@ with phase_diagram_tab:
                     )
                 else:
                     st.dataframe(
-                        result["boundaries"],
+                        element_columns_for_display(result["boundaries"]),
                         width="stretch",
                         hide_index=True,
                     )
@@ -9420,6 +9571,7 @@ with phase_diagram_tab:
         map_x_element = st.selectbox(
             "Элемент A — нижняя правая вершина",
             available_elements,
+            format_func=element_symbol,
             index=available_elements.index(
                 map_defaults["x"]
                 if map_defaults["x"] in available_elements
@@ -9441,6 +9593,7 @@ with phase_diagram_tab:
         map_y_element = st.selectbox(
             "Элемент B — верхняя вершина",
             map_y_options,
+            format_func=element_symbol,
             index=map_y_options.index(default_map_y),
             key=f"ternary_map_y_{database_key}_{map_x_element}",
         )
@@ -9458,6 +9611,7 @@ with phase_diagram_tab:
         map_dependent_element = st.selectbox(
             "Элемент C — нижняя левая вершина и остаток до 100 %",
             map_dependent_options,
+            format_func=element_symbol,
             index=map_dependent_options.index(default_map_dependent),
             key=(
                 f"ternary_map_dependent_{database_key}_"
@@ -9482,7 +9636,7 @@ with phase_diagram_tab:
         )
 
         map_step = st.number_input(
-            "Желаемый шаг сетки, %",
+            "Желаемый шаг сетки, % (2–20)",
             min_value=2.0,
             max_value=20.0,
             value=float(map_defaults["step"]),
@@ -9497,7 +9651,7 @@ with phase_diagram_tab:
         )
 
         map_threshold = st.number_input(
-            "Провести границу появления фазы при доле, мол.%",
+            "Провести границу появления фазы при доле, мол.% (0–100)",
             min_value=0.0,
             max_value=100.0,
             value=float(map_defaults["appearance_threshold"]),
@@ -9555,9 +9709,11 @@ with phase_diagram_tab:
                 PHASE_MODE_FAST,
             )
         except Exception as preview_error:
-            st.warning(
-                "Список фаз появится после исправления параметров системы: "
-                f"{preview_error}"
+            render_friendly_error(
+                preview_error,
+                context="Карта доли фазы",
+                title="Список фаз появится после исправления параметров системы.",
+                details_for_own=False,
             )
             map_candidate_phases = []
             map_selected_phases = None
@@ -9598,7 +9754,7 @@ with phase_diagram_tab:
             )
 
         if len(map_selected_phases or []) > 15:
-            st.warning(
+            st.info(
                 "В расчёте оставлено больше 15 фаз. На подробной сетке это "
                 "может занять много времени. Для обзорной карты сначала "
                 "оставьте матрицу, выбранную фазу, жидкость и основные "
@@ -9612,9 +9768,9 @@ with phase_diagram_tab:
         ):
             try:
                 if map_target_phase is None:
-                    raise ValueError("Сначала выберите фазу для карты.")
+                    raise UserValueError("Сначала выберите фазу для карты.")
                 if map_point_count > 1500:
-                    raise ValueError(
+                    raise UserValueError(
                         "Сетка содержит слишком много узлов. "
                         "Увеличьте шаг до 2 % или больше."
                     )
@@ -9639,9 +9795,9 @@ with phase_diagram_tab:
                         if phase in selected_set
                     ]
                 if not phases:
-                    raise ValueError("Нужно оставить хотя бы одну фазу.")
+                    raise UserValueError("Нужно оставить хотя бы одну фазу.")
                 if map_target_phase not in phases:
-                    raise ValueError(
+                    raise UserValueError(
                         "Фаза для карты исключена галочками. "
                         "Верните её в список разрешённых фаз."
                     )
@@ -9660,6 +9816,7 @@ with phase_diagram_tab:
                         text=f"Рассчитано узлов: {completed} из {total}",
                     )
 
+                map_node_errors: list[Exception] = []
                 try:
                     with st.spinner(
                         "Считаем равновесие в каждом узле треугольника…"
@@ -9678,6 +9835,7 @@ with phase_diagram_tab:
                                 map_units,
                                 interval_count,
                                 update_map_progress,
+                                node_errors=map_node_errors,
                             )
                         )
 
@@ -9702,7 +9860,7 @@ with phase_diagram_tab:
                     np.isfinite(map_data[target_column])
                 ]
                 if valid_data.empty:
-                    raise RuntimeError(
+                    raise UserRuntimeError(
                         "Ни один узел карты не был рассчитан успешно."
                     )
 
@@ -9808,6 +9966,20 @@ with phase_diagram_tab:
                     "target_phase": map_target_phase,
                     "target_column": target_column,
                     "threshold": float(map_threshold),
+                    "node_error_record": (
+                        log_error(
+                            map_node_errors[0],
+                            context="Карта доли фазы",
+                            extra={
+                                "nodes": [
+                                    f"{type(item).__name__}: {item}"
+                                    for item in map_node_errors
+                                ]
+                            },
+                        )
+                        if map_node_errors
+                        else None
+                    ),
                 }
                 record_calculation_history(
                     THERMOGAR_PATHS,
@@ -9825,11 +9997,14 @@ with phase_diagram_tab:
                 )
 
             except Exception as error:
-                st.error(
-                    "Карту доли фазы построить не удалось. "
-                    "Проверьте три элемента, выбранную фазу, температуру, "
-                    "шаг и набор разрешённых фаз. "
-                    f"Техническая причина: {error}"
+                render_friendly_error(
+                    error,
+                    context="Карта доли фазы",
+                    title=(
+                        "Карту доли фазы построить не удалось. "
+                        "Проверьте три элемента, выбранную фазу, температуру, "
+                        "шаг и набор разрешённых фаз."
+                    ),
                 )
 
         map_result_key = f"ternary_map_result_{database_key}"
@@ -9868,6 +10043,8 @@ with phase_diagram_tab:
                     "Не рассчитано узлов",
                     int(summary_lookup["Не рассчитано узлов"]),
                 )
+            if result.get("node_error_record"):
+                render_error_record(*result["node_error_record"])
 
             if float(
                 summary_lookup[
@@ -9886,7 +10063,7 @@ with phase_diagram_tab:
                 expanded=False,
             ):
                 st.dataframe(
-                    result["summary"],
+                    element_columns_for_display(result["summary"]),
                     width="stretch",
                     hide_index=True,
                 )
@@ -9896,7 +10073,7 @@ with phase_diagram_tab:
                 expanded=False,
             ):
                 st.dataframe(
-                    result["data"],
+                    element_columns_for_display(result["data"]),
                     width="stretch",
                     hide_index=True,
                 )
@@ -9955,19 +10132,19 @@ with solidification_tab:
 
     if not scheil_available():
         st.error(
-            "Для этого раздела не установлен дополнительный пакет `scheil`. "
-            "Остальные функции ThermoGar продолжают работать."
+            "Модуль Scheil–Gulliver недоступен. Остальные функции работают."
         )
-        st.markdown("Установите пакет один раз и перезапустите ThermoGar:")
-        st.code(
-            'python -m pip install "scheil==0.3.0"',
-            language="bash",
-        )
-        if _SCHEIL_STATE["error"]:
-            st.caption(f"Причина импорта: {_SCHEIL_STATE['error']}")
+        with st.expander("Технические сведения", expanded=False):
+            st.markdown("Установите пакет один раз и перезапустите ThermoGar:")
+            st.code(
+                'python -m pip install "scheil==0.3.0"',
+                language="bash",
+            )
+            if _SCHEIL_STATE["error"]:
+                st.caption(f"Причина импорта: {_SCHEIL_STATE['error']}")
     else:
-        st.success(
-            "Модуль затвердевания готов: пакет `scheil` установлен."
+        st.info(
+            "Модуль Scheil–Gulliver доступен."
         )
         st.info(
             "Оба метода этого модуля рассчитываются при 101 325 Па. "
@@ -9975,7 +10152,7 @@ with solidification_tab:
             "локальное равновесие на границе и отсутствие диффузии в твёрдом."
         )
         if not np.isclose(float(pressure_pa), 101325.0):
-            st.warning(
+            st.error(
                 "Заданное в боковой панели давление здесь не применяется: "
                 "модуль затвердевания использует 101 325 Па."
             )
@@ -10010,7 +10187,7 @@ with solidification_tab:
             solidification_start_kwargs["max_value"] = float(FE_DATABASE_MAX_T_C)
             solidification_start_kwargs["help"] = (
                 "Для mc_fe 2.062 расчёт ограничен верхней границей базы "
-                "2000 K (1726,85 °C)."
+                "2000 K (1726.85 °C)."
             )
         solidification_start_c = st.number_input(**solidification_start_kwargs)
         solidification_step_c = st.number_input(
@@ -10036,7 +10213,7 @@ with solidification_tab:
             )
             if database_key == "fe":
                 solidification_max_start_c = st.number_input(
-                    "Максимальная проверяемая температура, °C",
+                    f"Максимальная проверяемая температура, °C (-200–{float(FE_DATABASE_MAX_T_C):g})",
                     min_value=-200.0,
                     max_value=float(FE_DATABASE_MAX_T_C),
                     value=float(FE_DATABASE_MAX_T_C),
@@ -10044,7 +10221,7 @@ with solidification_tab:
                     key=f"solidification_max_start_13_1_{database_key}_{fe_profile_key}",
                     help=(
                         "Верхняя граница mc_fe 2.062 — 2000 K "
-                        "(1726,85 °C); выше неё ThermoGar не ищет расплав."
+                        "(1726.85 °C); выше неё ThermoGar не ищет расплав."
                     ),
                 )
             else:
@@ -10117,7 +10294,12 @@ with solidification_tab:
             )
         except Exception as preview_error:
             solidification_candidate_phases = []
-            st.error(f"Исправьте состав: {preview_error}")
+            render_friendly_error(
+                preview_error,
+                context="затвердевание",
+                title="Исправьте состав.",
+                details_for_own=False,
+            )
 
         (
             selected_solidification_phases,
@@ -10151,7 +10333,7 @@ with solidification_tab:
         ):
             try:
                 if float(solidification_max_start_c) < float(solidification_start_c):
-                    raise ValueError(
+                    raise UserValueError(
                         "Максимальная проверяемая температура должна быть "
                         "не ниже начальной температуры."
                     )
@@ -10173,7 +10355,7 @@ with solidification_tab:
                 )
 
                 if "LIQUID" not in phases:
-                    raise ValueError(
+                    raise UserValueError(
                         "Фаза LIQUID отсутствует в выбранном наборе фаз."
                     )
 
@@ -10209,6 +10391,15 @@ with solidification_tab:
 
                     results: dict[str, Any] = {}
                     errors: dict[str, str] = {}
+                    # 21-Ж: своё сообщение — для экрана, чужое — в отчёт.
+                    error_records: dict[str, tuple[str, Any]] = {}
+
+                    def solidification_error_record(
+                        error: Exception, context: str
+                    ) -> tuple[str, Any]:
+                        if is_user_message(error):
+                            return user_message_text(error), None
+                        return "", log_error(error, context=context)
 
                     for method_key in methods_to_run:
                         method_label = SOLIDIFICATION_METHOD_LABELS[method_key]
@@ -10225,10 +10416,9 @@ with solidification_tab:
                         # он стоит 2,1 с и нужен только здесь.
                         scheil_module = load_scheil()
                         if scheil_module["package"] is None:
-                            raise RuntimeError(
-                                "Пакет scheil не импортирован: "
-                                f"{scheil_module['error']}"
-                            )
+                            raise UserRuntimeError(
+                                "Модуль Scheil–Gulliver недоступен."
+                            ) from ImportError(str(scheil_module["error"]))
                         try:
                             if method_key == "equilibrium":
                                 result = scheil_module["equilibrium"](
@@ -10267,13 +10457,17 @@ with solidification_tab:
                             status.write(f"{method_label}: завершено.")
                         except Exception as method_error:
                             errors[method_key] = str(method_error)
+                            error_records[method_key] = (
+                                solidification_error_record(
+                                    method_error, "затвердевание"
+                                )
+                            )
                             status.write(
-                                f"{method_label}: расчёт не завершён — "
-                                f"{method_error}"
+                                f"{method_label}: расчёт не завершён."
                             )
 
                     if not results:
-                        raise RuntimeError(
+                        raise UserRuntimeError(
                             "Ни один выбранный метод не завершился успешно."
                         )
 
@@ -10330,7 +10524,10 @@ with solidification_tab:
                     except Exception as liquidus_error:
                         computed_liquidus_c = None
                         errors["Ликвидус"] = str(liquidus_error)
-                        status.write(f"Ликвидус не найден: {liquidus_error}")
+                        error_records["Ликвидус"] = solidification_error_record(
+                            liquidus_error, "затвердевание"
+                        )
+                        status.write("Ликвидус не найден.")
 
                     # BL-44: конец несошедшейся равновесной траектории — не
                     # солидус; тогда он ищется половинным делением.
@@ -10462,6 +10659,7 @@ with solidification_tab:
                     "components": components,
                     "results": results,
                     "errors": errors,
+                    "error_records": error_records,
                     "summary": summary_table,
                     "settings": settings_table,
                     "start_check": start_check_table,
@@ -10533,7 +10731,7 @@ with solidification_tab:
             with summary_subtab:
                 st.markdown("### Основные температуры")
                 st.dataframe(
-                    state["summary"],
+                    element_columns_for_display(state["summary"]),
                     width="stretch",
                     hide_index=True,
                 )
@@ -10559,10 +10757,20 @@ with solidification_tab:
                     )
                 if state["errors"]:
                     for method_key, error_text in state["errors"].items():
-                        st.warning(
-                            f"{SOLIDIFICATION_METHOD_LABELS.get(method_key, method_key)}: "
-                            f"{error_text}"
+                        own_text, error_record = state.get(
+                            "error_records", {}
+                        ).get(method_key, (error_text, None))
+                        head = (
+                            "Ликвидус не найден."
+                            if method_key == "Ликвидус"
+                            else f"{SOLIDIFICATION_METHOD_LABELS.get(method_key, method_key)}: "
+                            "расчёт не завершён."
                         )
+                        st.error(
+                            f"{head}\n\n{own_text}" if own_text else head
+                        )
+                        if error_record is not None:
+                            render_error_record(*error_record)
 
             with phases_subtab:
                 phase_method_key = st.selectbox(
@@ -10580,19 +10788,19 @@ with solidification_tab:
                 )
                 st.markdown("### Последовательность появления фаз")
                 st.dataframe(
-                    state["sequences"][phase_method_key],
+                    element_columns_for_display(state["sequences"][phase_method_key]),
                     width="stretch",
                     hide_index=True,
                 )
                 st.markdown("### Итоговые количества фаз")
                 st.dataframe(
-                    state["final_phases"][phase_method_key],
+                    element_columns_for_display(state["final_phases"][phase_method_key]),
                     width="stretch",
                     hide_index=True,
                 )
                 with st.expander("Полная траектория расчёта"):
                     st.dataframe(
-                        state["paths"][phase_method_key],
+                        element_columns_for_display(state["paths"][phase_method_key]),
                         width="stretch",
                         hide_index=True,
                     )
@@ -10606,6 +10814,7 @@ with solidification_tab:
                 liquid_element = st.selectbox(
                     "Элемент в остаточном расплаве",
                     liquid_elements,
+                    format_func=element_symbol,
                     key="solidification_liquid_element",
                 )
                 liquid_units_label = st.radio(
@@ -10635,7 +10844,7 @@ with solidification_tab:
                     key="solidification_liquid_method",
                 )
                 st.dataframe(
-                    state["liquid_tables"][liquid_method_key],
+                    element_columns_for_display(state["liquid_tables"][liquid_method_key]),
                     width="stretch",
                     hide_index=True,
                 )
@@ -10680,7 +10889,7 @@ with solidification_tab:
                     mime="image/png",
                 )
                 release_download_button(
-                    "Скачать полный архив ZIP",
+                    "Скачать полный архив, ZIP",
                     data=zip_bytes,
                     file_name="ThermoGar_solidification_results.zip",
                     mime="application/zip",
@@ -10725,9 +10934,11 @@ with energy_tab:
                 steel_mode,
             )
         except Exception as preview_error:
-            st.warning(
-                "Список фаз появится после исправления состава: "
-                f"{preview_error}"
+            render_friendly_error(
+                preview_error,
+                context="энергии фаз",
+                title="Список фаз появится после исправления состава.",
+                details_for_own=False,
             )
             energy_candidate_phases = []
 
@@ -10798,6 +11009,7 @@ with energy_tab:
                     steel_mode,
                 )
 
+                skipped_errors: list[Exception] = []
                 with st.spinner("Расчёт однофазных энергий…"):
                     absolute_table, relative_table, crossings, skipped = (
                         isolated_phase_energy_tables(
@@ -10809,8 +11021,23 @@ with energy_tab:
                             energy_t_min,
                             energy_t_max,
                             energy_t_step,
+                            skipped_errors=skipped_errors,
                         )
                     )
+                skipped_record = (
+                    log_error(
+                        skipped_errors[0],
+                        context="энергии фаз",
+                        extra={
+                            "skipped": [
+                                f"{type(item).__name__}: {item}"
+                                for item in skipped_errors
+                            ]
+                        },
+                    )
+                    if skipped_errors
+                    else None
+                )
 
                 valid_phases = [
                     phase_name
@@ -10848,6 +11075,7 @@ with energy_tab:
                     "relative": relative_table,
                     "crossings": crossings,
                     "skipped": skipped,
+                    "skipped_record": skipped_record,
                     "valid_phases": valid_phases,
                     "figure": figure,
                     "relative_view": relative_view,
@@ -10875,11 +11103,13 @@ with energy_tab:
                     "Некоторые фазы пропущены:\n\n- "
                     + "\n- ".join(energy_state["skipped"])
                 )
+                if energy_state.get("skipped_record"):
+                    render_error_record(*energy_state["skipped_record"])
 
             if not energy_state["crossings"].empty:
                 st.markdown("#### Приближённые пересечения энергетических кривых")
                 st.dataframe(
-                    energy_state["crossings"],
+                    element_columns_for_display(energy_state["crossings"]),
                     width="stretch",
                     hide_index=True,
                 )
@@ -10887,13 +11117,13 @@ with energy_tab:
             with st.expander("Таблицы энергий"):
                 st.markdown("#### Абсолютная энергия, Дж/моль")
                 st.dataframe(
-                    energy_state["absolute"],
+                    element_columns_for_display(energy_state["absolute"]),
                     width="stretch",
                     hide_index=True,
                 )
                 st.markdown("#### Энергия относительно минимума, Дж/моль")
                 st.dataframe(
-                    energy_state["relative"],
+                    element_columns_for_display(energy_state["relative"]),
                     width="stretch",
                     hide_index=True,
                 )
@@ -10950,9 +11180,11 @@ with energy_tab:
                 steel_mode,
             )
         except Exception as preview_error:
-            st.warning(
-                "Список фаз появится после исправления состава: "
-                f"{preview_error}"
+            render_friendly_error(
+                preview_error,
+                context="движущая сила",
+                title="Список фаз появится после исправления состава.",
+                details_for_own=False,
             )
             driving_candidate_phases = []
 
@@ -11020,7 +11252,7 @@ with energy_tab:
         ):
             try:
                 if not driving_target:
-                    raise ValueError("Не выбрана фаза для расчёта.")
+                    raise UserValueError("Не выбрана фаза для расчёта.")
                 reference_phases = list(driving_reference_phases)
                 if exclude_target:
                     reference_phases = [
@@ -11108,12 +11340,12 @@ with energy_tab:
             if not driving_state["crossings"].empty:
                 st.markdown("#### Приближённая смена знака")
                 st.dataframe(
-                    driving_state["crossings"],
+                    element_columns_for_display(driving_state["crossings"]),
                     width="stretch",
                     hide_index=True,
                 )
             st.dataframe(
-                driving_state["data"],
+                element_columns_for_display(driving_state["data"]),
                 width="stretch",
                 hide_index=True,
             )
@@ -11167,6 +11399,7 @@ with energy_tab:
         tzero_variable = st.selectbox(
             "Изменяемый элемент",
             options=tzero_variable_options,
+            format_func=element_symbol,
             index=tzero_variable_options.index(default_variable),
             key=f"tzero_variable_{database_key}_{balance}",
         )
@@ -11179,32 +11412,33 @@ with energy_tab:
         )
         tzero_units = "at" if tzero_units_label == "атомные %" else "wt"
         tzero_fixed_text = st.text_area(
-            "Постоянные добавки",
+            f"Постоянные добавки, {units_suffix(tzero_units)}",
             value="",
-            placeholder="Например: CR=15, CO=10",
+            placeholder="Например: Cr=15, Co=10",
             help=(
-                f"Не указывайте {balance} и {tzero_variable}. "
+                f"Не указывайте {element_symbol(balance)} и "
+                f"{element_symbol(tzero_variable)}. "
                 "Остаток считается элементом-основой."
             ),
             key=f"tzero_fixed_{database_key}_{tzero_variable}",
         )
 
         tzero_c_min = st.number_input(
-            f"{tzero_variable}: от, %",
+            f"{element_symbol(tzero_variable)}: от, {units_suffix(tzero_units)}",
             min_value=0.0,
             value=float(energy_defaults["c_min"]),
             step=float(energy_defaults["c_step"]),
             key=f"tzero_c_min_{database_key}_{tzero_variable}",
         )
         tzero_c_max = st.number_input(
-            f"{tzero_variable}: до, %",
+            f"{element_symbol(tzero_variable)}: до, {units_suffix(tzero_units)}",
             min_value=0.001,
             value=float(energy_defaults["c_max"]),
             step=float(energy_defaults["c_step"]),
             key=f"tzero_c_max_{database_key}_{tzero_variable}",
         )
         tzero_c_step = st.number_input(
-            f"{tzero_variable}: шаг, %",
+            f"{element_symbol(tzero_variable)}: шаг, {units_suffix(tzero_units)}",
             min_value=0.001,
             value=float(energy_defaults["c_step"]),
             step=float(energy_defaults["c_step"]),
@@ -11223,9 +11457,11 @@ with energy_tab:
                 steel_mode,
             )
         except Exception as preview_error:
-            st.warning(
-                "Список фаз появится после исправления постоянных добавок: "
-                f"{preview_error}"
+            render_friendly_error(
+                preview_error,
+                context="расчёт T₀",
+                title="Список фаз появится после исправления постоянных добавок.",
+                details_for_own=False,
             )
             tzero_candidate_phases = []
 
@@ -11298,7 +11534,7 @@ with energy_tab:
         ):
             try:
                 if not phase_one or not phase_two:
-                    raise ValueError("Выберите две фазы.")
+                    raise UserValueError("Выберите две фазы.")
                 with st.spinner("Поиск T₀ по составу…"):
                     tzero_table = tzero_path_table(
                         db,
@@ -11379,7 +11615,7 @@ with energy_tab:
                     "сдвиньте окно к ожидаемой температуре перехода."
                 )
             else:
-                st.warning(
+                st.error(
                     "В заданном окне T₀ не найдено ни в одной точке. "
                     "Сдвиньте окно к ожидаемой температуре перехода и "
                     "сделайте его уже — на широком окне разность энергий "
@@ -11389,7 +11625,7 @@ with energy_tab:
                 )
             st.pyplot(tzero_state["figure"])
             st.dataframe(
-                tzero_state["data"],
+                element_columns_for_display(tzero_state["data"]),
                 width="stretch",
                 hide_index=True,
             )
@@ -11432,9 +11668,8 @@ with energy_tab:
 with physical_tab:
     st.subheader("Физические свойства и механизмы упрочнения")
     st.caption(
-        "Плотность и объёмные доли используют проверенные TDB и "
-        "physical_data.pdb. Упругость и упрочнение используют ту же "
-        "проверенную привязку выбранной базы."
+        "Плотность и объёмные доли считаются по термодинамической и "
+        "физической базам. Упругость и упрочнение — по тем же базам."
     )
 
     try:
@@ -11443,7 +11678,11 @@ with physical_tab:
     except Exception as error:
         b4b_physical_context = None
         b4b_physical_error = error
-        st.error(f"Проверенная физическая привязка отклонена: {error}")
+        render_friendly_error(
+            error,
+            context="физическая база",
+            title="Физическая база не подключена: файлы не прошли проверку.",
+        )
 
     physical_overrides = render_physical_overrides_toggle()
 
@@ -11459,13 +11698,13 @@ with physical_tab:
             "Плотность по T",
             "Упругие свойства",
             "Вклады упрочнения",
-            "Покрытие PDB",
+            "Покрытие физической базы",
         ]
     )
 
     with physical_single_tab:
         if b4b_physical_context is None:
-            st.error(str(b4b_physical_error))
+            st.error(PHYSICAL_BINDING_ERROR_TITLE)
         else:
             render_b4b_density_single(
                 b4b_physical_context,
@@ -11480,7 +11719,7 @@ with physical_tab:
 
     with physical_scan_tab:
         if b4b_physical_context is None:
-            st.error(str(b4b_physical_error))
+            st.error(PHYSICAL_BINDING_ERROR_TITLE)
         else:
             render_b4b_density_temperature(
                 b4b_physical_context,
@@ -11497,7 +11736,7 @@ with physical_tab:
 
     with elastic_properties_tab:
         if b4b_physical_context is None:
-            st.error(str(b4b_physical_error))
+            st.error(PHYSICAL_BINDING_ERROR_TITLE)
         else:
             render_b4b2_elastic_properties(
                 b4b_physical_context,
@@ -11512,7 +11751,7 @@ with physical_tab:
 
     with strengthening_tab:
         if b4b_physical_context is None:
-            st.error(str(b4b_physical_error))
+            st.error(PHYSICAL_BINDING_ERROR_TITLE)
         else:
             render_b4b2_strengthening(
                 b4b_physical_context,
@@ -11522,14 +11761,14 @@ with physical_tab:
     with physical_coverage_tab:
         st.markdown("### Что покрывает физическая база")
         if b4b_physical_context is None:
-            st.error(str(b4b_physical_error))
+            st.error(PHYSICAL_BINDING_ERROR_TITLE)
         else:
-            st.caption(
-                "physical_data.pdb "
-                + PHYSICAL_DATABASE_VERSION
-                + " · SHA-256: "
-                + b4b_physical_context.physical_pdb.sha256
-            )
+            st.caption("Физическая база " + PHYSICAL_DATABASE_VERSION)
+            with st.expander("Технические сведения", expanded=False):
+                st.code(
+                    "SHA-256: " + b4b_physical_context.physical_pdb.sha256,
+                    language=None,
+                )
             render_b4b_coverage(
                 b4b_physical_context,
                 database_key,
@@ -11828,6 +12067,7 @@ with reference_tab:
             PHASE_EXPLANATIONS,
             workspace_state_store,
             batch_engine_runner,
+            paths=THERMOGAR_PATHS,
         )
 
     with projects_subtab:
@@ -11842,20 +12082,18 @@ with reference_tab:
     with database_passport_subtab:
         st.subheader("Паспорт текущей базы")
         st.caption(
-            "Паспорт показывает точный файл, профиль, контрольную сумму и "
-            "известные ограничения, влияющие на интерпретацию результата."
+            "Паспорт показывает файл базы и известные ограничения, "
+            "влияющие на интерпретацию результата."
         )
         if database_key != "fe":
             st.info(
-                "Отдельный профиль базы ведётся только для открытой "
-                "стальной базы mc_fe 2.062."
+                "Поправка проекта ThermoGar есть только у стальной базы "
+                "mc_fe 2.062."
             )
             st.dataframe(
                 pd.DataFrame(
                     [
                         ("База", definition["label"]),
-                        ("Файл", str(database_path)),
-                        ("SHA-256", CURRENT_CONTEXT["database_sha256"]),
                         ("Исключённые из расчёта фазы", "нет"),
                     ],
                     columns=["Поле", "Значение"],
@@ -11863,25 +12101,47 @@ with reference_tab:
                 width="stretch",
                 hide_index=True,
             )
+            with st.expander("Технические сведения", expanded=False):
+                st.dataframe(
+                    pd.DataFrame(
+                        [
+                            ("Файл", str(database_path)),
+                            ("SHA-256", CURRENT_CONTEXT["database_sha256"]),
+                        ],
+                        columns=["Поле", "Значение"],
+                    ),
+                    width="stretch",
+                    hide_index=True,
+                )
         else:
             st.caption(
-                "Steel/Fe · thermogar_patch · C15_LAVES исключена · "
-                "экспериментальная квалификация: NOT_PERFORMED"
+                "Стальная база mc_fe 2.062 · фаза C15_LAVES исключена из "
+                "расчёта · экспериментальная квалификация не проводилась"
+            )
+            passport_table = passport_dataframe(PROJECT_ROOT, fe_profile_key)
+            passport_technical = passport_table["Поле"].isin(
+                PASSPORT_TECHNICAL_FIELDS
             )
             st.dataframe(
-                passport_dataframe(PROJECT_ROOT, fe_profile_key),
+                passport_table[~passport_technical],
                 width="stretch",
                 hide_index=True,
             )
             manifest = load_profile_manifest(PROJECT_ROOT)
-            if manifest:
-                with st.expander("JSON-паспорт патча конвертера", expanded=False):
+            with st.expander("Технические сведения", expanded=False):
+                st.dataframe(
+                    passport_table[passport_technical],
+                    width="stretch",
+                    hide_index=True,
+                )
+                if manifest:
                     st.json(manifest)
 
     with help_subtab:
         st.subheader("Как пользоваться ThermoGar")
         st.caption(
-            "Версия 0.3.0. Ниже описано то, что приложение делает сейчас."
+            f"Версия {APP_VERSION}. Ниже описано то, что приложение делает "
+            "сейчас."
         )
         st.markdown(
             "1. Выберите базу материалов в боковой панели: никелевую, "
@@ -11914,7 +12174,7 @@ with reference_tab:
                 "- **Энергии** — энергии Гиббса выбранных фаз, движущая сила "
                 "образования фазы и T₀.\n"
                 "- **Свойства** — плотность и объёмные доли по "
-                "physical_data.pdb, Voigt–Reuss–Hill и вклады механизмов "
+                "физической базе, Voigt–Reuss–Hill и вклады механизмов "
                 "упрочнения по явно введённым коэффициентам.\n"
                 "- **Кинетика** — диффузионные профили и кинетика "
                 "выделений (KWN).\n"
@@ -11927,12 +12187,12 @@ with reference_tab:
             st.markdown(
                 "- Сталь — обычная база наравне с никелевой и алюминиевой: "
                 "те же разделы, те же сетки, те же выгрузки.\n"
-                "- Стальная база — mc_fe 2.062, профиль `thermogar_patch`; "
+                "- Стальная база — mc_fe 2.062 с поправкой проекта ThermoGar: "
                 "фаза `C15_LAVES` исключена из расчёта и не выбирается "
                 "вручную.\n"
-                "- Верхняя граница стальной базы — 2000 K (1726,85 °C); "
+                "- Верхняя граница стальной базы — 2000 K (1726.85 °C); "
                 "выше неё расчёт не идёт.\n"
-                "- `filter_phases` оставляет упорядоченную половину пары "
+                "- ThermoGar оставляет упорядоченную половину пары "
                 "порядок/беспорядок, поэтому матрица называется `GP_MAT` "
                 "для алюминия и `BCC_B2` для стали. Это не ошибка расчёта; "
                 "смысл названий смотрите в справочнике фаз."
@@ -11958,7 +12218,7 @@ with reference_tab:
             st.markdown(
                 "1. Откройте **Диаграммы → Тройная при T = const**.  \n"
                 "2. Выберите три разных элемента.  \n"
-                "3. Задайте температуру и шаг 2,5–5 ат.%.  \n"
+                "3. Задайте температуру и шаг 2.5–5 ат.%.  \n"
                 "4. Оставьте автоматический набор фаз.  \n"
                 "5. Нажмите **Построить тройную диаграмму**.  \n"
                 "6. Линии связи и точки трёхфазного равновесия "
@@ -12040,11 +12300,11 @@ with reference_tab:
                 "без данных."
             )
             st.caption(
-                "Прямая DP-модель взята из physical_data.pdb. Оценочная "
+                "Прямая модель плотности взята из физической базы. Оценочная "
                 "модель означает, что упорядоченная фаза использует "
                 "плотность связанной разупорядоченной структуры. Пример "
                 "неполного покрытия: для Al–4Cu–1Mg в базе нет модели "
-                "плотности `THETA_AL2CU`, покрытие около 98,9 %, поэтому "
+                "плотности `THETA_AL2CU`, покрытие около 98.9 %, поэтому "
                 "общая плотность сплава не выводится, а плотности "
                 "отдельных фаз считаются и выгружаются."
             )
@@ -12074,7 +12334,7 @@ with reference_tab:
                 "2. **Пакетный расчёт:** загрузите таблицу составов, "
                 "посчитайте её целиком и выгрузите результат.  \n"
                 "3. **Проекты и история:** проект сохраняет настройки, "
-                "а история — факт расчёта и отпечаток базы.  \n"
+                "а история — факт расчёта и версию базы.  \n"
                 "4. После загрузки проекта или истории расчёт нужно "
                 "повторить на текущей версии базы."
             )
@@ -12082,13 +12342,13 @@ with reference_tab:
         with st.expander("Готовые примеры"):
             examples = pd.DataFrame(
                 [
-                    ["Никелевые сплавы", "NI", "атомные %", "AL=15", "700 °C"],
-                    ["Алюминиевые сплавы", "AL", "атомные %", "CU=4", "500 °C"],
+                    ["Никелевые сплавы", "Ni", "атомные %", "Al=15", "700 °C"],
+                    ["Алюминиевые сплавы", "Al", "атомные %", "Cu=4", "500 °C"],
                     [
                         "Стали и Fe-сплавы",
-                        "FE",
+                        "Fe",
                         "массовые %",
-                        "C=0.20, CR=11.5, NI=0.7",
+                        "C=0.20, Cr=11.5, Ni=0.7",
                         "700 °C",
                     ],
                 ],
@@ -12133,6 +12393,7 @@ with reference_tab:
             KAWIN_IMPORT_ERROR,
             PRECIPITATION_AVAILABLE,
             PRECIPITATION_IMPORT_ERROR,
+            paths=THERMOGAR_PATHS,
         )
 
     with phase_reference_subtab:

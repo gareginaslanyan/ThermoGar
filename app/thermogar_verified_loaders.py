@@ -199,13 +199,28 @@ RESULT_ENVELOPE_FIELDS = (
 class VerifiedLoaderError(RuntimeError):
     """Fail-closed error carrying one frozen reason classification."""
 
-    def __init__(self, reason_code: ReasonCode, detail: str):
+    def __init__(
+        self,
+        reason_code: ReasonCode,
+        detail: str,
+        *,
+        user_message: bool = False,
+        user_text: str | None = None,
+    ):
         if type(reason_code) is not ReasonCode:
             raise TypeError("reason_code must be a ReasonCode.")
         if type(detail) is not str or not detail or len(detail) > MAX_REASON_DETAIL_CHARS:
             raise TypeError("detail must be bounded non-empty text.")
         self.reason_code = reason_code
         self.detail = detail
+        # 21-Ж: признак своего русского сообщения ThermoGar (is_user_message);
+        # на экран тогда выходит detail без кода причины либо отдельный
+        # русский ``user_text``, если detail остаётся служебным.
+        self.user_message = user_message is True or user_text is not None
+        if user_text is not None:
+            self.user_text = user_text
+        else:
+            self.user_text = detail if self.user_message else ""
         super().__init__(f"{reason_code.value}: {detail}")
 
 

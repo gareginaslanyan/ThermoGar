@@ -45,6 +45,7 @@ from thermogar_secure_io import (
     ensure_plain_directory,
     read_verified_snapshot,
 )
+from thermogar_user_errors import UserMessage, UserValueError
 
 
 ELASTIC_LIBRARY_SCHEMA_VERSION = 1
@@ -90,7 +91,7 @@ STRENGTHENING_SUMMATION_RULES = (
 )
 
 
-class PropertyCalculationError(ValueError):
+class PropertyCalculationError(UserMessage, ValueError):
     """Fail-closed numerical error with a stable machine-readable reason."""
 
     def __init__(self, reason_code: str, message: str) -> None:
@@ -121,10 +122,10 @@ def _finite_input_number(
     except (TypeError, ValueError, OverflowError) as error:
         raise PropertyCalculationError(
             invalid_reason,
-            f"{label}: требуется число, представимое в binary64.",
+            f"{label}: число слишком велико.",
         ) from error
     if not math.isfinite(number):
-        _property_fail(nonfinite_reason, f"{label}: NaN и бесконечность запрещены.")
+        _property_fail(nonfinite_reason, f"{label}: нужно конечное число.")
     if number == 0.0:
         return 0.0
     return number
@@ -136,10 +137,10 @@ def _finite_output_number(value: float, *, reason: str, label: str) -> float:
     except (TypeError, ValueError, OverflowError) as error:
         raise PropertyCalculationError(
             reason,
-            f"{label}: результат не представим в binary64.",
+            f"{label}: результат слишком велик.",
         ) from error
     if not math.isfinite(number):
-        _property_fail(reason, f"{label}: получен NaN или бесконечность.")
+        _property_fail(reason, f"{label}: результат не является конечным числом.")
     if number == 0.0:
         return 0.0
     return number
@@ -206,7 +207,7 @@ def _strengthening_ratio_product(
     except OverflowError as error:
         raise PropertyCalculationError(
             "STRENGTHENING_NONFINITE_OUTPUT",
-            f"{label}: результат вышел за диапазон binary64.",
+            f"{label}: результат слишком велик.",
         ) from error
     return _strengthening_output(result, label)
 
@@ -293,17 +294,17 @@ def _decode_elastic_library(data: bytes) -> dict[str, Any]:
     try:
         payload = json.loads(data.decode("utf-8-sig"))
     except (UnicodeError, json.JSONDecodeError) as error:
-        raise ValueError("Библиотека упругих свойств содержит неверный JSON.") from error
+        raise UserValueError("Библиотека упругих свойств содержит неверный JSON.") from error
     if not isinstance(payload, dict):
-        raise ValueError("Библиотека упругих свойств должна быть JSON-объектом.")
+        raise UserValueError("Библиотека упругих свойств должна быть JSON-объектом.")
     if int(payload.get("schema_version", 0)) != ELASTIC_LIBRARY_SCHEMA_VERSION:
-        raise ValueError(
+        raise UserValueError(
             "Неподдерживаемая версия библиотеки упругих свойств: "
             f"{payload.get('schema_version')!r}."
         )
     entries = payload.get("entries")
     if not isinstance(entries, dict):
-        raise ValueError("В библиотеке отсутствует объект entries.")
+        raise UserValueError("Введённые значения не проходят проверку.")
     return payload
 
 
@@ -314,7 +315,7 @@ def _encode_elastic_library(library: dict[str, Any]) -> bytes:
     payload.setdefault("entries", {})
     encoded = json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
     if len(encoded) > MAX_ELASTIC_LIBRARY_BYTES:
-        raise ValueError("Библиотека упругих свойств превысила допустимый размер.")
+        raise UserValueError("Библиотека упругих свойств превысила допустимый размер.")
     return encoded
 
 
@@ -517,7 +518,7 @@ def moduli_from_e_nu(young_gpa: float, poisson: float) -> ElasticModuli:
     if not (-1.0 < nu < 0.5):
         _property_fail(
             "ELASTIC_INPUT_INVALID",
-            "Коэффициент Пуассона должен лежать между -1 и 0,5.",
+            "Коэффициент Пуассона должен лежать между -1 и 0.5.",
         )
 
     bulk = young / (3.0 * (1.0 - 2.0 * nu))
@@ -587,7 +588,7 @@ def vrh_homogenization(
         if not isinstance(row, Mapping):
             _property_fail(
                 "ELASTIC_INPUT_INVALID",
-                f"Фаза {index}: ожидается объект с volume_fraction, bulk_gpa и shear_gpa.",
+                "Введённые значения не проходят проверку.",
             )
         required_fields = {"volume_fraction", "bulk_gpa", "shear_gpa"}
         allowed_fields = required_fields | {"phase"}
@@ -692,7 +693,7 @@ def vrh_homogenization(
     except (OverflowError, ZeroDivisionError) as error:
         raise PropertyCalculationError(
             "ELASTIC_NONFINITE_OUTPUT",
-            "Расчёт VRH вышел за диапазон конечных binary64-чисел.",
+            "Расчёт Voigt–Reuss–Hill дал слишком большое значение.",
         ) from error
     k_hill = _elastic_output(0.5 * k_voigt + 0.5 * k_reuss, "K Hill")
     g_hill = _elastic_output(0.5 * g_voigt + 0.5 * g_reuss, "G Hill")
@@ -842,7 +843,7 @@ def orowan_contribution(
     particle_radius_nm: float,
     spacing_nm: float,
 ) -> float:
-    m = _strengthening_input(taylor_factor, "Taylor factor M для Orowan")
+    m = _strengthening_input(taylor_factor, "M (Taylor) для Orowan")
     shear = _strengthening_input(shear_gpa, "Модуль сдвига G для Orowan")
     burgers = _strengthening_input(burgers_nm, "Вектор Бюргерса b для Orowan")
     nu = _strengthening_input(poisson, "Коэффициент Пуассона ν")
@@ -857,7 +858,7 @@ def orowan_contribution(
     if not (-1.0 < nu < 0.5):
         _property_fail(
             "STRENGTHENING_INPUT_INVALID",
-            "Коэффициент Пуассона должен лежать между -1 и 0,5.",
+            "Коэффициент Пуассона должен лежать между -1 и 0.5.",
         )
     if radius <= burgers:
         _property_fail(
@@ -923,7 +924,7 @@ def combine_strengthening(
         except OverflowError as error:
             raise PropertyCalculationError(
                 "STRENGTHENING_NONFINITE_OUTPUT",
-                "Линейная сумма вышла за диапазон binary64.",
+                "Сумма вкладов слишком велика.",
             ) from error
         return _strengthening_output(total, "Линейная сумма вкладов")
     if rule == "Квадратичное объединение вкладов":
@@ -958,7 +959,7 @@ def calculate_strengthening(
     if input_confirmation is not True:
         raise PropertyCalculationError(
             "STRENGTHENING_CONFIRMATION_REQUIRED",
-            "Требуется явное подтверждение research-only границы расчёта."
+            "Подтвердите область применимости введённых коэффициентов."
         )
     if summation_rule not in STRENGTHENING_SUMMATION_RULES:
         _property_fail(
@@ -1068,7 +1069,7 @@ def calculate_strengthening(
             {
                 "Механизм": "Твёрдорастворное упрочнение",
                 "Вклад, МПа": value,
-                "Формула": "внешняя source-backed модель / объявленный ввод",
+                "Формула": "внешний источник / объявленный ввод",
                 "Исходные данные": "вклад введён пользователем",
             }
         )
@@ -1097,7 +1098,7 @@ def calculate_strengthening(
                 "Механизм": "Обход частиц Orowan",
                 "Вклад, МПа": value,
                 "Формула": (
-                    "Δσ = M·0,4Gb/[2π√(1-ν)λ]·ln(r/b)"
+                    "Δσ = M·0.4Gb/[2π√(1-ν)λ]·ln(r/b)"
                 ),
                 "Исходные данные": (
                     f"M={orowan_inputs['taylor_factor']:.6g}; "
@@ -1260,7 +1261,7 @@ def _calculate_elastic_from_editor(
     paths: ThermoGarPaths,
 ) -> ElasticHomogenizationResult:
     if edited.empty:
-        raise ValueError("Нет фаз с рассчитанной объёмной долей.")
+        raise UserValueError("Нет фаз с рассчитанной объёмной долей.")
 
     phase_rows: list[dict[str, float | str]] = []
     output_rows: list[dict[str, Any]] = []
@@ -1339,23 +1340,23 @@ def _calculate_elastic_from_editor(
     )
 
     if missing_phases:
-        raise ValueError(
+        raise UserValueError(
             "Не заданы E и ν для фаз: " + ", ".join(missing_phases) + "."
         )
     if source_missing:
-        raise ValueError(
+        raise UserValueError(
             "Для каждой фазы обязательны происхождение и источник: "
             + ", ".join(source_missing)
             + "."
         )
     if reference_temperature_missing:
-        raise ValueError(
+        raise UserValueError(
             "Для каждой фазы обязательна температура источника: "
             + ", ".join(reference_temperature_missing)
             + "."
         )
     if abs(total_volume - 100.0) > 1e-4:
-        raise ValueError(
+        raise UserValueError(
             "Полные объёмные доли недоступны или не суммируются к 100 %. "
             "Сначала обеспечьте плотностями все равновесные фазы."
         )
@@ -1833,7 +1834,7 @@ def render_strengthening_section(
                 st.rerun()
 
     if st.button(
-        "Загрузить учебный пример Fe–0,20C",
+        "Загрузить учебный пример Fe–0.20C",
         key="strengthening_load_example",
     ):
         st.session_state.update(
@@ -1974,7 +1975,7 @@ def render_strengthening_section(
             key="strength_orowan_b",
         )
         orowan_nu = st.number_input(
-            "Коэффициент Пуассона ν",
+            "Коэффициент Пуассона ν (-0.99–0.499)",
             min_value=-0.99,
             max_value=0.499,
             format="%.6f",

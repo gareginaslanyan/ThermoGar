@@ -35,6 +35,7 @@ from thermogar_parallel import (
     PointResult,
     close_shared_engines,
 )
+from thermogar_user_errors import UserRuntimeError
 
 
 # Порог окупаемости пула (замеры волны 5B, tools/bench_parallel.md): подъём
@@ -106,10 +107,11 @@ class EquilibriumSnapshot:
 def snapshot_of(result: PointResult) -> EquilibriumSnapshot:
     """Переходник для успешной точки; на упавшей точке поднимает её ошибку."""
     if not result.ok:
+        # Текст ошибки точки даёт воркер («{класс}: {текст}») — он чужой (21-Ж).
         raise RuntimeError(result.error or "Точка не рассчитана.")
     if result.arrays is None:
-        raise RuntimeError(
-            "Движок не вернул массивы равновесия: расчёт запрошен без capture."
+        raise UserRuntimeError(
+            "Параллельный расчёт прерван. Повторите действие."
         )
     return EquilibriumSnapshot(result.arrays)
 
@@ -127,16 +129,27 @@ def pool_worker_count() -> int:
     return int(_WORKER_COUNT)
 
 
-def workers_label(workers: int) -> str:
-    tail = workers % 10
-    hundred = workers % 100
+def _points_form(count: int) -> str:
+    """Форма по числу: «one» (1, 21, 31…), «few» (2–4, 22–24…), «many»."""
+    tail = count % 10
+    hundred = count % 100
     if tail == 1 and hundred != 11:
-        word = "воркер"
-    elif tail in (2, 3, 4) and hundred not in (12, 13, 14):
-        word = "воркера"
-    else:
-        word = "воркеров"
-    return f"{workers} {word}"
+        return "one"
+    if tail in (2, 3, 4) and hundred not in (12, 13, 14):
+        return "few"
+    return "many"
+
+
+def points_at_once_label(workers: int) -> str:
+    """«{n} точка / точки / точек одновременно» — для «авто (…)» (21-Г, строка 41)."""
+    word = {"one": "точка", "few": "точки", "many": "точек"}[_points_form(workers)]
+    return f"{workers} {word} одновременно"
+
+
+def points_per_label(workers: int) -> str:
+    """«по {n} точке / точки / точек одновременно» (21-Г, строка 41)."""
+    word = {"one": "точке", "few": "точки", "many": "точек"}[_points_form(workers)]
+    return f"по {workers} {word} одновременно"
 
 
 def parallel_mode() -> str:
@@ -156,7 +169,7 @@ def render_sidebar_control() -> str:
         "Параллельный расчёт",
         options=[MODE_AUTO, MODE_OFF],
         format_func=lambda value: (
-            f"авто ({workers_label(workers)})" if value == MODE_AUTO else "выкл."
+            f"авто ({points_at_once_label(workers)})" if value == MODE_AUTO else "выкл."
         ),
         horizontal=True,
         key=SIDEBAR_STATE_KEY,
@@ -164,12 +177,12 @@ def render_sidebar_control() -> str:
     if mode == MODE_AUTO and workers > 1:
         st.sidebar.caption(
             "Сканы, карта, плотность по температуре и пакетный расчёт считают "
-            "точки в пуле процессов. Число воркеров выбрано по свободной "
-            "памяти; числа в обоих режимах одинаковы."
+            "несколько точек одновременно; сколько — выбрано по свободной "
+            "памяти. Результаты в обоих режимах одинаковы."
         )
     elif mode == MODE_AUTO:
         st.sidebar.caption(
-            "Свободной памяти хватает только на один процесс — точки "
+            "Свободной памяти хватает только на один расчёт — точки "
             "считаются последовательно."
         )
     return mode
@@ -198,12 +211,12 @@ class PointRun:
     def note(self) -> str:
         if self.fallback_reason:
             return (
-                f"Пул процессов отказал ({self.fallback_reason}); "
-                "оставшиеся точки досчитаны последовательно."
+                "Параллельный расчёт прерван; оставшиеся точки досчитаны "
+                "последовательно."
             )
         if self.used_pool:
-            return f"Параллельный расчёт: {workers_label(self.workers)}."
-        return "Последовательный расчёт в одном процессе."
+            return f"Параллельный расчёт: {points_per_label(self.workers)}."
+        return "Последовательный расчёт."
 
 
 def _progress_bridge(
@@ -332,5 +345,6 @@ __all__ = (
     "render_sidebar_control",
     "run_points",
     "snapshot_of",
-    "workers_label",
+    "points_at_once_label",
+    "points_per_label",
 )
