@@ -292,6 +292,10 @@ def test_style_css_rules_of_the_owner_decisions():
     assert "light-dark(#FFFFFF, #17181B)" in css
     assert "light-dark(#FFFFFF, #1F2226)" in css
     assert '[data-testid="InputInstructions"]' in css
+    # Выбор из списка и мультивыбор в 1.62 — react-aria, не BaseWeb.
+    assert 'div[data-testid="stSelectbox"] div[role="group"]' in css
+    assert 'div[data-testid="stMultiSelect"] div[role="group"]' in css
+    assert "data-baseweb" not in css
     note = "Отступление от S-4, решение владельца 24.09.2026 (1Г, 2Б, 4Б); проверка S-5 — 21-Е"
     assert css.count(note) == 3
 

@@ -29,14 +29,14 @@ div[data-testid="stVerticalBlock"] {
 }
 
 /* Отступление от S-4, решение владельца 24.09.2026 (1Г, 2Б, 4Б); проверка S-5 — 21-Е.
-   Поля ввода — тёмная рамка 1 px в покое; в фокусе рамка остаётся штатной. */
+   Поля ввода — тёмная рамка 1 px в покое; в фокусе рамка остаётся штатной.
+   Выбор из списка и мультивыбор в 1.62 — react-aria: рамку рисует role="group".
+   Полей даты и времени в приложении нет. */
 [data-testid="stTextInputRootElement"]:not(:focus-within),
 [data-testid="stNumberInputContainer"]:not(:focus-within),
 [data-testid="stTextAreaRootElement"]:not(:focus-within),
-div[data-testid="stSelectbox"] div[data-baseweb="select"] > div:not(:focus-within),
-div[data-testid="stMultiSelect"] div[data-baseweb="select"] > div:not(:focus-within),
-div[data-testid="stDateInput"] div[data-baseweb="input"]:not(:focus-within),
-div[data-testid="stTimeInput"] div[data-baseweb="select"] > div:not(:focus-within) {
+div[data-testid="stSelectbox"] div[role="group"]:not(:focus-within),
+div[data-testid="stMultiSelect"] div[role="group"]:not(:focus-within) {
     border: 1px solid light-dark(#79808B, #8A92A0);
 }
 
