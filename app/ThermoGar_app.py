@@ -69,7 +69,7 @@ import matplotlib.pyplot as plt
 import matplotlib.tri as mtri
 from matplotlib.collections import LineCollection
 from matplotlib.lines import Line2D
-from matplotlib.ticker import FuncFormatter
+from matplotlib.ticker import FuncFormatter, MaxNLocator
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -135,7 +135,7 @@ def scheil_available() -> bool:
     except Exception:
         return False
 
-from thermogar_palette import chart_roles, phase_styles
+from thermogar_palette import chart_roles, phase_styles, style_legend
 import thermogar_parallel_ui as parallel_ui
 import thermogar_phase_descriptions as phase_descriptions
 from thermogar_workspace import (
@@ -3612,6 +3612,31 @@ def style_chart_axes(
         spine.set_color(roles["axis"])
 
 
+class CelsiusLocatorOnKelvinAxis(MaxNLocator):
+    """Деления оси, которая хранит K, — на круглых °C."""
+
+    def tick_values(self, vmin: float, vmax: float) -> np.ndarray:
+        ticks_c = super().tick_values(vmin - 273.15, vmax - 273.15)
+        return np.asarray(ticks_c, dtype=float) + 273.15
+
+
+def set_celsius_ticks_on_kelvin_axis(axis: Any) -> None:
+    """Ось в K: деления на круглых °C, подписи — целые °C (21-Д).
+
+    Данные графика остаются в K; меняются только места делений и подписи.
+    """
+    axis.set_major_locator(
+        CelsiusLocatorOnKelvinAxis(
+            nbins="auto",
+            steps=[1, 2, 5, 10],
+            integer=True,
+        )
+    )
+    axis.set_major_formatter(
+        FuncFormatter(lambda value, _position: f"{round(value - 273.15):d}")
+    )
+
+
 def plot_density_temperature(dataframe: pd.DataFrame) -> plt.Figure:
     """Кривая плотности сплава по температуре для выгрузки PNG."""
     roles = chart_roles(current_theme_type())
@@ -3694,8 +3719,7 @@ def plot_phase_fraction_scan(
             bbox_to_anchor=(1.01, 0.5),
             fontsize=11,
         )
-        for item in legend.get_texts():
-            item.set_color(roles["axis"])
+        style_legend(legend, roles)
     figure.tight_layout()
     return figure
 
@@ -3929,8 +3953,7 @@ def plot_isolated_phase_energies(
         bbox_to_anchor=(1.01, 0.5),
         fontsize=11,
     )
-    for item in legend.get_texts():
-        item.set_color(roles["axis"])
+    style_legend(legend, roles)
     figure.tight_layout()
     return figure
 
@@ -4058,8 +4081,7 @@ def plot_driving_force(
         "Движущая сила, Дж/моль",
     )
     legend = axes.legend(fontsize=11)
-    for item in legend.get_texts():
-        item.set_color(roles["axis"])
+    style_legend(legend, roles)
     figure.tight_layout()
     return figure
 
@@ -4243,8 +4265,7 @@ def plot_tzero(
         "Температура T₀, °C",
     )
     legend = axes.legend(fontsize=11)
-    for item in legend.get_texts():
-        item.set_color(roles["axis"])
+    style_legend(legend, roles)
     figure.tight_layout()
     return figure
 
@@ -5006,8 +5027,7 @@ def plot_solidification_liquid_comparison(
         bbox_to_anchor=(1.01, 0.5),
         fontsize=11,
     )
-    for item in legend.get_texts():
-        item.set_color(roles["axis"])
+    style_legend(legend, roles)
     figure.tight_layout()
     return figure
 
@@ -5103,8 +5123,7 @@ def plot_liquid_composition_comparison(
             bbox_to_anchor=(1.01, 0.5),
             fontsize=11,
         )
-        for item in legend.get_texts():
-            item.set_color(roles["axis"])
+        style_legend(legend, roles)
     figure.tight_layout()
     return figure
 
@@ -5343,9 +5362,7 @@ def plot_binary_thermogar(
     axes.xaxis.set_major_formatter(
         FuncFormatter(lambda value, _position: f"{100.0 * value:g}")
     )
-    axes.yaxis.set_major_formatter(
-        FuncFormatter(lambda value, _position: f"{value - 273.15:g}")
-    )
+    set_celsius_ticks_on_kelvin_axis(axes.yaxis)
 
     legend = axes.legend(
         handles=handles,
@@ -5353,8 +5370,7 @@ def plot_binary_thermogar(
         bbox_to_anchor=(1.01, 0.5),
         fontsize=11,
     )
-    for item in legend.get_texts():
-        item.set_color(roles["axis"])
+    style_legend(legend, roles)
 
     if theme_type == "dark" and len(last_points) <= 7:
         for phase_name, (x_value, y_value) in last_points.items():
@@ -5885,9 +5901,7 @@ def plot_isopleth_thermogar(
     axes.xaxis.set_major_formatter(
         FuncFormatter(lambda value, _position: f"{100.0 * value:g}")
     )
-    axes.yaxis.set_major_formatter(
-        FuncFormatter(lambda value, _position: f"{value - 273.15:g}")
-    )
+    set_celsius_ticks_on_kelvin_axis(axes.yaxis)
 
     if handles:
         legend = axes.legend(
@@ -5896,8 +5910,7 @@ def plot_isopleth_thermogar(
             bbox_to_anchor=(1.01, 0.5),
             fontsize=11,
         )
-        for item in legend.get_texts():
-            item.set_color(roles["axis"])
+        style_legend(legend, roles)
 
     if theme_type == "dark" and len(last_points) <= 7:
         for phase_name, (x_value, y_value) in last_points.items():
@@ -6265,8 +6278,7 @@ def plot_ternary_thermogar(
             bbox_to_anchor=(1.02, 0.5),
             fontsize=11,
         )
-        for item in legend.get_texts():
-            item.set_color(roles["axis"])
+        style_legend(legend, roles)
 
     if theme_type == "dark":
         for phase_name, (x_value, y_value) in last_points.items():
@@ -6796,8 +6808,7 @@ def plot_ternary_phase_fraction_map(
             loc="upper right",
             fontsize=11,
         )
-        for item in legend.get_texts():
-            item.set_color(roles["axis"])
+        style_legend(legend, roles)
 
     figure.subplots_adjust(
         left=0.08,
@@ -7075,21 +7086,27 @@ parallel_ui.render_sidebar_control()
 with st.sidebar.expander("Доступные элементы"):
     st.write(", ".join(available_elements))
 
-CURRENT_CONTEXT = context_snapshot(
-    database_key,
-    balance,
-    units,
-    composition_text,
-    pressure_pa,
-    steel_mode,
-    database_path,
-    (
-        FE_PROFILE_SHA256[fe_profile_key]
-        if database_key == "fe"
-        else RELEASE_DATABASE_SHA256[database_key]
-    ),
-    fe_profile_key if database_key == "fe" else None,
-)
+# BL-63: a wrong "Добавки" line is an input error, not a crash. The
+# validator's own message goes to the main area and the page stops there.
+try:
+    CURRENT_CONTEXT = context_snapshot(
+        database_key,
+        balance,
+        units,
+        composition_text,
+        pressure_pa,
+        steel_mode,
+        database_path,
+        (
+            FE_PROFILE_SHA256[fe_profile_key]
+            if database_key == "fe"
+            else RELEASE_DATABASE_SHA256[database_key]
+        ),
+        fe_profile_key if database_key == "fe" else None,
+    )
+except ValueError as error:
+    st.error(str(error))
+    st.stop()
 CURRENT_CONTEXT["database_label"] = definition["label"]
 
 # A result calculated for another database/composition/pressure must never be

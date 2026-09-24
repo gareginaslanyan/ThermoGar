@@ -1,0 +1,414 @@
+{
+  "frames": [
+    {
+      "files": [
+        "04_raschety_temperaturnyi_diapazon_svet.png"
+      ],
+      "grey": [
+        "04_raschety_temperaturnyi_diapazon_svet_seroe.png"
+      ],
+      "slug": "raschety_temperaturnyi_diapazon",
+      "theme": "Light",
+      "what": "Расчёты / Температурный диапазон: график и таблица скана 500–900 °C",
+      "charts": 1,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 25 · Фаз: 132"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "warning",
+          "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки, FE_EXCLUDED_PHASES). Авто"
+        },
+        {
+          "kind": "success",
+          "text": "Проверка сканирования: все проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Температурный диапазон"
+      ],
+      "expanded": [],
+      "chartRects": [
+        {
+          "x": 390,
+          "y": 930.953125,
+          "width": 960,
+          "height": 535.21875,
+          "naturalWidth": 1460,
+          "naturalHeight": 814
+        }
+      ],
+      "height_px": 2108
+    },
+    {
+      "files": [
+        "15_diagrammy_binarnaya_svet.png"
+      ],
+      "grey": [
+        "15_diagrammy_binarnaya_svet_seroe.png"
+      ],
+      "slug": "diagrammy_binarnaya",
+      "theme": "Light",
+      "what": "Диаграммы / Бинарная T–X: Ni–Al 600–1600 °C",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "info",
+          "text": "На диаграмме выбрано больше семи фаз. Расчёт допустим, но для читаемого графика лучше оста"
+        }
+      ],
+      "tabs": [
+        "Диаграммы",
+        "Бинарная T–X"
+      ],
+      "expanded": [],
+      "chartRects": [
+        {
+          "x": 390,
+          "y": 1724.671875,
+          "width": 960,
+          "height": 577.96875,
+          "naturalWidth": 1460,
+          "naturalHeight": 879
+        }
+      ],
+      "height_px": 2605
+    },
+    {
+      "files": [
+        "16_diagrammy_mnogokomponentnoe_svet.png"
+      ],
+      "grey": [
+        "16_diagrammy_mnogokomponentnoe_svet_seroe.png"
+      ],
+      "slug": "diagrammy_mnogokomponentnoe",
+      "theme": "Light",
+      "what": "Диаграммы / Многокомпонентное T–X: значения по умолчанию",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "info",
+          "text": "На сечении выбрано больше семи фаз. Расчёт допустим, но для читаемого графика лучше остави"
+        }
+      ],
+      "tabs": [
+        "Диаграммы",
+        "Многокомпонентное T–X"
+      ],
+      "expanded": [],
+      "chartRects": [
+        {
+          "x": 390,
+          "y": 1713.109375,
+          "width": 960,
+          "height": 577.96875,
+          "naturalWidth": 1460,
+          "naturalHeight": 879
+        }
+      ],
+      "height_px": 2593
+    },
+    {
+      "files": [
+        "17_diagrammy_troynaya_svet.png"
+      ],
+      "grey": [
+        "17_diagrammy_troynaya_svet_seroe.png"
+      ],
+      "slug": "diagrammy_troynaya",
+      "theme": "Light",
+      "what": "Диаграммы / Тройная при T = const: значения по умолчанию",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Как читать вершины: в нижней левой вершине 100 % элемента C, в нижней правой — 100 % элеме"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "info",
+          "text": "Выбрано больше десяти фаз. Расчёт допустим, но может занять заметно больше времени. Для пе"
+        }
+      ],
+      "tabs": [
+        "Диаграммы",
+        "Тройная при T = const"
+      ],
+      "expanded": [],
+      "chartRects": [
+        {
+          "x": 390,
+          "y": 1632.359375,
+          "width": 960,
+          "height": 866.625,
+          "naturalWidth": 1460,
+          "naturalHeight": 1318
+        }
+      ],
+      "height_px": 2801
+    },
+    {
+      "files": [
+        "36_soobshchenie_error_svet.png"
+      ],
+      "grey": [],
+      "slug": "soobshchenie_error",
+      "theme": "Light",
+      "what": "st.error: неверная добавка «QQ=5» в боковой панели",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "error",
+          "text": "Элемент 'QQ' отсутствует в базе 'ni'."
+        }
+      ],
+      "tabs": [],
+      "expanded": [],
+      "chartRects": [],
+      "height_px": 1536
+    },
+    {
+      "files": [
+        "04_raschety_temperaturnyi_diapazon_tyomn.png"
+      ],
+      "grey": [
+        "04_raschety_temperaturnyi_diapazon_tyomn_seroe.png"
+      ],
+      "slug": "raschety_temperaturnyi_diapazon",
+      "theme": "Dark",
+      "what": "Расчёты / Температурный диапазон: график и таблица скана 500–900 °C",
+      "charts": 1,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 25 · Фаз: 132"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "warning",
+          "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки, FE_EXCLUDED_PHASES). Авто"
+        },
+        {
+          "kind": "success",
+          "text": "Проверка сканирования: все проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Температурный диапазон"
+      ],
+      "expanded": [],
+      "chartRects": [
+        {
+          "x": 390,
+          "y": 930.953125,
+          "width": 960,
+          "height": 535.21875,
+          "naturalWidth": 1460,
+          "naturalHeight": 814
+        }
+      ],
+      "height_px": 2108
+    },
+    {
+      "files": [
+        "15_diagrammy_binarnaya_tyomn.png"
+      ],
+      "grey": [
+        "15_diagrammy_binarnaya_tyomn_seroe.png"
+      ],
+      "slug": "diagrammy_binarnaya",
+      "theme": "Dark",
+      "what": "Диаграммы / Бинарная T–X: Ni–Al 600–1600 °C",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "info",
+          "text": "На диаграмме выбрано больше семи фаз. Расчёт допустим, но для читаемого графика лучше оста"
+        }
+      ],
+      "tabs": [
+        "Диаграммы",
+        "Бинарная T–X"
+      ],
+      "expanded": [],
+      "chartRects": [
+        {
+          "x": 390,
+          "y": 1724.671875,
+          "width": 960,
+          "height": 577.96875,
+          "naturalWidth": 1460,
+          "naturalHeight": 879
+        }
+      ],
+      "height_px": 2605
+    },
+    {
+      "files": [
+        "16_diagrammy_mnogokomponentnoe_tyomn.png"
+      ],
+      "grey": [
+        "16_diagrammy_mnogokomponentnoe_tyomn_seroe.png"
+      ],
+      "slug": "diagrammy_mnogokomponentnoe",
+      "theme": "Dark",
+      "what": "Диаграммы / Многокомпонентное T–X: значения по умолчанию",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "info",
+          "text": "На сечении выбрано больше семи фаз. Расчёт допустим, но для читаемого графика лучше остави"
+        }
+      ],
+      "tabs": [
+        "Диаграммы",
+        "Многокомпонентное T–X"
+      ],
+      "expanded": [],
+      "chartRects": [
+        {
+          "x": 390,
+          "y": 1713.109375,
+          "width": 960,
+          "height": 577.96875,
+          "naturalWidth": 1460,
+          "naturalHeight": 879
+        }
+      ],
+      "height_px": 2593
+    },
+    {
+      "files": [
+        "17_diagrammy_troynaya_tyomn.png"
+      ],
+      "grey": [
+        "17_diagrammy_troynaya_tyomn_seroe.png"
+      ],
+      "slug": "diagrammy_troynaya",
+      "theme": "Dark",
+      "what": "Диаграммы / Тройная при T = const: значения по умолчанию",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Как читать вершины: в нижней левой вершине 100 % элемента C, в нижней правой — 100 % элеме"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "info",
+          "text": "Выбрано больше десяти фаз. Расчёт допустим, но может занять заметно больше времени. Для пе"
+        }
+      ],
+      "tabs": [
+        "Диаграммы",
+        "Тройная при T = const"
+      ],
+      "expanded": [],
+      "chartRects": [
+        {
+          "x": 390,
+          "y": 1632.359375,
+          "width": 960,
+          "height": 866.625,
+          "naturalWidth": 1460,
+          "naturalHeight": 1318
+        }
+      ],
+      "height_px": 2801
+    },
+    {
+      "files": [
+        "36_soobshchenie_error_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "soobshchenie_error",
+      "theme": "Dark",
+      "what": "st.error: неверная добавка «QQ=5» в боковой панели",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "error",
+          "text": "Элемент 'QQ' отсутствует в базе 'ni'."
+        }
+      ],
+      "tabs": [],
+      "expanded": [],
+      "chartRects": [],
+      "height_px": 1536
+    }
+  ]
+}

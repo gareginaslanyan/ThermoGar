@@ -1,0 +1,101 @@
+{
+  "method": "21-D: legend text to legend fill contrast from frame pixels (frames 04, 17).\n\nThe legend is found in the dark frame, where its fill differs from the chart\nbackground: the largest connected patch of the modal non-background colour\ninside the chart image. Light and dark charts of one frame have the same\ngeometry (same figure size, same labels), so the dark box is used for the\nlight frame too. Inside the box (3 px inside the frame line):\n\n* fill - the most frequent colour;\n* text - the pixel of the text area with the largest WCAG 2.2 contrast to\n  the fill, i.e. the core of the glyphs. The text area starts after the line\n  samples: after the first gap of at least ``GAP_PX`` columns without ink\n  (colour farther than ``INK_DELTA`` from the fill in some channel).\n\nCharts are scaled by the browser (1460 -> 960 px), so glyph cores are\nantialiased; the pixel figure is a lower bound of the nominal contrast.\n\nThe same is done for the 21-B frames (before the fix) for comparison.",
+  "frames": {
+    "21-D 04_raschety_temperaturnyi_diapazon_svet.png": {
+      "legend_box_in_frame_px": [
+        957,
+        1157,
+        1340,
+        1217
+      ],
+      "text_left_in_box_px": 36,
+      "fill": "#FFFFFF",
+      "text_core": "#58544B",
+      "contrast_pixels": 7.54
+    },
+    "21-D 04_raschety_temperaturnyi_diapazon_tyomn.png": {
+      "legend_box_in_frame_px": [
+        957,
+        1157,
+        1340,
+        1217
+      ],
+      "text_left_in_box_px": 36,
+      "fill": "#211F1B",
+      "text_core": "#C5BFB4",
+      "contrast_pixels": 9.0
+    },
+    "21-B 04_raschety_temperaturnyi_diapazon_svet.png": {
+      "legend_box_in_frame_px": [
+        957,
+        1157,
+        1340,
+        1217
+      ],
+      "text_left_in_box_px": 36,
+      "fill": "#FFFFFF",
+      "text_core": "#58544B",
+      "contrast_pixels": 7.54
+    },
+    "21-B 04_raschety_temperaturnyi_diapazon_tyomn.png": {
+      "legend_box_in_frame_px": [
+        957,
+        1157,
+        1340,
+        1217
+      ],
+      "text_left_in_box_px": 36,
+      "fill": "#D0D0CF",
+      "text_core": "#C7C1B6",
+      "contrast_pixels": 1.16
+    },
+    "21-D 17_diagrammy_troynaya_svet.png": {
+      "legend_box_in_frame_px": [
+        1133,
+        1960,
+        1336,
+        2102
+      ],
+      "text_left_in_box_px": 50,
+      "fill": "#FFFFFF",
+      "text_core": "#57534A",
+      "contrast_pixels": 7.66
+    },
+    "21-D 17_diagrammy_troynaya_tyomn.png": {
+      "legend_box_in_frame_px": [
+        1133,
+        1960,
+        1336,
+        2102
+      ],
+      "text_left_in_box_px": 50,
+      "fill": "#211F1B",
+      "text_core": "#C7C1B6",
+      "contrast_pixels": 9.19
+    },
+    "21-B 17_diagrammy_troynaya_svet.png": {
+      "legend_box_in_frame_px": [
+        1133,
+        1960,
+        1336,
+        2102
+      ],
+      "text_left_in_box_px": 50,
+      "fill": "#FFFFFF",
+      "text_core": "#57534A",
+      "contrast_pixels": 7.66
+    },
+    "21-B 17_diagrammy_troynaya_tyomn.png": {
+      "legend_box_in_frame_px": [
+        1133,
+        1960,
+        1336,
+        2102
+      ],
+      "text_left_in_box_px": 50,
+      "fill": "#D0D0CF",
+      "text_core": "#C7C1B6",
+      "contrast_pixels": 1.16
+    }
+  }
+}

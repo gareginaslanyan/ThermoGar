@@ -1,0 +1,66 @@
+{
+  "Light": {
+    "theme_method": "default session (System theme, browser prefers light)",
+    "app_background": "rgb(255, 255, 255)",
+    "messages": {
+      "error_input": "QQ=5",
+      "restored": "AL=15",
+      "alerts": {
+        "error": {
+          "fg": "#A62A1E",
+          "bg": "#FDF0EE",
+          "ratio": 6.35,
+          "icon": null,
+          "iconRatio": null,
+          "shownOnScreen": true,
+          "sample": "Элемент 'QQ' отсутствует в базе 'ni'.",
+          "fontSize": "18px"
+        },
+        "warning": null,
+        "info": null,
+        "success": {
+          "fg": "#146C33",
+          "bg": "#EFFAF4",
+          "ratio": 6.1,
+          "icon": null,
+          "iconRatio": null,
+          "shownOnScreen": true,
+          "sample": "Элементов: 22 · Фаз: 99",
+          "fontSize": "18px"
+        }
+      }
+    }
+  },
+  "Dark": {
+    "theme_method": "URL query ?embed_options=dark_theme",
+    "app_background": "rgb(26, 24, 22)",
+    "messages": {
+      "error_input": "QQ=5",
+      "restored": "AL=15",
+      "alerts": {
+        "error": {
+          "fg": "#F5A79F",
+          "bg": "#2E1512",
+          "ratio": 8.85,
+          "icon": null,
+          "iconRatio": null,
+          "shownOnScreen": true,
+          "sample": "Элемент 'QQ' отсутствует в базе 'ni'.",
+          "fontSize": "18px"
+        },
+        "warning": null,
+        "info": null,
+        "success": {
+          "fg": "#8FE0B4",
+          "bg": "#15281E",
+          "ratio": 9.96,
+          "icon": null,
+          "iconRatio": null,
+          "shownOnScreen": true,
+          "sample": "Элементов: 22 · Фаз: 99",
+          "fontSize": "18px"
+        }
+      }
+    }
+  }
+}

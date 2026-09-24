@@ -25,7 +25,7 @@ from pycalphad import Database
 from pycalphad.core.utils import filter_phases, unpack_species
 
 from thermogar_diffusion import _atomic_masses, _phase_mobility_coverage
-from thermogar_palette import chart_roles, phase_styles
+from thermogar_palette import chart_roles, phase_styles, style_legend
 from thermogar_release_policy import (
     RELEASE_DATABASE_FILENAMES,
     RELEASE_DATABASE_KEYS,
@@ -551,7 +551,7 @@ def _composition_figure(table: pd.DataFrame, solutes: list[str]) -> plt.Figure:
     axis.set_ylabel("Содержание в матрице, ат.%")
     axis.set_title("Изменение состава матрицы")
     _chrome(axis, roles)
-    axis.legend(frameon=False, labelcolor=roles["axis"])
+    style_legend(axis.legend(frameon=False), roles)
     figure.tight_layout()
     return figure
 
