@@ -108,62 +108,62 @@ def main() -> int:
     expect_rejected(
         "unknown database rejected",
         ValueError,
-        "не входит в SWR release surface",
+        "База не подключена",
         database_key="cu",
     )
     expect_rejected(
         "non-string database key rejected",
         ValueError,
-        "должен быть строкой",
+        "База не подключена",
         database_key=7,
     )
     expect_rejected(
         "key/path mismatch rejected",
         RuntimeError,
-        "путь базы не соответствует",
+        "не совпадает с поставкой ThermoGar",
         database_key="al",
         database_label=RELEASE_DATABASE_LABELS["al"],
     )
     expect_rejected(
         "database label mismatch rejected",
         RuntimeError,
-        "название базы не соответствует",
+        "не совпадает с поставкой ThermoGar",
         database_label="Железные сплавы",
     )
     expect_rejected(
         "non-string database label rejected",
         ValueError,
-        "должно быть строкой",
+        "База не подключена",
         database_label=7,
     )
     expect_rejected(
         "non-string input provenance rejected",
         ValueError,
-        "должен быть строкой",
+        "Укажите источник исходных данных диффузии",
         input_provenance=123,
     )
     expect_rejected(
         "blank input provenance rejected",
         ValueError,
-        "обязателен источник",
+        "Укажите источник исходных данных диффузии",
         input_provenance="  ",
     )
     expect_rejected(
         "unconfirmed input rejected",
         ValueError,
-        "явное подтверждение",
+        "Подтвердите исследовательский характер",
         input_confirmation=False,
     )
     expect_rejected(
         "unknown model kind rejected",
         ValueError,
-        "model_kind diffusion должен быть строго",
+        "Введённые значения не проходят проверку",
         model_kind="typo",
     )
     expect_rejected(
         "unknown homogenization function rejected",
         ValueError,
-        "Неизвестная модель эффективной подвижности",
+        "Введённые значения не проходят проверку",
         model_kind="homogenization",
         homogenization_function="typo",
     )
@@ -171,7 +171,7 @@ def main() -> int:
         expect_rejected(
             "database SHA mismatch rejected",
             RuntimeError,
-            "SHA-256 базы не соответствует",
+            "не совпадает с поставкой ThermoGar",
         )
     with patch(
         "thermogar_diffusion._sha256",
@@ -188,7 +188,7 @@ def main() -> int:
         expect_rejected(
             "byte-identical noncanonical copy rejected",
             RuntimeError,
-            "путь базы не соответствует",
+            "не совпадает с поставкой ThermoGar",
             database_path=copied_database,
         )
 

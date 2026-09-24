@@ -117,7 +117,8 @@ def test_718_run_ends_with_quality_error_not_exception() -> None:
     assert row["Статус"] == "ошибка"
     assert row["Примечание"] == result.stop_note
     assert result.stop_note.startswith(("Расчёт остановлен", "Расчёт прерван"))
-    assert "LIMITS_OF_APPLICABILITY" in result.stop_note
+    # 21-Г, часть 2, строка 9: ссылка на docs/LIMITS_OF_APPLICABILITY.md снята с экрана.
+    assert result.stop_note.endswith("быстрее, чем модель это выдерживает.")
     # Посчитанная часть не пропала, и до горизонта 100 ч расчёт не дошёл.
     time_s = result.kinetics["Время, с"].to_numpy()
     assert len(time_s) > 100

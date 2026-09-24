@@ -47,7 +47,7 @@ def _estimate(rnuc_nm: float, temperature_k: float = 1073.15) -> tuple[float, fl
 BL26_TEXT_1_02 = (
     "Радиус зародыша 1.02 нм (оценка при 800.0 °C) больше начального максимального "
     "радиуса сетки 0.5 нм, поэтому первые зародыши записываются мельче своего размера, "
-    "пока kawin не достроит сетку. Итоговые доля, радиус и число частиц от этого почти "
+    "пока модель не расширит сетку размеров. Итоговые доля, радиус и число частиц от этого почти "
     "не меняются, но начало зарождения на графиках искажено: доля и радиус занижены, "
     "число частиц завышено. Задайте «Начальный максимальный радиус» больше 1.02 нм."
 )
@@ -235,9 +235,9 @@ def test_empty_solution_reaches_the_screen_as_one_sentence() -> None:
     )
     title, action = stage14._friendly_error_text(error, "равновесие при одной температуре")
     assert title == (
-        "Равновесие при 750.0 °C не найдено: pycalphad вернул пустое решение (сумма "
+        "Равновесие при 750.0 °C не найдено: pycalphad не нашёл ни одной фазы (сумма "
         "долей фаз равна нулю), поэтому результата нет — попробуйте другую "
-        "температуру или состав; решатель не сходится на части составов, и "
+        "температуру или состав; на части составов расчёт не сходится, и "
         "соседние точки тоже могут оказаться пустыми."
     )
     assert action == ""
@@ -250,7 +250,11 @@ def test_other_result_errors_keep_the_generic_text() -> None:
     error = vl.VerifiedLoaderError(vl.ReasonCode.RESULT_INVALID, "Backend phase fractions do not close to one.")
     title, action = stage14._friendly_error_text(error, "равновесие при одной температуре")
     assert title == "ThermoGar не завершил расчёт."
-    assert action.endswith("Причина: RESULT_INVALID: Backend phase fractions do not close to one.")
+    # 21-Ж: текст чужого исключения — в «Технических сведениях», не в подсказке.
+    assert action == (
+        "Проверьте состав, диапазон и набор фаз. Если ошибка повторяется, "
+        "скачайте технический отчёт ниже."
+    )
 
 
 # --------------------------------------------------------------------------- #
@@ -319,19 +323,30 @@ def _app_with_note(monkeypatch: pytest.MonkeyPatch, note: str):
 def test_stop_note_is_shown_above_the_tabs(monkeypatch: pytest.MonkeyPatch) -> None:
     note = precipitation._composition_stop_note(2.011, "NB", 0.0)
     app = _app_with_note(monkeypatch, note)
-    main_warnings = [element.value for element in app.main.warning]
-    assert note in main_warnings
-    # Над вкладками: после предупреждений расчёта, в основном блоке, не внутри вкладки.
-    assert main_warnings.index(note) == main_warnings.index("предупреждение расчёта") + 1
+    # 21-Ж (часть 3, строка 29): остановка расчёта — уровень error.
+    main_errors = [element.value for element in app.main.error]
+    assert note in main_errors
+    # Над вкладками: в основном блоке, до итога проверок, не внутри вкладки.
+    assert main_errors.index(note) < main_errors.index(
+        "Одна или несколько внутренних проверок не пройдены."
+    )
     for tab in app.tabs:
-        assert note not in [element.value for element in tab.warning]
+        assert note not in [element.value for element in tab.error]
+    assert "предупреждение расчёта" in [element.value for element in app.main.warning]
     # Строка в таблице проверок осталась.
-    assert [element.value for element in app.error] == ["Одна или несколько внутренних проверок не пройдены."]
+    assert [element.value for element in app.error] == [
+        note,
+        "Одна или несколько внутренних проверок не пройдены.",
+    ]
 
 
 def test_no_stop_note_no_extra_warning(monkeypatch: pytest.MonkeyPatch) -> None:
     app = _app_with_note(monkeypatch, "")
     warnings = [element.value for element in app.main.warning]
+    errors = [element.value for element in app.main.error]
     assert "предупреждение расчёта" in warnings
-    assert not any("Расчёт остановлен" in value or "Расчёт прерван" in value for value in warnings)
+    assert not any(
+        "Расчёт остановлен" in value or "Расчёт прерван" in value
+        for value in warnings + errors
+    )
     assert [element.value for element in app.success] == ["Внутренние численные проверки пройдены."]

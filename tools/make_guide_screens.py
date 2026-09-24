@@ -563,7 +563,7 @@ def scenario_raschety(page, log):
         tall=True,
     )
     shooter.shot(
-        root.get_by_role("button", name="Excel", exact=True).first,
+        root.get_by_role("button", name="Скачать Excel", exact=True).first,
         "Выгрузка результата скана в Excel",
         tall=True,
     )
@@ -597,7 +597,7 @@ def scenario_diagrammy(page, log):
     wait_idle(page)
     shooter.shot(
         [
-            widget(root, "stNumberInput", "AL: до, %"),
+            widget(root, "stNumberInput", "Al: до, ат.%"),
             widget(root, "stNumberInput", "Шаг по составу"),
             widget(root, "stNumberInput", "Шаг по температуре, °C"),
         ],

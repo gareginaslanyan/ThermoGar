@@ -250,7 +250,7 @@ def test_temperature_scan_tables_match_with_and_without_pool() -> None:
     plain_data, plain_note, plain_csv = _temperature_scan(parallel_ui.MODE_OFF)
 
     assert len(pooled_data) == 5
-    assert plain_note == "Последовательный расчёт в одном процессе."
+    assert plain_note == "Последовательный расчёт."
     if parallel_ui.pool_worker_count() > 1:
         assert pooled_note.startswith("Параллельный расчёт:"), pooled_note
     assert list(pooled_data.columns) == list(plain_data.columns)

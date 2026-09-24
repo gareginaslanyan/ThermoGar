@@ -45,7 +45,7 @@ import thermogar_physical as physical  # noqa: E402
 TOGGLE_KEY = "physical_overrides_enabled"
 SINGLE_STATE = "_thermogar_vlb_b4b_result_property_density_single"
 SCAN_STATE = "_thermogar_vlb_b4b_result_property_density_temperature"
-USER_OFF_PREFIX = "Поправки проекта ThermoGar к физической базе выключены пользователем"
+USER_OFF_PREFIX = "Поправки проекта ThermoGar к физической базе выключены: плотность посчитана строго по данным базы"
 CR_OVERRIDE_PREFIX = "Плотность хрома посчитана по поправке проекта ThermoGar"
 
 
@@ -221,8 +221,10 @@ def test_environment_off_locks_the_toggle(monkeypatch) -> None:
     assert toggle.value is False
     assert TOGGLE_KEY not in [w.key for w in at.checkbox]
     captions = " ".join(element.value for element in at.caption)
+    # 21-Г, часть 1, строка 25: на экране — фраза, имя переменной — в
+    # свёрнутых «Технических сведениях».
+    assert "галочка сейчас не действует" in captions
     assert physical.PHYSICAL_OVERRIDES_ENV in captions
-    assert "сильнее галочки" in captions
 
     at.button(key="physical_single_calculate").click().run()
     _assert_clean(at)

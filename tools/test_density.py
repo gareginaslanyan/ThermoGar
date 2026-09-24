@@ -1104,7 +1104,7 @@ def test_element_density_ignores_foreign_d0_records(
         physical_db_plain.function_value("D0TETR_B", T_BL39), rel=1.0e-12
     )
     note = physical_db_plain.element_density_note("B", T_BL39)
-    assert note is not None and "D0TETR_B" in note and "298,15 K" in note
+    assert note is not None and "D0TETR_B" in note and "298.15 K" in note
     # Азот: единственная запись DP(LIQUID,N) — это плотность алмаза.
     assert physical_db_plain.element_density("N", T_BL39) is None
 
@@ -1118,7 +1118,9 @@ def test_function_only_element_note_warns_about_volume_error(
 
     note = physical_db_plain.element_density_note(element, T_BL39)
     assert note is not None
-    assert note.startswith(f"Плотность элемента {element} в правиле смеси взята по функции D0")
+    # 21-Ж, шаг 4: символ элемента на экране — La, Pd, Ta.
+    symbol = element[:1] + element[1:].lower()
+    assert note.startswith(f"Плотность элемента {symbol} в правиле смеси взята по функции D0")
     assert note.endswith(
         "при рабочих температурах ошибка объёма может превышать 10 %."
     )
