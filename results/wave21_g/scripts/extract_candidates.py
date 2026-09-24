@@ -6,6 +6,7 @@ f-строк), в которых есть находка по правилам �
 
 Запуск из корня рабочей копии:
     python results/wave21_g/scripts/extract_candidates.py > candidates.tsv
+    python results/wave21_g/scripts/extract_candidates.py --latin > latin_in_st.tsv
 """
 from __future__ import annotations
 
@@ -121,9 +122,6 @@ def main() -> int:
     return 0
 
 
-if __name__ == "__main__":
-    raise SystemExit(main())
-
 
 # --- вторая выборка: латиница без кириллицы прямо в вызовах Streamlit ---
 ST_METHODS = {
@@ -183,3 +181,7 @@ def main_latin() -> int:
             flat = text.replace("\t", " ").replace("\n", "\n")
             out.write(f"{path.name}\t{line}\t{call}\t{hit}\t{flat}\n")
     return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main_latin() if "--latin" in sys.argv else main())
