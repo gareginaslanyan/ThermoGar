@@ -6,46 +6,47 @@ HEX-литералы: все смысловые цвета живут здесь
 
 from __future__ import annotations
 
-from itertools import cycle
 from typing import Iterable
 
+
+# Холодная шкала (оттенок 216°), решение владельца 24.09.2026. Фон графика —
+# поверхность: белая на окне #F8F8F9 в светлой теме, #1F2226 на окне #17181B
+# в тёмной (А-8).
 
 # Светлая тема
 LIGHT = {
     "background": "#FFFFFF",
-    "surface": "#F1EFEA",
-    "grid": "#D8D4CC",
-    "axis": "#57534A",
-    "text": "#2A2722",
+    "surface": "#ECEDEF",
+    "grid": "#CFD1D5",
+    "axis": "#4B4F56",
+    "text": "#232529",
     "primary": "#1F60C1",
     "primary_dark": "#0D2768",
     "primary_light": "#4587DE",
-    "muted": "#8A857A",
+    "muted": "#79808B",
     "danger": "#A62A1E",
     "danger_sign": "#C93425",
     "info_fill": "#EFF6FA",
-    # Легенда: как у matplotlib по умолчанию (белая плашка, рамка 0.8).
     "legend_fill": "#FFFFFF",
-    "legend_edge": "#CCCCCC",
+    "legend_edge": "#CFD1D5",
 }
 
 # Тёмная тема
 DARK = {
-    "background": "#1A1816",
-    "surface": "#24211D",
-    "grid": "#3A362F",
-    "axis": "#C7C1B6",
-    "text": "#F1EFEA",
+    "background": "#1F2226",
+    "surface": "#25292F",
+    "grid": "#33373E",
+    "axis": "#BCC2CD",
+    "text": "#ECEDEF",
     "primary": "#5C97E8",
     "primary_dark": "#4587DE",
     "primary_light": "#B4D1EE",
-    "muted": "#8A857A",
+    "muted": "#8A92A0",
     "danger": "#F06157",
     "danger_sign": "#F06157",
     "info_fill": "#16233B",
-    # Легенда: тёмная плашка под светлый текст роли axis (21-Д).
-    "legend_fill": "#24211D",
-    "legend_edge": "#3A362F",
+    "legend_fill": "#1F2226",
+    "legend_edge": "#33373E",
 }
 
 # Категориальная палитра: сначала два синих ряда, затем допустимые цвета
@@ -63,14 +64,24 @@ LIGHT_SERIES = (
 DARK_SERIES = (
     "#4587DE",
     "#B4D1EE",
-    "#F1EFEA",
+    "#ECEDEF",
     "#F5A79F",
     "#8FE0B4",
     "#E8B200",
     "#9CC0F2",
 )
 
-LINE_STYLES = ("-", "--", "-.", ":")
+# Семь видов линий (решение владельца 5Б): сплошная, штрих, штрих-пунктир,
+# точки, длинный штрих, штрих и две точки, короткий штрих.
+LINE_STYLES = (
+    "-",
+    (0, (7, 4)),
+    (0, (8, 3, 2, 3)),
+    (0, (2, 3)),
+    (0, (14, 5)),
+    (0, (8, 3, 2, 3, 2, 3)),
+    (0, (3, 2)),
+)
 MARKERS = ("o", "s", "^", "D", "v", "P", "X")
 
 
@@ -82,19 +93,21 @@ def chart_roles(theme_type: str | None = None) -> dict[str, str]:
 def phase_styles(
     phases: Iterable[str],
     theme_type: str | None = None,
-) -> dict[str, dict[str, str]]:
-    """Назначить фазам устойчивую комбинацию цвета, линии и маркера."""
-    colors = DARK_SERIES if str(theme_type).lower() == "dark" else LIGHT_SERIES
-    color_cycle = cycle(colors)
-    line_cycle = cycle(LINE_STYLES)
-    marker_cycle = cycle(MARKERS)
+) -> dict[str, dict[str, object]]:
+    """Назначить фазам устойчивую пару «цвет + линия» и маркер.
 
-    result: dict[str, dict[str, str]] = {}
-    for phase in sorted(dict.fromkeys(str(item) for item in phases)):
+    Фаза с номером i (по отсортированным именам) получает цвет i mod 7 и
+    линию (i + i div 7) mod 7: у первых семи фаз различны и цвет, и линия,
+    у 49 фаз — 49 разных пар.
+    """
+    colors = DARK_SERIES if str(theme_type).lower() == "dark" else LIGHT_SERIES
+
+    result: dict[str, dict[str, object]] = {}
+    for index, phase in enumerate(sorted(dict.fromkeys(str(item) for item in phases))):
         result[phase] = {
-            "color": next(color_cycle),
-            "linestyle": next(line_cycle),
-            "marker": next(marker_cycle),
+            "color": colors[index % len(colors)],
+            "linestyle": LINE_STYLES[(index + index // len(colors)) % len(LINE_STYLES)],
+            "marker": MARKERS[index % len(MARKERS)],
         }
     return result
 
