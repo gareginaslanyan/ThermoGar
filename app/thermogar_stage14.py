@@ -1227,7 +1227,10 @@ def render_quick_examples(queue_context_load: Callable[..., None]) -> None:
     ]
 
     for label, description, context, widget_state in examples:
-        with st.container(border=True):
+        with st.container(
+            border=True,
+            key=f"quick_example_card_{context['database_key']}",
+        ):
             st.markdown(f"#### {label}")
             st.caption(description)
             if st.button(
