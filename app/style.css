@@ -60,3 +60,8 @@ div[data-testid="stExpander"] details,
 div[data-testid="stForm"] {
     background-color: light-dark(#FFFFFF, #1F2226);
 }
+
+/* Наблюдатель смены темы (решение 7Б) места на странице не занимает. */
+.st-key-thermogar_theme_watch {
+    display: none;
+}
