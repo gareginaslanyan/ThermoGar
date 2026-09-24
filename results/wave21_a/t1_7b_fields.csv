@@ -1,0 +1,180 @@
+﻿файл,строка,функция,достижимо,вызов,подпись,единица (FM-4),границы в коде,границы в подписи,границы в подсказке help,замечание
+app/ThermoGar_app.py,1429,_b4b_requested_phases,да,st.multiselect,Фазы,—,—,—,—,
+app/ThermoGar_app.py,1587,render_b4b_density_single,да,st.number_input,"Температура, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,1751,render_b4b_density_temperature,да,st.number_input,"Температура от, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,1753,render_b4b_density_temperature,да,st.number_input,"Температура до, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,1755,render_b4b_density_temperature,да,st.number_input,"Шаг температуры, °C",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2053,render_b4b2_elastic_properties,да,st.number_input,"Температура, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,2253,render_b4b2_strengthening,да,st.text_area,Источник и область применимости входов,—,—,—,—,
+app/ThermoGar_app.py,2261,render_b4b2_strengthening,да,st.number_input,"Базовое внутреннее сопротивление, МПа",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2267,render_b4b2_strengthening,да,st.selectbox,Правило объединения,—,—,—,—,
+app/ThermoGar_app.py,2278,render_b4b2_strengthening,да,st.number_input,"k_y, МПа·м¹ᐟ²",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2279,render_b4b2_strengthening,да,st.number_input,"Размер зерна, мкм",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2294,render_b4b2_strengthening,да,st.number_input,M (Taylor),безразмерная,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2295,render_b4b2_strengthening,да,st.number_input,α,безразмерная,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2296,render_b4b2_strengthening,да,st.number_input,"G, ГПа (Taylor)",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2297,render_b4b2_strengthening,да,st.number_input,"b, нм (Taylor)",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2298,render_b4b2_strengthening,да,st.number_input,"Плотность дислокаций, м⁻²",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2300,render_b4b2_strengthening,да,st.number_input,"Твёрдорастворный вклад, МПа",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2303,render_b4b2_strengthening,да,st.number_input,M (Orowan),безразмерная,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2304,render_b4b2_strengthening,да,st.number_input,"G, ГПа (Orowan)",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2305,render_b4b2_strengthening,да,st.number_input,"b, нм (Orowan)",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2306,render_b4b2_strengthening,да,st.number_input,ν (Orowan),безразмерная,min max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2307,render_b4b2_strengthening,да,st.number_input,"Радиус частиц, нм",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2308,render_b4b2_strengthening,да,st.number_input,"Расстояние между частицами, нм",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2310,render_b4b2_strengthening,да,st.number_input,"Другой вклад, МПа",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,2736,phase_selection_editor,да,st.radio,Набор фаз,—,—,—,—,
+app/ThermoGar_app.py,2772,phase_selection_editor,да,st.radio,Какие фазы учитывать,—,—,—,—,
+app/ThermoGar_app.py,6850,,да,st.sidebar.selectbox,База материалов,—,—,—,—,
+app/ThermoGar_app.py,6988,,да,st.sidebar.radio,Выберите углеродную систему,—,—,—,—,
+app/ThermoGar_app.py,7030,,да,st.sidebar.selectbox,Элемент-основа,—,—,—,—,
+app/ThermoGar_app.py,7042,,да,st.sidebar.radio,Единицы состава,—,—,—,—,
+app/ThermoGar_app.py,7054,,да,st.sidebar.text_area,Добавки,—,—,—,—,
+app/ThermoGar_app.py,7065,,да,st.sidebar.number_input,"Давление, Па",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,7206,,да,st.number_input,"Температура, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,7455,,да,st.radio,Показывать составы фаз,—,—,—,—,
+app/ThermoGar_app.py,7505,,да,st.number_input,"От, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,7513,,да,st.number_input,"До, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,7521,,да,st.number_input,"Шаг, °C",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,7529,,да,st.number_input,"Показывать на графике фазы с максимумом не менее, %",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,7821,,да,st.selectbox,Изменяемый элемент,—,—,—,—,
+app/ThermoGar_app.py,7831,,да,st.text_area,Постоянные добавки,—,—,—,—,
+app/ThermoGar_app.py,7841,,да,st.number_input,"{variable_element}: от, %",да (% без ат./мас. — единица из переключателя),min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,7849,,да,st.number_input,"{variable_element}: до, %",да (% без ат./мас. — единица из переключателя),min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,7857,,да,st.number_input,"{variable_element}: шаг, %",да (% без ат./мас. — единица из переключателя),min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,7864,,да,st.number_input,"Температура, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,7871,,да,st.number_input,"Показывать на графике фазы с максимумом не менее, %",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,8197,,да,st.selectbox,Первый элемент системы,—,—,—,—,
+app/ThermoGar_app.py,8218,,да,st.selectbox,Второй элемент; его содержание идёт по горизонтальной оси,—,—,—,—,
+app/ThermoGar_app.py,8225,,да,st.radio,Единицы горизонтальной оси,—,—,—,—,
+app/ThermoGar_app.py,8234,,да,st.number_input,"{right_element}: от, %",да (% без ат./мас. — единица из переключателя),min max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,8242,,да,st.number_input,"{right_element}: до, %",да (% без ат./мас. — единица из переключателя),min max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,8250,,да,st.number_input,"Шаг по составу, {binary_units_label}",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,8258,,да,st.number_input,"Температура от, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,8264,,да,st.number_input,"Температура до, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,8270,,да,st.number_input,"Шаг по температуре, °C",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,8559,,да,st.selectbox,Изменяемый элемент,—,—,—,—,
+app/ThermoGar_app.py,8579,,да,st.text_area,"Постоянные добавки, ат.%",—,—,—,—,
+app/ThermoGar_app.py,8593,,да,st.number_input,"{variable_element}: от, ат.%",да,min max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,8604,,да,st.number_input,"{variable_element}: до, ат.%",да,min max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,8615,,да,st.number_input,"Шаг по составу, ат.%",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,8626,,да,st.number_input,"Температура от, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,8632,,да,st.number_input,"Температура до, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,8638,,да,st.number_input,"Шаг по температуре, °C",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,9039,,да,st.selectbox,Элемент A — нижняя правая вершина,—,—,—,—,
+app/ThermoGar_app.py,9060,,да,st.selectbox,Элемент B — верхняя вершина,—,—,—,—,
+app/ThermoGar_app.py,9077,,да,st.selectbox,Элемент C — нижняя левая вершина; остаток до 100 %,—,—,—,—,
+app/ThermoGar_app.py,9087,,да,st.number_input,"Температура, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,9093,,да,st.number_input,"Шаг поиска границ, ат.%",да,min max,нет,да,
+app/ThermoGar_app.py,9110,,да,st.number_input,Показывать каждую N-ю линию связи,счётная,min max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,9403,,да,st.selectbox,Элемент A — нижняя правая вершина,—,—,—,—,
+app/ThermoGar_app.py,9424,,да,st.selectbox,Элемент B — верхняя вершина,—,—,—,—,
+app/ThermoGar_app.py,9441,,да,st.selectbox,Элемент C — нижняя левая вершина и остаток до 100 %,—,—,—,—,
+app/ThermoGar_app.py,9451,,да,st.radio,Единицы состава на треугольнике,—,—,—,—,
+app/ThermoGar_app.py,9460,,да,st.number_input,"Температура, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,9467,,да,st.number_input,"Желаемый шаг сетки, %",да,min max,нет,да,
+app/ThermoGar_app.py,9482,,да,st.number_input,"Провести границу появления фазы при доле, мол.%",да,min max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,9491,,да,st.radio,Шкала цвета,—,—,—,—,
+app/ThermoGar_app.py,9563,,да,st.selectbox,Какую фазу показать цветом,—,—,—,—,
+app/ThermoGar_app.py,9967,,да,st.radio,Метод расчёта,—,—,—,—,
+app/ThermoGar_app.py,9998,,да,st.number_input,"Начальная температура, °C",да,max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,9999,,да,st.number_input,"Шаг охлаждения, °C",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,10013,,да,st.number_input,"Шаг автоматического повышения, °C",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,10021,,да,st.number_input,"Максимальная проверяемая температура, °C",да,min max,нет,да,
+app/ThermoGar_app.py,10034,,да,st.number_input,"Максимальная проверяемая температура, °C",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,10041,,да,st.number_input,"Scheil: остановить при остатке расплава, %",да,min max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,10050,,да,st.number_input,"Порог появления фазы, %",да,min max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,10059,,да,st.number_input,"Показывать на графиках фазы от, %",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,10066,,да,st.select_slider,Плотность начального поиска состояний,счётная,варианты,нет,да,
+app/ThermoGar_app.py,10076,,да,st.number_input,"Точность поиска равновесного солидуса, °C",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,10551,,да,st.selectbox,Какой метод показать,—,—,—,—,
+app/ThermoGar_app.py,10589,,да,st.selectbox,Элемент в остаточном расплаве,—,—,—,—,
+app/ThermoGar_app.py,10594,,да,st.radio,Единицы состава расплава,—,—,—,—,
+app/ThermoGar_app.py,10611,,да,st.selectbox,Таблица для метода,—,—,—,—,
+app/ThermoGar_app.py,10725,,да,st.multiselect,Фазы для сравнения — не более восьми,—,—,—,—,
+app/ThermoGar_app.py,10733,,да,st.number_input,"Температура от, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,10739,,да,st.number_input,"Температура до, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,10745,,да,st.number_input,"Шаг температуры, °C",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,10752,,да,st.radio,Что показать на графике,—,—,—,—,
+app/ThermoGar_app.py,10946,,да,st.selectbox,"Фаза, движущую силу которой рассчитываем",—,—,—,—,
+app/ThermoGar_app.py,10972,,да,st.multiselect,Фазы исходного равновесия,—,—,—,—,
+app/ThermoGar_app.py,10979,,да,st.number_input,"Температура от, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,10985,,да,st.number_input,"Температура до, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,10991,,да,st.number_input,"Шаг температуры, °C",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,11150,,да,st.selectbox,Изменяемый элемент,—,—,—,—,
+app/ThermoGar_app.py,11156,,да,st.radio,Единицы горизонтальной оси,—,—,—,—,
+app/ThermoGar_app.py,11164,,да,st.text_area,Постоянные добавки,—,—,—,—,
+app/ThermoGar_app.py,11175,,да,st.number_input,"{tzero_variable}: от, %",да (% без ат./мас. — единица из переключателя),min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,11182,,да,st.number_input,"{tzero_variable}: до, %",да (% без ат./мас. — единица из переключателя),min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,11189,,да,st.number_input,"{tzero_variable}: шаг, %",да (% без ат./мас. — единица из переключателя),min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/ThermoGar_app.py,11223,,да,st.selectbox,Фаза 1,—,—,—,—,
+app/ThermoGar_app.py,11244,,да,st.selectbox,Фаза 2,—,—,—,—,
+app/ThermoGar_app.py,11264,,да,st.number_input,"Нижняя граница поиска T₀, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,11270,,да,st.number_input,"Верхняя граница поиска T₀, °C",да,нет,нет,нет,
+app/ThermoGar_app.py,12130,,да,st.text_input,Поиск по коду или описанию,—,—,—,—,
+app/thermogar_diffusion.py,1153,_result_display,да,st.radio,Единицы графика состава,—,—,—,—,
+app/thermogar_diffusion.py,1246,_common_inputs,да,st.selectbox,Элемент-основа,—,—,—,—,
+app/thermogar_diffusion.py,1252,_common_inputs,да,st.radio,Единицы исходных составов,—,—,—,—,
+app/thermogar_diffusion.py,1263,_common_inputs,да,st.text_area,Левая сторона,—,—,—,—,
+app/thermogar_diffusion.py,1270,_common_inputs,да,st.text_area,Правая сторона,—,—,—,—,
+app/thermogar_diffusion.py,1277,_common_inputs,да,st.number_input,"Температура выдержки, °C",да,нет,нет,нет,
+app/thermogar_diffusion.py,1286,_common_inputs,да,st.number_input,"Длина области, мкм",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_diffusion.py,1294,_common_inputs,да,st.number_input,"Граница пары, %",да,min max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_diffusion.py,1303,_common_inputs,да,st.number_input,"Время, ч",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_diffusion.py,1311,_common_inputs,да,st.number_input,Ячеек,счётная,min max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_diffusion.py,1320,_common_inputs,да,st.text_area,Источник и назначение diffusion inputs,—,—,—,—,"латиница: diffusion, inputs (W-1)"
+app/thermogar_diffusion.py,1437,render_kinetics_section,да,st.selectbox,Фаза для всего профиля,—,—,—,—,
+app/thermogar_diffusion.py,1552,render_kinetics_section,да,st.multiselect,Фазы локального равновесия,—,—,—,—,
+app/thermogar_diffusion.py,1563,render_kinetics_section,да,st.selectbox,Модель эффективной подвижности,—,—,—,—,
+app/thermogar_diffusion.py,1571,render_kinetics_section,да,st.number_input,Сглаживающий коэффициент ε,безразмерная,min max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_diffusion.py,1581,render_kinetics_section,да,st.number_input,Лабиринтный фактор,безразмерная,min max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_parallel_ui.py,155,render_sidebar_control,да,st.sidebar.radio,Параллельный расчёт,—,—,—,—,
+app/thermogar_precipitation.py,1322,render_precipitation_section,да,st.selectbox,Набор исходных параметров,—,—,—,—,
+app/thermogar_precipitation.py,1389,render_precipitation_section,да,st.selectbox,Матричная фаза,—,—,—,—,
+app/thermogar_precipitation.py,1418,render_precipitation_section,да,st.selectbox,Фаза-выделение,—,—,—,—,
+app/thermogar_precipitation.py,1425,render_precipitation_section,да,st.radio,Температурный режим,—,—,—,—,
+app/thermogar_precipitation.py,1436,render_precipitation_section,да,st.number_input,"Температура, °C",да,нет,нет,нет,
+app/thermogar_precipitation.py,1442,render_precipitation_section,да,st.number_input,"Время выдержки, ч",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_precipitation.py,1450,render_precipitation_section,да,st.text_area,"Время, ч; температура, °C",—,—,—,—,
+app/thermogar_precipitation.py,1459,render_precipitation_section,да,st.number_input,"Межфазная энергия, Дж/м²",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_precipitation.py,1467,render_precipitation_section,да,st.number_input,"Молярный объём матрицы, см³/моль",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_precipitation.py,1474,render_precipitation_section,да,st.number_input,"Молярный объём выделения, см³/моль",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_precipitation.py,1481,render_precipitation_section,да,st.selectbox,Центры зарождения,—,—,—,—,
+app/thermogar_precipitation.py,1487,render_precipitation_section,да,st.number_input,"Плотность объёмных центров, 1/м³",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_precipitation.py,1494,render_precipitation_section,да,st.number_input,"Средний размер зерна, мкм",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_precipitation.py,1501,render_precipitation_section,да,st.number_input,"Плотность дислокаций, 1/м²",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_precipitation.py,1508,render_precipitation_section,да,st.number_input,"Энергия границы зерна, Дж/м²",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_precipitation.py,1517,render_precipitation_section,да,st.number_input,"Минимальный радиус, нм",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_precipitation.py,1524,render_precipitation_section,да,st.number_input,"Начальный максимальный радиус, нм",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_precipitation.py,1531,render_precipitation_section,да,st.slider,Классов размеров,счётная,min max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_precipitation.py,1544,render_precipitation_section,да,st.text_area,Источник и применимость физических входов,—,—,—,—,
+app/thermogar_properties.py,1490,render_elastic_section,нет,st.number_input,"Температура расчёта, °C",да,нет,нет,нет,
+app/thermogar_properties.py,1870,render_strengthening_section,нет,st.number_input,"Базовое внутреннее сопротивление σ_int, МПа",да,min,нет,нет,"латиница: int (W-1); границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,1882,render_strengthening_section,нет,st.number_input,"k_y, МПа·м^1/2",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,1888,render_strengthening_section,нет,st.number_input,"Средний размер зерна d, мкм",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,1901,render_strengthening_section,нет,st.number_input,Taylor factor M,безразмерная,min,нет,нет,"латиница: factor (W-1); границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,1907,render_strengthening_section,нет,st.number_input,Коэффициент взаимодействия α,безразмерная,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,1913,render_strengthening_section,нет,st.number_input,"Модуль сдвига G, ГПа",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,1919,render_strengthening_section,нет,st.number_input,"Вектор Бюргерса b, нм",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,1925,render_strengthening_section,нет,st.number_input,"Плотность дислокаций ρ_d, м⁻²",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,1938,render_strengthening_section,нет,st.number_input,"Δσ_ss, МПа",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,1944,render_strengthening_section,нет,st.text_input,Источник коэффициентов / модели,—,—,—,—,
+app/thermogar_properties.py,1958,render_strengthening_section,нет,st.number_input,Taylor factor M для Orowan,безразмерная,min,нет,нет,"латиница: factor (W-1); границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,1964,render_strengthening_section,нет,st.number_input,"Модуль сдвига матрицы G, ГПа",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,1970,render_strengthening_section,нет,st.number_input,"Вектор Бюргерса b, нм",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,1976,render_strengthening_section,нет,st.number_input,Коэффициент Пуассона ν,безразмерная,min max,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,1983,render_strengthening_section,нет,st.number_input,"Средний радиус частиц r, нм",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,1989,render_strengthening_section,нет,st.number_input,"Межчастичное расстояние λ, нм",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,2005,render_strengthening_section,нет,st.number_input,"Дополнительный вклад, МПа",да,min,нет,нет,"границы есть в коде, в подписи/подсказке нет (FM-4)"
+app/thermogar_properties.py,2011,render_strengthening_section,нет,st.text_input,Что это и откуда взято,—,—,—,—,
+app/thermogar_properties.py,2016,render_strengthening_section,нет,st.selectbox,Правило объединения вкладов,—,—,—,—,
+app/thermogar_properties.py,2026,render_strengthening_section,нет,st.text_area,Источник и применимость всех коэффициентов (обязательно),—,—,—,—,
+app/thermogar_workspace.py,1112,render_alloy_library,да,st.text_input,Название марки или состава,—,—,—,—,
+app/thermogar_workspace.py,1116,render_alloy_library,да,st.text_area,Заметка (не обязательно),—,—,—,—,
+app/thermogar_workspace.py,1171,render_alloy_library,да,st.selectbox,Выберите запись,—,—,—,—,
+app/thermogar_workspace.py,1638,render_projects_and_history,да,st.radio,Что открыть,—,—,—,—,
+app/thermogar_workspace.py,1647,render_projects_and_history,да,st.text_input,Название проекта,—,—,—,—,
+app/thermogar_workspace.py,1651,render_projects_and_history,да,st.text_area,Описание (не обязательно),—,—,—,—,
+app/thermogar_workspace.py,1728,render_projects_and_history,да,st.selectbox,Выберите проект,—,—,—,—,
+app/thermogar_workspace.py,1918,render_projects_and_history,да,st.multiselect,Показывать события,—,—,—,—,
+app/thermogar_workspace.py,1946,render_projects_and_history,да,st.selectbox,Запись для восстановления материала,—,—,—,—,

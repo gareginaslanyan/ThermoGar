@@ -1,0 +1,12 @@
+﻿где,что,значение,ступень T-2 (15/18/22/26/31),примечание
+.streamlit/config.toml:2,[theme] baseFontSize,18,18 px — ступень T-2 ✓,известен 1.62
+.streamlit/config.toml:3,[theme] headingFontSizes h1,31px,31 ✓,известен 1.62; не наследуется в [theme.sidebar]
+.streamlit/config.toml:3,headingFontSizes h2,22px,22 ✓,
+.streamlit/config.toml:3,headingFontSizes h3,22px,"22 ✓ (h2 = h3 — различие только весом/отступом, снимок 21-Б)",
+.streamlit/config.toml:3,headingFontSizes h4–h6,18px,18 ✓,
+app/style.css,font-size,нет,✓ кеглей в CSS нет,
+app/*.py,font-size в HTML/CSS-строках,нет,"✓ (единственный unsafe_allow_html — подключение style.css, ThermoGar_app.py:647)",
+app/ThermoGar_app.py,matplotlib fontsize=13,10 мест,18.1 px → 18 ✓,заголовки и подписи осей
+app/ThermoGar_app.py,matplotlib fontsize=11 / labelsize=11,25 + 4 места,15.3 px → 15 ✓,"деления, легенды, подписи"
+"app/thermogar_diffusion.py, app/thermogar_precipitation.py",matplotlib кегли не заданы,7 фигур,10 pt: 13.9 px → 15 ✗ (вне ±1 px); 12 pt: 16.7 px → 18 ✗ (вне ±1 px),умолчания matplotlib 3.11.2
+—,metricValueFontSize,не задан,значение st.metric — кегль Streamlit по умолчанию (снимок 21-Б),ключ есть в 1.62

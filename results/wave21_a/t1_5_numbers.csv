@@ -1,0 +1,230 @@
+﻿файл,строка,функция,достижимо из приложения,вызов,вид места,что выводится,"формат (T-3, D-15)",единица рядом (W-4),дробное число — перевод на запятую по А-2,примечание
+app/ThermoGar_app.py,1587,render_b4b_density_single,да,st.number_input,поле ввода,"Температура, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,1662,render_b4b_density_single,да,st.metric,метрика,"Плотность сплава, кг/м³ = '—' if projection['alloy_density_kg_m3'] is None else f""{projection['a",есть: .1f,да (в подписи),да,
+app/ThermoGar_app.py,1688,render_b4b_density_single,да,st.dataframe,таблица,coverage,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,1703,render_b4b_density_single,да,st.info,текст экрана,{projection['mass_coverage_pct']:.2f},есть: .2f,да,да,
+app/ThermoGar_app.py,1716,render_b4b_density_single,да,st.dataframe,таблица,pd.DataFrame(projection['phase_rows']),нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,1718,render_b4b_density_single,да,st.dataframe,таблица,pd.DataFrame(projection['missing_rows']),нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,1751,render_b4b_density_temperature,да,st.number_input,поле ввода,"Температура от, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,1753,render_b4b_density_temperature,да,st.number_input,поле ввода,"Температура до, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,1755,render_b4b_density_temperature,да,st.number_input,поле ввода,"Шаг температуры, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,1902,render_b4b_density_temperature,да,st.dataframe,таблица,table,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,1964,render_b4b_pdb_self_test,да,st.dataframe,таблица,pd.DataFrame(state['projections'][0]['rows']),нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,1998,render_b4b_coverage,да,st.dataframe,таблица,coverage_rows,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,2053,render_b4b2_elastic_properties,да,st.number_input,поле ввода,"Температура, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2132,render_b4b2_elastic_properties,да,st.data_editor,таблица,editor,column_config без format,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,2202,render_b4b2_elastic_properties,да,st.dataframe,таблица,bounds_table,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,2205,render_b4b2_elastic_properties,да,metric_columns[0].metric,метрика,"E Hill, ГПа = f""{summary['E_Hill_GPa']:.3f}""",есть: .3f,да (в подписи),да,
+app/ThermoGar_app.py,2206,render_b4b2_elastic_properties,да,metric_columns[1].metric,метрика,"G Hill, ГПа = f""{summary['G_Hill_GPa']:.3f}""",есть: .3f,да (в подписи),да,
+app/ThermoGar_app.py,2207,render_b4b2_elastic_properties,да,metric_columns[2].metric,метрика,"ν Hill = f""{summary['nu_Hill']:.5f}""",есть: .5f,безразмерная,да,
+app/ThermoGar_app.py,2261,render_b4b2_strengthening,да,st.number_input,поле ввода,"Базовое внутреннее сопротивление, МПа",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2278,render_b4b2_strengthening,да,st.number_input,поле ввода,"k_y, МПа·м¹ᐟ²",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2279,render_b4b2_strengthening,да,st.number_input,поле ввода,"Размер зерна, мкм",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2294,render_b4b2_strengthening,да,st.number_input,поле ввода,M (Taylor),нет (Streamlit по умолчанию %0.2f),безразмерная,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2295,render_b4b2_strengthening,да,st.number_input,поле ввода,α,нет (Streamlit по умолчанию %0.2f),безразмерная,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2296,render_b4b2_strengthening,да,st.number_input,поле ввода,"G, ГПа (Taylor)",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2297,render_b4b2_strengthening,да,st.number_input,поле ввода,"b, нм (Taylor)",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2298,render_b4b2_strengthening,да,st.number_input,поле ввода,"Плотность дислокаций, м⁻²",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2300,render_b4b2_strengthening,да,st.number_input,поле ввода,"Твёрдорастворный вклад, МПа",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2303,render_b4b2_strengthening,да,st.number_input,поле ввода,M (Orowan),нет (Streamlit по умолчанию %0.2f),безразмерная,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2304,render_b4b2_strengthening,да,st.number_input,поле ввода,"G, ГПа (Orowan)",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2305,render_b4b2_strengthening,да,st.number_input,поле ввода,"b, нм (Orowan)",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2306,render_b4b2_strengthening,да,st.number_input,поле ввода,ν (Orowan),нет (Streamlit по умолчанию %0.2f),безразмерная,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2307,render_b4b2_strengthening,да,st.number_input,поле ввода,"Радиус частиц, нм",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2308,render_b4b2_strengthening,да,st.number_input,поле ввода,"Расстояние между частицами, нм",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2310,render_b4b2_strengthening,да,st.number_input,поле ввода,"Другой вклад, МПа",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,2378,render_b4b2_strengthening,да,st.dataframe,таблица,contribution_table,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,2380,render_b4b2_strengthening,да,st.metric,метрика,"Итог, МПа = f""{projection['total_mpa']:.3f}""",есть: .3f,да (в подписи),да,
+app/ThermoGar_app.py,2783,phase_selection_editor,да,st.caption,текст экрана,{len(candidate_phases)},целое,счётное,нет,
+app/ThermoGar_app.py,2816,phase_selection_editor,да,st.data_editor,таблица,phase_table,column_config без format,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,2862,phase_selection_editor,да,st.caption,текст экрана,{len(selected)},целое,счётное,нет,
+app/ThermoGar_app.py,2862,phase_selection_editor,да,st.caption,текст экрана,{len(candidate_phases)},целое,счётное,нет,
+app/ThermoGar_app.py,5344,plot_binary_thermogar,да,FuncFormatter,форматтер оси,"lambda value, _position: f'{100.0 * value:g}'",есть (:g),в подписи оси,да,подписи делений оси с точкой
+app/ThermoGar_app.py,5347,plot_binary_thermogar,да,FuncFormatter,форматтер оси,"lambda value, _position: f'{value - 273.15:g}'",есть (:g),в подписи оси,да,подписи делений оси с точкой
+app/ThermoGar_app.py,5886,plot_isopleth_thermogar,да,FuncFormatter,форматтер оси,"lambda value, _position: f'{100.0 * value:g}'",есть (:g),в подписи оси,да,подписи делений оси с точкой
+app/ThermoGar_app.py,5889,plot_isopleth_thermogar,да,FuncFormatter,форматтер оси,"lambda value, _position: f'{value - 273.15:g}'",есть (:g),в подписи оси,да,подписи делений оси с точкой
+app/ThermoGar_app.py,6178,plot_ternary_thermogar,да,axes.set_title,текст графика,{temperature_c:.1f},есть: .1f,да,да,
+app/ThermoGar_app.py,6200,plot_ternary_thermogar,да,FuncFormatter,форматтер оси,"lambda value, _position: f'{100.0 * value:g}'",есть (:g),в подписи оси,да,подписи делений оси с точкой
+app/ThermoGar_app.py,6203,plot_ternary_thermogar,да,FuncFormatter,форматтер оси,"lambda value, _position: f'{100.0 * value:g}'",есть (:g),в подписи оси,да,подписи делений оси с точкой
+app/ThermoGar_app.py,6684,plot_ternary_phase_fraction_map,да,axes.set_title,текст графика,{temperature_c:.1f},есть: .1f,да,да,
+app/ThermoGar_app.py,6706,plot_ternary_phase_fraction_map,да,FuncFormatter,форматтер оси,"lambda value, _position: f'{100.0 * value:g}'",есть (:g),в подписи оси,да,подписи делений оси с точкой
+app/ThermoGar_app.py,6709,plot_ternary_phase_fraction_map,да,FuncFormatter,форматтер оси,"lambda value, _position: f'{100.0 * value:g}'",есть (:g),в подписи оси,да,подписи делений оси с точкой
+app/ThermoGar_app.py,6783,plot_ternary_phase_fraction_map,да,.Line2D,текст графика,{threshold:g},есть: g,да,да,
+app/ThermoGar_app.py,6973,,да,st.sidebar.success,текст экрана,{len(available_elements)},целое,счётное,нет,
+app/ThermoGar_app.py,6973,,да,st.sidebar.success,текст экрана,{len(db.phases)},целое,счётное,нет,
+app/ThermoGar_app.py,7065,,да,st.sidebar.number_input,поле ввода,"Давление, Па",format='%.1f',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,7206,,да,st.number_input,поле ввода,"Температура, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,7447,,да,st.dataframe,таблица,result['summary'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,7467,,да,st.dataframe,таблица,phase_table,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,7505,,да,st.number_input,поле ввода,"От, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,7513,,да,st.number_input,поле ввода,"До, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,7521,,да,st.number_input,поле ввода,"Шаг, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,7529,,да,st.number_input,поле ввода,"Показывать на графике фазы с максимумом не менее, %",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,7759,,да,st.dataframe,таблица,result['data'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,7841,,да,st.number_input,поле ввода,"f'{variable_element}: от, %'",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,7849,,да,st.number_input,поле ввода,"f'{variable_element}: до, %'",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,7857,,да,st.number_input,поле ввода,"f'{variable_element}: шаг, %'",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,7864,,да,st.number_input,поле ввода,"Температура, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,7871,,да,st.number_input,поле ввода,"Показывать на графике фазы с максимумом не менее, %",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,8116,,да,st.dataframe,таблица,result['data'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,8234,,да,st.number_input,поле ввода,"f'{right_element}: от, %'",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,8242,,да,st.number_input,поле ввода,"f'{right_element}: до, %'",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,8250,,да,st.number_input,поле ввода,"f'Шаг по составу, {binary_units_label}'",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,8258,,да,st.number_input,поле ввода,"Температура от, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,8264,,да,st.number_input,поле ввода,"Температура до, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,8270,,да,st.number_input,поле ввода,"Шаг по температуре, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,8504,,да,st.dataframe,таблица,result['boundaries'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,8593,,да,st.number_input,поле ввода,"f'{variable_element}: от, ат.%'",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,8604,,да,st.number_input,поле ввода,"f'{variable_element}: до, ат.%'",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,8615,,да,st.number_input,поле ввода,"Шаг по составу, ат.%",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,8626,,да,st.number_input,поле ввода,"Температура от, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,8632,,да,st.number_input,поле ввода,"Температура до, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,8638,,да,st.number_input,поле ввода,"Шаг по температуре, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,8988,,да,st.dataframe,таблица,result['boundaries'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,9087,,да,st.number_input,поле ввода,"Температура, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,9093,,да,st.number_input,поле ввода,"Шаг поиска границ, ат.%",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,9110,,да,st.number_input,поле ввода,Показывать каждую N-ю линию связи,целое (формат не нужен),счётная,нет,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,9356,,да,st.dataframe,таблица,result['boundaries'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,9460,,да,st.number_input,поле ввода,"Температура, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,9467,,да,st.number_input,поле ввода,"Желаемый шаг сетки, %",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,9482,,да,st.number_input,поле ввода,"Провести границу появления фазы при доле, мол.%",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,9504,,да,st.info,текст экрана,{map_point_count},целое,счётное,нет,
+app/ThermoGar_app.py,9504,,да,st.info,текст экрана,{actual_step:.3g},есть: .3g,да,да,
+app/ThermoGar_app.py,9834,,да,st.metric,метрика,"Максимальная доля = f""{float(summary_lookup['Максимальная мольная доля фазы, %']):.2f} %""",есть: .2f,да (в значении),да,
+app/ThermoGar_app.py,9841,,да,st.metric,метрика,Узлов с фазой = int(summary_lookup['Узлов с долей не ниже заданной границы']),целое,счётное,нет,
+app/ThermoGar_app.py,9850,,да,st.metric,метрика,Не рассчитано узлов = int(summary_lookup['Не рассчитано узлов']),целое,счётное,нет,
+app/ThermoGar_app.py,9871,,да,st.dataframe,таблица,result['summary'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,9881,,да,st.dataframe,таблица,result['data'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,9998,,да,st.number_input,поле ввода,"Начальная температура, °C (solidification_start_kwargs)",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,9999,,да,st.number_input,поле ввода,"Шаг охлаждения, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,10013,,да,st.number_input,поле ввода,"Шаг автоматического повышения, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,10021,,да,st.number_input,поле ввода,"Максимальная проверяемая температура, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,10034,,да,st.number_input,поле ввода,"Максимальная проверяемая температура, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,10041,,да,st.number_input,поле ввода,"Scheil: остановить при остатке расплава, %",format='%.4f',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,10050,,да,st.number_input,поле ввода,"Порог появления фазы, %",format='%.4f',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,10059,,да,st.number_input,поле ввода,"Показывать на графиках фазы от, %",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,10066,,да,st.select_slider,поле ввода,Плотность начального поиска состояний,варианты заданы списком целых,счётная,нет,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,10076,,да,st.number_input,поле ввода,"Точность поиска равновесного солидуса, °C",format='%.2f',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,10180,,да,status.write,текст экрана,{actual_start_k - 273.15:.2f},есть: .2f,да,да,
+app/ThermoGar_app.py,10302,,да,status.write,текст экрана,{step},целое,счётное,нет,
+app/ThermoGar_app.py,10302,,да,status.write,текст экрана,{total},целое,счётное,нет,
+app/ThermoGar_app.py,10302,,да,status.write,текст экрана,{temperature_c:.2f},есть: .2f,да,да,
+app/ThermoGar_app.py,10302,,да,status.write,текст экрана,{100.0 * solid:.4f},есть: .4f,да,да,
+app/ThermoGar_app.py,10309,,да,status.write,текст экрана,{computed_liquidus_c:.2f},есть: .2f,да,да,
+app/ThermoGar_app.py,10309,,да,status.write,текст экрана,{LIQUIDUS_TOLERANCE_C:g},есть: g,да,да,
+app/ThermoGar_app.py,10518,,да,st.dataframe,таблица,state['summary'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,10528,,да,st.caption,текст экрана,{LIQUIDUS_TOLERANCE_C:g},есть: g,да,да,
+app/ThermoGar_app.py,10538,,да,st.dataframe,таблица,state['start_check'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,10565,,да,st.dataframe,таблица,state['sequences'][phase_method_key],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,10571,,да,st.dataframe,таблица,state['final_phases'][phase_method_key],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,10577,,да,st.dataframe,таблица,state['paths'][phase_method_key],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,10620,,да,st.dataframe,таблица,state['liquid_tables'][liquid_method_key],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,10733,,да,st.number_input,поле ввода,"Температура от, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,10739,,да,st.number_input,поле ввода,"Температура до, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,10745,,да,st.number_input,поле ввода,"Шаг температуры, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,10864,,да,st.dataframe,таблица,energy_state['crossings'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,10872,,да,st.dataframe,таблица,energy_state['absolute'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,10878,,да,st.dataframe,таблица,energy_state['relative'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,10979,,да,st.number_input,поле ввода,"Температура от, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,10985,,да,st.number_input,поле ввода,"Температура до, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,10991,,да,st.number_input,поле ввода,"Шаг температуры, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,11093,,да,st.dataframe,таблица,driving_state['crossings'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,11098,,да,st.dataframe,таблица,driving_state['data'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,11175,,да,st.number_input,поле ввода,"f'{tzero_variable}: от, %'",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,11182,,да,st.number_input,поле ввода,"f'{tzero_variable}: до, %'",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,11189,,да,st.number_input,поле ввода,"f'{tzero_variable}: шаг, %'",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,11264,,да,st.number_input,поле ввода,"Нижняя граница поиска T₀, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,11270,,да,st.number_input,поле ввода,"Верхняя граница поиска T₀, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/ThermoGar_app.py,11355,,да,st.success,текст экрана,{valid_count},целое,счётное,нет,
+app/ThermoGar_app.py,11355,,да,st.success,текст экрана,{total_count},целое,счётное,нет,
+app/ThermoGar_app.py,11359,,да,st.warning,текст экрана,{valid_count},целое,счётное,нет,
+app/ThermoGar_app.py,11359,,да,st.warning,текст экрана,{total_count},целое,счётное,нет,
+app/ThermoGar_app.py,11374,,да,st.dataframe,таблица,tzero_state['data'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,11836,,да,st.dataframe,таблица,"pd.DataFrame([('База', definition['label']), ('Файл', str(database_path)), ('SHA-256', CUR",нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,11854,,да,st.dataframe,таблица,"passport_dataframe(PROJECT_ROOT, fe_profile_key)",нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,12080,,да,st.dataframe,таблица,examples,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/ThermoGar_app.py,12170,,да,st.dataframe,таблица,reference_view[displayed_columns],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_diffusion.py,1136,_result_display,да,st.metric,метрика,Метод = result.method_label,не число (текст),—,нет,
+app/thermogar_diffusion.py,1138,_result_display,да,st.metric,метрика,"Время выдержки, ч = f'{result.actual_time_s / 3600.0:.3g}'",есть: .3g,да (в подписи),да,
+app/thermogar_diffusion.py,1140,_result_display,да,st.metric,метрика,"Макс. ошибка баланса, u-доля = f'{result.max_balance_error:.3e}'",есть: .3e,да (в подписи),да,
+app/thermogar_diffusion.py,1179,_result_display,да,st.dataframe,таблица,result.profile_table[table_columns],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_diffusion.py,1188,_result_display,да,st.dataframe,таблица,result.phase_fractions,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_diffusion.py,1191,_result_display,да,st.dataframe,таблица,result.balance_table,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_diffusion.py,1192,_result_display,да,st.dataframe,таблица,result.settings,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_diffusion.py,1277,_common_inputs,да,st.number_input,поле ввода,"Температура выдержки, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_diffusion.py,1286,_common_inputs,да,st.number_input,поле ввода,"Длина области, мкм",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_diffusion.py,1294,_common_inputs,да,st.number_input,поле ввода,"Граница пары, %",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_diffusion.py,1303,_common_inputs,да,st.number_input,поле ввода,"Время, ч",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_diffusion.py,1311,_common_inputs,да,st.number_input,поле ввода,Ячеек,целое (формат не нужен),счётная,нет,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_diffusion.py,1571,render_kinetics_section,да,st.number_input,поле ввода,Сглаживающий коэффициент ε,format='%.3f',безразмерная,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_diffusion.py,1581,render_kinetics_section,да,st.number_input,поле ввода,Лабиринтный фактор,нет (Streamlit по умолчанию %0.2f),безразмерная,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_diffusion.py,1666,render_kinetics_section,да,st.metric,метрика,Kawin = _package_version('kawin'),не число (текст),—,нет,
+app/thermogar_diffusion.py,1668,render_kinetics_section,да,st.metric,метрика,Диффундирующих элементов = len(diffusing_species),целое,счётное,нет,
+app/thermogar_diffusion.py,1670,render_kinetics_section,да,st.metric,метрика,Фаз с параметрами подвижности = len(kinetic_phases),целое,счётное,нет,
+app/thermogar_diffusion.py,1678,render_kinetics_section,да,st.dataframe,таблица,kinetics_table,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_precipitation.py,1367,render_precipitation_section,да,st.caption,текст экрана,{KWN_MAX_SOLUTES},целое,счётное,нет,
+app/thermogar_precipitation.py,1367,render_precipitation_section,да,st.caption,текст экрана,{KWN_MAX_SOLUTES},целое,счётное,нет,
+app/thermogar_precipitation.py,1436,render_precipitation_section,да,st.number_input,поле ввода,"Температура, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_precipitation.py,1442,render_precipitation_section,да,st.number_input,поле ввода,"Время выдержки, ч",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_precipitation.py,1459,render_precipitation_section,да,st.number_input,поле ввода,"Межфазная энергия, Дж/м²",format='%.6g',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_precipitation.py,1467,render_precipitation_section,да,st.number_input,поле ввода,"Молярный объём матрицы, см³/моль",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_precipitation.py,1474,render_precipitation_section,да,st.number_input,поле ввода,"Молярный объём выделения, см³/моль",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_precipitation.py,1487,render_precipitation_section,да,st.number_input,поле ввода,"Плотность объёмных центров, 1/м³",format='%.6e',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_precipitation.py,1494,render_precipitation_section,да,st.number_input,поле ввода,"Средний размер зерна, мкм",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_precipitation.py,1501,render_precipitation_section,да,st.number_input,поле ввода,"Плотность дислокаций, 1/м²",format='%.6e',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_precipitation.py,1508,render_precipitation_section,да,st.number_input,поле ввода,"Энергия границы зерна, Дж/м²",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_precipitation.py,1517,render_precipitation_section,да,st.number_input,поле ввода,"Минимальный радиус, нм",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_precipitation.py,1524,render_precipitation_section,да,st.number_input,поле ввода,"Начальный максимальный радиус, нм",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_precipitation.py,1531,render_precipitation_section,да,st.slider,поле ввода,Классов размеров,нет (Streamlit по умолчанию %0.2f),счётная,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_precipitation.py,1627,render_precipitation_section,да,st.dataframe,таблица,result.summary,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_precipitation.py,1630,render_precipitation_section,да,st.dataframe,таблица,result.quality,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_precipitation.py,1634,render_precipitation_section,да,st.dataframe,таблица,result.kinetics,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_precipitation.py,1636,render_precipitation_section,да,st.dataframe,таблица,result.matrix_composition,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_precipitation.py,1637,render_precipitation_section,да,st.dataframe,таблица,result.interface_composition,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_precipitation.py,1640,render_precipitation_section,да,st.dataframe,таблица,result.psd,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_properties.py,1490,render_elastic_section,нет (код не вызывается из приложения),st.number_input,поле ввода,"Температура расчёта, °C",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,1592,render_elastic_section,нет (код не вызывается из приложения),st.data_editor,таблица,prepared['editor'],column_config с format,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_properties.py,1707,render_elastic_section,нет (код не вызывается из приложения),st.metric,метрика,"E_Hill, ГПа = f""{float(hill['E, ГПа']):.3f}""",есть: .3f,да (в подписи),да,
+app/thermogar_properties.py,1709,render_elastic_section,нет (код не вызывается из приложения),st.metric,метрика,"ν_Hill = f""{float(hill['ν']):.4f}""",есть: .4f,безразмерная,да,
+app/thermogar_properties.py,1711,render_elastic_section,нет (код не вызывается из приложения),st.metric,метрика,"K_Hill, ГПа = f""{float(hill['K, ГПа']):.3f}""",есть: .3f,да (в подписи),да,
+app/thermogar_properties.py,1713,render_elastic_section,нет (код не вызывается из приложения),st.metric,метрика,"G_Hill, ГПа = f""{float(hill['G, ГПа']):.3f}""",есть: .3f,да (в подписи),да,
+app/thermogar_properties.py,1715,render_elastic_section,нет (код не вызывается из приложения),st.caption,текст экрана,{result.volume_coverage_pct:.2f},есть: .2f,да,да,
+app/thermogar_properties.py,1715,render_elastic_section,нет (код не вызывается из приложения),st.caption,текст экрана,{result.source_coverage_pct:.2f},есть: .2f,да,да,
+app/thermogar_properties.py,1715,render_elastic_section,нет (код не вызывается из приложения),st.caption,текст экрана,{result.density_quality},нет (проверить тип),нет,возможно,
+app/thermogar_properties.py,1731,render_elastic_section,нет (код не вызывается из приложения),st.dataframe,таблица,result.bounds_table,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_properties.py,1732,render_elastic_section,нет (код не вызывается из приложения),st.dataframe,таблица,result.phase_table,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_properties.py,1870,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,"Базовое внутреннее сопротивление σ_int, МПа",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,1882,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,"k_y, МПа·м^1/2",format='%.6f',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,1888,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,"Средний размер зерна d, мкм",format='%.6f',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,1901,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,Taylor factor M,format='%.6f',безразмерная,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,1907,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,Коэффициент взаимодействия α,format='%.6f',безразмерная,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,1913,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,"Модуль сдвига G, ГПа",format='%.6f',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,1919,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,"Вектор Бюргерса b, нм",format='%.6f',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,1925,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,"Плотность дислокаций ρ_d, м⁻²",format='%.6g',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,1938,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,"Δσ_ss, МПа",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,1958,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,Taylor factor M для Orowan,format='%.6f',безразмерная,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,1964,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,"Модуль сдвига матрицы G, ГПа",format='%.6f',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,1970,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,"Вектор Бюргерса b, нм",format='%.6f',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,1976,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,Коэффициент Пуассона ν,format='%.6f',безразмерная,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,1983,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,"Средний радиус частиц r, нм",format='%.6f',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,1989,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,"Межчастичное расстояние λ, нм",format='%.6f',да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,2005,render_strengthening_section,нет (код не вызывается из приложения),st.number_input,поле ввода,"Дополнительный вклад, МПа",нет (Streamlit по умолчанию %0.2f),да,да,подпись и значение поля; дробная точка в поле ввода Streamlit
+app/thermogar_properties.py,2141,render_strengthening_section,нет (код не вызывается из приложения),st.metric,метрика,"Механизм-ориентированная оценка, МПа = f'{result.total_mpa:.2f}'",есть: .2f,да (в подписи),да,
+app/thermogar_properties.py,2154,render_strengthening_section,нет (код не вызывается из приложения),st.dataframe,таблица,result.contribution_table,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_stage14.py,850,render_validation_report,да,st.error,текст экрана,{failed},целое,счётное,нет,
+app/thermogar_stage14.py,858,render_validation_report,да,st.dataframe,таблица,dataframe,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_stage14.py,1200,render_diagnostics,да,st.dataframe,таблица,env,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_stage14.py,1228,render_diagnostics,да,st.dataframe,таблица,file_table,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_stage14.py,1263,render_diagnostics,да,st.dataframe,таблица,database_table,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_stage14.py,1274,render_diagnostics,да,st.dataframe,таблица,smoke,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_workspace.py,1108,render_alloy_library,да,st.dataframe,таблица,current,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_workspace.py,1164,render_alloy_library,да,st.dataframe,таблица,"alloy_table(all_alloys, database_definitions)",нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_workspace.py,1722,render_projects_and_history,да,st.dataframe,таблица,table,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_workspace.py,1926,render_projects_and_history,да,st.dataframe,таблица,filtered,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_workspace.py,2557,render_batch_calculation,да,st.dataframe,таблица,source.head(25),нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_workspace.py,2558,render_batch_calculation,да,st.caption,текст экрана,{len(source)},целое,счётное,нет,
+app/thermogar_workspace.py,2596,render_batch_calculation,да,st.warning,текст экрана,{completed},целое,счётное,нет,
+app/thermogar_workspace.py,2596,render_batch_calculation,да,st.warning,текст экрана,{failed},целое,счётное,нет,
+app/thermogar_workspace.py,2598,render_batch_calculation,да,st.success,текст экрана,{completed},целое,счётное,нет,
+app/thermogar_workspace.py,2600,render_batch_calculation,да,st.dataframe,таблица,summary,нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
+app/thermogar_workspace.py,2603,render_batch_calculation,да,st.dataframe,таблица,summary[summary['Статус'] != 'готово'],нет,в заголовках столбцов (проверить снимком),да (если есть дробные столбцы),формат столбцов не задан; Streamlit выводит float по своему правилу
