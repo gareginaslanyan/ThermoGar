@@ -7075,21 +7075,27 @@ parallel_ui.render_sidebar_control()
 with st.sidebar.expander("Доступные элементы"):
     st.write(", ".join(available_elements))
 
-CURRENT_CONTEXT = context_snapshot(
-    database_key,
-    balance,
-    units,
-    composition_text,
-    pressure_pa,
-    steel_mode,
-    database_path,
-    (
-        FE_PROFILE_SHA256[fe_profile_key]
-        if database_key == "fe"
-        else RELEASE_DATABASE_SHA256[database_key]
-    ),
-    fe_profile_key if database_key == "fe" else None,
-)
+# BL-63: a wrong "Добавки" line is an input error, not a crash. The
+# validator's own message goes to the main area and the page stops there.
+try:
+    CURRENT_CONTEXT = context_snapshot(
+        database_key,
+        balance,
+        units,
+        composition_text,
+        pressure_pa,
+        steel_mode,
+        database_path,
+        (
+            FE_PROFILE_SHA256[fe_profile_key]
+            if database_key == "fe"
+            else RELEASE_DATABASE_SHA256[database_key]
+        ),
+        fe_profile_key if database_key == "fe" else None,
+    )
+except ValueError as error:
+    st.error(str(error))
+    st.stop()
 CURRENT_CONTEXT["database_label"] = definition["label"]
 
 # A result calculated for another database/composition/pressure must never be
