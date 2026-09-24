@@ -22,7 +22,7 @@ import pandas as pd
 import streamlit as st
 from pycalphad import Database
 
-from thermogar_palette import chart_roles, phase_styles
+from thermogar_palette import chart_roles, phase_styles, style_legend
 from thermogar_release_policy import (
     PRODUCTION_USE,
     RELEASE_DATABASE_FILENAMES,
@@ -717,7 +717,7 @@ def _profile_figure(
         Line2D([0], [0], color=roles["axis"], linestyle="--", label="Начальный профиль"),
         Line2D([0], [0], color=roles["axis"], linestyle="-", label="После выдержки"),
     ]
-    axis.legend(handles=legend_items, frameon=False, labelcolor=roles["axis"])
+    style_legend(axis.legend(handles=legend_items, frameon=False), roles)
     figure.tight_layout()
     return figure
 
@@ -757,7 +757,7 @@ def _phase_figure(phase_table: pd.DataFrame, phases: list[str]) -> plt.Figure | 
     axis.set_title("Локальное фазовое состояние после диффузии")
     _apply_chart_chrome(axis, roles)
     axis.set_ylim(-1.0, 101.0)
-    axis.legend(frameon=False, labelcolor=roles["axis"])
+    style_legend(axis.legend(frameon=False), roles)
     figure.tight_layout()
     return figure
 

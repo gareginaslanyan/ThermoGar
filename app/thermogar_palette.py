@@ -24,6 +24,9 @@ LIGHT = {
     "danger": "#A62A1E",
     "danger_sign": "#C93425",
     "info_fill": "#EFF6FA",
+    # Легенда: как у matplotlib по умолчанию (белая плашка, рамка 0.8).
+    "legend_fill": "#FFFFFF",
+    "legend_edge": "#CCCCCC",
 }
 
 # Тёмная тема
@@ -40,6 +43,9 @@ DARK = {
     "danger": "#F06157",
     "danger_sign": "#F06157",
     "info_fill": "#16233B",
+    # Легенда: тёмная плашка под светлый текст роли axis (21-Д).
+    "legend_fill": "#24211D",
+    "legend_edge": "#3A362F",
 }
 
 # Категориальная палитра: сначала два синих ряда, затем допустимые цвета
@@ -91,3 +97,13 @@ def phase_styles(
             "marker": next(marker_cycle),
         }
     return result
+
+
+def style_legend(legend, roles: dict[str, str]) -> None:
+    """Покрасить легенду matplotlib по ролям темы: заливка, рамка, текст."""
+    frame = legend.get_frame()
+    frame.set_facecolor(roles["legend_fill"])
+    frame.set_edgecolor(roles["legend_edge"])
+    for text in legend.get_texts():
+        text.set_color(roles["axis"])
+    legend.get_title().set_color(roles["axis"])
