@@ -220,3 +220,17 @@
 ## git
 
 `git log --oneline a40c0d8..wave21-zh`, `git status --short` и `git ls-remote origin wave21-zh` — в конце файла (дописаны после пуша).
+
+После пуша `f9da4fc` (коммит отчёта о пуше — следующий, его хэш в `git log` ветки):
+
+```
+$ git log --oneline a40c0d8..wave21-zh
+f9da4fc docs(21-Ж): таблица внедрённых текстов и отчёт
+4b26446 test(21-Ж): ожидания тестов под новые тексты экрана
+b7c34e8 feat(21-Ж): тексты экрана по списку 21-Г, свои сообщения и чужие исключения, символы элементов, границы в подписях
+09d22a5 docs(21-Ж): задание
+$ git status --short
+?? _to_delete/
+$ git ls-remote origin wave21-zh
+f9da4fc5f743535dc09fa26dc5dcf7ee9e2fe30a	refs/heads/wave21-zh
+```
