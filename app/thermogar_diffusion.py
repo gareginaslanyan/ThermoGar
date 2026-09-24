@@ -82,8 +82,8 @@ KINETIC_PARAMETER_TYPES = {"MQ", "MF", "DQ", "DF"}
 DEFAULTS = {
     "ni": {
         "balance": "NI",
-        "left": "CR=7.7, AL=5.4",
-        "right": "CR=35.9, AL=6.2",
+        "left": "Cr=7.7, Al=5.4",
+        "right": "Cr=35.9, Al=6.2",
         "units": "at",
         "temperature_C": 1200.0,
         "length_um": 2000.0,
@@ -95,8 +95,8 @@ DEFAULTS = {
     },
     "al": {
         "balance": "AL",
-        "left": "CU=1",
-        "right": "CU=5",
+        "left": "Cu=1",
+        "right": "Cu=5",
         "units": "at",
         "temperature_C": 500.0,
         "length_um": 200.0,
@@ -108,8 +108,8 @@ DEFAULTS = {
     },
     "fe": {
         "balance": "FE",
-        "left": "C=0.1, CR=8",
-        "right": "C=0.3, CR=14",
+        "left": "C=0.1, Cr=8",
+        "right": "C=0.3, Cr=14",
         "units": "wt",
         "temperature_C": 900.0,
         "length_um": 100.0,

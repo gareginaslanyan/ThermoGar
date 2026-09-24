@@ -350,3 +350,102 @@ def test_batch_row_error_text() -> None:
     foreign = RuntimeError("ValueError: Singular matrix")
     assert workspace.batch_row_error_text(foreign, collected) == "расчёт строки не выполнен"
     assert collected == [foreign]
+
+
+# ---------------------------------------------------------------------------
+# 21-Ж2, шаг 3: строки составов и составы по умолчанию
+# ---------------------------------------------------------------------------
+
+
+def test_composition_text_display() -> None:
+    from thermogar_user_errors import composition_columns_for_display, composition_text_display
+
+    assert composition_text_display("CR=15, CO=10") == "Cr=15, Co=10"
+    assert composition_text_display("C=0.2, cr=11.5, NI=0.7") == "C=0.2, Cr=11.5, Ni=0.7"
+    assert composition_text_display("") == ""
+    assert composition_text_display(None) is None
+    # Не символ элемента перед «=» — без изменений.
+    assert composition_text_display("ZZ=1") == "ZZ=1"
+    import pandas as pd
+
+    table = pd.DataFrame({"Основа": ["NI", "—"], "Добавки": ["AL=15", "CU=4, MG=1"]})
+    shown = composition_columns_for_display(table)
+    assert list(shown["Основа"]) == ["Ni", "—"]
+    assert list(shown["Добавки"]) == ["Al=15", "Cu=4, Mg=1"]
+    # Данные таблицы не меняются.
+    assert list(table["Добавки"]) == ["AL=15", "CU=4, MG=1"]
+
+
+def test_diffusion_defaults_parse_like_the_old_ones() -> None:
+    import thermogar_diffusion as diffusion
+
+    old = {
+        "ni": ("CR=7.7, AL=5.4", "CR=35.9, AL=6.2"),
+        "al": ("CU=1", "CU=5"),
+        "fe": ("C=0.1, CR=8", "C=0.3, CR=14"),
+    }
+    for key, (left, right) in old.items():
+        defaults = diffusion.DEFAULTS[key]
+        assert defaults["left"] == composition_display(left)
+        assert defaults["right"] == composition_display(right)
+        assert diffusion._parse_percent_text(defaults["left"]) == diffusion._parse_percent_text(left)
+        assert diffusion._parse_percent_text(defaults["right"]) == diffusion._parse_percent_text(right)
+
+
+def composition_display(text: str) -> str:
+    from thermogar_user_errors import composition_text_display
+
+    return composition_text_display(text)
+
+
+# ---------------------------------------------------------------------------
+# 21-Ж2, шаг 4: своё сообщение через BACKEND_FAILED
+# ---------------------------------------------------------------------------
+
+
+def test_backend_failure_keeps_own_message() -> None:
+    import thermogar_stage14 as stage14
+
+    own = UserValueError("Сумма добавок должна быть меньше 100 %.")
+    try:
+        raise own
+    except Exception as error:
+        with pytest.raises(verified_loaders.VerifiedLoaderError) as caught:
+            verified_loaders.fail_backend(error, type(error).__name__)
+    assert caught.value.reason_code is verified_loaders.ReasonCode.BACKEND_FAILED
+    assert str(caught.value) == "BACKEND_FAILED: UserValueError"
+    assert is_user_message(caught.value)
+    assert user_message_text(caught.value) == "Сумма добавок должна быть меньше 100 %."
+    title, action = stage14._friendly_error_text(caught.value, "плотность и объёмные доли")
+    assert "Сумма добавок должна быть меньше 100 %." in title + action
+
+    foreign = ValueError("Number of degrees of freedom is not zero")
+    with pytest.raises(verified_loaders.VerifiedLoaderError) as caught:
+        verified_loaders.fail_backend(foreign, "ValueError: Number of degrees of freedom is not zero")
+    assert not is_user_message(caught.value)
+    title, action = stage14._friendly_error_text(caught.value, "плотность и объёмные доли")
+    assert "degrees of freedom" not in title + action
+
+
+@pytest.mark.parametrize(
+    "module",
+    ["thermogar_verified_physical.py", "thermogar_verified_properties.py", "thermogar_verified_equilibrium.py"],
+)
+def test_backend_wrappers_use_fail_backend(module: str) -> None:
+    source = (APP / module).read_text("utf-8")
+    tree = ast.parse(source)
+    handlers = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ExceptHandler)
+        and isinstance(node.type, ast.Name)
+        and node.type.id == "Exception"
+        and any(
+            isinstance(call, ast.Call)
+            and isinstance(call.func, ast.Attribute)
+            and call.func.attr == "fail_backend"
+            for call in ast.walk(node)
+        )
+    ]
+    assert len(handlers) == 1, module
+    assert "ReasonCode.BACKEND_FAILED, type(error)" not in source

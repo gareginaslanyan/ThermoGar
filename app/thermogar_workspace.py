@@ -79,6 +79,7 @@ from thermogar_stage14 import (
 from thermogar_user_errors import (
     UserRuntimeError,
     UserValueError,
+    composition_columns_for_display,
     element_columns_for_display,
     element_symbol,
     is_user_message,
@@ -1117,7 +1118,7 @@ def render_alloy_library(
         ]
     )
     st.markdown("### Текущий состав")
-    st.dataframe(element_columns_for_display(current), width="stretch", hide_index=True)
+    st.dataframe(composition_columns_for_display(current), width="stretch", hide_index=True)
 
     user_alloys = load_user_alloys(paths)
     with st.form("alloy_save_form", clear_on_submit=False):
@@ -1183,7 +1184,7 @@ def render_alloy_library(
         return
 
     st.dataframe(
-        element_columns_for_display(alloy_table(all_alloys, database_definitions)),
+        composition_columns_for_display(alloy_table(all_alloys, database_definitions)),
         width="stretch",
         hide_index=True,
     )
@@ -1548,7 +1549,7 @@ def history_display_dataframe(history: pd.DataFrame) -> pd.DataFrame:
     )
     if "Подробности" in display.columns:
         display["Подробности"] = display["Подробности"].map(_history_details_display)
-    return display
+    return composition_columns_for_display(display)
 
 
 def history_dataframe(entries: list[dict[str, Any]]) -> pd.DataFrame:
@@ -1839,7 +1840,11 @@ def render_projects_and_history(
                     for path, payload, _snapshot_bytes in projects
                 ]
             )
-            st.dataframe(table, width="stretch", hide_index=True)
+            st.dataframe(
+                composition_columns_for_display(table),
+                width="stretch",
+                hide_index=True,
+            )
 
             project_map = {
                 str(path): (path, payload, snapshot_bytes)
@@ -2240,7 +2245,9 @@ def batch_summary_display(summary: pd.DataFrame) -> pd.DataFrame:
     """Сводка на экране (21-Г, часть 2, строка 82): подпись базы, «ат.%» или
     «мас.%», без контрольной суммы. Выгрузка — прежняя."""
 
-    display = summary.drop(columns=["База SHA-256"], errors="ignore")
+    display = composition_columns_for_display(
+        summary.drop(columns=["База SHA-256"], errors="ignore")
+    )
     if "База" in display.columns:
         display["База"] = display["База"].map(
             lambda key: RELEASE_DATABASE_LABELS.get(key, key)

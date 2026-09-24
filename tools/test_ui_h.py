@@ -753,7 +753,8 @@ def test_quick_examples_cover_three_databases_and_carry_a_steel():
         )
 
     steel = next(context for context, _s, _l in captured if context["database_key"] == "fe")
-    assert steel["composition"] == "C=0.2, CR=11.5, NI=0.7"
+    # 21-Ж2: состав учебного примера — с символами Cr, Ni.
+    assert steel["composition"] == "C=0.2, Cr=11.5, Ni=0.7"
     assert steel["units"] == "wt"
     assert steel["steel_mode"] == "metastable"
 

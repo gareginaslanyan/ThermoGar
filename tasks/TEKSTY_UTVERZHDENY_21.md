@@ -6,7 +6,7 @@
 
 ## Итоги
 
-- Часть 1 (96 строк): внедрено 95; не внедрена 1 — строка 2 (причина ниже).
+- Часть 1 (96 строк): внедрено 96 (строка 2 — в 21-Ж2, см. раздел «21-Ж2»).
 - Часть 2 (118 строк): внедрено 118.
 - Часть 3 (31 место): уровень сменён в 23 местах; оставлен в 8 (строки 18–24, 28) — так и предложено списком.
 - 19 надписей: внедрены все 19 (правок кода: 11).
@@ -18,9 +18,7 @@
 
 ## Не внедрено из списка
 
-| строка | где | причина |
-|---|---|---|
-| часть 1, строка 2 (А2б) | предупреждение о поправке плотности хрома | текст живёт в `databases/physical/overrides/physical_data_v103.overrides.json:63`, а `databases\` задание менять запрещает; код выводит его как есть (`app/ThermoGar_app.py` — вывод, `app/thermogar_physical.py:558`). |
+Нет. Строка 2 части 1, не внедрённая в 21-Ж, внедрена в 21-Ж2 (раздел «21-Ж2» в конце).
 
 Часть 3, строки 18–24 и 28 — «оставить» по самому списку; уровень не менялся.
 
@@ -529,3 +527,30 @@
 | ШАГ 5 | app/thermogar_diffusion.py:1620 | `"Лабиринтный фактор"` | `"Лабиринтный фактор (1–2)"` |
 | ШАГ 5 | app/thermogar_properties.py:1978 | `"Коэффициент Пуассона ν"` | `"Коэффициент Пуассона ν (-0.99–0.499)"` |
 
+## 21-Ж2
+
+Доводка по приёмке мастера (задание `tasks/WAVE21_ZH2_OPUS.md`).
+
+| источник | адрес после правки | было | стало |
+|---|---|---|---|
+| Ч1 стр. 2 (А2б) | databases/physical/overrides/physical_data_v103.overrides.json:63 | `"user_message": "Плотность хрома посчитана по поправке проекта ThermoGar, а не по данным physical_data_v103.pdb: тепловая функция DTCRBCC заменена. …"` | `"user_message": "Плотность хрома посчитана по поправке проекта ThermoGar. Коэффициенты теплового расширения хрома взяты из статьи, на которую ссылается сама физическая база (Lu, Selleby, Sundman, Calphad 29 (2005) 68–89): при переносе в базу они искажены, и расширение хрома завышено в 2.5–3 раза против измерений. Плотность при 25 °C не изменена. Чтобы считать строго по данным базы, снимите галочку «Применять поправки проекта ThermoGar к физической базе».",` |
+| 21-Ж2 ШАГ 2 (ч. 1, стр. 83, 92) | app/thermogar_precipitation.py:998–1000 | `raise UserRuntimeError("KWN отклонён: файл базы изменился во время загрузки.")` | `raise UserRuntimeError( "Расчёт выделений не запущен: файл базы изменился во время загрузки." )` |
+| 21-Ж2 ШАГ 3 (плейсхолдер) | app/ThermoGar_app.py:8737 | `placeholder="Например: CR=15, CO=10",` | `placeholder="Например: Cr=15, Co=10",` |
+| 21-Ж2 ШАГ 3 («Как вводить состав») | app/ThermoGar_app.py:12203 | `"- ˋAL=15ˋ при основе ˋNIˋ означает 15 % Al и 85 % Ni.\n"` | `"- ˋAl=15ˋ при основе ˋNiˋ означает 15 % Al и 85 % Ni.\n"` |
+| 21-Ж2 ШАГ 3 (DEFAULTS диффузии) | app/thermogar_diffusion.py:85–86 | `"left": "CR=7.7, AL=5.4", "right": "CR=35.9, AL=6.2",` | `"left": "Cr=7.7, Al=5.4", "right": "Cr=35.9, Al=6.2",` |
+| 21-Ж2 ШАГ 3 (DEFAULTS диффузии) | app/thermogar_diffusion.py:98–99 | `"left": "CU=1", "right": "CU=5",` | `"left": "Cu=1", "right": "Cu=5",` |
+| 21-Ж2 ШАГ 3 (DEFAULTS диффузии) | app/thermogar_diffusion.py:111–112 | `"left": "C=0.1, CR=8", "right": "C=0.3, CR=14",` | `"left": "C=0.1, Cr=8", "right": "C=0.3, Cr=14",` |
+| 21-Ж2 ШАГ 3 (учебные примеры) | app/thermogar_stage14.py:1190 | `"composition": "AL=15",` | `"composition": "Al=15",` |
+| 21-Ж2 ШАГ 3 (учебные примеры) | app/thermogar_stage14.py:1203 | `"composition": "CU=4, MG=1",` | `"composition": "Cu=4, Mg=1",` |
+| 21-Ж2 ШАГ 3 (учебные примеры) | app/thermogar_stage14.py:1217 | `"composition": "C=0.2, CR=11.5, NI=0.7",` | `"composition": "C=0.2, Cr=11.5, Ni=0.7",` |
+| 21-Ж2 ШАГ 3 (показ строк составов) | app/thermogar_workspace.py:1121 | `st.dataframe(element_columns_for_display(current), width="stretch", hide_index=True)` | `st.dataframe(composition_columns_for_display(current), width="stretch", hide_index=True)` |
+| 21-Ж2 ШАГ 3 (показ строк составов) | app/thermogar_workspace.py:1187 | `element_columns_for_display(alloy_table(all_alloys, database_definitions)),` | `composition_columns_for_display(alloy_table(all_alloys, database_definitions)),` |
+| 21-Ж2 ШАГ 3 (показ строк составов) | app/thermogar_workspace.py:1843–1849 | `st.dataframe(table, width="stretch", hide_index=True)  project_map = {` | `st.dataframe( composition_columns_for_display(table), width="stretch", hide_index=True, )  project_map = {` |
+| 21-Ж2 ШАГ 3 (показ строк составов) | app/thermogar_workspace.py:1550–1552 | `if "Подробности" in display.columns: display["Подробности"] = display["Подробности"].map(_history_details_display) return display` | `if "Подробности" in display.columns: display["Подробности"] = display["Подробности"].map(_history_details_display) return composition_columns_for_display(display)` |
+| 21-Ж2 ШАГ 3 (показ строк составов) | app/thermogar_workspace.py:2248–2250 | `display = summary.drop(columns=["База SHA-256"], errors="ignore")` | `display = composition_columns_for_display( summary.drop(columns=["База SHA-256"], errors="ignore") )` |
+| 21-Ж2 ШАГ 3 (импорт) | app/thermogar_workspace.py:81–84 | `UserValueError, element_columns_for_display, element_symbol,` | `UserValueError, composition_columns_for_display, element_columns_for_display, element_symbol,` |
+| 21-Ж2 ШАГ 4 (BACKEND_FAILED) | app/thermogar_verified_loaders.py:232–246 (`fail_backend`; `detail` затем обрезан до MAX_REASON_DETAIL_CHARS) | `def _fail(reason_code: ReasonCode, detail: str) -> None: raise VerifiedLoaderError(reason_code, detail[:MAX_REASON_DETAIL_CHARS])` | `def _fail(reason_code: ReasonCode, detail: str) -> None: raise VerifiedLoaderError(reason_code, detail[:MAX_REASON_DETAIL_CHARS])   def fail_backend(error: BaseException, detail: str) -> None: """BACKEND_FAILED с прежним ˋˋdetailˋˋ; своё сообщение причины — на экран.  21-Ж2: если расчёт поднял своё сообщение ThermoGar (ˋˋis_user_messageˋˋ), у ˋˋVerifiedLoaderErrorˋˋ ставится признак своего и её текст; чужое исключение — как раньше, только класс и текст в техническом отчёте. """  own = user_message_text(error) raise VerifiedLoaderError( ReasonCode.BACKEND_FAILED, detail, user_text=own if own else None, )` |
+| 21-Ж2 ШАГ 4 (BACKEND_FAILED) | app/thermogar_verified_loaders.py:29–30 | `from thermogar_verified_artifact import duplicate_reject_json, strict_utf8_text` | `from thermogar_user_errors import user_message_text from thermogar_verified_artifact import duplicate_reject_json, strict_utf8_text` |
+| 21-Ж2 ШАГ 4 (BACKEND_FAILED) | app/thermogar_verified_physical.py:689 | `_fail( verified_loaders.ReasonCode.BACKEND_FAILED, _backend_failure_detail(error), )` | `verified_loaders.fail_backend(error, _backend_failure_detail(error))` |
+| 21-Ж2 ШАГ 4 (BACKEND_FAILED) | app/thermogar_verified_properties.py:1221–1223 | `except Exception as error: _fail(verified_loaders.ReasonCode.BACKEND_FAILED, type(error).__name__) prepared = _validate_prepare_backend(raw, phases)` | `except Exception as error: verified_loaders.fail_backend(error, type(error).__name__) prepared = _validate_prepare_backend(raw, phases)` |
+| 21-Ж2 ШАГ 4 (BACKEND_FAILED) | app/thermogar_verified_equilibrium.py:528–530 | `except Exception as error: _fail(verified_loaders.ReasonCode.BACKEND_FAILED, type(error).__name__) fractions, phase_atomic, phase_mass, display_value = _validate_backend_result(raw_result, phases)` | `except Exception as error: verified_loaders.fail_backend(error, type(error).__name__) fractions, phase_atomic, phase_mass, display_value = _validate_backend_result(raw_result, phases)` |

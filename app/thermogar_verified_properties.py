@@ -1219,7 +1219,7 @@ def execute_verified_properties(
         except verified_loaders.VerifiedLoaderError:
             raise
         except Exception as error:
-            _fail(verified_loaders.ReasonCode.BACKEND_FAILED, type(error).__name__)
+            verified_loaders.fail_backend(error, type(error).__name__)
         prepared = _validate_prepare_backend(raw, phases)
         phase_rows = tuple((row.phase, row.volume_fraction) for row in prepared)
         mole_rows = tuple((row.phase, row.mole_fraction) for row in prepared)

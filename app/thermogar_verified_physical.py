@@ -683,13 +683,10 @@ def execute_verified_physical(
             except verified_loaders.VerifiedLoaderError:
                 raise
             except Exception as error:
-                # Пользователю уходит текст исключения, а не только его класс:
-                # «BACKEND_FAILED: ValueError» ничего не говорит ни ему, ни
-                # разбору. Текст движка хотя бы называет фазу или условие.
-                _fail(
-                    verified_loaders.ReasonCode.BACKEND_FAILED,
-                    _backend_failure_detail(error),
-                )
+                # В технический отчёт уходит текст исключения, а не только его
+                # класс: «BACKEND_FAILED: ValueError» ничего не говорит разбору.
+                # На экран — только своё сообщение ThermoGar (21-Ж2).
+                verified_loaders.fail_backend(error, _backend_failure_detail(error))
             projection = _validate_density_projection(raw)
             projection["temperature_k"] = float(temperature)
             points.append(

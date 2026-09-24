@@ -26,6 +26,7 @@ from thermogar_secure_io import (
     parse_verified_utf8_snapshot,
     read_verified_snapshot,
 )
+from thermogar_user_errors import user_message_text
 from thermogar_verified_artifact import duplicate_reject_json, strict_utf8_text
 
 
@@ -226,6 +227,22 @@ class VerifiedLoaderError(RuntimeError):
 
 def _fail(reason_code: ReasonCode, detail: str) -> None:
     raise VerifiedLoaderError(reason_code, detail[:MAX_REASON_DETAIL_CHARS])
+
+
+def fail_backend(error: BaseException, detail: str) -> None:
+    """BACKEND_FAILED с прежним ``detail``; своё сообщение причины — на экран.
+
+    21-Ж2: если расчёт поднял своё сообщение ThermoGar (``is_user_message``),
+    у ``VerifiedLoaderError`` ставится признак своего и её текст; чужое
+    исключение — как раньше, только класс и текст в техническом отчёте.
+    """
+
+    own = user_message_text(error)
+    raise VerifiedLoaderError(
+        ReasonCode.BACKEND_FAILED,
+        detail[:MAX_REASON_DETAIL_CHARS],
+        user_text=own if own else None,
+    )
 
 
 def _validate_sha256(value: object, label: str) -> str:

@@ -124,3 +124,49 @@ def element_columns_for_display(table: Any) -> Any:
         if element_column_label(column) != column
     }
     return table.rename(columns=mapping) if mapping else table
+
+
+# «CR=15, NI=8» → «Cr=15, Ni=8»: символ перед знаком «=» в строке состава.
+_COMPOSITION_SYMBOL_RE = re.compile(r"(?<![A-Za-z0-9_])([A-Za-z]{1,2})(?=\s*=)")
+
+
+def composition_text_display(text: object) -> object:
+    """Строка состава для экрана: символы элементов — Ni, Al, Cr (21-Ж2).
+
+    Только показ: данные, файлы и выгрузки хранят строку как есть.
+    """
+
+    if not isinstance(text, str):
+        return text
+    return _COMPOSITION_SYMBOL_RE.sub(
+        lambda match: (
+            element_symbol(match.group(1))
+            if match.group(1).upper() in _ELEMENT_TOKENS
+            else match.group(1)
+        ),
+        text,
+    )
+
+
+COMPOSITION_TEXT_COLUMNS = ("Добавки", "Состав")
+ELEMENT_VALUE_COLUMNS = ("Основа",)
+
+
+def composition_columns_for_display(table: Any) -> Any:
+    """Таблица для экрана: строки составов и столбец «Основа» — Ni, Al, Cr."""
+
+    columns = getattr(table, "columns", None)
+    if columns is None:
+        return table
+    shown = table.copy()
+    for column in COMPOSITION_TEXT_COLUMNS:
+        if column in shown.columns:
+            shown[column] = shown[column].map(composition_text_display)
+    for column in ELEMENT_VALUE_COLUMNS:
+        if column in shown.columns:
+            shown[column] = shown[column].map(
+                lambda value: element_symbol(value)
+                if isinstance(value, str) and value.strip().upper() in _ELEMENT_TOKENS
+                else value
+            )
+    return shown

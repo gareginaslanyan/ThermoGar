@@ -995,7 +995,9 @@ def _bind_release_database(
     database = Database(str(candidate_path))
     _repair_loaded_database(database)
     if _sha256(candidate_path) != expected_sha256:
-        raise UserRuntimeError("KWN отклонён: файл базы изменился во время загрузки.")
+        raise UserRuntimeError(
+            "Расчёт выделений не запущен: файл базы изменился во время загрузки."
+        )
     return database_key, candidate_path, database_sha256, canonical_label, database
 
 
