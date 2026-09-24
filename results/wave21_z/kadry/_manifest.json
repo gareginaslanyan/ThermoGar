@@ -1,0 +1,352 @@
+{
+  "frames": [
+    {
+      "files": [
+        "01_zapusk_svet.png"
+      ],
+      "grey": [],
+      "slug": "zapusk",
+      "theme": "Light",
+      "what": "Запуск: боковая панель целиком и первая вкладка «Расчёты / Одна температура»",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "info",
+          "text": "Элементов: 25 · Фаз: 132"
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Одна температура"
+      ],
+      "expanded": [],
+      "height_px": 2048
+    },
+    {
+      "files": [
+        "04_raschety_temperaturnyi_diapazon_svet.png"
+      ],
+      "grey": [
+        "04_raschety_temperaturnyi_diapazon_svet_seroe.png"
+      ],
+      "slug": "raschety_temperaturnyi_diapazon",
+      "theme": "Light",
+      "what": "Расчёты / Температурный диапазон: график и таблица скана 500–900 °C",
+      "charts": 1,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "info",
+          "text": "Элементов: 25 · Фаз: 132"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "warning",
+          "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки). Автор базы вводил фазы Л"
+        },
+        {
+          "kind": "success",
+          "text": "Проверка сканирования: все проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Температурный диапазон"
+      ],
+      "expanded": [],
+      "height_px": 2139
+    },
+    {
+      "files": [
+        "09_svoystva_vklady_svet.png"
+      ],
+      "grey": [],
+      "slug": "svoystva_vklady",
+      "theme": "Light",
+      "what": "Свойства / Вклады упрочнения: значения по умолчанию",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "info",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "error",
+          "text": "ThermoGar не завершил расчёт.\n\nПроверьте состав, диапазон и набор фаз. Если ошибка повторя"
+        }
+      ],
+      "tabs": [
+        "Свойства",
+        "Вклады упрочнения"
+      ],
+      "expanded": [],
+      "height_px": 2013
+    },
+    {
+      "files": [
+        "29_proekty_marki_svet.png"
+      ],
+      "grey": [],
+      "slug": "proekty_marki",
+      "theme": "Light",
+      "what": "Проекты и данные / Марки и составы: запись сохранена (st.success)",
+      "charts": 0,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "info",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "success",
+          "text": "Состав «Опытный Ni–15Al» сохранён."
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Марки и составы"
+      ],
+      "expanded": [],
+      "height_px": 1872
+    },
+    {
+      "files": [
+        "33_proekty_kak_polzovatsya_svet_ch1.png",
+        "33_proekty_kak_polzovatsya_svet_ch2.png"
+      ],
+      "grey": [],
+      "slug": "proekty_kak_polzovatsya",
+      "theme": "Light",
+      "what": "Проекты и данные / Как пользоваться",
+      "charts": 0,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "info",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "success",
+          "text": "Загружено: Опытный Ni–15Al"
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Как пользоваться"
+      ],
+      "expanded": [
+        "Что считает каждый раздел",
+        "Три базы и стальная база",
+        "Как построить тройную диаграмму",
+        "Как построить карту доли фазы",
+        "Как рассчитать затвердевание",
+        "Как рассчитать плотность и объёмные доли",
+        "Как сохранить состав, рассчитать таблицу и продолжить проект"
+      ],
+      "height_px": 5299
+    },
+    {
+      "files": [
+        "36_soobshchenie_error_svet.png"
+      ],
+      "grey": [],
+      "slug": "soobshchenie_error",
+      "theme": "Light",
+      "what": "st.error: неверная добавка «QQ=5» в боковой панели",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "info",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "error",
+          "text": "Элемента Qq нет в базе «Никелевые сплавы — mc_ni 2.036»."
+        }
+      ],
+      "tabs": [],
+      "expanded": [],
+      "height_px": 1645
+    },
+    {
+      "files": [
+        "01_zapusk_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "zapusk",
+      "theme": "Dark",
+      "what": "Запуск: боковая панель целиком и первая вкладка «Расчёты / Одна температура»",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "info",
+          "text": "Элементов: 25 · Фаз: 132"
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Одна температура"
+      ],
+      "expanded": [],
+      "height_px": 2048
+    },
+    {
+      "files": [
+        "04_raschety_temperaturnyi_diapazon_tyomn.png"
+      ],
+      "grey": [
+        "04_raschety_temperaturnyi_diapazon_tyomn_seroe.png"
+      ],
+      "slug": "raschety_temperaturnyi_diapazon",
+      "theme": "Dark",
+      "what": "Расчёты / Температурный диапазон: график и таблица скана 500–900 °C",
+      "charts": 1,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "info",
+          "text": "Элементов: 25 · Фаз: 132"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "warning",
+          "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки). Автор базы вводил фазы Л"
+        },
+        {
+          "kind": "success",
+          "text": "Проверка сканирования: все проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Температурный диапазон"
+      ],
+      "expanded": [],
+      "height_px": 2139
+    },
+    {
+      "files": [
+        "09_svoystva_vklady_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "svoystva_vklady",
+      "theme": "Dark",
+      "what": "Свойства / Вклады упрочнения: значения по умолчанию",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "info",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "error",
+          "text": "ThermoGar не завершил расчёт.\n\nПроверьте состав, диапазон и набор фаз. Если ошибка повторя"
+        }
+      ],
+      "tabs": [
+        "Свойства",
+        "Вклады упрочнения"
+      ],
+      "expanded": [],
+      "height_px": 2013
+    },
+    {
+      "files": [
+        "29_proekty_marki_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "proekty_marki",
+      "theme": "Dark",
+      "what": "Проекты и данные / Марки и составы: запись сохранена (st.success)",
+      "charts": 0,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "info",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "success",
+          "text": "Состав «Опытный Ni–15Al» сохранён."
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Марки и составы"
+      ],
+      "expanded": [],
+      "height_px": 1872
+    },
+    {
+      "files": [
+        "33_proekty_kak_polzovatsya_tyomn_ch1.png",
+        "33_proekty_kak_polzovatsya_tyomn_ch2.png"
+      ],
+      "grey": [],
+      "slug": "proekty_kak_polzovatsya",
+      "theme": "Dark",
+      "what": "Проекты и данные / Как пользоваться",
+      "charts": 0,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "info",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "success",
+          "text": "Загружено: Опытный Ni–15Al"
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Как пользоваться"
+      ],
+      "expanded": [
+        "Что считает каждый раздел",
+        "Три базы и стальная база",
+        "Как построить тройную диаграмму",
+        "Как построить карту доли фазы",
+        "Как рассчитать затвердевание",
+        "Как рассчитать плотность и объёмные доли",
+        "Как сохранить состав, рассчитать таблицу и продолжить проект"
+      ],
+      "height_px": 5299
+    },
+    {
+      "files": [
+        "36_soobshchenie_error_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "soobshchenie_error",
+      "theme": "Dark",
+      "what": "st.error: неверная добавка «QQ=5» в боковой панели",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "info",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "error",
+          "text": "Элемента Qq нет в базе «Никелевые сплавы — mc_ni 2.036»."
+        }
+      ],
+      "tabs": [],
+      "expanded": [],
+      "height_px": 1645
+    }
+  ]
+}
