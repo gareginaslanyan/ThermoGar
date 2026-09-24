@@ -1,0 +1,50 @@
+[
+  {
+    "theme": "Light",
+    "phases": [
+      "ALPHA_MN",
+      "BCC_B2",
+      "BETA_MN",
+      "DELTA",
+      "DIAMOND_A4",
+      "ETA",
+      "FCC_A1",
+      "GAMMA_DP"
+    ],
+    "settings": {
+      "Температура от, °C": "300.00",
+      "Температура до, °C": "1700.00",
+      "Шаг температуры, °C": "25.00",
+      "Добавки": "AL=15"
+    },
+    "files": [
+      "sem_faz_svet.png",
+      "sem_faz_svet_seroe.png",
+      "sem_faz_svet_vygruzka.png"
+    ]
+  },
+  {
+    "theme": "Dark",
+    "phases": [
+      "ALPHA_MN",
+      "BCC_B2",
+      "BETA_MN",
+      "DELTA",
+      "DIAMOND_A4",
+      "ETA",
+      "FCC_A1",
+      "GAMMA_DP"
+    ],
+    "settings": {
+      "Температура от, °C": "300.00",
+      "Температура до, °C": "1700.00",
+      "Шаг температуры, °C": "25.00",
+      "Добавки": "AL=15"
+    },
+    "files": [
+      "sem_faz_tyomn.png",
+      "sem_faz_tyomn_seroe.png",
+      "sem_faz_tyomn_vygruzka.png"
+    ]
+  }
+]

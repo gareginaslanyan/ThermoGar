@@ -8,7 +8,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 import hashlib
@@ -22,7 +22,16 @@ import pandas as pd
 import streamlit as st
 from pycalphad import Database
 
-from thermogar_palette import chart_roles, phase_styles, style_legend
+from thermogar_palette import (
+    ThemedFigure,
+    annotate_line_ends,
+    chart_roles,
+    element_case_text,
+    element_label,
+    phase_styles,
+    place_legend_below,
+    resolve_figure,
+)
 from thermogar_release_policy import (
     PRODUCTION_USE,
     RELEASE_DATABASE_FILENAMES,
@@ -161,11 +170,18 @@ class DiffusionResult:
     profile_table: pd.DataFrame
     balance_table: pd.DataFrame
     settings: pd.DataFrame
+    # Фигуры в теме расчёта — для выгрузок и проверок, которые берут их
+    # напрямую; экран берёт фигуры из построителей *_chart ниже.
     profile_figure: plt.Figure
     phase_figure: plt.Figure | None
     max_balance_error: float
     actual_time_s: float
     quality: pd.DataFrame
+    # Построители с данными (решение 7Б): при смене темы фигура строится
+    # заново без повторного расчёта, по теме — кэш.
+    profile_chart: ThemedFigure | None = None
+    profile_chart_wt: ThemedFigure | None = None
+    phase_chart: ThemedFigure | None = None
 
 
 def _sha256(path: Path) -> str:
@@ -658,12 +674,21 @@ def _balance_dataframe(
 def _apply_chart_chrome(axis: Any, roles: dict[str, str]) -> None:
     axis.set_facecolor(roles["background"])
     axis.grid(True, color=roles["grid"], alpha=0.35)
-    axis.tick_params(colors=roles["axis"])
+    # Кегли — как в style_chart_axes: деления 11 pt, подписи и заголовок 13 pt.
+    axis.tick_params(colors=roles["axis"], labelsize=11)
     axis.xaxis.label.set_color(roles["axis"])
+    axis.xaxis.label.set_fontsize(13)
     axis.yaxis.label.set_color(roles["axis"])
+    axis.yaxis.label.set_fontsize(13)
     axis.title.set_color(roles["text"])
+    axis.title.set_fontsize(13)
     for spine in axis.spines.values():
-        spine.set_color(roles["grid"])
+        spine.set_color(roles["axis"])
+
+
+# Начальный профиль — мелкий пунктир, которого нет среди семи видов линий
+# итоговых профилей (находка 12 аудита 21-А).
+INITIAL_PROFILE_LINESTYLE = (0, (1, 1.5))
 
 
 def _profile_figure(
@@ -673,19 +698,22 @@ def _profile_figure(
     final: np.ndarray,
     units_label: str,
     title: str,
+    theme_type: str | None = None,
 ) -> plt.Figure:
-    theme = _theme_type()
+    theme = theme_type or _theme_type()
     roles = chart_roles(theme)
     styles = phase_styles(elements, theme)
     figure, axis = plt.subplots(figsize=(10, 6))
     figure.patch.set_facecolor(roles["background"])
+    end_points: dict[str, tuple[float, float]] = {}
+    end_colors: dict[str, str] = {}
 
     for index, element in enumerate(elements):
         style = styles[element]
         axis.plot(
             z_um,
             100.0 * initial[:, index],
-            linestyle="--",
+            linestyle=INITIAL_PROFILE_LINESTYLE,
             linewidth=1.2,
             color=style["color"],
             alpha=0.65,
@@ -700,38 +728,47 @@ def _profile_figure(
             markevery=max(1, len(z_um) // 12),
             markersize=4,
         )
-        axis.text(
-            float(z_um[-1]),
-            float(100.0 * final[-1, index]),
-            f"  {element}",
-            color=style["color"],
-            va="center",
-        )
+        label = element_label(element)
+        end_points[label] = (float(z_um[-1]), float(100.0 * final[-1, index]))
+        end_colors[label] = style["color"]
 
     axis.set_xlabel("Расстояние, мкм")
     axis.set_ylabel(f"Содержание, {units_label}")
-    axis.set_title(title)
+    axis.set_title(element_case_text(title))
     _apply_chart_chrome(axis, roles)
+    figure.tight_layout()
+    annotate_line_ends(axis, end_points, end_colors)
 
     legend_items = [
-        Line2D([0], [0], color=roles["axis"], linestyle="--", label="Начальный профиль"),
+        Line2D(
+            [0],
+            [0],
+            color=roles["axis"],
+            linestyle=INITIAL_PROFILE_LINESTYLE,
+            linewidth=1.2,
+            label="Начальный профиль",
+        ),
         Line2D([0], [0], color=roles["axis"], linestyle="-", label="После выдержки"),
     ]
-    style_legend(axis.legend(handles=legend_items, frameon=False), roles)
-    figure.tight_layout()
+    place_legend_below(figure, axis, roles, handles=legend_items)
     return figure
 
 
-def _phase_figure(phase_table: pd.DataFrame, phases: list[str]) -> plt.Figure | None:
+def _phase_figure(
+    phase_table: pd.DataFrame,
+    phases: list[str],
+    theme_type: str | None = None,
+) -> plt.Figure | None:
     if phase_table.empty or not phases:
         return None
 
-    theme = _theme_type()
+    theme = theme_type or _theme_type()
     roles = chart_roles(theme)
     styles = phase_styles(phases, theme)
     figure, axis = plt.subplots(figsize=(10, 5.5))
     figure.patch.set_facecolor(roles["background"])
     x = phase_table["Расстояние, мкм"].to_numpy(dtype=float)
+    end_points: dict[str, tuple[float, float]] = {}
 
     for phase in phases:
         column = f"{phase}, локальная доля, %"
@@ -750,15 +787,20 @@ def _phase_figure(phase_table: pd.DataFrame, phases: list[str]) -> plt.Figure | 
             linewidth=2.0,
             label=phase,
         )
-        axis.text(float(x[-1]), float(y[-1]), f"  {phase}", color=style["color"], va="center")
+        end_points[phase] = (float(x[-1]), float(y[-1]))
 
     axis.set_xlabel("Расстояние, мкм")
     axis.set_ylabel("Локальная равновесная доля фазы, %")
     axis.set_title("Локальное фазовое состояние после диффузии")
     _apply_chart_chrome(axis, roles)
     axis.set_ylim(-1.0, 101.0)
-    style_legend(axis.legend(frameon=False), roles)
     figure.tight_layout()
+    annotate_line_ends(
+        axis,
+        end_points,
+        {phase: styles[phase]["color"] for phase in end_points},
+    )
+    place_legend_below(figure, axis, roles)
     return figure
 
 
@@ -956,7 +998,8 @@ def _run_model(
         columns=["Параметр", "Значение"],
     )
 
-    profile_figure = _profile_figure(
+    profile_chart = ThemedFigure(
+        _profile_figure,
         z_um,
         couple.elements,
         initial_at,
@@ -964,7 +1007,24 @@ def _run_model(
         "ат.%",
         f"{method_label}: профиль состава",
     )
-    phase_figure = _phase_figure(phase_table, phases)
+    profile_figure = profile_chart.figure(_theme_type())
+    profile_chart_wt = ThemedFigure(
+        _profile_figure,
+        z_um,
+        couple.elements,
+        initial_wt,
+        final_wt,
+        "мас.%",
+        f"{method_label}: профиль состава",
+    )
+    phase_chart = (
+        ThemedFigure(_phase_figure, phase_table, phases)
+        if not phase_table.empty and phases
+        else None
+    )
+    phase_figure = (
+        phase_chart.figure(_theme_type()) if phase_chart is not None else None
+    )
     composition_sum_error = float(
         np.max(np.abs(np.sum(final_at, axis=1) - 1.0))
     )
@@ -1029,6 +1089,9 @@ def _run_model(
         max_balance_error=max_balance_error,
         actual_time_s=float(model.currentTime),
         quality=quality,
+        profile_chart=profile_chart,
+        profile_chart_wt=profile_chart_wt,
+        phase_chart=phase_chart,
     )
 
 
@@ -1131,6 +1194,19 @@ def _result_display(
     dataframe_to_excel: Callable[[dict[str, pd.DataFrame]], bytes],
     figure_to_png: Callable[[plt.Figure], bytes],
 ) -> None:
+    # Фигуры — в теме текущего прогона, из сохранённых данных (решение 7Б).
+    theme = _theme_type()
+    result = replace(
+        result,
+        profile_figure=resolve_figure(
+            result.profile_chart or result.profile_figure, theme
+        ),
+        phase_figure=(
+            resolve_figure(result.phase_chart, theme)
+            if result.phase_chart is not None
+            else result.phase_figure
+        ),
+    )
     metric_col1, metric_col2, metric_col3 = st.columns(3)
     with metric_col1:
         st.metric("Метод", result.method_label)
@@ -1163,19 +1239,24 @@ def _result_display(
             column for column in result.profile_table.columns if "ат.%" in column
         ]
     else:
-        figure = _profile_figure(
-            result.z_um,
-            result.elements,
-            result.initial_wt,
-            result.final_wt,
-            "мас.%",
-            f"{result.method_label}: профиль состава",
+        figure = resolve_figure(
+            result.profile_chart_wt
+            or ThemedFigure(
+                _profile_figure,
+                result.z_um,
+                result.elements,
+                result.initial_wt,
+                result.final_wt,
+                "мас.%",
+                f"{result.method_label}: профиль состава",
+            ),
+            theme,
         )
         table_columns = ["Расстояние, мкм"] + [
             column for column in result.profile_table.columns if "мас.%" in column
         ]
 
-    st.pyplot(figure, use_container_width=False)
+    st.pyplot(figure, width="content")
     st.dataframe(
         result.profile_table[table_columns],
         width="stretch",
@@ -1184,7 +1265,7 @@ def _result_display(
 
     if result.phase_figure is not None:
         st.markdown("### Локальные равновесные доли фаз")
-        st.pyplot(result.phase_figure, use_container_width=False)
+        st.pyplot(result.phase_figure, width="content")
         st.dataframe(result.phase_fractions, width="stretch", hide_index=True)
 
     with st.expander("Проверка баланса и параметры расчёта"):
@@ -1225,12 +1306,6 @@ def _result_display(
                 mime="image/png",
                 key=f"{state_key}_phase_png",
             )
-
-    if figure is not result.profile_figure:
-        # График в мас.% строится заново на каждом прогоне скрипта. Без этого
-        # matplotlib копит фигуры до предупреждения «More than 20 figures».
-        # Сохранённый в результате профиль не трогаем: он нужен и дальше.
-        plt.close(figure)
 
 
 def _common_inputs(

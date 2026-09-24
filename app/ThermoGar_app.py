@@ -57,7 +57,7 @@ import math
 import re
 import threading
 import zipfile
-from typing import Any, Mapping
+from typing import Any, Callable, Mapping
 
 from thermogar_paths import ThermoGarPaths, migrate_legacy_state
 
@@ -135,7 +135,18 @@ def scheil_available() -> bool:
     except Exception:
         return False
 
-from thermogar_palette import chart_roles, phase_styles, style_legend
+from thermogar_palette import (
+    ThemedFigure,
+    annotate_line_ends,
+    chart_roles,
+    element_case_text,
+    element_label,
+    normalize_theme,
+    phase_styles,
+    place_legend_below,
+    resolve_figure,
+    style_legend,
+)
 import thermogar_parallel_ui as parallel_ui
 import thermogar_phase_descriptions as phase_descriptions
 from thermogar_workspace import (
@@ -650,6 +661,70 @@ def load_project_style() -> None:
 
 
 load_project_style()
+
+
+# Смена темы в меню ⋮ перекрашивает страницу, но прогона скрипта не вызывает,
+# и графики matplotlib остаются в прежней теме. Наблюдатель следит за
+# color-scheme контейнера приложения и при её смене просит один прогон: тип
+# темы уходит в скрипт с запросом прогона (st.context.theme), и графики
+# строятся заново из сохранённых данных (решение 7Б). Прогон просится только
+# на изменение темы, поэтому бесконечных прогонов нет.
+_THEME_WATCH_JS = """
+function schemeNow() {
+    const app = document.querySelector('[data-testid="stApp"]') || document.body;
+    const scheme = getComputedStyle(app).colorScheme || "";
+    if (scheme.includes("dark")) return "dark";
+    if (scheme.includes("light")) return "light";
+    return null;
+}
+
+export default function(component) {
+    const { data, setTriggerValue } = component;
+    const watch = window.__thermogarThemeWatch || (window.__thermogarThemeWatch = {});
+    watch.trigger = setTriggerValue;
+    const current = schemeNow();
+    if (watch.seen === undefined) {
+        watch.seen = current;
+    }
+    // Первый показ сессии: скрипт мог получить тему до её применения
+    // (оговорка st.context.theme, issue #11920) — один прогон на значение.
+    if (current && data && data.theme !== current && watch.fixed !== current) {
+        watch.fixed = current;
+        watch.seen = current;
+        setTriggerValue("theme", current);
+    }
+    if (!watch.timer) {
+        watch.timer = window.setInterval(() => {
+            const scheme = schemeNow();
+            if (scheme && scheme !== watch.seen) {
+                watch.seen = scheme;
+                watch.fixed = scheme;
+                watch.trigger("theme", scheme);
+            }
+        }, 300);
+    }
+}
+"""
+
+
+def watch_theme_change() -> None:
+    """Повторный прогон при смене темы, чтобы графики перерисовались сразу."""
+    try:
+        theme_watch = st.components.v2.component(
+            "thermogar_theme_watch",
+            js=_THEME_WATCH_JS,
+        )
+        theme_watch(
+            key="thermogar_theme_watch",
+            data={"theme": normalize_theme(st.context.theme.type)},
+            on_theme_change=lambda: None,
+        )
+    except Exception:
+        # Без наблюдателя графики перерисуются при следующем прогоне.
+        pass
+
+
+watch_theme_change()
 
 
 _DATABASE_SNAPSHOT_CACHE: dict[tuple[str, str], Database] = {}
@@ -1903,7 +1978,11 @@ def render_b4b_density_temperature(
         figure = None
         if not table.empty:
             st.line_chart(table, x="Температура, K", y="Плотность сплава, кг/м³")
-            figure = plot_density_temperature(table)
+            # PNG строится из сохранённых точек в теме прогона, кэш по теме.
+            figure = state.setdefault(
+                "figure",
+                ThemedFigure(plot_density_temperature, table),
+            )
         _b4b_render_result_downloads(
             "physical_scan",
             {
@@ -3581,9 +3660,30 @@ def _legacy_b2_composition_equilibrium_oracle(*args: Any, **kwargs: Any) -> Any:
 def current_theme_type() -> str:
     """Вернуть тип активной темы Streamlit без падения на старой сборке."""
     try:
-        return str(st.context.theme.type)
+        return normalize_theme(st.context.theme.type)
     except Exception:
         return "light"
+
+
+def chart_figure(item: Any) -> plt.Figure:
+    """Фигура для показа и PNG в теме текущего прогона (решение 7Б)."""
+    return resolve_figure(item, current_theme_type())
+
+
+def build_themed_figure(
+    builder: Callable[..., Any],
+    *args: Any,
+    **kwargs: Any,
+) -> ThemedFigure:
+    """Сохранить построитель графика с данными и сразу построить фигуру.
+
+    Первая фигура строится в теме расчёта, чтобы ошибка построения попала в
+    обработку ошибок расчёта; фигуры других тем строятся из тех же данных
+    при смене темы, без повторного расчёта.
+    """
+    themed = ThemedFigure(builder, *args, **kwargs)
+    themed.figure(current_theme_type())
+    return themed
 
 
 def style_chart_axes(
@@ -3592,16 +3692,17 @@ def style_chart_axes(
     title: str,
     x_label: str,
     y_label: str,
+    theme_type: str | None = None,
 ) -> None:
     """Применить единый визуальный стандарт ThermoGar к matplotlib."""
-    roles = chart_roles(current_theme_type())
+    roles = chart_roles(theme_type or current_theme_type())
     figure.set_facecolor(roles["background"])
     axes.set_facecolor(roles["background"])
-    axes.set_title(title, fontsize=13, color=roles["text"])
-    axes.set_xlabel(x_label, fontsize=13, color=roles["axis"])
-    axes.set_ylabel(y_label, fontsize=13, color=roles["axis"])
-    # На тепловой карте декоративная сетка мешает чтению шкалы.
-    axes.grid(False)
+    axes.set_title(element_case_text(title), fontsize=13, color=roles["text"])
+    axes.set_xlabel(element_case_text(x_label), fontsize=13, color=roles["axis"])
+    axes.set_ylabel(element_case_text(y_label), fontsize=13, color=roles["axis"])
+    # Сетка — роль grid, прозрачность 0.25 (решение владельца 24.09.2026).
+    axes.grid(True, color=roles["grid"], alpha=0.25)
     axes.tick_params(
         axis="both",
         which="both",
@@ -3637,9 +3738,13 @@ def set_celsius_ticks_on_kelvin_axis(axis: Any) -> None:
     )
 
 
-def plot_density_temperature(dataframe: pd.DataFrame) -> plt.Figure:
+def plot_density_temperature(
+    dataframe: pd.DataFrame,
+    theme_type: str | None = None,
+) -> plt.Figure:
     """Кривая плотности сплава по температуре для выгрузки PNG."""
-    roles = chart_roles(current_theme_type())
+    theme_type = normalize_theme(theme_type or current_theme_type())
+    roles = chart_roles(theme_type)
     figure, axes = plt.subplots(figsize=(9.5, 5.5), dpi=100)
     axes.plot(
         np.asarray(dataframe["Температура, K"], dtype=float),
@@ -3652,9 +3757,10 @@ def plot_density_temperature(dataframe: pd.DataFrame) -> plt.Figure:
     style_chart_axes(
         figure,
         axes,
-        "ThermoGar: плотность сплава по температуре",
+        "Плотность сплава по температуре",
         "Температура, K",
         "Плотность сплава, кг/м³",
+        theme_type,
     )
     figure.tight_layout()
     return figure
@@ -3666,13 +3772,15 @@ def plot_phase_fraction_scan(
     phases: list[str],
     title: str,
     database_key: str,
+    theme_type: str | None = None,
 ) -> plt.Figure:
     """Построить фазовые доли с закреплённой палитрой и формами линий."""
-    theme_type = current_theme_type()
+    theme_type = normalize_theme(theme_type or current_theme_type())
     roles = chart_roles(theme_type)
     styles = phase_styles(phases, theme_type)
 
     figure, axes = plt.subplots(figsize=(11.5, 6.5), dpi=100)
+    end_points: dict[str, tuple[float, float]] = {}
 
     for phase in phases:
         style = styles[phase]
@@ -3692,19 +3800,10 @@ def plot_phase_fraction_scan(
             label=label,
         )
 
-        if theme_type == "dark":
-            valid = dataframe[[x_column, phase]].dropna()
-            if not valid.empty:
-                last = valid.iloc[-1]
-                axes.annotate(
-                    phase,
-                    (float(last[x_column]), float(last[phase])),
-                    xytext=(6, 0),
-                    textcoords="offset points",
-                    color=style["color"],
-                    fontsize=11,
-                    va="center",
-                )
+        valid = dataframe[[x_column, phase]].dropna()
+        if not valid.empty:
+            last = valid.iloc[-1]
+            end_points[phase] = (float(last[x_column]), float(last[phase]))
 
     style_chart_axes(
         figure,
@@ -3712,15 +3811,16 @@ def plot_phase_fraction_scan(
         title,
         x_column,
         "Мольная доля фазы, %",
+        theme_type,
+    )
+    figure.tight_layout()
+    annotate_line_ends(
+        axes,
+        end_points,
+        {phase: styles[phase]["color"] for phase in end_points},
     )
     if phases:
-        legend = axes.legend(
-            loc="center left",
-            bbox_to_anchor=(1.01, 0.5),
-            fontsize=11,
-        )
-        style_legend(legend, roles)
-    figure.tight_layout()
+        place_legend_below(figure, axes, roles)
     return figure
 
 
@@ -3888,12 +3988,14 @@ def plot_isolated_phase_energies(
     phases: list[str],
     database_key: str,
     relative: bool,
+    theme_type: str | None = None,
 ) -> plt.Figure:
     """Построить энергии отдельных фаз."""
-    theme_type = current_theme_type()
+    theme_type = normalize_theme(theme_type or current_theme_type())
     roles = chart_roles(theme_type)
     styles = phase_styles(phases, theme_type)
     figure, axes = plt.subplots(figsize=(11.5, 6.5), dpi=100)
+    end_points: dict[str, tuple[float, float]] = {}
 
     for phase_name in phases:
         style = styles[phase_name]
@@ -3914,19 +4016,13 @@ def plot_isolated_phase_energies(
             label=label,
         )
 
-        if theme_type == "dark":
-            valid = dataframe[["Температура, °C", phase_name]].dropna()
-            if not valid.empty:
-                last = valid.iloc[-1]
-                axes.annotate(
-                    phase_name,
-                    (float(last["Температура, °C"]), float(last[phase_name])),
-                    xytext=(6, 0),
-                    textcoords="offset points",
-                    color=style["color"],
-                    fontsize=11,
-                    va="center",
-                )
+        valid = dataframe[["Температура, °C", phase_name]].dropna()
+        if not valid.empty:
+            last = valid.iloc[-1]
+            end_points[phase_name] = (
+                float(last["Температура, °C"]),
+                float(last[phase_name]),
+            )
 
     if relative:
         axes.axhline(
@@ -3936,10 +4032,10 @@ def plot_isolated_phase_energies(
             linewidth=1.2,
         )
         y_label = "ΔG относительно минимума выбранных фаз, Дж/моль"
-        title = "ThermoGar: относительные энергии фаз"
+        title = "Относительные энергии фаз"
     else:
         y_label = "Молярная энергия Гиббса GM, Дж/моль"
-        title = "ThermoGar: энергия Гиббса отдельных фаз"
+        title = "Энергия Гиббса отдельных фаз"
 
     style_chart_axes(
         figure,
@@ -3947,14 +4043,15 @@ def plot_isolated_phase_energies(
         title,
         "Температура, °C",
         y_label,
+        theme_type,
     )
-    legend = axes.legend(
-        loc="center left",
-        bbox_to_anchor=(1.01, 0.5),
-        fontsize=11,
-    )
-    style_legend(legend, roles)
     figure.tight_layout()
+    annotate_line_ends(
+        axes,
+        end_points,
+        {phase: styles[phase]["color"] for phase in end_points},
+    )
+    place_legend_below(figure, axes, roles)
     return figure
 
 
@@ -4051,14 +4148,16 @@ def dormant_phase_driving_force_table(
 def plot_driving_force(
     dataframe: pd.DataFrame,
     target_phase: str,
+    theme_type: str | None = None,
 ) -> plt.Figure:
     """Построить движущую силу выбранной фазы."""
-    roles = chart_roles(current_theme_type())
+    theme_type = normalize_theme(theme_type or current_theme_type())
+    roles = chart_roles(theme_type)
     figure, axes = plt.subplots(figsize=(11.5, 6.5), dpi=100)
     axes.plot(
         dataframe["Температура, °C"],
         dataframe["Движущая сила, Дж/моль"],
-        color=roles["primary_dark"],
+        color=roles["primary"],
         linestyle="-",
         marker="o",
         markevery=max(1, len(dataframe) // 20),
@@ -4076,13 +4175,13 @@ def plot_driving_force(
     style_chart_axes(
         figure,
         axes,
-        f"ThermoGar: движущая сила образования {target_phase}",
+        f"Движущая сила образования {target_phase}",
         "Температура, °C",
         "Движущая сила, Дж/моль",
+        theme_type,
     )
-    legend = axes.legend(fontsize=11)
-    style_legend(legend, roles)
     figure.tight_layout()
+    place_legend_below(figure, axes, roles)
     return figure
 
 
@@ -4242,15 +4341,17 @@ def plot_tzero(
     x_column: str,
     phase_one: str,
     phase_two: str,
+    theme_type: str | None = None,
 ) -> plt.Figure:
     """Построить T0 по составу."""
-    roles = chart_roles(current_theme_type())
+    theme_type = normalize_theme(theme_type or current_theme_type())
+    roles = chart_roles(theme_type)
     figure, axes = plt.subplots(figsize=(11.5, 6.5), dpi=100)
     valid = dataframe.dropna(subset=["T₀, °C"])
     axes.plot(
         valid[x_column],
         valid["T₀, °C"],
-        color=roles["primary_dark"],
+        color=roles["primary"],
         linestyle="-",
         marker="o",
         linewidth=1.8,
@@ -4260,13 +4361,13 @@ def plot_tzero(
     style_chart_axes(
         figure,
         axes,
-        f"ThermoGar: T₀ для {phase_one} и {phase_two}",
+        f"T₀ для {phase_one} и {phase_two}",
         x_column,
         "Температура T₀, °C",
+        theme_type,
     )
-    legend = axes.legend(fontsize=11)
-    style_legend(legend, roles)
     figure.tight_layout()
+    place_legend_below(figure, axes, roles)
     return figure
 
 
@@ -4968,9 +5069,10 @@ def solidification_summary_row(
 
 def plot_solidification_liquid_comparison(
     results: dict[str, Any],
+    theme_type: str | None = None,
 ) -> plt.Figure:
     """Сравнить долю расплава для доступных методов."""
-    theme_type = current_theme_type()
+    theme_type = normalize_theme(theme_type or current_theme_type())
     roles = chart_roles(theme_type)
     styles = phase_styles(list(results), theme_type)
     figure, axes = plt.subplots(figsize=(11.5, 6.5), dpi=100)
@@ -5017,18 +5119,14 @@ def plot_solidification_liquid_comparison(
     style_chart_axes(
         figure,
         axes,
-        "ThermoGar: доля расплава при охлаждении",
+        "Доля расплава при охлаждении",
         "Температура, °C",
         "Доля расплава, %",
+        theme_type,
     )
     axes.set_ylim(-1.0, 101.0)
-    legend = axes.legend(
-        loc="center left",
-        bbox_to_anchor=(1.01, 0.5),
-        fontsize=11,
-    )
-    style_legend(legend, roles)
     figure.tight_layout()
+    place_legend_below(figure, axes, roles)
     return figure
 
 
@@ -5036,6 +5134,7 @@ def plot_solidification_phase_path(
     result: Any,
     database_key: str,
     display_threshold_percent: float,
+    theme_type: str | None = None,
 ) -> plt.Figure:
     """Показать накопленные количества твёрдых фаз."""
     dataframe = solidification_path_dataframe(result)
@@ -5062,8 +5161,9 @@ def plot_solidification_phase_path(
         renamed,
         "Температура, °C",
         visible_phases,
-        f"ThermoGar: твёрдые фазы — {method_label}",
+        f"Твёрдые фазы — {method_label}",
         database_key,
+        theme_type,
     )
 
 
@@ -5071,9 +5171,10 @@ def plot_liquid_composition_comparison(
     liquid_tables: dict[str, pd.DataFrame],
     element: str,
     units: str,
+    theme_type: str | None = None,
 ) -> plt.Figure:
     """Сравнить изменение состава остаточного расплава."""
-    theme_type = current_theme_type()
+    theme_type = normalize_theme(theme_type or current_theme_type())
     roles = chart_roles(theme_type)
     styles = phase_styles(list(liquid_tables), theme_type)
     suffix = "ат.%" if units == "at" else "мас.%"
@@ -5112,19 +5213,13 @@ def plot_liquid_composition_comparison(
     style_chart_axes(
         figure,
         axes,
-        f"ThermoGar: {element} в остаточном расплаве",
+        f"{element_label(element)} в остаточном расплаве",
         "Температура, °C",
-        f"Содержание {element}, {suffix}",
+        f"Содержание {element_label(element)}, {suffix}",
+        theme_type,
     )
-    handles, labels = axes.get_legend_handles_labels()
-    if handles:
-        legend = axes.legend(
-            loc="center left",
-            bbox_to_anchor=(1.01, 0.5),
-            fontsize=11,
-        )
-        style_legend(legend, roles)
     figure.tight_layout()
+    place_legend_below(figure, axes, roles)
     return figure
 
 
@@ -5153,9 +5248,9 @@ def solidification_excel_bytes(
 
 def solidification_zip_bytes(
     state: dict[str, Any],
-    comparison_figure: plt.Figure,
-    phase_figures: dict[str, plt.Figure],
-    liquid_figure: plt.Figure | None,
+    comparison_figure: plt.Figure | ThemedFigure,
+    phase_figures: dict[str, plt.Figure | ThemedFigure],
+    liquid_figure: plt.Figure | ThemedFigure | None,
 ) -> bytes:
     """Собрать полный переносимый архив результатов."""
     buffer = BytesIO()
@@ -5247,9 +5342,10 @@ def plot_binary_thermogar(
     x_label: str,
     show_tielines: bool,
     label_nodes: bool,
+    theme_type: str | None = None,
 ) -> tuple[plt.Figure, plt.Axes]:
     """Нарисовать бинарную диаграмму по данным Mapping API."""
-    theme_type = current_theme_type()
+    theme_type = normalize_theme(theme_type or current_theme_type())
     roles = chart_roles(theme_type)
     phase_names = sorted(strategy.get_all_phases())
     styles = phase_styles(phase_names, theme_type)
@@ -5356,6 +5452,7 @@ def plot_binary_thermogar(
         title,
         x_label,
         "Температура, °C",
+        theme_type,
     )
     axes.set_xlim(*x_limits)
     axes.set_ylim(*temperature_limits_k)
@@ -5364,27 +5461,16 @@ def plot_binary_thermogar(
     )
     set_celsius_ticks_on_kelvin_axis(axes.yaxis)
 
-    legend = axes.legend(
-        handles=handles,
-        loc="center left",
-        bbox_to_anchor=(1.01, 0.5),
-        fontsize=11,
-    )
-    style_legend(legend, roles)
-
-    if theme_type == "dark" and len(last_points) <= 7:
-        for phase_name, (x_value, y_value) in last_points.items():
-            axes.annotate(
-                phase_name,
-                (x_value, y_value),
-                xytext=(5, 0),
-                textcoords="offset points",
-                color=styles[phase_name]["color"],
-                fontsize=11,
-                va="center",
-            )
-
     figure.tight_layout()
+    # Подписи у концов линий — в обеих темах; при числе фаз больше семи
+    # не ставятся (разведённые подписи заняли бы поле диаграммы).
+    if len(last_points) <= 7:
+        annotate_line_ends(
+            axes,
+            last_points,
+            {phase: styles[phase]["color"] for phase in last_points},
+        )
+    place_legend_below(figure, axes, roles, handles=handles)
     return figure, axes
 
 
@@ -5501,7 +5587,8 @@ def dataframe_to_excel(
     return buffer.getvalue()
 
 
-def figure_to_png(figure: plt.Figure) -> bytes:
+def figure_to_png(figure: plt.Figure | ThemedFigure) -> bytes:
+    figure = chart_figure(figure)
     buffer = BytesIO()
     figure.savefig(buffer, format="png", dpi=200, bbox_inches="tight")
     return buffer.getvalue()
@@ -5789,9 +5876,10 @@ def plot_isopleth_thermogar(
     title: str,
     x_label: str,
     label_nodes: bool,
+    theme_type: str | None = None,
 ) -> tuple[plt.Figure, plt.Axes]:
     """Нарисовать многокомпонентное изоплетное сечение в стиле ThermoGar."""
-    theme_type = current_theme_type()
+    theme_type = normalize_theme(theme_type or current_theme_type())
     roles = chart_roles(theme_type)
     phase_names = sorted(strategy.get_all_phases())
     styles = phase_styles(phase_names, theme_type)
@@ -5895,6 +5983,7 @@ def plot_isopleth_thermogar(
         title,
         x_label,
         "Температура, °C",
+        theme_type,
     )
     axes.set_xlim(*x_limits)
     axes.set_ylim(*temperature_limits_k)
@@ -5903,31 +5992,19 @@ def plot_isopleth_thermogar(
     )
     set_celsius_ticks_on_kelvin_axis(axes.yaxis)
 
-    if handles:
-        legend = axes.legend(
-            handles=handles,
-            loc="center left",
-            bbox_to_anchor=(1.01, 0.5),
-            fontsize=11,
-        )
-        style_legend(legend, roles)
-
-    if theme_type == "dark" and len(last_points) <= 7:
-        for phase_name, (x_value, y_value) in last_points.items():
-            axes.annotate(
-                phase_name,
-                (x_value, y_value),
-                xytext=(5, 0),
-                textcoords="offset points",
-                color=styles.get(
-                    phase_name,
-                    {"color": roles["primary"]},
-                )["color"],
-                fontsize=11,
-                va="center",
-            )
-
     figure.tight_layout()
+    # Подписи у концов линий — в обеих темах; при числе фаз больше семи
+    # не ставятся (разведённые подписи заняли бы поле диаграммы).
+    if len(last_points) <= 7:
+        annotate_line_ends(
+            axes,
+            last_points,
+            {
+                phase: styles.get(phase, {"color": roles["primary"]})["color"]
+                for phase in last_points
+            },
+        )
+    place_legend_below(figure, axes, roles, handles=handles)
     return figure, axes
 
 
@@ -6037,9 +6114,13 @@ def plot_ternary_thermogar(
     show_tielines: bool,
     tieline_every: int,
     label_nodes: bool,
+    theme_type: str | None = None,
 ) -> tuple[plt.Figure, plt.Axes]:
     """Нарисовать тройную изотермическую диаграмму в стиле ThermoGar."""
-    theme_type = current_theme_type()
+    theme_type = normalize_theme(theme_type or current_theme_type())
+    dependent_element = element_label(dependent_element)
+    x_element = element_label(x_element)
+    y_element = element_label(y_element)
     roles = chart_roles(theme_type)
     phase_names = sorted(strategy.get_all_phases())
     styles = phase_styles(phase_names, theme_type)
@@ -6196,6 +6277,8 @@ def plot_ternary_thermogar(
         ),
         fontsize=13,
         color=roles["text"],
+        # Над подписью верхней вершины, а не поверх неё.
+        pad=40,
     )
     axes.set_xlabel(
         f"Содержание {x_element}, ат.%",
@@ -6271,37 +6354,21 @@ def plot_ternary_thermogar(
         color=roles["axis"],
     )
 
-    if handles:
-        legend = axes.legend(
-            handles=handles,
-            loc="center left",
-            bbox_to_anchor=(1.02, 0.5),
-            fontsize=11,
-        )
-        style_legend(legend, roles)
-
-    if theme_type == "dark":
-        for phase_name, (x_value, y_value) in last_points.items():
-            style = styles.get(
-                phase_name,
-                {"color": roles["primary"]},
-            )
-            axes.annotate(
-                phase_name,
-                (x_value, y_value),
-                xytext=(5, 0),
-                textcoords="offset points",
-                color=style["color"],
-                fontsize=11,
-                va="center",
-            )
-
     figure.subplots_adjust(
         left=0.08,
         right=0.76,
         bottom=0.17,
         top=0.88,
     )
+    annotate_line_ends(
+        axes,
+        last_points,
+        {
+            phase: styles.get(phase, {"color": roles["primary"]})["color"]
+            for phase in last_points
+        },
+    )
+    place_legend_below(figure, axes, roles, handles=handles)
     return figure, axes
 
 
@@ -6597,11 +6664,16 @@ def plot_ternary_phase_fraction_map(
     units_label: str,
     appearance_threshold_percent: float,
     color_scale_mode: str,
+    theme_type: str | None = None,
 ) -> tuple[plt.Figure, plt.Axes]:
     """Нарисовать тройную карту мольной доли выбранной фазы."""
     x_column = f"{x_element}, доля на карте"
     y_column = f"{y_element}, доля на карте"
     z_column = f"{target_phase}, мольная доля, %"
+    # Столбцы таблицы остаются как есть; на графике — символы Ni, Al, Cr.
+    dependent_element = element_label(dependent_element)
+    x_element = element_label(x_element)
+    y_element = element_label(y_element)
 
     x_values = dataframe[x_column].to_numpy(dtype=float)
     y_values = dataframe[y_column].to_numpy(dtype=float)
@@ -6635,7 +6707,7 @@ def plot_ternary_phase_fraction_map(
     plot_values = np.where(valid_points, z_values, 0.0)
     finite_values = z_values[valid_points]
 
-    theme_type = current_theme_type()
+    theme_type = normalize_theme(theme_type or current_theme_type())
     roles = chart_roles(theme_type)
 
     figure, axes = plt.subplots(
@@ -6701,6 +6773,8 @@ def plot_ternary_phase_fraction_map(
         ),
         fontsize=13,
         color=roles["text"],
+        # Над подписью верхней вершины, а не поверх неё.
+        pad=40,
     )
     axes.set_xlabel(
         f"Содержание {x_element}, {units_label}",
@@ -6720,7 +6794,8 @@ def plot_ternary_phase_fraction_map(
     axes.yaxis.set_major_formatter(
         FuncFormatter(lambda value, _position: f"{100.0 * value:g}")
     )
-    axes.grid(True, color=roles["grid"], alpha=0.55)
+    # Сетка поверх цветовой шкалы cividis мешает читать карту (находка 16).
+    axes.grid(False)
     axes.tick_params(
         axis="both",
         which="both",
@@ -6791,6 +6866,12 @@ def plot_ternary_phase_fraction_map(
     )
     colorbar.outline.set_edgecolor(roles["axis"])
 
+    figure.subplots_adjust(
+        left=0.08,
+        right=0.82,
+        bottom=0.17,
+        top=0.88,
+    )
     if threshold_drawn:
         threshold_handle = Line2D(
             [0],
@@ -6803,19 +6884,7 @@ def plot_ternary_phase_fraction_map(
                 f"{threshold:g} мол.%"
             ),
         )
-        legend = axes.legend(
-            handles=[threshold_handle],
-            loc="upper right",
-            fontsize=11,
-        )
-        style_legend(legend, roles)
-
-    figure.subplots_adjust(
-        left=0.08,
-        right=0.82,
-        bottom=0.17,
-        top=0.88,
-    )
+        place_legend_below(figure, axes, roles, handles=[threshold_handle])
     return figure, axes
 
 
@@ -7714,11 +7783,12 @@ with temperature_tab:
                 for phase in phase_columns
                 if float(scan_df[phase].max()) >= display_threshold
             ]
-            figure = plot_phase_fraction_scan(
+            figure = build_themed_figure(
+                plot_phase_fraction_scan,
                 scan_df,
                 "Температура, °C",
                 visible_phases,
-                "ThermoGar: фазовые доли от температуры",
+                "Фазовые доли от температуры",
                 database_key,
             )
             temperature_settings = pd.DataFrame(
@@ -7772,7 +7842,7 @@ with temperature_tab:
         render_phase_set_note(result["settings"])
         render_release_exclusion_note(result["settings"])
         render_engine_note(result["settings"])
-        st.pyplot(result["figure"])
+        st.pyplot(chart_figure(result["figure"]))
         st.dataframe(
             result["data"],
             width="stretch",
@@ -8068,12 +8138,13 @@ with concentration_tab:
                 for phase in phase_columns
                 if float(scan_df[phase].max()) >= concentration_threshold
             ]
-            figure = plot_phase_fraction_scan(
+            figure = build_themed_figure(
+                plot_phase_fraction_scan,
                 scan_df,
                 x_column,
                 visible_phases,
                 (
-                    "ThermoGar: фазовые доли от концентрации "
+                    "Фазовые доли от концентрации "
                     f"при {concentration_temperature:.1f} °C"
                 ),
                 database_key,
@@ -8129,7 +8200,7 @@ with concentration_tab:
         render_phase_set_note(result["settings"])
         render_release_exclusion_note(result["settings"])
         render_engine_note(result["settings"])
-        st.pyplot(result["figure"])
+        st.pyplot(chart_figure(result["figure"]))
         st.dataframe(
             result["data"],
             width="stretch",
@@ -8432,7 +8503,8 @@ with phase_diagram_tab:
                     )
                     strategy.do_map()
 
-                    figure, _axes = plot_binary_thermogar(
+                    figure = build_themed_figure(
+                        plot_binary_thermogar,
                         strategy,
                         x_variable,
                         v.T,
@@ -8512,7 +8584,7 @@ with phase_diagram_tab:
             result = st.session_state[binary_result_key]
             render_phase_set_note(result["settings"])
             render_release_exclusion_note(result["settings"])
-            st.pyplot(result["figure"])
+            st.pyplot(chart_figure(result["figure"]))
 
             with st.expander("Таблица рассчитанных границ", expanded=False):
                 if result["boundaries"].empty:
@@ -8895,7 +8967,8 @@ with phase_diagram_tab:
                     )
                     strategy.do_map()
 
-                    figure, _axes = plot_isopleth_thermogar(
+                    figure = build_themed_figure(
+                        plot_isopleth_thermogar,
                         strategy,
                         x_variable,
                         v.T,
@@ -8991,7 +9064,7 @@ with phase_diagram_tab:
             ]
             render_phase_set_note(result["settings"])
             render_release_exclusion_note(result["settings"])
-            st.pyplot(result["figure"])
+            st.pyplot(chart_figure(result["figure"]))
 
             with st.expander(
                 "Таблица рассчитанных границ",
@@ -9263,7 +9336,8 @@ with phase_diagram_tab:
                         center_added = False
                     strategy.do_map()
 
-                    figure, _axes = plot_ternary_thermogar(
+                    figure = build_themed_figure(
+                        plot_ternary_thermogar,
                         strategy,
                         x_variable,
                         y_variable,
@@ -9351,7 +9425,7 @@ with phase_diagram_tab:
             result = st.session_state[ternary_result_key]
             render_phase_set_note(result["settings"])
             render_release_exclusion_note(result["settings"])
-            st.pyplot(result["figure"])
+            st.pyplot(chart_figure(result["figure"]))
 
             if result["boundaries"].empty:
                 st.warning(
@@ -9681,7 +9755,8 @@ with phase_diagram_tab:
                             )
                         )
 
-                        figure, _axes = plot_ternary_phase_fraction_map(
+                        figure = build_themed_figure(
+                            plot_ternary_phase_fraction_map,
                             map_data,
                             map_dependent_element,
                             map_x_element,
@@ -9838,7 +9913,7 @@ with phase_diagram_tab:
             render_phase_set_note(result["settings"])
             render_release_exclusion_note(result["settings"])
             render_engine_note(result["settings"])
-            st.pyplot(result["figure"])
+            st.pyplot(chart_figure(result["figure"]))
 
             summary_lookup = dict(
                 zip(
@@ -10511,12 +10586,22 @@ with solidification_tab:
             render_phase_set_note(state["settings"])
             render_release_exclusion_note(state["settings"])
             results = state["results"]
-            comparison_figure = plot_solidification_liquid_comparison(results)
+            # Графики строятся из сохранённого результата в теме прогона и
+            # кэшируются по теме (решение 7Б): расчёт не повторяется.
+            figure_cache = state.setdefault("figure_cache", {})
+            comparison_figure = figure_cache.setdefault(
+                "comparison",
+                ThemedFigure(plot_solidification_liquid_comparison, results),
+            )
             phase_figures = {
-                method_key: plot_solidification_phase_path(
-                    result,
-                    database_key,
-                    state["display_threshold_percent"],
+                method_key: figure_cache.setdefault(
+                    ("phases", method_key),
+                    ThemedFigure(
+                        plot_solidification_phase_path,
+                        result,
+                        database_key,
+                        state["display_threshold_percent"],
+                    ),
                 )
                 for method_key, result in results.items()
             }
@@ -10541,7 +10626,7 @@ with solidification_tab:
                     st.warning(SOLIDUS_FALLBACK_WARNING)
                 if "quality" in state:
                     render_quality_panel(state["quality"])
-                st.pyplot(comparison_figure, use_container_width=False)
+                st.pyplot(chart_figure(comparison_figure), width="content")
                 st.caption(
                     "Ликвидус ищется половинным делением по равновесиям с "
                     f"точностью {LIQUIDUS_TOLERANCE_C:g} °C и не зависит ни от "
@@ -10575,8 +10660,8 @@ with solidification_tab:
                     key="solidification_phase_method",
                 )
                 st.pyplot(
-                    phase_figures[phase_method_key],
-                    use_container_width=False,
+                    chart_figure(phase_figures[phase_method_key]),
+                    width="content",
                 )
                 st.markdown("### Последовательность появления фаз")
                 st.dataframe(
@@ -10619,12 +10704,16 @@ with solidification_tab:
                     if liquid_units_label == "атомные %"
                     else "wt"
                 )
-                liquid_figure = plot_liquid_composition_comparison(
-                    state["liquid_tables"],
-                    liquid_element,
-                    liquid_units,
+                liquid_figure = figure_cache.setdefault(
+                    ("liquid", liquid_element, liquid_units),
+                    ThemedFigure(
+                        plot_liquid_composition_comparison,
+                        state["liquid_tables"],
+                        liquid_element,
+                        liquid_units,
+                    ),
                 )
-                st.pyplot(liquid_figure, use_container_width=False)
+                st.pyplot(chart_figure(liquid_figure), width="content")
                 liquid_method_key = st.selectbox(
                     "Таблица для метода",
                     options=list(results),
@@ -10652,10 +10741,14 @@ with solidification_tab:
                     if component != "VA"
                 ]
                 export_element = export_liquid_elements[0]
-                export_liquid_figure = plot_liquid_composition_comparison(
-                    state["liquid_tables"],
-                    export_element,
-                    "at",
+                export_liquid_figure = figure_cache.setdefault(
+                    ("liquid", export_element, "at"),
+                    ThemedFigure(
+                        plot_liquid_composition_comparison,
+                        state["liquid_tables"],
+                        export_element,
+                        "at",
+                    ),
                 )
                 excel_bytes = solidification_excel_bytes(state)
                 zip_bytes = solidification_zip_bytes(
@@ -10819,7 +10912,8 @@ with energy_tab:
                 ]
                 relative_view = energy_view.startswith("Относительно")
                 plot_table = relative_table if relative_view else absolute_table
-                figure = plot_isolated_phase_energies(
+                figure = build_themed_figure(
+                    plot_isolated_phase_energies,
                     plot_table,
                     valid_phases,
                     database_key,
@@ -10868,7 +10962,7 @@ with energy_tab:
 
         energy_state = st.session_state.get("energy_curve_result")
         if energy_state and energy_state.get("database_key") == database_key:
-            st.pyplot(energy_state["figure"])
+            st.pyplot(chart_figure(energy_state["figure"]))
 
             if energy_state["skipped"]:
                 st.warning(
@@ -11061,7 +11155,8 @@ with energy_tab:
                             driving_t_step,
                         )
                     )
-                figure = plot_driving_force(
+                figure = build_themed_figure(
+                    plot_driving_force,
                     driving_table,
                     driving_target,
                 )
@@ -11104,7 +11199,7 @@ with energy_tab:
 
         driving_state = st.session_state.get("driving_force_result")
         if driving_state and driving_state.get("database_key") == database_key:
-            st.pyplot(driving_state["figure"])
+            st.pyplot(chart_figure(driving_state["figure"]))
             if not driving_state["crossings"].empty:
                 st.markdown("#### Приближённая смена знака")
                 st.dataframe(
@@ -11321,7 +11416,8 @@ with energy_tab:
                     f"{tzero_variable}, "
                     f"{'ат.%' if tzero_units == 'at' else 'мас.%'}"
                 )
-                figure = plot_tzero(
+                figure = build_themed_figure(
+                    plot_tzero,
                     tzero_table,
                     x_column,
                     phase_one,
@@ -11387,7 +11483,7 @@ with energy_tab:
                     "выделение» (γ/γ′, α/карбид) пересечения по T обычно "
                     "не имеют: для них T₀ не строится."
                 )
-            st.pyplot(tzero_state["figure"])
+            st.pyplot(chart_figure(tzero_state["figure"]))
             st.dataframe(
                 tzero_state["data"],
                 width="stretch",

@@ -1,0 +1,134 @@
+{
+  "free_gib_at_start": 3.12,
+  "history_before_calculation": 2,
+  "steps": [
+    {
+      "moment": "posle_rascheta",
+      "page_theme": "Light",
+      "chart_corner": [
+        255,
+        255,
+        255
+      ],
+      "chart_theme": "Light",
+      "png_corner": [
+        255,
+        255,
+        255
+      ],
+      "png_theme": "Light",
+      "history_scans": 3
+    },
+    {
+      "moment": "srazu",
+      "to": "Dark",
+      "page_theme": "Dark",
+      "chart_corner": [
+        31,
+        34,
+        38
+      ],
+      "chart_theme": "Dark",
+      "history_scans": 3
+    },
+    {
+      "moment": "bez_deystviy",
+      "to": "Dark",
+      "chart_in_new_theme_after_s": 0.62,
+      "page_theme": "Dark",
+      "chart_corner": [
+        31,
+        34,
+        38
+      ],
+      "chart_theme": "Dark",
+      "history_scans": 3
+    },
+    {
+      "moment": "pozzhe_3s",
+      "to": "Dark",
+      "page_theme": "Dark",
+      "chart_corner": [
+        31,
+        34,
+        38
+      ],
+      "chart_theme": "Dark",
+      "history_scans": 3
+    },
+    {
+      "moment": "posle_deystviya",
+      "to": "Dark",
+      "page_theme": "Dark",
+      "chart_corner": [
+        31,
+        34,
+        38
+      ],
+      "chart_theme": "Dark",
+      "png_corner": [
+        31,
+        34,
+        38
+      ],
+      "png_theme": "Dark",
+      "history_scans": 3
+    },
+    {
+      "moment": "srazu",
+      "to": "Light",
+      "page_theme": "Light",
+      "chart_corner": [
+        255,
+        255,
+        255
+      ],
+      "chart_theme": "Light",
+      "history_scans": 3
+    },
+    {
+      "moment": "bez_deystviy",
+      "to": "Light",
+      "chart_in_new_theme_after_s": 0.25,
+      "page_theme": "Light",
+      "chart_corner": [
+        255,
+        255,
+        255
+      ],
+      "chart_theme": "Light",
+      "history_scans": 3
+    },
+    {
+      "moment": "pozzhe_3s",
+      "to": "Light",
+      "page_theme": "Light",
+      "chart_corner": [
+        255,
+        255,
+        255
+      ],
+      "chart_theme": "Light",
+      "history_scans": 3
+    },
+    {
+      "moment": "posle_deystviya",
+      "to": "Light",
+      "page_theme": "Light",
+      "chart_corner": [
+        255,
+        255,
+        255
+      ],
+      "chart_theme": "Light",
+      "png_corner": [
+        255,
+        255,
+        255
+      ],
+      "png_theme": "Light",
+      "history_scans": 3
+    }
+  ],
+  "history_after_switches": 3
+}

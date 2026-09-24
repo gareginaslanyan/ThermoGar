@@ -25,7 +25,14 @@ from pycalphad import Database
 from pycalphad.core.utils import filter_phases, unpack_species
 
 from thermogar_diffusion import _atomic_masses, _phase_mobility_coverage
-from thermogar_palette import chart_roles, phase_styles, style_legend
+from thermogar_palette import (
+    ThemedFigure,
+    chart_roles,
+    element_label,
+    phase_styles,
+    place_legend_below,
+    resolve_figure,
+)
 from thermogar_release_policy import (
     RELEASE_DATABASE_FILENAMES,
     RELEASE_DATABASE_KEYS,
@@ -130,7 +137,7 @@ class PrecipitationResult:
     interface_composition: pd.DataFrame
     psd: pd.DataFrame
     quality: pd.DataFrame
-    figures: dict[str, plt.Figure]
+    figures: dict[str, ThemedFigure]
     npz: bytes
     provenance: bytes
     # Сообщения о правках базы, касающихся элементов расчёта (BL-20), и
@@ -487,12 +494,16 @@ def _theme() -> str:
 def _chrome(axis: Any, roles: dict[str, str]) -> None:
     axis.set_facecolor(roles["background"])
     axis.grid(True, color=roles["grid"], alpha=0.35)
-    axis.tick_params(colors=roles["axis"])
+    # Кегли — как в style_chart_axes: деления 11 pt, подписи и заголовок 13 pt.
+    axis.tick_params(colors=roles["axis"], labelsize=11)
     axis.xaxis.label.set_color(roles["axis"])
+    axis.xaxis.label.set_fontsize(13)
     axis.yaxis.label.set_color(roles["axis"])
+    axis.yaxis.label.set_fontsize(13)
     axis.title.set_color(roles["text"])
+    axis.title.set_fontsize(13)
     for spine in axis.spines.values():
-        spine.set_color(roles["grid"])
+        spine.set_color(roles["axis"])
 
 
 def _time_axis(axis: Any) -> None:
@@ -500,12 +511,14 @@ def _time_axis(axis: Any) -> None:
     axis.set_xlabel("Время, ч")
 
 
-def _single_figure(x: np.ndarray, y: np.ndarray, ylabel: str, title: str, key: str, log_y: bool = False) -> plt.Figure:
-    roles = chart_roles(_theme())
-    style = phase_styles([key], _theme())[key]
+def _single_figure(x: np.ndarray, y: np.ndarray, ylabel: str, title: str, key: str, log_y: bool = False, theme_type: str | None = None) -> plt.Figure:
+    theme = theme_type or _theme()
+    roles = chart_roles(theme)
+    style = phase_styles([key], theme)[key]
     figure, axis = plt.subplots(figsize=(10, 5.4))
     figure.patch.set_facecolor(roles["background"])
-    axis.plot(x, y, color=style["color"], linestyle=style["linestyle"], marker=style["marker"], markevery=max(1, len(x)//14), markersize=4)
+    # Одиночный ряд — роль primary (находка 10 аудита 21-А).
+    axis.plot(x, y, color=roles["primary"], linestyle=style["linestyle"], marker=style["marker"], markevery=max(1, len(x)//14), markersize=4)
     _time_axis(axis)
     if log_y and np.any(np.asarray(y) > 0):
         axis.set_yscale("symlog", linthresh=max(float(np.nanmax(y))*1e-12, 1e-30))
@@ -516,9 +529,10 @@ def _single_figure(x: np.ndarray, y: np.ndarray, ylabel: str, title: str, key: s
     return figure
 
 
-def _radius_density_figure(time_h: np.ndarray, radius_nm: np.ndarray, density: np.ndarray, phase: str) -> plt.Figure:
-    roles = chart_roles(_theme())
-    styles = phase_styles(["Радиус", "Плотность"], _theme())
+def _radius_density_figure(time_h: np.ndarray, radius_nm: np.ndarray, density: np.ndarray, phase: str, theme_type: str | None = None) -> plt.Figure:
+    theme = theme_type or _theme()
+    roles = chart_roles(theme)
+    styles = phase_styles(["Радиус", "Плотность"], theme)
     figure, left = plt.subplots(figsize=(10, 5.6))
     right = left.twinx()
     figure.patch.set_facecolor(roles["background"])
@@ -532,39 +546,45 @@ def _radius_density_figure(time_h: np.ndarray, radius_nm: np.ndarray, density: n
     right.set_ylabel("Плотность частиц, 1/м³")
     left.set_title(f"Размер и плотность выделений {phase}")
     _chrome(left, roles)
-    right.tick_params(colors=roles["axis"])
+    # Правая ось: рамка, деления и подпись — роль axis (находка 17 аудита 21-А).
+    right.tick_params(colors=roles["axis"], labelsize=11)
     right.yaxis.label.set_color(roles["axis"])
+    right.yaxis.label.set_fontsize(13)
+    for spine in right.spines.values():
+        spine.set_color(roles["axis"])
     figure.tight_layout()
     return figure
 
 
-def _composition_figure(table: pd.DataFrame, solutes: list[str]) -> plt.Figure:
-    roles = chart_roles(_theme())
-    styles = phase_styles(solutes, _theme())
+def _composition_figure(table: pd.DataFrame, solutes: list[str], theme_type: str | None = None) -> plt.Figure:
+    theme = theme_type or _theme()
+    roles = chart_roles(theme)
+    styles = phase_styles(solutes, theme)
     figure, axis = plt.subplots(figsize=(10, 5.4))
     figure.patch.set_facecolor(roles["background"])
     x = table["Время, ч"].to_numpy(float)
     for element in solutes:
         style = styles[element]
-        axis.plot(x, table[f"{element}, матрица, ат.%"], label=element, color=style["color"], linestyle=style["linestyle"])
+        axis.plot(x, table[f"{element}, матрица, ат.%"], label=element_label(element), color=style["color"], linestyle=style["linestyle"])
     _time_axis(axis)
     axis.set_ylabel("Содержание в матрице, ат.%")
     axis.set_title("Изменение состава матрицы")
     _chrome(axis, roles)
-    style_legend(axis.legend(frameon=False), roles)
     figure.tight_layout()
+    place_legend_below(figure, axis, roles)
     return figure
 
 
-def _psd_figure(table: pd.DataFrame, phase: str) -> plt.Figure:
-    roles = chart_roles(_theme())
-    style = phase_styles([phase], _theme())[phase]
+def _psd_figure(table: pd.DataFrame, phase: str, theme_type: str | None = None) -> plt.Figure:
+    theme = theme_type or _theme()
+    roles = chart_roles(theme)
     figure, axis = plt.subplots(figsize=(10, 5.4))
     figure.patch.set_facecolor(roles["background"])
     x = table["Радиус класса, нм"].to_numpy(float)
     y = table["Число частиц в классе, 1/м³"].to_numpy(float)
-    axis.step(x, y, where="mid", color=style["color"])
-    axis.fill_between(x, y, step="mid", color=style["color"], alpha=0.18)
+    # Одиночный ряд — роль primary (находка 10 аудита 21-А).
+    axis.step(x, y, where="mid", color=roles["primary"])
+    axis.fill_between(x, y, step="mid", color=roles["primary"], alpha=0.18)
     if np.any(y > 0):
         axis.set_yscale("symlog", linthresh=max(float(np.nanmax(y))*1e-12, 1e-30))
     axis.set_xlabel("Радиус, нм")
@@ -1255,13 +1275,17 @@ def run_precipitation(
             "no automatic fitting or uncertainty estimate",
         ],
     }
+    # Графики — построитель с данными (решение 7Б): при смене темы фигура
+    # строится заново без повторного расчёта; первая — в теме расчёта.
     figures = {
-        "fraction": _single_figure(time_h, 100*fraction, "Объёмная доля, %", f"Доля {precipitate_phase}", precipitate_phase),
-        "radius_density": _radius_density_figure(time_h, radius_nm, density, precipitate_phase),
-        "nucleation": _single_figure(time_h, nuc_rate, "Скорость зарождения, 1/(м³·с)", f"Зарождение {precipitate_phase}", precipitate_phase, True),
-        "composition": _composition_figure(matrix_table, solutes),
-        "psd": _psd_figure(psd, precipitate_phase),
+        "fraction": ThemedFigure(_single_figure, time_h, 100*fraction, "Объёмная доля, %", f"Доля {precipitate_phase}", precipitate_phase),
+        "radius_density": ThemedFigure(_radius_density_figure, time_h, radius_nm, density, precipitate_phase),
+        "nucleation": ThemedFigure(_single_figure, time_h, nuc_rate, "Скорость зарождения, 1/(м³·с)", f"Зарождение {precipitate_phase}", precipitate_phase, True),
+        "composition": ThemedFigure(_composition_figure, matrix_table, solutes),
+        "psd": ThemedFigure(_psd_figure, psd, precipitate_phase),
     }
+    for themed_figure in figures.values():
+        themed_figure.figure(_theme())
     buffer = BytesIO()
     np.savez_compressed(buffer, **model.toDict())
     return PrecipitationResult(
@@ -1291,7 +1315,8 @@ def _excel(result: PrecipitationResult) -> bytes:
     return buffer.getvalue()
 
 
-def _png(figure: plt.Figure) -> bytes:
+def _png(figure: plt.Figure | ThemedFigure) -> bytes:
+    figure = resolve_figure(figure, _theme())
     buffer = BytesIO()
     figure.savefig(buffer, format="png", dpi=200, bbox_inches="tight")
     return buffer.getvalue()
@@ -1625,18 +1650,18 @@ def render_precipitation_section(
     )
     with overview:
         st.dataframe(result.summary, width="stretch", hide_index=True)
-        st.pyplot(result.figures["fraction"])
-        st.pyplot(result.figures["radius_density"])
+        st.pyplot(resolve_figure(result.figures["fraction"], _theme()))
+        st.pyplot(resolve_figure(result.figures["radius_density"], _theme()))
         st.dataframe(result.quality, width="stretch", hide_index=True)
     with kinetics_tab:
-        st.pyplot(result.figures["nucleation"])
-        st.pyplot(result.figures["composition"])
+        st.pyplot(resolve_figure(result.figures["nucleation"], _theme()))
+        st.pyplot(resolve_figure(result.figures["composition"], _theme()))
         st.dataframe(result.kinetics, width="stretch", hide_index=True)
         with st.expander("Составы матрицы и межфазного равновесия"):
             st.dataframe(result.matrix_composition, width="stretch", hide_index=True)
             st.dataframe(result.interface_composition, width="stretch", hide_index=True)
     with psd_tab:
-        st.pyplot(result.figures["psd"])
+        st.pyplot(resolve_figure(result.figures["psd"], _theme()))
         st.dataframe(result.psd, width="stretch", hide_index=True)
     with export_tab:
         release_download_button("Excel", data=_excel(result), file_name=f"ThermoGar_precipitation_{result.phase}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", key=f"{widget_prefix}_download_excel")

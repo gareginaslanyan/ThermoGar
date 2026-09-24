@@ -1,0 +1,2408 @@
+{
+  "frames": [
+    {
+      "files": [
+        "01_zapusk_svet.png"
+      ],
+      "grey": [],
+      "slug": "zapusk",
+      "theme": "Light",
+      "what": "Запуск: боковая панель целиком и первая вкладка «Расчёты / Одна температура»",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 25 · Фаз: 132"
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Одна температура"
+      ],
+      "expanded": [],
+      "height_px": 1939
+    },
+    {
+      "files": [
+        "02_raschety_odna_temperatura_svet.png"
+      ],
+      "grey": [],
+      "slug": "raschety_odna_temperatura",
+      "theme": "Light",
+      "what": "Расчёты / Одна температура: результат (таблица фазовых долей)",
+      "charts": 0,
+      "tables": 3,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 25 · Фаз: 132"
+        },
+        {
+          "kind": "warning",
+          "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки, FE_EXCLUDED_PHASES). Авто"
+        },
+        {
+          "kind": "success",
+          "text": "Проверка равновесия: все проверки пройдены."
+        },
+        {
+          "kind": "info",
+          "text": ""
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Одна температура"
+      ],
+      "expanded": [],
+      "height_px": 1636
+    },
+    {
+      "files": [
+        "03_raschety_upravlenie_fazami_svet.png"
+      ],
+      "grey": [],
+      "slug": "raschety_upravlenie_fazami",
+      "theme": "Light",
+      "what": "Расчёты / Одна температура: раскрыт блок «Управление фазами / метастабильный расчёт»",
+      "charts": 0,
+      "tables": 3,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 25 · Фаз: 132"
+        },
+        {
+          "kind": "warning",
+          "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки, FE_EXCLUDED_PHASES). Авто"
+        },
+        {
+          "kind": "success",
+          "text": "Проверка равновесия: все проверки пройдены."
+        },
+        {
+          "kind": "info",
+          "text": ""
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Одна температура"
+      ],
+      "expanded": [
+        "Управление фазами / метастабильный расчёт"
+      ],
+      "height_px": 1974
+    },
+    {
+      "files": [
+        "04_raschety_temperaturnyi_diapazon_svet.png"
+      ],
+      "grey": [
+        "04_raschety_temperaturnyi_diapazon_svet_seroe.png"
+      ],
+      "slug": "raschety_temperaturnyi_diapazon",
+      "theme": "Light",
+      "what": "Расчёты / Температурный диапазон: график и таблица скана 500–900 °C",
+      "charts": 1,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 25 · Фаз: 132"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "warning",
+          "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки, FE_EXCLUDED_PHASES). Авто"
+        },
+        {
+          "kind": "success",
+          "text": "Проверка сканирования: все проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Температурный диапазон"
+      ],
+      "expanded": [],
+      "height_px": 2139
+    },
+    {
+      "files": [
+        "05_raschety_izmenenie_sostava_svet.png"
+      ],
+      "grey": [
+        "05_raschety_izmenenie_sostava_svet_seroe.png"
+      ],
+      "slug": "raschety_izmenenie_sostava",
+      "theme": "Light",
+      "what": "Расчёты / Изменение состава: график по составу, значения по умолчанию",
+      "charts": 1,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 25 · Фаз: 132"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "warning",
+          "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки, FE_EXCLUDED_PHASES). Авто"
+        },
+        {
+          "kind": "success",
+          "text": "Проверка сканирования: все проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Изменение состава"
+      ],
+      "expanded": [],
+      "height_px": 2454
+    },
+    {
+      "files": [
+        "06_svoystva_plotnost_svet.png"
+      ],
+      "grey": [],
+      "slug": "svoystva_plotnost",
+      "theme": "Light",
+      "what": "Свойства / Плотность: сталь, метрика плотности и таблица",
+      "charts": 0,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 25 · Фаз: 132"
+        },
+        {
+          "kind": "warning",
+          "text": "Плотность хрома посчитана по поправке проекта ThermoGar, а не по данным physical_data_v103"
+        },
+        {
+          "kind": "warning",
+          "text": "Для упорядоченных или структурно родственных фаз использованы плотности связанных базовых "
+        }
+      ],
+      "tabs": [
+        "Свойства",
+        "Плотность"
+      ],
+      "expanded": [],
+      "height_px": 2547
+    },
+    {
+      "files": [
+        "07_svoystva_uprugie_svet.png"
+      ],
+      "grey": [],
+      "slug": "svoystva_uprugie",
+      "theme": "Light",
+      "what": "Свойства / Упругие свойства: Ni–15Al, метрики E, G, ν по Хиллу",
+      "charts": 0,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": "Плотность хрома посчитана по поправке проекта ThermoGar, а не по данным physical_data_v103"
+        },
+        {
+          "kind": "warning",
+          "text": "Объёмные доли фаз GAMMA_PRIME посчитаны по плотности связанной фазы физической базы; это о"
+        }
+      ],
+      "tabs": [
+        "Свойства",
+        "Упругие свойства"
+      ],
+      "expanded": [],
+      "height_px": 2446
+    },
+    {
+      "files": [
+        "08_svoystva_plotnost_po_t_svet.png"
+      ],
+      "grey": [
+        "08_svoystva_plotnost_po_t_svet_seroe.png"
+      ],
+      "slug": "svoystva_plotnost_po_t",
+      "theme": "Light",
+      "what": "Свойства / Плотность по T: значения по умолчанию",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": "Плотность хрома посчитана по поправке проекта ThermoGar, а не по данным physical_data_v103"
+        },
+        {
+          "kind": "warning",
+          "text": "Для упорядоченных или структурно родственных фаз использованы плотности связанных базовых "
+        }
+      ],
+      "tabs": [
+        "Свойства",
+        "Плотность по T"
+      ],
+      "expanded": [],
+      "height_px": 2800
+    },
+    {
+      "files": [
+        "09_svoystva_vklady_svet.png"
+      ],
+      "grey": [],
+      "slug": "svoystva_vklady",
+      "theme": "Light",
+      "what": "Свойства / Вклады упрочнения: значения по умолчанию",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "error",
+          "text": "ThermoGar не завершил расчёт.\n\nПроверьте состав, диапазон и набор фаз. Если ошибка повторя"
+        }
+      ],
+      "tabs": [
+        "Свойства",
+        "Вклады упрочнения"
+      ],
+      "expanded": [],
+      "height_px": 2038
+    },
+    {
+      "files": [
+        "10_svoystva_pokrytie_pdb_svet.png"
+      ],
+      "grey": [],
+      "slug": "svoystva_pokrytie_pdb",
+      "theme": "Light",
+      "what": "Свойства / Покрытие PDB: после обновления",
+      "charts": 0,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        }
+      ],
+      "tabs": [
+        "Свойства",
+        "Покрытие PDB"
+      ],
+      "expanded": [],
+      "height_px": 1486
+    },
+    {
+      "files": [
+        "11_zatverdevanie_svodka_svet.png"
+      ],
+      "grey": [
+        "11_zatverdevanie_svodka_svet_seroe.png"
+      ],
+      "slug": "zatverdevanie_svodka",
+      "theme": "Light",
+      "what": "Затвердевание / Сводка: Al–4Cu–1Mg, Scheil",
+      "charts": 1,
+      "tables": 3,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 12 · Фаз: 195"
+        },
+        {
+          "kind": "success",
+          "text": "Модуль затвердевания готов: пакет scheil установлен."
+        },
+        {
+          "kind": "info",
+          "text": "Оба метода этого модуля рассчитываются при 101 325 Па. Scheil–Gulliver предполагает полное"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "success",
+          "text": "Проверка затвердевания: все проверки пройдены."
+        },
+        {
+          "kind": "info",
+          "text": ""
+        }
+      ],
+      "tabs": [
+        "Затвердевание",
+        "Сводка"
+      ],
+      "expanded": [],
+      "height_px": 2563
+    },
+    {
+      "files": [
+        "12_zatverdevanie_tvyordye_fazy_svet.png"
+      ],
+      "grey": [
+        "12_zatverdevanie_tvyordye_fazy_svet_seroe.png"
+      ],
+      "slug": "zatverdevanie_tvyordye_fazy",
+      "theme": "Light",
+      "what": "Затвердевание / Твёрдые фазы",
+      "charts": 1,
+      "tables": 3,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 12 · Фаз: 195"
+        },
+        {
+          "kind": "success",
+          "text": "Модуль затвердевания готов: пакет scheil установлен."
+        },
+        {
+          "kind": "info",
+          "text": "Оба метода этого модуля рассчитываются при 101 325 Па. Scheil–Gulliver предполагает полное"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        }
+      ],
+      "tabs": [
+        "Затвердевание",
+        "Твёрдые фазы"
+      ],
+      "expanded": [],
+      "height_px": 2704
+    },
+    {
+      "files": [
+        "13_zatverdevanie_ostatochnyi_rasplav_svet.png"
+      ],
+      "grey": [
+        "13_zatverdevanie_ostatochnyi_rasplav_svet_seroe.png"
+      ],
+      "slug": "zatverdevanie_ostatochnyi_rasplav",
+      "theme": "Light",
+      "what": "Затвердевание / Остаточный расплав",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 12 · Фаз: 195"
+        },
+        {
+          "kind": "success",
+          "text": "Модуль затвердевания готов: пакет scheil установлен."
+        },
+        {
+          "kind": "info",
+          "text": "Оба метода этого модуля рассчитываются при 101 325 Па. Scheil–Gulliver предполагает полное"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        }
+      ],
+      "tabs": [
+        "Затвердевание",
+        "Остаточный расплав"
+      ],
+      "expanded": [],
+      "height_px": 2878
+    },
+    {
+      "files": [
+        "14_zatverdevanie_vygruzka_svet.png"
+      ],
+      "grey": [],
+      "slug": "zatverdevanie_vygruzka",
+      "theme": "Light",
+      "what": "Затвердевание / Выгрузка",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 12 · Фаз: 195"
+        },
+        {
+          "kind": "success",
+          "text": "Модуль затвердевания готов: пакет scheil установлен."
+        },
+        {
+          "kind": "info",
+          "text": "Оба метода этого модуля рассчитываются при 101 325 Па. Scheil–Gulliver предполагает полное"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        }
+      ],
+      "tabs": [
+        "Затвердевание",
+        "Выгрузка"
+      ],
+      "expanded": [],
+      "height_px": 1681
+    },
+    {
+      "files": [
+        "15_diagrammy_binarnaya_svet.png"
+      ],
+      "grey": [
+        "15_diagrammy_binarnaya_svet_seroe.png"
+      ],
+      "slug": "diagrammy_binarnaya",
+      "theme": "Light",
+      "what": "Диаграммы / Бинарная T–X: Ni–Al 600–1600 °C",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "info",
+          "text": "На диаграмме выбрано больше семи фаз. Расчёт допустим, но для читаемого графика лучше оста"
+        }
+      ],
+      "tabs": [
+        "Диаграммы",
+        "Бинарная T–X"
+      ],
+      "expanded": [],
+      "height_px": 2643
+    },
+    {
+      "files": [
+        "16_diagrammy_mnogokomponentnoe_svet.png"
+      ],
+      "grey": [
+        "16_diagrammy_mnogokomponentnoe_svet_seroe.png"
+      ],
+      "slug": "diagrammy_mnogokomponentnoe",
+      "theme": "Light",
+      "what": "Диаграммы / Многокомпонентное T–X: значения по умолчанию",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "info",
+          "text": "На сечении выбрано больше семи фаз. Расчёт допустим, но для читаемого графика лучше остави"
+        }
+      ],
+      "tabs": [
+        "Диаграммы",
+        "Многокомпонентное T–X"
+      ],
+      "expanded": [],
+      "height_px": 2590
+    },
+    {
+      "files": [
+        "17_diagrammy_troynaya_svet_ch1.png",
+        "17_diagrammy_troynaya_svet_ch2.png"
+      ],
+      "grey": [
+        "17_diagrammy_troynaya_svet_ch1_seroe.png",
+        "17_diagrammy_troynaya_svet_ch2_seroe.png"
+      ],
+      "slug": "diagrammy_troynaya",
+      "theme": "Light",
+      "what": "Диаграммы / Тройная при T = const: значения по умолчанию",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Как читать вершины: в нижней левой вершине 100 % элемента C, в нижней правой — 100 % элеме"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "info",
+          "text": "Выбрано больше десяти фаз. Расчёт допустим, но может занять заметно больше времени. Для пе"
+        }
+      ],
+      "tabs": [
+        "Диаграммы",
+        "Тройная при T = const"
+      ],
+      "expanded": [],
+      "height_px": 3193
+    },
+    {
+      "files": [
+        "18_diagrammy_karta_svet_ch1.png",
+        "18_diagrammy_karta_svet_ch2.png"
+      ],
+      "grey": [
+        "18_diagrammy_karta_svet_ch1_seroe.png",
+        "18_diagrammy_karta_svet_ch2_seroe.png"
+      ],
+      "slug": "diagrammy_karta",
+      "theme": "Light",
+      "what": "Диаграммы / Карта доли фазы: значения по умолчанию",
+      "charts": 1,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Будет рассчитано узлов: 21. Фактический равномерный шаг: 20 %. Один узел — это отдельное р"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        }
+      ],
+      "tabs": [
+        "Диаграммы",
+        "Карта доли фазы"
+      ],
+      "expanded": [],
+      "height_px": 3352
+    },
+    {
+      "files": [
+        "19_energii_dvizhushchaya_sila_svet.png"
+      ],
+      "grey": [
+        "19_energii_dvizhushchaya_sila_svet_seroe.png"
+      ],
+      "slug": "energii_dvizhushchaya_sila",
+      "theme": "Light",
+      "what": "Энергии / Движущая сила: GAMMA_PRIME из FCC_A1, 600–800 °C",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Движущая сила — только термодинамический стимул. Она не задаёт скорость превращения, время"
+        }
+      ],
+      "tabs": [
+        "Энергии",
+        "Движущая сила"
+      ],
+      "expanded": [],
+      "height_px": 2422
+    },
+    {
+      "files": [
+        "20_energii_energii_faz_svet.png"
+      ],
+      "grey": [
+        "20_energii_energii_faz_svet_seroe.png"
+      ],
+      "slug": "energii_energii_faz",
+      "theme": "Light",
+      "what": "Энергии / Энергии фаз: значения по умолчанию",
+      "charts": 1,
+      "tables": 3,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Минимальная энергия среди выбранных однофазных состояний не равна автоматически полному мн"
+        }
+      ],
+      "tabs": [
+        "Энергии",
+        "Энергии фаз"
+      ],
+      "expanded": [],
+      "height_px": 2336
+    },
+    {
+      "files": [
+        "21_energii_t0_svet_ch1.png",
+        "21_energii_t0_svet_ch2.png"
+      ],
+      "grey": [
+        "21_energii_t0_svet_ch1_seroe.png",
+        "21_energii_t0_svet_ch2_seroe.png"
+      ],
+      "slug": "energii_t0",
+      "theme": "Light",
+      "what": "Энергии / T₀: значения по умолчанию",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": "T₀ найдено в 9 точках из 26. В остальных точках перехода в заданном окне нет: сдвиньте окн"
+        },
+        {
+          "kind": "info",
+          "text": "T₀ показывает равенство энергий двух фаз при одинаковом составе. Для диффузионных превраще"
+        }
+      ],
+      "tabs": [
+        "Энергии",
+        "T₀"
+      ],
+      "expanded": [],
+      "height_px": 3380
+    },
+    {
+      "files": [
+        "22_kinetika_vydeleniya_itogi_svet_ch1.png",
+        "22_kinetika_vydeleniya_itogi_svet_ch2.png"
+      ],
+      "grey": [
+        "22_kinetika_vydeleniya_itogi_svet_ch1_seroe.png",
+        "22_kinetika_vydeleniya_itogi_svet_ch2_seroe.png"
+      ],
+      "slug": "kinetika_vydeleniya_itogi",
+      "theme": "Light",
+      "what": "Кинетика / Выделения / Итоги: KWN γ′, 800 °C, 1 ч",
+      "charts": 2,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": "TDB/DDB не содержат всех параметров KWN. Межфазная энергия, молярные объёмы и центры зарож"
+        },
+        {
+          "kind": "warning",
+          "text": "Критический радиус зародыша 0.268 нм (оценка при 800.0 °C по начальному составу) меньше пр"
+        },
+        {
+          "kind": "success",
+          "text": "Внутренние численные проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Кинетика",
+        "Выделения",
+        "Итоги"
+      ],
+      "expanded": [
+        "Параметры модели KWN"
+      ],
+      "height_px": 4706
+    },
+    {
+      "files": [
+        "23_kinetika_vydeleniya_kinetika_svet_ch1.png",
+        "23_kinetika_vydeleniya_kinetika_svet_ch2.png"
+      ],
+      "grey": [
+        "23_kinetika_vydeleniya_kinetika_svet_ch1_seroe.png",
+        "23_kinetika_vydeleniya_kinetika_svet_ch2_seroe.png"
+      ],
+      "slug": "kinetika_vydeleniya_kinetika",
+      "theme": "Light",
+      "what": "Кинетика / Выделения / Кинетика и состав",
+      "charts": 2,
+      "tables": 3,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": "TDB/DDB не содержат всех параметров KWN. Межфазная энергия, молярные объёмы и центры зарож"
+        },
+        {
+          "kind": "warning",
+          "text": "Критический радиус зародыша 0.268 нм (оценка при 800.0 °C по начальному составу) меньше пр"
+        },
+        {
+          "kind": "success",
+          "text": "Внутренние численные проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Кинетика",
+        "Выделения",
+        "Кинетика и состав"
+      ],
+      "expanded": [
+        "Параметры модели KWN"
+      ],
+      "height_px": 4470
+    },
+    {
+      "files": [
+        "24_kinetika_vydeleniya_raspredelenie_svet_ch1.png",
+        "24_kinetika_vydeleniya_raspredelenie_svet_ch2.png"
+      ],
+      "grey": [
+        "24_kinetika_vydeleniya_raspredelenie_svet_ch1_seroe.png",
+        "24_kinetika_vydeleniya_raspredelenie_svet_ch2_seroe.png"
+      ],
+      "slug": "kinetika_vydeleniya_raspredelenie",
+      "theme": "Light",
+      "what": "Кинетика / Выделения / Распределение размеров",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": "TDB/DDB не содержат всех параметров KWN. Межфазная энергия, молярные объёмы и центры зарож"
+        },
+        {
+          "kind": "warning",
+          "text": "Критический радиус зародыша 0.268 нм (оценка при 800.0 °C по начальному составу) меньше пр"
+        },
+        {
+          "kind": "success",
+          "text": "Внутренние численные проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Кинетика",
+        "Выделения",
+        "Распределение размеров"
+      ],
+      "expanded": [
+        "Параметры модели KWN"
+      ],
+      "height_px": 3837
+    },
+    {
+      "files": [
+        "25_kinetika_vydeleniya_eksport_svet_ch1.png",
+        "25_kinetika_vydeleniya_eksport_svet_ch2.png"
+      ],
+      "grey": [],
+      "slug": "kinetika_vydeleniya_eksport",
+      "theme": "Light",
+      "what": "Кинетика / Выделения / Экспорт и ограничения",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": "TDB/DDB не содержат всех параметров KWN. Межфазная энергия, молярные объёмы и центры зарож"
+        },
+        {
+          "kind": "warning",
+          "text": "Критический радиус зародыша 0.268 нм (оценка при 800.0 °C по начальному составу) меньше пр"
+        },
+        {
+          "kind": "success",
+          "text": "Внутренние численные проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Кинетика",
+        "Выделения",
+        "Экспорт и ограничения"
+      ],
+      "expanded": [
+        "Параметры модели KWN"
+      ],
+      "height_px": 3550
+    },
+    {
+      "files": [
+        "26_kinetika_diffuziya_odnofaznaya_svet_ch1.png",
+        "26_kinetika_diffuziya_odnofaznaya_svet_ch2.png"
+      ],
+      "grey": [
+        "26_kinetika_diffuziya_odnofaznaya_svet_ch1_seroe.png",
+        "26_kinetika_diffuziya_odnofaznaya_svet_ch2_seroe.png"
+      ],
+      "slug": "kinetika_diffuziya_odnofaznaya",
+      "theme": "Light",
+      "what": "Кинетика / Диффузия и гомогенизация / Однофазная пара: профиль после 100 ч",
+      "charts": 2,
+      "tables": 4,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Границы закрыты: поток через левый и правый торцы равен нулю. Составы задаются в ат.% или "
+        },
+        {
+          "kind": "success",
+          "text": "Численная проверка сохранения среднего состава пройдена. Невязка считается по u-долям — ве"
+        }
+      ],
+      "tabs": [
+        "Кинетика",
+        "Диффузия и гомогенизация",
+        "Однофазная пара"
+      ],
+      "expanded": [],
+      "height_px": 4464
+    },
+    {
+      "files": [
+        "27_kinetika_diffuziya_mnogofaznaya_svet.png"
+      ],
+      "grey": [],
+      "slug": "kinetika_diffuziya_mnogofaznaya",
+      "theme": "Light",
+      "what": "Кинетика / Диффузия и гомогенизация / Многофазная гомогенизация: «Рассчитать гомогенизацию», значения по умолчанию",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Рекомендуемый первый вариант — нижняя граница Хашина—Штрикмана. Разница между верхней и ни"
+        },
+        {
+          "kind": "error",
+          "text": "Расчёт не выполнен из-за неверных исходных данных.\n\nДля многофазной гомогенизации выберите"
+        }
+      ],
+      "tabs": [
+        "Кинетика",
+        "Диффузия и гомогенизация",
+        "Многофазная гомогенизация"
+      ],
+      "expanded": [],
+      "height_px": 2249
+    },
+    {
+      "files": [
+        "28_kinetika_diffuziya_pokrytie_svet.png"
+      ],
+      "grey": [],
+      "slug": "kinetika_diffuziya_pokrytie",
+      "theme": "Light",
+      "what": "Кинетика / Диффузия и гомогенизация / Покрытие базы подвижностей",
+      "charts": 0,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        }
+      ],
+      "tabs": [
+        "Кинетика",
+        "Диффузия и гомогенизация",
+        "Покрытие базы подвижностей"
+      ],
+      "expanded": [],
+      "height_px": 1715
+    },
+    {
+      "files": [
+        "29_proekty_marki_svet.png"
+      ],
+      "grey": [],
+      "slug": "proekty_marki",
+      "theme": "Light",
+      "what": "Проекты и данные / Марки и составы: запись сохранена (st.success)",
+      "charts": 0,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "success",
+          "text": "Состав «Опытный Ni–15Al» сохранён."
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Марки и составы"
+      ],
+      "expanded": [],
+      "height_px": 1872
+    },
+    {
+      "files": [
+        "30_proekty_paketnyi_svet.png"
+      ],
+      "grey": [],
+      "slug": "proekty_paketnyi",
+      "theme": "Light",
+      "what": "Проекты и данные / Пакетный расчёт: три состава рассчитаны, раскрыт блок «Требуемые столбцы»",
+      "charts": 0,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "success",
+          "text": "Загружено: Опытный Ni–15Al"
+        },
+        {
+          "kind": "success",
+          "text": "Все составы рассчитаны: 3."
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Пакетный расчёт"
+      ],
+      "expanded": [
+        "Требуемые столбцы"
+      ],
+      "height_px": 1811
+    },
+    {
+      "files": [
+        "31_proekty_proekty_istoriya_svet.png"
+      ],
+      "grey": [],
+      "slug": "proekty_proekty_istoriya",
+      "theme": "Light",
+      "what": "Проекты и данные / Проекты и история: проект сохранён",
+      "charts": 0,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "success",
+          "text": "Загружено: Опытный Ni–15Al"
+        },
+        {
+          "kind": "success",
+          "text": "Проект сохранён: Ni_Al_подбор_старения.thermogar.json"
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Проекты и история"
+      ],
+      "expanded": [],
+      "height_px": 1737
+    },
+    {
+      "files": [
+        "32_proekty_pasport_svet.png"
+      ],
+      "grey": [],
+      "slug": "proekty_pasport",
+      "theme": "Light",
+      "what": "Проекты и данные / Паспорт базы",
+      "charts": 0,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Отдельный профиль базы ведётся только для открытой стальной базы mc_fe 2.062."
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Паспорт базы"
+      ],
+      "expanded": [],
+      "height_px": 940
+    },
+    {
+      "files": [
+        "33_proekty_kak_polzovatsya_svet_ch1.png",
+        "33_proekty_kak_polzovatsya_svet_ch2.png"
+      ],
+      "grey": [],
+      "slug": "proekty_kak_polzovatsya",
+      "theme": "Light",
+      "what": "Проекты и данные / Как пользоваться",
+      "charts": 0,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "success",
+          "text": "Загружено: Опытный Ni–15Al"
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Как пользоваться"
+      ],
+      "expanded": [
+        "Что считает каждый раздел",
+        "Три базы и стальная база",
+        "Как построить тройную диаграмму",
+        "Как построить карту доли фазы",
+        "Как рассчитать затвердевание",
+        "Как рассчитать плотность и объёмные доли",
+        "Как сохранить состав, рассчитать таблицу и продолжить проект"
+      ],
+      "height_px": 5299
+    },
+    {
+      "files": [
+        "34_proekty_spravochnik_faz_svet.png"
+      ],
+      "grey": [],
+      "slug": "proekty_spravochnik_faz",
+      "theme": "Light",
+      "what": "Проекты и данные / Справочник фаз",
+      "charts": 0,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Справочник фаз"
+      ],
+      "expanded": [],
+      "height_px": 1218
+    },
+    {
+      "files": [
+        "35_proekty_proverka_ustanovki_svet.png"
+      ],
+      "grey": [],
+      "slug": "proekty_proverka_ustanovki",
+      "theme": "Light",
+      "what": "Проекты и данные / Проверка установки: три контрольных расчёта выполнены",
+      "charts": 0,
+      "tables": 4,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "success",
+          "text": "Загружено: Опытный Ni–15Al"
+        },
+        {
+          "kind": "success",
+          "text": "Модуль Scheil–Gulliver доступен."
+        },
+        {
+          "kind": "success",
+          "text": "Модуль диффузии Kawin доступен."
+        },
+        {
+          "kind": "success",
+          "text": "Модуль кинетики выделений Kawin доступен."
+        },
+        {
+          "kind": "success",
+          "text": "Все три контрольных расчёта пройдены."
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Проверка установки"
+      ],
+      "expanded": [],
+      "height_px": 2327
+    },
+    {
+      "files": [
+        "36_soobshchenie_error_svet.png"
+      ],
+      "grey": [],
+      "slug": "soobshchenie_error",
+      "theme": "Light",
+      "what": "st.error: неверная добавка «QQ=5» в боковой панели",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "error",
+          "text": "Элемент 'QQ' отсутствует в базе 'ni'."
+        }
+      ],
+      "tabs": [],
+      "expanded": [],
+      "height_px": 1536
+    },
+    {
+      "files": [
+        "01_zapusk_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "zapusk",
+      "theme": "Dark",
+      "what": "Запуск: боковая панель целиком и первая вкладка «Расчёты / Одна температура»",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 25 · Фаз: 132"
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Одна температура"
+      ],
+      "expanded": [],
+      "height_px": 1939
+    },
+    {
+      "files": [
+        "02_raschety_odna_temperatura_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "raschety_odna_temperatura",
+      "theme": "Dark",
+      "what": "Расчёты / Одна температура: результат (таблица фазовых долей)",
+      "charts": 0,
+      "tables": 3,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 25 · Фаз: 132"
+        },
+        {
+          "kind": "warning",
+          "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки, FE_EXCLUDED_PHASES). Авто"
+        },
+        {
+          "kind": "success",
+          "text": "Проверка равновесия: все проверки пройдены."
+        },
+        {
+          "kind": "info",
+          "text": ""
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Одна температура"
+      ],
+      "expanded": [],
+      "height_px": 1636
+    },
+    {
+      "files": [
+        "03_raschety_upravlenie_fazami_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "raschety_upravlenie_fazami",
+      "theme": "Dark",
+      "what": "Расчёты / Одна температура: раскрыт блок «Управление фазами / метастабильный расчёт»",
+      "charts": 0,
+      "tables": 3,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 25 · Фаз: 132"
+        },
+        {
+          "kind": "warning",
+          "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки, FE_EXCLUDED_PHASES). Авто"
+        },
+        {
+          "kind": "success",
+          "text": "Проверка равновесия: все проверки пройдены."
+        },
+        {
+          "kind": "info",
+          "text": ""
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Одна температура"
+      ],
+      "expanded": [
+        "Управление фазами / метастабильный расчёт"
+      ],
+      "height_px": 1974
+    },
+    {
+      "files": [
+        "04_raschety_temperaturnyi_diapazon_tyomn.png"
+      ],
+      "grey": [
+        "04_raschety_temperaturnyi_diapazon_tyomn_seroe.png"
+      ],
+      "slug": "raschety_temperaturnyi_diapazon",
+      "theme": "Dark",
+      "what": "Расчёты / Температурный диапазон: график и таблица скана 500–900 °C",
+      "charts": 1,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 25 · Фаз: 132"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "warning",
+          "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки, FE_EXCLUDED_PHASES). Авто"
+        },
+        {
+          "kind": "success",
+          "text": "Проверка сканирования: все проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Температурный диапазон"
+      ],
+      "expanded": [],
+      "height_px": 2139
+    },
+    {
+      "files": [
+        "05_raschety_izmenenie_sostava_tyomn.png"
+      ],
+      "grey": [
+        "05_raschety_izmenenie_sostava_tyomn_seroe.png"
+      ],
+      "slug": "raschety_izmenenie_sostava",
+      "theme": "Dark",
+      "what": "Расчёты / Изменение состава: график по составу, значения по умолчанию",
+      "charts": 1,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 25 · Фаз: 132"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "warning",
+          "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки, FE_EXCLUDED_PHASES). Авто"
+        },
+        {
+          "kind": "success",
+          "text": "Проверка сканирования: все проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Расчёты",
+        "Изменение состава"
+      ],
+      "expanded": [],
+      "height_px": 2454
+    },
+    {
+      "files": [
+        "06_svoystva_plotnost_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "svoystva_plotnost",
+      "theme": "Dark",
+      "what": "Свойства / Плотность: сталь, метрика плотности и таблица",
+      "charts": 0,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 25 · Фаз: 132"
+        },
+        {
+          "kind": "warning",
+          "text": "Плотность хрома посчитана по поправке проекта ThermoGar, а не по данным physical_data_v103"
+        },
+        {
+          "kind": "warning",
+          "text": "Для упорядоченных или структурно родственных фаз использованы плотности связанных базовых "
+        }
+      ],
+      "tabs": [
+        "Свойства",
+        "Плотность"
+      ],
+      "expanded": [],
+      "height_px": 2547
+    },
+    {
+      "files": [
+        "07_svoystva_uprugie_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "svoystva_uprugie",
+      "theme": "Dark",
+      "what": "Свойства / Упругие свойства: Ni–15Al, метрики E, G, ν по Хиллу",
+      "charts": 0,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": "Плотность хрома посчитана по поправке проекта ThermoGar, а не по данным physical_data_v103"
+        },
+        {
+          "kind": "warning",
+          "text": "Объёмные доли фаз GAMMA_PRIME посчитаны по плотности связанной фазы физической базы; это о"
+        }
+      ],
+      "tabs": [
+        "Свойства",
+        "Упругие свойства"
+      ],
+      "expanded": [],
+      "height_px": 2446
+    },
+    {
+      "files": [
+        "08_svoystva_plotnost_po_t_tyomn.png"
+      ],
+      "grey": [
+        "08_svoystva_plotnost_po_t_tyomn_seroe.png"
+      ],
+      "slug": "svoystva_plotnost_po_t",
+      "theme": "Dark",
+      "what": "Свойства / Плотность по T: значения по умолчанию",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": "Плотность хрома посчитана по поправке проекта ThermoGar, а не по данным physical_data_v103"
+        },
+        {
+          "kind": "warning",
+          "text": "Для упорядоченных или структурно родственных фаз использованы плотности связанных базовых "
+        }
+      ],
+      "tabs": [
+        "Свойства",
+        "Плотность по T"
+      ],
+      "expanded": [],
+      "height_px": 2800
+    },
+    {
+      "files": [
+        "09_svoystva_vklady_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "svoystva_vklady",
+      "theme": "Dark",
+      "what": "Свойства / Вклады упрочнения: значения по умолчанию",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "error",
+          "text": "ThermoGar не завершил расчёт.\n\nПроверьте состав, диапазон и набор фаз. Если ошибка повторя"
+        }
+      ],
+      "tabs": [
+        "Свойства",
+        "Вклады упрочнения"
+      ],
+      "expanded": [],
+      "height_px": 2038
+    },
+    {
+      "files": [
+        "10_svoystva_pokrytie_pdb_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "svoystva_pokrytie_pdb",
+      "theme": "Dark",
+      "what": "Свойства / Покрытие PDB: после обновления",
+      "charts": 0,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        }
+      ],
+      "tabs": [
+        "Свойства",
+        "Покрытие PDB"
+      ],
+      "expanded": [],
+      "height_px": 1486
+    },
+    {
+      "files": [
+        "11_zatverdevanie_svodka_tyomn.png"
+      ],
+      "grey": [
+        "11_zatverdevanie_svodka_tyomn_seroe.png"
+      ],
+      "slug": "zatverdevanie_svodka",
+      "theme": "Dark",
+      "what": "Затвердевание / Сводка: Al–4Cu–1Mg, Scheil",
+      "charts": 1,
+      "tables": 3,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 12 · Фаз: 195"
+        },
+        {
+          "kind": "success",
+          "text": "Модуль затвердевания готов: пакет scheil установлен."
+        },
+        {
+          "kind": "info",
+          "text": "Оба метода этого модуля рассчитываются при 101 325 Па. Scheil–Gulliver предполагает полное"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "success",
+          "text": "Проверка затвердевания: все проверки пройдены."
+        },
+        {
+          "kind": "info",
+          "text": ""
+        }
+      ],
+      "tabs": [
+        "Затвердевание",
+        "Сводка"
+      ],
+      "expanded": [],
+      "height_px": 2563
+    },
+    {
+      "files": [
+        "12_zatverdevanie_tvyordye_fazy_tyomn.png"
+      ],
+      "grey": [
+        "12_zatverdevanie_tvyordye_fazy_tyomn_seroe.png"
+      ],
+      "slug": "zatverdevanie_tvyordye_fazy",
+      "theme": "Dark",
+      "what": "Затвердевание / Твёрдые фазы",
+      "charts": 1,
+      "tables": 3,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 12 · Фаз: 195"
+        },
+        {
+          "kind": "success",
+          "text": "Модуль затвердевания готов: пакет scheil установлен."
+        },
+        {
+          "kind": "info",
+          "text": "Оба метода этого модуля рассчитываются при 101 325 Па. Scheil–Gulliver предполагает полное"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        }
+      ],
+      "tabs": [
+        "Затвердевание",
+        "Твёрдые фазы"
+      ],
+      "expanded": [],
+      "height_px": 2704
+    },
+    {
+      "files": [
+        "13_zatverdevanie_ostatochnyi_rasplav_tyomn.png"
+      ],
+      "grey": [
+        "13_zatverdevanie_ostatochnyi_rasplav_tyomn_seroe.png"
+      ],
+      "slug": "zatverdevanie_ostatochnyi_rasplav",
+      "theme": "Dark",
+      "what": "Затвердевание / Остаточный расплав",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 12 · Фаз: 195"
+        },
+        {
+          "kind": "success",
+          "text": "Модуль затвердевания готов: пакет scheil установлен."
+        },
+        {
+          "kind": "info",
+          "text": "Оба метода этого модуля рассчитываются при 101 325 Па. Scheil–Gulliver предполагает полное"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        }
+      ],
+      "tabs": [
+        "Затвердевание",
+        "Остаточный расплав"
+      ],
+      "expanded": [],
+      "height_px": 2878
+    },
+    {
+      "files": [
+        "14_zatverdevanie_vygruzka_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "zatverdevanie_vygruzka",
+      "theme": "Dark",
+      "what": "Затвердевание / Выгрузка",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 12 · Фаз: 195"
+        },
+        {
+          "kind": "success",
+          "text": "Модуль затвердевания готов: пакет scheil установлен."
+        },
+        {
+          "kind": "info",
+          "text": "Оба метода этого модуля рассчитываются при 101 325 Па. Scheil–Gulliver предполагает полное"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        }
+      ],
+      "tabs": [
+        "Затвердевание",
+        "Выгрузка"
+      ],
+      "expanded": [],
+      "height_px": 1681
+    },
+    {
+      "files": [
+        "15_diagrammy_binarnaya_tyomn.png"
+      ],
+      "grey": [
+        "15_diagrammy_binarnaya_tyomn_seroe.png"
+      ],
+      "slug": "diagrammy_binarnaya",
+      "theme": "Dark",
+      "what": "Диаграммы / Бинарная T–X: Ni–Al 600–1600 °C",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "info",
+          "text": "На диаграмме выбрано больше семи фаз. Расчёт допустим, но для читаемого графика лучше оста"
+        }
+      ],
+      "tabs": [
+        "Диаграммы",
+        "Бинарная T–X"
+      ],
+      "expanded": [],
+      "height_px": 2643
+    },
+    {
+      "files": [
+        "16_diagrammy_mnogokomponentnoe_tyomn.png"
+      ],
+      "grey": [
+        "16_diagrammy_mnogokomponentnoe_tyomn_seroe.png"
+      ],
+      "slug": "diagrammy_mnogokomponentnoe",
+      "theme": "Dark",
+      "what": "Диаграммы / Многокомпонентное T–X: значения по умолчанию",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "info",
+          "text": "На сечении выбрано больше семи фаз. Расчёт допустим, но для читаемого графика лучше остави"
+        }
+      ],
+      "tabs": [
+        "Диаграммы",
+        "Многокомпонентное T–X"
+      ],
+      "expanded": [],
+      "height_px": 2590
+    },
+    {
+      "files": [
+        "17_diagrammy_troynaya_tyomn_ch1.png",
+        "17_diagrammy_troynaya_tyomn_ch2.png"
+      ],
+      "grey": [
+        "17_diagrammy_troynaya_tyomn_ch1_seroe.png",
+        "17_diagrammy_troynaya_tyomn_ch2_seroe.png"
+      ],
+      "slug": "diagrammy_troynaya",
+      "theme": "Dark",
+      "what": "Диаграммы / Тройная при T = const: значения по умолчанию",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Как читать вершины: в нижней левой вершине 100 % элемента C, в нижней правой — 100 % элеме"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "info",
+          "text": "Выбрано больше десяти фаз. Расчёт допустим, но может занять заметно больше времени. Для пе"
+        }
+      ],
+      "tabs": [
+        "Диаграммы",
+        "Тройная при T = const"
+      ],
+      "expanded": [],
+      "height_px": 3193
+    },
+    {
+      "files": [
+        "18_diagrammy_karta_tyomn_ch1.png",
+        "18_diagrammy_karta_tyomn_ch2.png"
+      ],
+      "grey": [
+        "18_diagrammy_karta_tyomn_ch1_seroe.png",
+        "18_diagrammy_karta_tyomn_ch2_seroe.png"
+      ],
+      "slug": "diagrammy_karta",
+      "theme": "Dark",
+      "what": "Диаграммы / Карта доли фазы: значения по умолчанию",
+      "charts": 1,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Будет рассчитано узлов: 21. Фактический равномерный шаг: 20 %. Один узел — это отдельное р"
+        },
+        {
+          "kind": "warning",
+          "text": ""
+        }
+      ],
+      "tabs": [
+        "Диаграммы",
+        "Карта доли фазы"
+      ],
+      "expanded": [],
+      "height_px": 3352
+    },
+    {
+      "files": [
+        "19_energii_dvizhushchaya_sila_tyomn.png"
+      ],
+      "grey": [
+        "19_energii_dvizhushchaya_sila_tyomn_seroe.png"
+      ],
+      "slug": "energii_dvizhushchaya_sila",
+      "theme": "Dark",
+      "what": "Энергии / Движущая сила: GAMMA_PRIME из FCC_A1, 600–800 °C",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Движущая сила — только термодинамический стимул. Она не задаёт скорость превращения, время"
+        }
+      ],
+      "tabs": [
+        "Энергии",
+        "Движущая сила"
+      ],
+      "expanded": [],
+      "height_px": 2422
+    },
+    {
+      "files": [
+        "20_energii_energii_faz_tyomn.png"
+      ],
+      "grey": [
+        "20_energii_energii_faz_tyomn_seroe.png"
+      ],
+      "slug": "energii_energii_faz",
+      "theme": "Dark",
+      "what": "Энергии / Энергии фаз: значения по умолчанию",
+      "charts": 1,
+      "tables": 3,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Минимальная энергия среди выбранных однофазных состояний не равна автоматически полному мн"
+        }
+      ],
+      "tabs": [
+        "Энергии",
+        "Энергии фаз"
+      ],
+      "expanded": [],
+      "height_px": 2336
+    },
+    {
+      "files": [
+        "21_energii_t0_tyomn_ch1.png",
+        "21_energii_t0_tyomn_ch2.png"
+      ],
+      "grey": [
+        "21_energii_t0_tyomn_ch1_seroe.png",
+        "21_energii_t0_tyomn_ch2_seroe.png"
+      ],
+      "slug": "energii_t0",
+      "theme": "Dark",
+      "what": "Энергии / T₀: значения по умолчанию",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": "T₀ найдено в 9 точках из 26. В остальных точках перехода в заданном окне нет: сдвиньте окн"
+        },
+        {
+          "kind": "info",
+          "text": "T₀ показывает равенство энергий двух фаз при одинаковом составе. Для диффузионных превраще"
+        }
+      ],
+      "tabs": [
+        "Энергии",
+        "T₀"
+      ],
+      "expanded": [],
+      "height_px": 3380
+    },
+    {
+      "files": [
+        "22_kinetika_vydeleniya_itogi_tyomn_ch1.png",
+        "22_kinetika_vydeleniya_itogi_tyomn_ch2.png"
+      ],
+      "grey": [
+        "22_kinetika_vydeleniya_itogi_tyomn_ch1_seroe.png",
+        "22_kinetika_vydeleniya_itogi_tyomn_ch2_seroe.png"
+      ],
+      "slug": "kinetika_vydeleniya_itogi",
+      "theme": "Dark",
+      "what": "Кинетика / Выделения / Итоги: KWN γ′, 800 °C, 1 ч",
+      "charts": 2,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": "TDB/DDB не содержат всех параметров KWN. Межфазная энергия, молярные объёмы и центры зарож"
+        },
+        {
+          "kind": "warning",
+          "text": "Критический радиус зародыша 0.268 нм (оценка при 800.0 °C по начальному составу) меньше пр"
+        },
+        {
+          "kind": "success",
+          "text": "Внутренние численные проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Кинетика",
+        "Выделения",
+        "Итоги"
+      ],
+      "expanded": [
+        "Параметры модели KWN"
+      ],
+      "height_px": 4706
+    },
+    {
+      "files": [
+        "23_kinetika_vydeleniya_kinetika_tyomn_ch1.png",
+        "23_kinetika_vydeleniya_kinetika_tyomn_ch2.png"
+      ],
+      "grey": [
+        "23_kinetika_vydeleniya_kinetika_tyomn_ch1_seroe.png",
+        "23_kinetika_vydeleniya_kinetika_tyomn_ch2_seroe.png"
+      ],
+      "slug": "kinetika_vydeleniya_kinetika",
+      "theme": "Dark",
+      "what": "Кинетика / Выделения / Кинетика и состав",
+      "charts": 2,
+      "tables": 3,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": "TDB/DDB не содержат всех параметров KWN. Межфазная энергия, молярные объёмы и центры зарож"
+        },
+        {
+          "kind": "warning",
+          "text": "Критический радиус зародыша 0.268 нм (оценка при 800.0 °C по начальному составу) меньше пр"
+        },
+        {
+          "kind": "success",
+          "text": "Внутренние численные проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Кинетика",
+        "Выделения",
+        "Кинетика и состав"
+      ],
+      "expanded": [
+        "Параметры модели KWN"
+      ],
+      "height_px": 4470
+    },
+    {
+      "files": [
+        "24_kinetika_vydeleniya_raspredelenie_tyomn_ch1.png",
+        "24_kinetika_vydeleniya_raspredelenie_tyomn_ch2.png"
+      ],
+      "grey": [
+        "24_kinetika_vydeleniya_raspredelenie_tyomn_ch1_seroe.png",
+        "24_kinetika_vydeleniya_raspredelenie_tyomn_ch2_seroe.png"
+      ],
+      "slug": "kinetika_vydeleniya_raspredelenie",
+      "theme": "Dark",
+      "what": "Кинетика / Выделения / Распределение размеров",
+      "charts": 1,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": "TDB/DDB не содержат всех параметров KWN. Межфазная энергия, молярные объёмы и центры зарож"
+        },
+        {
+          "kind": "warning",
+          "text": "Критический радиус зародыша 0.268 нм (оценка при 800.0 °C по начальному составу) меньше пр"
+        },
+        {
+          "kind": "success",
+          "text": "Внутренние численные проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Кинетика",
+        "Выделения",
+        "Распределение размеров"
+      ],
+      "expanded": [
+        "Параметры модели KWN"
+      ],
+      "height_px": 3837
+    },
+    {
+      "files": [
+        "25_kinetika_vydeleniya_eksport_tyomn_ch1.png",
+        "25_kinetika_vydeleniya_eksport_tyomn_ch2.png"
+      ],
+      "grey": [],
+      "slug": "kinetika_vydeleniya_eksport",
+      "theme": "Dark",
+      "what": "Кинетика / Выделения / Экспорт и ограничения",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "warning",
+          "text": "TDB/DDB не содержат всех параметров KWN. Межфазная энергия, молярные объёмы и центры зарож"
+        },
+        {
+          "kind": "warning",
+          "text": "Критический радиус зародыша 0.268 нм (оценка при 800.0 °C по начальному составу) меньше пр"
+        },
+        {
+          "kind": "success",
+          "text": "Внутренние численные проверки пройдены."
+        }
+      ],
+      "tabs": [
+        "Кинетика",
+        "Выделения",
+        "Экспорт и ограничения"
+      ],
+      "expanded": [
+        "Параметры модели KWN"
+      ],
+      "height_px": 3550
+    },
+    {
+      "files": [
+        "26_kinetika_diffuziya_odnofaznaya_tyomn_ch1.png",
+        "26_kinetika_diffuziya_odnofaznaya_tyomn_ch2.png"
+      ],
+      "grey": [
+        "26_kinetika_diffuziya_odnofaznaya_tyomn_ch1_seroe.png",
+        "26_kinetika_diffuziya_odnofaznaya_tyomn_ch2_seroe.png"
+      ],
+      "slug": "kinetika_diffuziya_odnofaznaya",
+      "theme": "Dark",
+      "what": "Кинетика / Диффузия и гомогенизация / Однофазная пара: профиль после 100 ч",
+      "charts": 2,
+      "tables": 4,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Границы закрыты: поток через левый и правый торцы равен нулю. Составы задаются в ат.% или "
+        },
+        {
+          "kind": "success",
+          "text": "Численная проверка сохранения среднего состава пройдена. Невязка считается по u-долям — ве"
+        }
+      ],
+      "tabs": [
+        "Кинетика",
+        "Диффузия и гомогенизация",
+        "Однофазная пара"
+      ],
+      "expanded": [],
+      "height_px": 4464
+    },
+    {
+      "files": [
+        "27_kinetika_diffuziya_mnogofaznaya_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "kinetika_diffuziya_mnogofaznaya",
+      "theme": "Dark",
+      "what": "Кинетика / Диффузия и гомогенизация / Многофазная гомогенизация: «Рассчитать гомогенизацию», значения по умолчанию",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Рекомендуемый первый вариант — нижняя граница Хашина—Штрикмана. Разница между верхней и ни"
+        },
+        {
+          "kind": "error",
+          "text": "Расчёт не выполнен из-за неверных исходных данных.\n\nДля многофазной гомогенизации выберите"
+        }
+      ],
+      "tabs": [
+        "Кинетика",
+        "Диффузия и гомогенизация",
+        "Многофазная гомогенизация"
+      ],
+      "expanded": [],
+      "height_px": 2249
+    },
+    {
+      "files": [
+        "28_kinetika_diffuziya_pokrytie_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "kinetika_diffuziya_pokrytie",
+      "theme": "Dark",
+      "what": "Кинетика / Диффузия и гомогенизация / Покрытие базы подвижностей",
+      "charts": 0,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        }
+      ],
+      "tabs": [
+        "Кинетика",
+        "Диффузия и гомогенизация",
+        "Покрытие базы подвижностей"
+      ],
+      "expanded": [],
+      "height_px": 1715
+    },
+    {
+      "files": [
+        "29_proekty_marki_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "proekty_marki",
+      "theme": "Dark",
+      "what": "Проекты и данные / Марки и составы: запись сохранена (st.success)",
+      "charts": 0,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "success",
+          "text": "Состав «Опытный Ni–15Al» сохранён."
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Марки и составы"
+      ],
+      "expanded": [],
+      "height_px": 1872
+    },
+    {
+      "files": [
+        "30_proekty_paketnyi_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "proekty_paketnyi",
+      "theme": "Dark",
+      "what": "Проекты и данные / Пакетный расчёт: три состава рассчитаны, раскрыт блок «Требуемые столбцы»",
+      "charts": 0,
+      "tables": 2,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "success",
+          "text": "Загружено: Опытный Ni–15Al"
+        },
+        {
+          "kind": "success",
+          "text": "Все составы рассчитаны: 3."
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Пакетный расчёт"
+      ],
+      "expanded": [
+        "Требуемые столбцы"
+      ],
+      "height_px": 1811
+    },
+    {
+      "files": [
+        "31_proekty_proekty_istoriya_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "proekty_proekty_istoriya",
+      "theme": "Dark",
+      "what": "Проекты и данные / Проекты и история: проект сохранён",
+      "charts": 0,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "success",
+          "text": "Загружено: Опытный Ni–15Al"
+        },
+        {
+          "kind": "success",
+          "text": "Проект сохранён: Ni_Al_подбор_старения.thermogar.json"
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Проекты и история"
+      ],
+      "expanded": [],
+      "height_px": 1737
+    },
+    {
+      "files": [
+        "32_proekty_pasport_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "proekty_pasport",
+      "theme": "Dark",
+      "what": "Проекты и данные / Паспорт базы",
+      "charts": 0,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "info",
+          "text": "Отдельный профиль базы ведётся только для открытой стальной базы mc_fe 2.062."
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Паспорт базы"
+      ],
+      "expanded": [],
+      "height_px": 940
+    },
+    {
+      "files": [
+        "33_proekty_kak_polzovatsya_tyomn_ch1.png",
+        "33_proekty_kak_polzovatsya_tyomn_ch2.png"
+      ],
+      "grey": [],
+      "slug": "proekty_kak_polzovatsya",
+      "theme": "Dark",
+      "what": "Проекты и данные / Как пользоваться",
+      "charts": 0,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "success",
+          "text": "Загружено: Опытный Ni–15Al"
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Как пользоваться"
+      ],
+      "expanded": [
+        "Что считает каждый раздел",
+        "Три базы и стальная база",
+        "Как построить тройную диаграмму",
+        "Как построить карту доли фазы",
+        "Как рассчитать затвердевание",
+        "Как рассчитать плотность и объёмные доли",
+        "Как сохранить состав, рассчитать таблицу и продолжить проект"
+      ],
+      "height_px": 5299
+    },
+    {
+      "files": [
+        "34_proekty_spravochnik_faz_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "proekty_spravochnik_faz",
+      "theme": "Dark",
+      "what": "Проекты и данные / Справочник фаз",
+      "charts": 0,
+      "tables": 1,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Справочник фаз"
+      ],
+      "expanded": [],
+      "height_px": 1218
+    },
+    {
+      "files": [
+        "35_proekty_proverka_ustanovki_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "proekty_proverka_ustanovki",
+      "theme": "Dark",
+      "what": "Проекты и данные / Проверка установки: три контрольных расчёта выполнены",
+      "charts": 0,
+      "tables": 4,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "success",
+          "text": "Загружено: Опытный Ni–15Al"
+        },
+        {
+          "kind": "success",
+          "text": "Модуль Scheil–Gulliver доступен."
+        },
+        {
+          "kind": "success",
+          "text": "Модуль диффузии Kawin доступен."
+        },
+        {
+          "kind": "success",
+          "text": "Модуль кинетики выделений Kawin доступен."
+        },
+        {
+          "kind": "success",
+          "text": "Все три контрольных расчёта пройдены."
+        }
+      ],
+      "tabs": [
+        "Проекты и данные",
+        "Проверка установки"
+      ],
+      "expanded": [],
+      "height_px": 2327
+    },
+    {
+      "files": [
+        "36_soobshchenie_error_tyomn.png"
+      ],
+      "grey": [],
+      "slug": "soobshchenie_error",
+      "theme": "Dark",
+      "what": "st.error: неверная добавка «QQ=5» в боковой панели",
+      "charts": 0,
+      "tables": 0,
+      "alerts": [
+        {
+          "kind": "success",
+          "text": "Элементов: 22 · Фаз: 99"
+        },
+        {
+          "kind": "error",
+          "text": "Элемент 'QQ' отсутствует в базе 'ni'."
+        }
+      ],
+      "tabs": [],
+      "expanded": [],
+      "height_px": 1536
+    }
+  ]
+}

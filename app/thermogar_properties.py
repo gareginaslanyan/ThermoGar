@@ -32,7 +32,7 @@ import pandas as pd
 import streamlit as st
 from pycalphad import equilibrium, variables as v
 
-from thermogar_palette import chart_roles
+from thermogar_palette import ThemedFigure, chart_roles, resolve_figure
 from thermogar_physical import calculate_physical_properties
 from thermogar_release_ui import (
     release_calculation_button,
@@ -1384,10 +1384,13 @@ def _calculate_elastic_from_editor(
 
 def _elastic_figure(
     bounds: pd.DataFrame,
-    theme_type: str | None,
+    theme_type: str | None = None,
 ) -> plt.Figure:
     roles = chart_roles(theme_type)
     figure, axes = plt.subplots(figsize=(9, 5.5))
+    # Фон фигуры и осей — роль background темы (в тёмной теме был белым).
+    figure.set_facecolor(roles["background"])
+    axes.set_facecolor(roles["background"])
     x = np.arange(len(bounds))
     axes.bar(
         x,
@@ -1399,7 +1402,7 @@ def _elastic_figure(
         [str(value).split(" — ")[0] for value in bounds["Метод"]],
     )
     axes.set_ylabel("Модуль Юнга E, ГПа")
-    axes.set_title("ThermoGar: границы Voigt–Reuss–Hill")
+    axes.set_title("Границы Voigt–Reuss–Hill")
     axes.grid(True, axis="y", color=roles["grid"], alpha=0.35)
     axes.tick_params(colors=roles["axis"])
     axes.yaxis.label.set_color(roles["axis"])
@@ -1413,15 +1416,18 @@ def _elastic_figure(
 
 def _strengthening_figure(
     table: pd.DataFrame,
-    theme_type: str | None,
+    theme_type: str | None = None,
 ) -> plt.Figure:
     roles = chart_roles(theme_type)
     figure, axes = plt.subplots(figsize=(9, 5.5))
+    # Фон фигуры и осей — роль background темы (в тёмной теме был белым).
+    figure.set_facecolor(roles["background"])
+    axes.set_facecolor(roles["background"])
     x = np.arange(len(table))
     axes.bar(
         x,
         table["Вклад, МПа"].to_numpy(dtype=float),
-        color=roles["primary_dark"],
+        color=roles["primary"],
     )
     axes.set_xticks(x)
     axes.set_xticklabels(
@@ -1438,7 +1444,7 @@ def _strengthening_figure(
         ha="right",
     )
     axes.set_ylabel("Вклад, МПа")
-    axes.set_title("ThermoGar: введённые вклады упрочнения")
+    axes.set_title("Введённые вклады упрочнения")
     axes.grid(True, axis="y", color=roles["grid"], alpha=0.35)
     axes.tick_params(colors=roles["axis"])
     axes.yaxis.label.set_color(roles["axis"])
@@ -1650,7 +1656,10 @@ def render_elastic_section(
                 physical_result.quality_label,
                 paths,
             )
-            figure = _elastic_figure(result.bounds_table, theme_type)
+            # Построитель с данными (решение 7Б): при смене темы фигура
+            # строится заново без повторного расчёта.
+            figure = ThemedFigure(_elastic_figure, result.bounds_table)
+            figure.figure(theme_type)
 
             settings = pd.DataFrame(
                 [
@@ -1727,7 +1736,7 @@ def render_elastic_section(
         "могут вывести реальную систему за границы этой простой модели."
     )
 
-    st.pyplot(state["figure"])
+    st.pyplot(resolve_figure(state["figure"], theme_type))
     st.dataframe(result.bounds_table, width="stretch", hide_index=True)
     st.dataframe(result.phase_table, width="stretch", hide_index=True)
 
@@ -2102,10 +2111,11 @@ def render_strengthening_section(
                 ],
                 columns=["Параметр", "Значение"],
             )
-            figure = _strengthening_figure(
+            figure = ThemedFigure(
+                _strengthening_figure,
                 result.contribution_table,
-                theme_type,
             )
+            figure.figure(theme_type)
             st.session_state["strengthening_result"] = {
                 "result": result,
                 "assumptions": assumptions,
@@ -2150,7 +2160,7 @@ def render_strengthening_section(
 
     for warning in result.warnings:
         st.warning(warning)
-    st.pyplot(state["figure"])
+    st.pyplot(resolve_figure(state["figure"], theme_type))
     st.dataframe(
         result.contribution_table,
         width="stretch",

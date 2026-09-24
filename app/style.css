@@ -1,22 +1,21 @@
 /* ThermoGar — минимальный слой поверх штатной темы Streamlit. */
 
-/* L-6: контейнер рассчитан под графики 11.5 in × 100 dpi. */
-.main .block-container {
-    max-width: 1150px;
-    padding-top: 24px;
-    padding-bottom: 32px;
-}
+/* Цвета — light-dark(светлая, тёмная): Streamlit 1.62 ставит color-scheme
+   light/dark на контейнер приложения и на боковую панель. */
 
 /* T-6 / D-27: сплошной текст не растягивается на всю ширину. */
 .stMarkdown p,
+.stMarkdown li,
 .stCaption,
 div[data-testid="stAlert"] p {
     max-width: 60ch;
 }
 
-/* C-12: вторичный текст берётся из активной темы, а не из alpha-канала. */
-.stCaption {
-    color: var(--st-gray-text-color, var(--st-text-color));
+/* C-12: вторичный текст — сплошным цветом роли axis, а не прозрачностью
+   (Streamlit ставит подписи st.caption непрозрачность 0.6). */
+div[data-testid="stCaptionContainer"] {
+    color: light-dark(#4B4F56, #BCC2CD);
+    opacity: 1;
 }
 
 /* L-2: подпись ближе к своему полю, чем к следующей группе. */
@@ -27,4 +26,42 @@ div[data-testid="stWidgetLabel"] {
 /* Явный межгрупповой ритм. */
 div[data-testid="stVerticalBlock"] {
     row-gap: 16px;
+}
+
+/* Отступление от S-4, решение владельца 24.09.2026 (1Г, 2Б, 4Б); проверка S-5 — 21-Е.
+   Поля ввода — тёмная рамка 1 px в покое; в фокусе рамка остаётся штатной.
+   Выбор из списка и мультивыбор в 1.62 — react-aria: рамку рисует role="group".
+   Полей даты и времени в приложении нет. */
+[data-testid="stTextInputRootElement"]:not(:focus-within),
+[data-testid="stNumberInputContainer"]:not(:focus-within),
+[data-testid="stTextAreaRootElement"]:not(:focus-within),
+div[data-testid="stSelectbox"] div[role="group"]:not(:focus-within),
+div[data-testid="stMultiSelect"] div[role="group"]:not(:focus-within) {
+    border: 1px solid light-dark(#79808B, #8A92A0);
+}
+
+/* Отступление от S-4, решение владельца 24.09.2026 (1Г, 2Б, 4Б); проверка S-5 — 21-Е.
+   Текст основной кнопки во всех состояниях: белый на #1F60C1, #17181B на #5C97E8. */
+button[data-testid="stBaseButton-primary"],
+button[data-testid="stBaseButton-primary"] *,
+button[data-testid="stBaseButton-primaryFormSubmit"],
+button[data-testid="stBaseButton-primaryFormSubmit"] * {
+    color: light-dark(#FFFFFF, #17181B) !important;
+}
+
+/* Отступление от S-4, решение владельца 24.09.2026 (1Г, 2Б, 4Б); проверка S-5 — 21-Е.
+   Подсказка «Press Enter to apply» под полями не выводится. */
+[data-testid="InputInstructions"] {
+    display: none;
+}
+
+/* А-8: белые поверхности на холодном фоне — раскрытия и формы. */
+div[data-testid="stExpander"] details,
+div[data-testid="stForm"] {
+    background-color: light-dark(#FFFFFF, #1F2226);
+}
+
+/* Наблюдатель смены темы (решение 7Б) места на странице не занимает. */
+.st-key-thermogar_theme_watch {
+    display: none;
 }
