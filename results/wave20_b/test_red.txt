@@ -1,0 +1,66 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0 -- D:\Pets\ThermoGar\.venv-windows\Scripts\python.exe
+rootdir: D:\Pets\ThermoGar-w20b
+plugins: anyio-4.15.1, cov-7.1.0, timeout-2.4.0
+collecting ... collected 8 items
+
+tools/test_tab_snapshot_compare.py::test_same_files_equal PASSED         [ 12%]
+tools/test_tab_snapshot_compare.py::test_time_only_with_rule_equal_with_exceptions PASSED [ 25%]
+tools/test_tab_snapshot_compare.py::test_crlf_against_lf_differ FAILED   [ 37%]
+tools/test_tab_snapshot_compare.py::test_crlf_against_lf_plus_time_differ FAILED [ 50%]
+tools/test_tab_snapshot_compare.py::test_missing_final_newline_differ FAILED [ 62%]
+tools/test_tab_snapshot_compare.py::test_changed_number_differ PASSED    [ 75%]
+tools/test_tab_snapshot_compare.py::test_path_rule_pairs_files PASSED    [ 87%]
+tools/test_tab_snapshot_compare.py::test_broken_sha256_not_full_equality PASSED [100%]
+
+================================== FAILURES ===================================
+_________________________ test_crlf_against_lf_differ _________________________
+
+tmp_path = WindowsPath('C:/Users/gareg/AppData/Local/Temp/pytest-of-gareg/pytest-46/test_crlf_against_lf_differ0')
+
+    def test_crlf_against_lf_differ(tmp_path):
+        a = {"c1/karkas.txt": b"one\r\ntwo\r\n"}
+        b = {"c1/karkas.txt": b"one\ntwo\n"}
+        code, status, report = run_compare(tmp_path, a, b)
+>       assert verdict(status["c1/karkas.txt"]) == "различаются"
+E       AssertionError: assert 'равны с исключениями' == 'различаются'
+E         
+E         - различаются
+E         + равны с исключениями
+
+tools\test_tab_snapshot_compare.py:93: AssertionError
+____________________ test_crlf_against_lf_plus_time_differ ____________________
+
+tmp_path = WindowsPath('C:/Users/gareg/AppData/Local/Temp/pytest-of-gareg/pytest-46/test_crlf_against_lf_plus_time0')
+
+    def test_crlf_against_lf_plus_time_differ(tmp_path):
+        a = {"c1/meta.json": b'{\r\n  "start": "2026-09-23T15:03:46+03:00"\r\n}\r\n'}
+        b = {"c1/meta.json": b'{\n  "start": "2026-09-23T16:20:56+03:00"\n}\n'}
+        code, status, report = run_compare(tmp_path, a, b, [TIME_RULE])
+>       assert verdict(status["c1/meta.json"]) == "различаются"
+E       AssertionError: assert 'равны с исключениями' == 'различаются'
+E         
+E         - различаются
+E         + равны с исключениями
+
+tools\test_tab_snapshot_compare.py:103: AssertionError
+______________________ test_missing_final_newline_differ ______________________
+
+tmp_path = WindowsPath('C:/Users/gareg/AppData/Local/Temp/pytest-of-gareg/pytest-46/test_missing_final_newline_dif0')
+
+    def test_missing_final_newline_differ(tmp_path):
+        a = {"c1/karkas.txt": b"one\ntwo\n"}
+        b = {"c1/karkas.txt": b"one\ntwo"}
+        code, status, report = run_compare(tmp_path, a, b)
+>       assert verdict(status["c1/karkas.txt"]) == "различаются"
+E       AssertionError: assert 'равны с исключениями' == 'различаются'
+E         
+E         - различаются
+E         + равны с исключениями
+
+tools\test_tab_snapshot_compare.py:113: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/test_tab_snapshot_compare.py::test_crlf_against_lf_differ - Asse...
+FAILED tools/test_tab_snapshot_compare.py::test_crlf_against_lf_plus_time_differ
+FAILED tools/test_tab_snapshot_compare.py::test_missing_final_newline_differ
+========================= 3 failed, 5 passed in 1.36s =========================

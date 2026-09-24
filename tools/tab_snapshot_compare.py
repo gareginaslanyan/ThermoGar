@@ -19,6 +19,11 @@
 (поле в имени, например метка времени): файлы ставятся в пару по пути после
 замены, а их содержимое сравнивается как обычно. ``где`` — шаблоны пути
 относительно каталога (``fnmatch``, через запятую), например ``*/meta.json``.
+
+20-Б: правила ``re:`` применяются к строке без её конца; концы строк (CRLF/LF),
+завершающий перевод строки и BOM сравниваются как есть. Различие байтов, которое
+не объясняет ни одно правило, — «различаются» с причиной (например «только
+концы строк»), а не «равны с исключениями».
 """
 
 from __future__ import annotations
@@ -96,9 +101,41 @@ def integrity(root: Path, files: dict[str, Path]) -> list[str]:
 
 def as_text(data: bytes) -> str | None:
     try:
-        return data.decode("utf-8-sig")
+        return data.decode("utf-8")  # BOM остаётся в тексте и сравнивается
     except UnicodeDecodeError:
         return None
+
+
+def split_ends(text: str) -> tuple[list[str], list[str]]:
+    """Строки без концов и сами концы (``\\r\\n``, ``\\n``…; у последней строки может быть пусто)."""
+
+    bodies: list[str] = []
+    ends: list[str] = []
+    for piece in text.splitlines(keepends=True):
+        body = piece.splitlines()[0]
+        bodies.append(body)
+        ends.append(piece[len(body):])
+    return bodies, ends
+
+
+END_NAMES = {"\r\n": "CRLF", "\n": "LF", "\r": "CR", "": "нет"}
+
+
+def end_name(end: str) -> str:
+    return END_NAMES.get(end, repr(end))
+
+
+def ends_reason(a_ends: list[str], b_ends: list[str]) -> str:
+    """Чем различаются концы строк при одинаковом содержимом строк."""
+
+    differ = [i for i, (a, b) in enumerate(zip(a_ends, b_ends)) if a != b]
+    last = len(a_ends) - 1
+    final = bool(differ) and differ[-1] == last and "" in (a_ends[last], b_ends[last])
+    if final and len(differ) == 1:
+        return "завершающий перевод строки"
+    if final:
+        return "концы строк и завершающий перевод строки"
+    return "концы строк"
 
 
 def normalized(lines: list[str], rules: list[Rule]) -> tuple[list[str], set[int]]:
@@ -169,12 +206,33 @@ def compare(a_root: Path, b_root: Path, rules: list[Rule], limit: int) -> tuple[
             report.append(f"различаются | {rel} | двоичный, байт {len(a_data)} / {len(b_data)}")
             continue
         active = [rule for rule in rules if not rule.on_path and rule.applies(rel)]
-        a_lines, used_a = normalized(a_text.splitlines(), active)
-        b_lines, used_b = normalized(b_text.splitlines(), active)
-        if a_lines == b_lines:
+        a_bodies, a_ends = split_ends(a_text)
+        b_bodies, b_ends = split_ends(b_text)
+        a_lines, used_a = normalized(a_bodies, active)
+        b_lines, used_b = normalized(b_bodies, active)
+        used = ",".join(str(n) for n in sorted(used_a | used_b | path_rules))
+        if a_lines == b_lines and a_ends == b_ends and used_a | used_b:
             counts["равны с исключениями"] += 1
-            used = ",".join(str(n) for n in sorted(used_a | used_b | path_rules))
             report.append(f"равны с исключениями | {rel} | правила {used}")
+            continue
+        if a_lines == b_lines:
+            # Содержимое строк после правил совпало, байты — нет: правилами не объяснено.
+            counts["различаются"] += 1
+            if a_ends == b_ends:
+                report.append(f"различаются | {rel} | причина не установлена")
+                continue
+            reason = ends_reason(a_ends, b_ends)
+            reason = f"{reason}; остальное — правила {used}" if used_a | used_b else f"только {reason}"
+            report.append(f"различаются | {rel} | {reason}")
+            shown = 0
+            for number, (old, new) in enumerate(zip(a_ends, b_ends), start=1):
+                if old == new:
+                    continue
+                if shown >= limit:
+                    report.append(f"    … показано {limit} различающихся строк")
+                    break
+                report.append(f"    строка {number} | конец строки было: {end_name(old)} | стало: {end_name(new)}")
+                shown += 1
             continue
         counts["различаются"] += 1
         report.append(f"различаются | {rel}")

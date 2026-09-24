@@ -1,0 +1,16 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0 -- D:\Pets\ThermoGar\.venv-windows\Scripts\python.exe
+rootdir: D:\Pets\ThermoGar-w20b
+plugins: anyio-4.15.1, cov-7.1.0, timeout-2.4.0
+collecting ... collected 8 items
+
+tools/test_tab_snapshot_compare.py::test_same_files_equal PASSED         [ 12%]
+tools/test_tab_snapshot_compare.py::test_time_only_with_rule_equal_with_exceptions PASSED [ 25%]
+tools/test_tab_snapshot_compare.py::test_crlf_against_lf_differ PASSED   [ 37%]
+tools/test_tab_snapshot_compare.py::test_crlf_against_lf_plus_time_differ PASSED [ 50%]
+tools/test_tab_snapshot_compare.py::test_missing_final_newline_differ PASSED [ 62%]
+tools/test_tab_snapshot_compare.py::test_changed_number_differ PASSED    [ 75%]
+tools/test_tab_snapshot_compare.py::test_path_rule_pairs_files PASSED    [ 87%]
+tools/test_tab_snapshot_compare.py::test_broken_sha256_not_full_equality PASSED [100%]
+
+============================== 8 passed in 1.14s ==============================
