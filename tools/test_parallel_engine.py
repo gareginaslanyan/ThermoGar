@@ -227,7 +227,8 @@ def test_sha_mismatch_rejected_before_start(db_path: Path) -> None:
         tp.ParallelEquilibrium(db_path, wrong, workers=2)
     after = {child.pid for child in psutil.Process().children(recursive=True)}
 
-    assert "SHA-256" in str(failure.value)
+    # 21-Г, часть 2, строка 105 (21-Ж): текст отказа без SHA-256.
+    assert str(failure.value) == "Файл базы изменился во время загрузки. Повторите действие."
     assert after == before, "Отказ по SHA не должен порождать процессы"
 
 
@@ -323,7 +324,8 @@ def test_failed_point_is_isolated(engine: tp.ParallelEquilibrium, case: BenchCas
     assert results[0].phase_fractions and results[2].phase_fractions
     assert results[1].error and results[1].error_type
     # Точка без температуры отбивается билдером условий, а не солвером.
-    assert results[3].error_type == "ValueError"
+    # 21-Ж: своё сообщение ThermoGar — UserValueError (подкласс ValueError).
+    assert results[3].error_type == "UserValueError"
     assert "T" in str(results[3].error)
     # Пул остался рабочим.
     assert engine.pool_is_open

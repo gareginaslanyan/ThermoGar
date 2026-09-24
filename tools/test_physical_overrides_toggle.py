@@ -143,7 +143,8 @@ def test_toggle_is_present_and_on_by_default() -> None:
     assert toggle.value is True
     assert not toggle.disabled
     assert "поправки проекта ThermoGar" in toggle.label
-    assert toggle.help and "DTCRBCC" in toggle.help
+    # 21-Г, часть 1, строка 26 (21-Ж): в подсказке нет обозначения DTCRBCC.
+    assert toggle.help and "тепловое расширение хрома" in toggle.help
 
 
 def test_switching_off_changes_density_and_result_note() -> None:

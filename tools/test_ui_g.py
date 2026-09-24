@@ -411,8 +411,9 @@ def test_kwn_precipitation(database_key: str) -> None:
         assert result.stop_note.startswith("Расчёт остановлен"), result.stop_note
         others = quality.drop(index=COMPOSITION_CHECK)["Статус"]
         assert (others == "пройдена").all(), others
-        assert result.stop_note in [element.value for element in app.warning]
-        assert new_errors(app) == [QUALITY_FAILED_ERROR], new_errors(app)
+        # 21-Г, часть 3, строка 29 (21-Ж): stop_note — st.error.
+        assert result.stop_note in [element.value for element in app.error]
+        assert new_errors(app) == [result.stop_note, QUALITY_FAILED_ERROR], new_errors(app)
     else:
         assert new_errors(app) == [], new_errors(app)
         assert result.stop_note == ""
@@ -635,8 +636,9 @@ def test_bad_couple_composition_is_reported(
     app.run()
 
     assert_no_traceback(app)
-    warnings = "\n".join(element.value for element in app.warning)
-    assert fragment in warnings, warnings
+    # 21-Г, часть 3, строка 11 (21-Ж): «Исправьте составы пары.» — st.error.
+    errors = "\n".join(element.value for element in app.error)
+    assert fragment in errors, errors
 
 
 def test_kwn_size_grid_is_validated() -> None:
