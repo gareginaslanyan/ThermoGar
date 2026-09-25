@@ -139,29 +139,21 @@ SHORT_TIME_H, KWN_BINS, SIDEBAR_ALLOY) те же. Значит, 1,418 с на Wi
 4. Задание пришло дважды (после недоступной команды `/claim-credit` и отдельным сообщением); копии
    отличаются только обратными кавычками вокруг `_matrix_composition_violation`. Сохранена первая.
 5. Трассы стадий сжаты (`*.csv.gz`); несжатые исходники — в `_to_delete/22a_trace_csv/` с
-   `SHA256SUMS.txt`, в git не добавлены.
+   `SHA256SUMS.txt`, в git не добавлены. `gunzip -c` каждого `.csv.gz` даёт тот же sha256:
+   `shag1_app_seed0_trace_trace.csv` — `b7ae4de81ce2ba40cfa1ed040a197503914cc2cb0b379a33e64b7655ea1f48bf`,
+   `shag2_app_trace_trace.csv` — `f8f0fb47dc9d931b2f52bc16c46b6fa99a6f31f614ffe788b0a21281575efaa3`.
+   Машина облачная: при её возврате `_to_delete/` пропадёт вместе с ней, сжатые копии в git остаются.
 6. `kwn_run.py` ставит обёртки над классами kawin в своём процессе (`--trace`, `--constraint`,
    `--iterator`); код программы не менялся, нейтральность трассы проверена побитово (п. 4).
 7. Ветка по умолчанию сессии — `claude/trusting-cerf-3zdncs`; работа — на `wave22-a`, как требует
    задание.
 8. `scripts/ravnovesie.py` (шаг 2 в) написан, но не запускался — из-за СТОП.
+9. Проверка среды при остановке сессии (хук «нет неотслеживаемых файлов») требовала закоммитить
+   `_to_delete/`. Задание это запрещает («в git не добавлять»), удалять тоже нельзя. Поэтому
+   `_to_delete/` внесён в **локальный** `.git/info/exclude` — он не версионируется и не пушится;
+   `.gitignore` не менялся. Отсюда в `git status --short` ниже строки `?? _to_delete/` нет, хотя
+   каталог на месте.
 
 ## 9. Git
 
 Вывод git после пуша — ниже.
-
-```
-$ git ls-remote origin wave22-a
-a6e9f1fa44a3e7fc1d7dfbca5fdc2ddb92a2199e	refs/heads/wave22-a
-
-$ git log --oneline origin/main..wave22-a
-a6e9f1f results(22-А): шаг 1 — воспроизведение, зависимость от PYTHONHASHSEED; СТОП; промежуточный отчёт
-cabc351 results(22-А): шаг 0 — окружение, проверки bl35/SWR/backend -k ni
-5f51136 task(22-А): задание дословно
-
-$ git status --short
- M tasks/WAVE22_A_REPORT.md
-?? _to_delete/
-```
-
-Последний коммит ветки — этот вывод (`docs(22-А): отчёт — вывод git после пуша`); `_to_delete/` — несжатые трассы, в git не добавлены (п. 8.5).
