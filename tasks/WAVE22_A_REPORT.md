@@ -157,3 +157,19 @@ SHORT_TIME_H, KWN_BINS, SIDEBAR_ALLOY) те же. Значит, 1,418 с на Wi
 ## 9. Git
 
 Вывод git после пуша — ниже.
+
+```
+$ git ls-remote origin wave22-a
+547b74b35bf8046a34a8b70cd852152771dac50c	refs/heads/wave22-a
+
+$ git log --oneline origin/main..wave22-a
+547b74b docs(22-А): отчёт — sha256 трасс, _to_delete в локальном exclude
+6f7613b docs(22-А): отчёт — вывод git после пуша
+a6e9f1f results(22-А): шаг 1 — воспроизведение, зависимость от PYTHONHASHSEED; СТОП; промежуточный отчёт
+cabc351 results(22-А): шаг 0 — окружение, проверки bl35/SWR/backend -k ni
+5f51136 task(22-А): задание дословно
+
+$ git status --short
+```
+
+Вывод снят до последнего коммита ветки — `docs(22-А): отчёт — вывод git после пуша`, который его и добавляет.
