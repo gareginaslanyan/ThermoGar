@@ -313,3 +313,30 @@
 `21i_temp_x`, `21i_pereklyuchatel_proba`, `21i_sokhranenie_proba`, `21i_sokhranenie_proba2`, `21i_formy_proba`, `21i_formy_proba2`, `21i_state`, `21i_pycache_app` — в каждой `OPIS_sha256.txt`.
 
 ## git
+
+Вывод после пуша отчёта (`ee41fb2`). Этот раздел дописан следующим коммитом, он в списке не виден.
+
+`git ls-remote origin main wave21-i`:
+
+```
+ce3bd5365e7a71f8c29a485be4f313c815907eb2	refs/heads/main
+ee41fb2274b917aff94ef88cc15cc0393864ec83	refs/heads/wave21-i
+```
+
+`git log --oneline ce3bd53..wave21-i`:
+
+```
+ee41fb2 docs(21-И): отчёт; REGISTER — 21-И сдано
+6f63252 results(21-И): логи полной регрессии, память test_ui_f
+ec89c18 results(21-И): скрипты, кадры 11–14 и 22–28 в двух темах, переключатель по пикселям, сохранение значений, замер длинных форм
+f8272da fix(21-И): селектор выбранного варианта по DOM Streamlit 1.62
+b84301f feat(21-И): «Кинетика» и «Затвердевание» — переключатель вместо вкладок (N-4)
+2e27f6b docs(21-И): REGISTER — приёмка 21-З, решение по синему акценту; 21-И и 21-К в работе; BL-64
+c974fc2 docs(21-И): задание
+```
+
+`git status --short`:
+
+```
+?? _to_delete/
+```
