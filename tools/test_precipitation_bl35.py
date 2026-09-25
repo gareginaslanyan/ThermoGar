@@ -33,10 +33,14 @@ COMPOSITION_CHECK = "Состав матрицы допустим"
 
 def _model(rows: list[list[float]]) -> SimpleNamespace:
     composition = np.asarray(rows, float)
+    # 22-Б: условие читает состав до зажима — (x0 − Σ fconc)/(1 − Σ f). Без
+    # доли выделений и с fconc = x0 − x он равен записанному составу строк.
     data = SimpleNamespace(
         n=len(rows) - 1,
         composition=composition,
         time=np.arange(len(rows), dtype=float),
+        volFrac=np.zeros((len(rows), 1)),
+        fconc=(composition[0] - composition)[:, None, :],
     )
     return SimpleNamespace(data=data)
 
