@@ -33,3 +33,190 @@ tools/test_precipitation_grid.py::test_run_precipitation_refuses_minimum_radius_
 tools/test_precipitation_grid.py::test_run_precipitation_on_resolved_grid_passes_all_checks PASSED [ 76%]
 tools/test_precipitation_grid.py::test_run_precipitation_refuses_bulk_case_a5_before_solving PASSED [ 79%]
 tools/test_precipitation_grid.py::test_run_precipitation_refuses_grain_boundary_case_a5_before_solving PASSED [ 82%]
+tools/test_precipitation_grid.py::test_run_precipitation_boundary_from_both_sides PASSED [ 85%]
+tools/test_precipitation_grid.py::test_run_precipitation_warns_and_solves_on_the_ni_section_default PASSED [ 88%]
+tools/test_precipitation_grid.py::test_run_precipitation_still_solves_five_solutes_of_ladder_b PASSED [ 91%]
+tools/test_precipitation_grid.py::test_nucleus_estimate_does_not_change_kinetics PASSED [ 94%]
+tools/test_wave15_z.py::test_run_precipitation_warns_when_nucleus_exceeds_cmax PASSED [ 97%]
+tools/test_wave15_z.py::test_run_precipitation_is_silent_when_cmax_covers_nucleus PASSED [100%]
+
+=============================== warnings summary ===============================
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:10
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:10: DeprecationWarning: invalid escape sequence '\G'
+    '''
+
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:25
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:25: DeprecationWarning: invalid escape sequence '\G'
+    '''
+
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:62
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:62: DeprecationWarning: invalid escape sequence '\G'
+    '''
+
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:325
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:325: DeprecationWarning: invalid escape sequence '\g'
+    '''
+
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:340
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:340: DeprecationWarning: invalid escape sequence '\g'
+    '''
+
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/PopulationBalance.py:724
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/PopulationBalance.py:724: DeprecationWarning: invalid escape sequence '\i'
+    '''
+
+tools/test_precipitation_grid.py: 12 warnings
+tools/test_wave15_z.py: 2 warnings
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+    incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+__________ test_run_precipitation_on_resolved_grid_passes_all_checks ___________
+----------------------------- Captured stderr call -----------------------------
+2026-09-25 14:28:58.449 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:28:58.659 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:28:58.787 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:28:58.899 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:28:58.988 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call -------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+______ test_run_precipitation_warns_and_solves_on_the_ni_section_default _______
+----------------------------- Captured stderr call -----------------------------
+2026-09-25 14:29:48.850 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:29:48.892 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:29:49.157 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:29:49.251 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:29:49.305 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call -------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+_________ test_run_precipitation_still_solves_five_solutes_of_ladder_b _________
+----------------------------- Captured stderr call -----------------------------
+2026-09-25 14:30:07.690 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:07.733 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:07.864 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:07.976 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:08.038 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call -------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+________________ test_nucleus_estimate_does_not_change_kinetics ________________
+----------------------------- Captured stderr call -----------------------------
+2026-09-25 14:30:19.825 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:19.882 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:20.018 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:20.124 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:20.206 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:31.641 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:31.687 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:31.817 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:31.921 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:32.001 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call -------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+____________ test_run_precipitation_warns_when_nucleus_exceeds_cmax ____________
+----------------------------- Captured stderr call -----------------------------
+2026-09-25 14:30:37.773 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:37.819 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:37.881 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:37.931 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:37.991 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call -------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+__________ test_run_precipitation_is_silent_when_cmax_covers_nucleus ___________
+----------------------------- Captured stderr call -----------------------------
+2026-09-25 14:30:43.207 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:43.251 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:43.310 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:43.365 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:43.433 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call -------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+============================== slowest durations ===============================
+23.99s call     tools/test_precipitation_grid.py::test_nucleus_estimate_does_not_change_kinetics
+18.86s call     tools/test_precipitation_grid.py::test_run_precipitation_boundary_from_both_sides
+18.75s call     tools/test_precipitation_grid.py::test_run_precipitation_still_solves_five_solutes_of_ladder_b
+17.51s call     tools/test_precipitation_grid.py::test_run_precipitation_warns_and_solves_on_the_ni_section_default
+11.59s call     tools/test_precipitation_grid.py::test_run_precipitation_on_resolved_grid_passes_all_checks
+7.78s call     tools/test_precipitation_grid.py::test_run_precipitation_refuses_bulk_case_a5_before_solving
+6.13s call     tools/test_precipitation_grid.py::test_run_precipitation_refuses_grain_boundary_case_a5_before_solving
+6.10s call     tools/test_wave15_z.py::test_run_precipitation_warns_when_nucleus_exceeds_cmax
+6.01s call     tools/test_precipitation_grid.py::test_run_precipitation_refuses_coarse_grid_before_solving
+5.56s call     tools/test_precipitation_grid.py::test_run_precipitation_refuses_minimum_radius_above_nucleus
+5.23s call     tools/test_wave15_z.py::test_run_precipitation_is_silent_when_cmax_covers_nucleus
+0.07s call     tools/test_precipitation_grid.py::test_check_is_silent_without_clamp
+0.05s call     tools/test_precipitation_grid.py::test_check_takes_the_worst_temperature_of_a_profile
+0.05s call     tools/test_precipitation_grid.py::test_check_boundary_from_both_sides[True]
+0.05s call     tools/test_precipitation_grid.py::test_check_boundary_from_both_sides[False]
+0.05s call     tools/test_precipitation_grid.py::test_check_warns_between_floor_and_refusal_ratio[True]
+0.04s call     tools/test_precipitation_grid.py::test_check_warns_between_floor_and_refusal_ratio[False]
+0.04s call     tools/test_precipitation_grid.py::test_check_refuses_bulk_without_barrier_wording
+0.03s call     tools/test_precipitation_grid.py::test_check_refuses_grain_boundaries_with_the_derived_reason
+0.01s call     tools/test_precipitation_grid.py::test_quality_passes_on_resolved_grid
+
+(82 durations < 0.005s hidden.  Use -vv to show these durations.)
+=========================== short test summary info ============================
+PASSED tools/test_precipitation_grid.py::test_kawin_puts_nucleus_below_cmin_into_last_class
+PASSED tools/test_precipitation_grid.py::test_kawin_puts_nucleus_into_class_wider_than_nucleus
+PASSED tools/test_precipitation_grid.py::test_quality_passes_on_resolved_grid
+PASSED tools/test_precipitation_grid.py::test_volume_fraction_of_one_is_not_a_passed_check
+PASSED tools/test_precipitation_grid.py::test_volume_fraction_ceiling_checked_without_grid_arguments
+PASSED tools/test_precipitation_grid.py::test_quality_flags_class_wider_than_critical_radius
+PASSED tools/test_precipitation_grid.py::test_quality_flags_nucleus_below_minimum_radius
+PASSED tools/test_precipitation_grid.py::test_quality_ignores_steps_without_nucleation
+PASSED tools/test_precipitation_grid.py::test_check_size_grid_refuses_class_wider_than_critical_radius
+PASSED tools/test_precipitation_grid.py::test_check_size_grid_refuses_nucleus_below_minimum_radius
+PASSED tools/test_precipitation_grid.py::test_check_size_grid_uses_strictest_temperature_of_profile
+PASSED tools/test_precipitation_grid.py::test_check_size_grid_accepts_default_grid_and_empty_estimates
+PASSED tools/test_precipitation_grid.py::test_refusal_ratio_is_the_zero_of_the_grain_boundary_barrier
+PASSED tools/test_precipitation_grid.py::test_check_refuses_bulk_without_barrier_wording
+PASSED tools/test_precipitation_grid.py::test_check_refuses_grain_boundaries_with_the_derived_reason
+PASSED tools/test_precipitation_grid.py::test_check_warns_between_floor_and_refusal_ratio[False]
+PASSED tools/test_precipitation_grid.py::test_check_warns_between_floor_and_refusal_ratio[True]
+PASSED tools/test_precipitation_grid.py::test_check_is_silent_without_clamp
+PASSED tools/test_precipitation_grid.py::test_check_boundary_from_both_sides[False]
+PASSED tools/test_precipitation_grid.py::test_check_boundary_from_both_sides[True]
+PASSED tools/test_precipitation_grid.py::test_check_takes_the_worst_temperature_of_a_profile
+PASSED tools/test_precipitation_grid.py::test_composition_accepts_ten_solutes
+PASSED tools/test_precipitation_grid.py::test_composition_refuses_eleven_solutes_as_measured_limit
+PASSED tools/test_precipitation_grid.py::test_run_precipitation_refuses_coarse_grid_before_solving
+PASSED tools/test_precipitation_grid.py::test_run_precipitation_refuses_minimum_radius_above_nucleus
+PASSED tools/test_precipitation_grid.py::test_run_precipitation_on_resolved_grid_passes_all_checks
+PASSED tools/test_precipitation_grid.py::test_run_precipitation_refuses_bulk_case_a5_before_solving
+PASSED tools/test_precipitation_grid.py::test_run_precipitation_refuses_grain_boundary_case_a5_before_solving
+PASSED tools/test_precipitation_grid.py::test_run_precipitation_boundary_from_both_sides
+PASSED tools/test_precipitation_grid.py::test_run_precipitation_warns_and_solves_on_the_ni_section_default
+PASSED tools/test_precipitation_grid.py::test_run_precipitation_still_solves_five_solutes_of_ladder_b
+PASSED tools/test_precipitation_grid.py::test_nucleus_estimate_does_not_change_kinetics
+PASSED tools/test_wave15_z.py::test_run_precipitation_warns_when_nucleus_exceeds_cmax
+PASSED tools/test_wave15_z.py::test_run_precipitation_is_silent_when_cmax_covers_nucleus
+================= 34 passed, 20 warnings in 132.93s (0:02:12) ==================
+ZAMER: код=0; стена=134.8 с; пик RSS=0.712 ГиБ (746692 КиБ)

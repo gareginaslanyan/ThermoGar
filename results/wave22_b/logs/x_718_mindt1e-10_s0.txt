@@ -1,0 +1,13 @@
+# 2026-09-25T14:31:59 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_b/scripts/kwn_run.py --tag x_718_mindt1e-10_s0 --cell 718 --min-dt-frac 1e-10 --progress 60
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+ЖУРНАЛ стена=60 с; t=3.71721 с (0.001033 ч); шаг=1061; доля=4.8697 %; x_AL=0.01133
+ЖУРНАЛ стена=120 с; t=3.76621 с (0.001046 ч); шаг=2289; доля=4.9799 %; x_AL=0.01134
+2026-09-25 14:34:44.586 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:34:44.677 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:34:44.819 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:34:44.937 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:34:45.000 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "x_718_mindt1e-10_s0", "status": "ok", "error": "", "wall_s": 160.37, "peak_rss_gib": 0.416, "rows": 3117, "final_time_s": 3.7977779155781284, "stop": true, "final_fraction_pct": 5.05423985919703, "final_radius_nm": 0.5433810485567818, "quality_all_passed": false, "raw_nonpositive_calls": {"calls": 12464, "stage": 1, "post": 1, "first_t": 3.796733915578124, "min_raw_over_x0": -0.00028507010173241644}}
+stop_note: Расчёт остановлен на 3.798 с модельного времени (0.001055 ч): доля Ti в матрице стала -0.0003359 ат.%, баланс масс нарушен. Показана часть расчёта до остановки. Причина: при движущей силе по базе зарождение практически безбарьерное, и выделение вычерпывает добавки из матрицы быстрее, чем модель это выдерживает.
+ZAMER: код=0; стена=165.9 с; пик RSS=0.419 ГиБ (439112 КиБ)

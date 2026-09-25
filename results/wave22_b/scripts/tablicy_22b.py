@@ -87,7 +87,21 @@ def kind(s: dict[str, Any] | None) -> str:
     d = s.get("stop_diagnostics") or {}
     if d:
         return f"{d['kind']} (невязка {comma(d['residual_max_rel'], '.2g')}·x0)"
-    return "см. разбор «до»"
+    # До правки признака в результате нет — те же функции приложения по NPZ.
+    path = DATA / f"{s.get('tag')}.npz"
+    if not path.exists():
+        return "—"
+    import sys
+    from types import SimpleNamespace
+
+    sys.path.insert(0, str(BASE.parents[1] / "app"))
+    import thermogar_precipitation as tp
+
+    with np.load(path) as archive:
+        data = SimpleNamespace(**{name: archive[name] for name in ("time", "volFrac", "fconc", "composition")})
+    residual, _index = tp._balance_residual(data, len(data.time) - 1)
+    label = "перелёт" if residual <= tp.KWN_BALANCE_RESIDUAL_LIMIT else "разрыв"
+    return f"{label} (по NPZ; невязка {comma(residual, '.2g')}·x0)"
 
 
 def row(label: str, tag: str, extra: str = "") -> str:

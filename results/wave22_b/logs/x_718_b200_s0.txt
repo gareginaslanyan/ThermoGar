@@ -1,0 +1,11 @@
+# 2026-09-25T14:31:35 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_b/scripts/kwn_run.py --tag x_718_b200_s0 --cell 718 --bins 200 --progress 60
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+2026-09-25 14:31:58.061 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:31:58.147 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:31:58.286 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:31:58.400 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:31:58.466 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "x_718_b200_s0", "status": "ok", "error": "", "wall_s": 17.97, "peak_rss_gib": 0.416, "rows": 248, "final_time_s": 4.152756441727999, "stop": true, "final_fraction_pct": 5.048963784077622, "final_radius_nm": 0.5131363698149699, "quality_all_passed": false, "raw_nonpositive_calls": {"calls": 988, "stage": 2, "post": 1, "first_t": 4.102356441728005, "min_raw_over_x0": -0.01291444566318351}}
+stop_note: Расчёт остановлен на 4.153 с модельного времени (0.001154 ч): доля Ti в матрице стала -0.01522 ат.%, баланс масс нарушен. Показана часть расчёта до остановки. Причина: при движущей силе по базе зарождение практически безбарьерное, и выделение вычерпывает добавки из матрицы быстрее, чем модель это выдерживает.
+ZAMER: код=0; стена=23.4 с; пик RSS=0.419 ГиБ (439032 КиБ)

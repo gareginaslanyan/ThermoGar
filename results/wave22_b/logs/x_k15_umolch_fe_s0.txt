@@ -4,3 +4,15 @@
 ЖУРНАЛ стена=60 с; t=6.89744 с (0.001916 ч); шаг=2048; доля=4.4099 %; x_C=3.526e-05
 ЖУРНАЛ стена=120 с; t=20.3982 с (0.005666 ч); шаг=4448; доля=4.4102 %; x_C=3.465e-05
 ЖУРНАЛ стена=180 с; t=36.1621 с (0.01005 ч); шаг=6764; доля=4.4103 %; x_C=3.422e-05
+ЖУРНАЛ стена=240 с; t=55.7247 с (0.01548 ч); шаг=9113; доля=4.4107 %; x_C=3.344e-05
+ЖУРНАЛ стена=300 с; t=80.1538 с (0.02226 ч); шаг=11509; доля=4.4110 %; x_C=3.281e-05
+ЖУРНАЛ стена=360 с; t=108.03 с (0.03001 ч); шаг=13842; доля=4.4112 %; x_C=3.242e-05
+ЖУРНАЛ стена=420 с; t=140.633 с (0.03906 ч); шаг=16136; доля=4.4114 %; x_C=3.192e-05
+ЖУРНАЛ стена=480 с; t=179.869 с (0.04996 ч); шаг=18456; доля=4.4115 %; x_C=3.171e-05
+2026-09-25 14:33:52.484 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:33:52.582 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:33:52.859 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:33:52.999 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:33:53.070 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "x_k15_umolch_fe_s0", "status": "ok", "error": "", "wall_s": 480.44, "peak_rss_gib": 0.357, "rows": 18466, "final_time_s": 180.0, "stop": false, "final_fraction_pct": 4.411603826942654, "final_radius_nm": 18.870371643062388, "quality_all_passed": true, "raw_nonpositive_calls": {"calls": 73860, "stage": 0, "post": 0, "first_t": null, "min_raw_over_x0": 0.003420752518677276}}
+ZAMER: код=0; стена=486.4 с; пик RSS=0.363 ГиБ (381068 КиБ)
