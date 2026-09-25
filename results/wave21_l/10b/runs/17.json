@@ -1,0 +1,75 @@
+{
+  "id": "17",
+  "screen": "S06",
+  "base": "al",
+  "variant": "umolch",
+  "step": "",
+  "note": "",
+  "changes": [],
+  "stem": "S06_al_umolch",
+  "free_gib_before": 7.38,
+  "state_root": "C:\\Users\\gareg\\AppData\\Local\\Temp\\tg21l_state\\17",
+  "app_start_s": 1.5,
+  "sidebar": {
+    "database": "Алюминиевые сплавы — mc_al 2.037",
+    "balance": "Al",
+    "units": "атомные %",
+    "additions": "Cu=4",
+    "sidebar_width": 300,
+    "sidebar_right": 300,
+    "default_ok": true
+  },
+  "fields_before": {},
+  "fields_after": {},
+  "button": "Построить тройную диаграмму",
+  "calc_s": 111.7,
+  "finished": true,
+  "result": {
+    "button_found": true,
+    "button_disabled": false,
+    "alerts": [
+      {
+        "kind": "info",
+        "where": "above",
+        "text": "Как читать вершины: в нижней левой вершине 100 % элемента C, в нижней правой — 100 % элемента A, в верхней — 100 % элемента B. Внутри треугольника сумма трёх долей равна 100 %."
+      },
+      {
+        "kind": "warning",
+        "where": "above",
+        "text": ""
+      },
+      {
+        "kind": "info",
+        "where": "above",
+        "text": "Выбрано больше десяти фаз. Расчёт допустим, но может занять заметно больше времени. Для первого теста можно оставить основные фазы."
+      }
+    ],
+    "texts": [
+      "Набор фаз: быстрый (41 из 64)"
+    ],
+    "metrics": [],
+    "tables": [
+      {
+        "rows": null,
+        "cols": null,
+        "headers": [],
+        "cells": []
+      }
+    ],
+    "charts": 1,
+    "switches": [],
+    "expanders": [
+      "Таблица рассчитанных границ и узлов"
+    ]
+  },
+  "status": "ok",
+  "frames": [
+    "S06_al_umolch_ch1.png",
+    "S06_al_umolch_ch2.png"
+  ],
+  "free_gib_after": 5.88,
+  "taskkill": [
+    "Успешно: Процесс, с идентификатором 4528, дочерний процесса 15160, был завершен.",
+    "Успешно: Процесс, с идентификатором 15160, дочерний процесса 10852, был завершен.\nОшибка: Не удается завершить процесс с идентификатором 4528, дочерний процесса 15160.\nПричина: Ни один из экземпляров этого задания не запущен."
+  ]
+}

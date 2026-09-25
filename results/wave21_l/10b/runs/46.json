@@ -1,0 +1,62 @@
+{
+  "id": "46",
+  "screen": "S17",
+  "base": "ni",
+  "variant": "umolch",
+  "step": "",
+  "note": "",
+  "changes": [],
+  "stem": "S17_ni_umolch",
+  "free_gib_before": 7.83,
+  "state_root": "C:\\Users\\gareg\\AppData\\Local\\Temp\\tg21l_state\\46",
+  "app_start_s": 1.6,
+  "sidebar": {
+    "database": "Никелевые сплавы — mc_ni 2.036",
+    "balance": "Ni",
+    "units": "атомные %",
+    "additions": "Al=15",
+    "sidebar_width": 300,
+    "sidebar_right": 300,
+    "default_ok": true
+  },
+  "fields_before": {},
+  "fields_after": {},
+  "button": "Рассчитать гомогенизацию",
+  "calc_s": 1.6,
+  "finished": true,
+  "result": {
+    "button_found": true,
+    "button_disabled": false,
+    "alerts": [
+      {
+        "kind": "info",
+        "where": "above",
+        "text": "Рекомендуемый первый вариант — нижняя граница Хашина—Штрикмана. Разница между верхней и нижней границами показывает чувствительность к неизвестной геометрии фаз."
+      },
+      {
+        "kind": "error",
+        "where": "below",
+        "text": "Расчёт не выполнен из-за неверных исходных данных. Для многофазной гомогенизации выберите минимум две фазы."
+      }
+    ],
+    "texts": [
+      "Код ошибки: 20260925-115409-ffff6d6d"
+    ],
+    "metrics": [],
+    "tables": [],
+    "charts": 0,
+    "switches": [],
+    "expanders": [
+      "Технические сведения"
+    ]
+  },
+  "status": "ok",
+  "frames": [
+    "S17_ni_umolch.png"
+  ],
+  "free_gib_after": 7.21,
+  "taskkill": [
+    "Успешно: Процесс, с идентификатором 19276, дочерний процесса 18008, был завершен.\nУспешно: Процесс, с идентификатором 18008, дочерний процесса 10852, был завершен.",
+    "Ошибка: Не удается найти процесс \"19276\"."
+  ]
+}

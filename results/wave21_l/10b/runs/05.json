@@ -1,0 +1,102 @@
+{
+  "id": "05",
+  "screen": "S03",
+  "base": "fe",
+  "variant": "umolch",
+  "step": "",
+  "note": "",
+  "changes": [],
+  "stem": "S03_fe_umolch",
+  "free_gib_before": 7.34,
+  "state_root": "C:\\Users\\gareg\\AppData\\Local\\Temp\\tg21l_state\\05",
+  "app_start_s": 1.5,
+  "sidebar": {
+    "database": "Стали и Fe-сплавы — mc_fe 2.062",
+    "balance": "Fe",
+    "units": "массовые %",
+    "additions": "C=0.20, Cr=11.5, Ni=0.7",
+    "sidebar_width": 300,
+    "sidebar_right": 300,
+    "default_ok": true
+  },
+  "fields_before": {},
+  "fields_after": {},
+  "button": "Построить график по составу",
+  "calc_s": 8.1,
+  "finished": true,
+  "result": {
+    "button_found": true,
+    "button_disabled": false,
+    "alerts": [
+      {
+        "kind": "warning",
+        "where": "above",
+        "text": ""
+      },
+      {
+        "kind": "warning",
+        "where": "below",
+        "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки). Автор базы вводил фазы Лавеса под дуплексные нержавеющие и корпусные стали — для таких марок результат может быть неполным."
+      },
+      {
+        "kind": "success",
+        "where": "below",
+        "text": "Проверка сканирования: все проверки пройдены."
+      },
+      {
+        "kind": "info",
+        "where": "below",
+        "text": ""
+      }
+    ],
+    "texts": [
+      "Набор фаз: быстрый (13 из 22)",
+      "Последовательный расчёт."
+    ],
+    "metrics": [],
+    "tables": [
+      {
+        "rows": 3,
+        "cols": 2,
+        "headers": [
+          "Al, массовые %",
+          "BCC_B2"
+        ],
+        "cells": [
+          [
+            "0",
+            "99.99999999999999"
+          ],
+          [
+            "10",
+            "100.00000000000004"
+          ],
+          [
+            "20",
+            "100"
+          ]
+        ]
+      },
+      {
+        "rows": null,
+        "cols": null,
+        "headers": [],
+        "cells": []
+      }
+    ],
+    "charts": 1,
+    "switches": [],
+    "expanders": [
+      "Что именно проверено"
+    ]
+  },
+  "status": "ok",
+  "frames": [
+    "S03_fe_umolch.png"
+  ],
+  "free_gib_after": 6.41,
+  "taskkill": [
+    "Успешно: Процесс, с идентификатором 21984, дочерний процесса 9848, был завершен.\nУспешно: Процесс, с идентификатором 9848, дочерний процесса 10852, был завершен.",
+    "Ошибка: Не удается найти процесс \"21984\"."
+  ]
+}

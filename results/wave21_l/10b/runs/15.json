@@ -1,0 +1,69 @@
+{
+  "id": "15",
+  "screen": "S05",
+  "base": "al",
+  "variant": "umolch",
+  "step": "",
+  "note": "",
+  "changes": [],
+  "stem": "S05_al_umolch",
+  "free_gib_before": 6.88,
+  "state_root": "C:\\Users\\gareg\\AppData\\Local\\Temp\\tg21l_state\\15",
+  "app_start_s": 1.5,
+  "sidebar": {
+    "database": "Алюминиевые сплавы — mc_al 2.037",
+    "balance": "Al",
+    "units": "атомные %",
+    "additions": "Cu=4",
+    "sidebar_width": 300,
+    "sidebar_right": 300,
+    "default_ok": true
+  },
+  "fields_before": {},
+  "fields_after": {},
+  "button": "Построить многокомпонентное сечение",
+  "calc_s": 203.5,
+  "finished": true,
+  "result": {
+    "button_found": true,
+    "button_disabled": false,
+    "alerts": [
+      {
+        "kind": "warning",
+        "where": "above",
+        "text": ""
+      },
+      {
+        "kind": "info",
+        "where": "above",
+        "text": "На сечении выбрано больше семи фаз. Расчёт допустим, но для читаемого графика лучше оставить основные фазы."
+      }
+    ],
+    "texts": [
+      "Набор фаз: быстрый (45 из 85)"
+    ],
+    "metrics": [],
+    "tables": [
+      {
+        "rows": null,
+        "cols": null,
+        "headers": [],
+        "cells": []
+      }
+    ],
+    "charts": 1,
+    "switches": [],
+    "expanders": [
+      "Таблица рассчитанных границ"
+    ]
+  },
+  "status": "ok",
+  "frames": [
+    "S05_al_umolch.png"
+  ],
+  "free_gib_after": 5.67,
+  "taskkill": [
+    "Успешно: Процесс, с идентификатором 10932, дочерний процесса 2484, был завершен.\nУспешно: Процесс, с идентификатором 2484, дочерний процесса 10852, был завершен.",
+    "Ошибка: Не удается завершить процесс с идентификатором 10932, дочерний процесса 2484.\nПричина: Ни один из экземпляров этого задания не запущен."
+  ]
+}

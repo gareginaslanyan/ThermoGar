@@ -1,0 +1,67 @@
+{
+  "id": "40",
+  "screen": "S15",
+  "base": "ni",
+  "variant": "dop",
+  "step": "v",
+  "note": "",
+  "changes": [
+    [
+      "text_area",
+      "Источник и область применимости входов",
+      "Проверка умолчаний 21-Л"
+    ]
+  ],
+  "stem": "S15_ni_dop_v",
+  "free_gib_before": 7.82,
+  "state_root": "C:\\Users\\gareg\\AppData\\Local\\Temp\\tg21l_state\\40",
+  "app_start_s": 1.5,
+  "sidebar": {
+    "database": "Никелевые сплавы — mc_ni 2.036",
+    "balance": "Ni",
+    "units": "атомные %",
+    "additions": "Al=15",
+    "sidebar_width": 300,
+    "sidebar_right": 300,
+    "default_ok": true
+  },
+  "fields_before": {
+    "Источник и область применимости входов": ""
+  },
+  "fields_after": {
+    "Источник и область применимости входов": "Проверка умолчаний 21-Л"
+  },
+  "button": "Рассчитать вклады",
+  "calc_s": 1.5,
+  "finished": true,
+  "result": {
+    "button_found": true,
+    "button_disabled": false,
+    "alerts": [
+      {
+        "kind": "error",
+        "where": "below",
+        "text": "ThermoGar не завершил расчёт. Проверьте состав, диапазон и набор фаз. Если ошибка повторяется, скачайте технический отчёт ниже."
+      }
+    ],
+    "texts": [
+      "Код ошибки: 20260925-114941-82fef0aa"
+    ],
+    "metrics": [],
+    "tables": [],
+    "charts": 0,
+    "switches": [],
+    "expanders": [
+      "Технические сведения"
+    ]
+  },
+  "status": "ok",
+  "frames": [
+    "S15_ni_dop_v.png"
+  ],
+  "free_gib_after": 7.2,
+  "taskkill": [
+    "Успешно: Процесс, с идентификатором 15184, дочерний процесса 19552, был завершен.",
+    "Ошибка: Не удается найти процесс \"19552\"."
+  ]
+}

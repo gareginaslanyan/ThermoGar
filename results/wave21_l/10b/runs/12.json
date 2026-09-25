@@ -1,0 +1,93 @@
+{
+  "id": "12",
+  "screen": "S01",
+  "base": "al",
+  "variant": "umolch",
+  "step": "",
+  "note": "",
+  "changes": [],
+  "stem": "S01_al_umolch",
+  "free_gib_before": 7.11,
+  "state_root": "C:\\Users\\gareg\\AppData\\Local\\Temp\\tg21l_state\\12_2",
+  "app_start_s": 1.5,
+  "sidebar": {
+    "database": "Алюминиевые сплавы — mc_al 2.037",
+    "balance": "Al",
+    "units": "атомные %",
+    "additions": "Cu=4",
+    "sidebar_width": 300,
+    "sidebar_right": 300,
+    "default_ok": true
+  },
+  "fields_before": {},
+  "fields_after": {},
+  "button": "Рассчитать равновесие",
+  "calc_s": 11.6,
+  "finished": true,
+  "result": {
+    "button_found": true,
+    "button_disabled": false,
+    "alerts": [
+      {
+        "kind": "success",
+        "where": "below",
+        "text": "Проверка равновесия: все проверки пройдены."
+      },
+      {
+        "kind": "info",
+        "where": "below",
+        "text": ""
+      }
+    ],
+    "texts": [
+      "Набор фаз: все фазы базы (46)",
+      "Фазовые доли",
+      "Составы фаз",
+      "атомные %",
+      "массовые %"
+    ],
+    "metrics": [],
+    "tables": [
+      {
+        "rows": 2,
+        "cols": 3,
+        "headers": [
+          "Фаза",
+          "Что это",
+          "Мольная доля фазы, %"
+        ]
+      },
+      {
+        "rows": null,
+        "cols": null,
+        "headers": []
+      },
+      {
+        "rows": 2,
+        "cols": 4,
+        "headers": [
+          "Фаза",
+          "Что это",
+          "Al, ат.%",
+          "Cu, ат.%"
+        ]
+      }
+    ],
+    "charts": 0,
+    "switches": [
+      "Показывать составы фаз"
+    ],
+    "expanders": [
+      "Что именно проверено"
+    ]
+  },
+  "status": "ok",
+  "frames": [
+    "S01_al_umolch.png"
+  ],
+  "free_gib_after": 6.2,
+  "taskkill": [
+    "Успешно: Процесс, с идентификатором 7880, дочерний процесса 19680, был завершен.",
+    "Ошибка: Не удается завершить процесс с идентификатором 19680, дочерний процесса 21876.\nПричина: Ни один из экземпляров этого задания не запущен."
+  ]
+}

@@ -1,0 +1,8 @@
+/* 21-L 9B a): probe only, injected into the open page (not app/style.css).
+   The app title st.title (app/ThermoGar_app.py:7011) is hidden. */
+[data-testid="stMain"] [data-testid="stElementContainer"]:has(> [data-testid="stHeading"] h1) {
+    display: none;
+}
+[data-testid="stMainBlockContainer"] {
+    padding-top: 52px;
+}

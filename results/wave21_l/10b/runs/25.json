@@ -1,0 +1,101 @@
+{
+  "id": "25",
+  "screen": "S09",
+  "base": "fe",
+  "variant": "umolch",
+  "step": "",
+  "note": "",
+  "changes": [],
+  "stem": "S09_fe_umolch",
+  "free_gib_before": 7.79,
+  "state_root": "C:\\Users\\gareg\\AppData\\Local\\Temp\\tg21l_state\\25",
+  "app_start_s": 1.6,
+  "sidebar": {
+    "database": "Стали и Fe-сплавы — mc_fe 2.062",
+    "balance": "Fe",
+    "units": "массовые %",
+    "additions": "C=0.20, Cr=11.5, Ni=0.7",
+    "sidebar_width": 300,
+    "sidebar_right": 300,
+    "default_ok": true
+  },
+  "fields_before": {},
+  "fields_after": {},
+  "button": "Рассчитать энергии фаз",
+  "calc_s": 6.8,
+  "finished": true,
+  "result": {
+    "button_found": true,
+    "button_disabled": false,
+    "alerts": [
+      {
+        "kind": "info",
+        "where": "below",
+        "text": "Минимальная энергия среди выбранных однофазных состояний не равна автоматически полному многофазному равновесию. Стехиометрическая фаза может быть определена только в узком диапазоне состава."
+      }
+    ],
+    "texts": [
+      "Приближённые пересечения энергетических кривых"
+    ],
+    "metrics": [],
+    "tables": [
+      {
+        "rows": 4,
+        "cols": 3,
+        "headers": [
+          "Фаза 1",
+          "Фаза 2",
+          "Температура пересечения, °C"
+        ],
+        "cells": [
+          [
+            "BCC_B2",
+            "FCC_A1",
+            "683.301345914067"
+          ],
+          [
+            "BCC_B2",
+            "FCC_A1",
+            "1404.7510448579712"
+          ],
+          [
+            "BCC_B2",
+            "LIQUID",
+            "1477.5066977520794"
+          ],
+          [
+            "FCC_A1",
+            "LIQUID",
+            "1467.4286321414806"
+          ]
+        ]
+      },
+      {
+        "rows": null,
+        "cols": null,
+        "headers": [],
+        "cells": []
+      },
+      {
+        "rows": null,
+        "cols": null,
+        "headers": [],
+        "cells": []
+      }
+    ],
+    "charts": 1,
+    "switches": [],
+    "expanders": [
+      "Таблицы энергий"
+    ]
+  },
+  "status": "ok",
+  "frames": [
+    "S09_fe_umolch.png"
+  ],
+  "free_gib_after": 7.11,
+  "taskkill": [
+    "Успешно: Процесс, с идентификатором 20892, дочерний процесса 16440, был завершен.\nУспешно: Процесс, с идентификатором 16440, дочерний процесса 10852, был завершен.",
+    "Ошибка: Не удается найти процесс \"20892\"."
+  ]
+}

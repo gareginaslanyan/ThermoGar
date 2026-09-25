@@ -1,0 +1,14 @@
+/* 21-L 9B b): probe only, injected into the open page (not app/style.css).
+   Sticky primary button: the wrapper stElementContainer (class st-key-<key> of the
+   button) lies directly in the long stVerticalBlock of the tab panel (DOM of run 53,
+   9b/kompakt_ni.json, "dom"). It sticks to the bottom edge of the window while its
+   place is below the window and stands in its place when the page is scrolled past it.
+   Strip under the button: window colour; line above: border colour of the blocks. */
+[data-testid="stVerticalBlock"] > [data-testid="stElementContainer"]:has(button[data-testid="stBaseButton-primary"]) {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    background-color: light-dark(#F8F8F9, #17181B);
+    border-top: 1px solid light-dark(#CFD1D5, #33373E);
+    padding: 12px 0;
+}

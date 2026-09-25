@@ -1,0 +1,86 @@
+{
+  "id": "24",
+  "screen": "S09",
+  "base": "al",
+  "variant": "umolch",
+  "step": "",
+  "note": "",
+  "changes": [],
+  "stem": "S09_al_umolch",
+  "free_gib_before": 7.36,
+  "state_root": "C:\\Users\\gareg\\AppData\\Local\\Temp\\tg21l_state\\24",
+  "app_start_s": 1.5,
+  "sidebar": {
+    "database": "Алюминиевые сплавы — mc_al 2.037",
+    "balance": "Al",
+    "units": "атомные %",
+    "additions": "Cu=4",
+    "sidebar_width": 300,
+    "sidebar_right": 300,
+    "default_ok": true
+  },
+  "fields_before": {},
+  "fields_after": {},
+  "button": "Рассчитать энергии фаз",
+  "calc_s": 4.4,
+  "finished": true,
+  "result": {
+    "button_found": true,
+    "button_disabled": false,
+    "alerts": [
+      {
+        "kind": "info",
+        "where": "below",
+        "text": "Минимальная энергия среди выбранных однофазных состояний не равна автоматически полному многофазному равновесию. Стехиометрическая фаза может быть определена только в узком диапазоне состава."
+      }
+    ],
+    "texts": [
+      "Приближённые пересечения энергетических кривых"
+    ],
+    "metrics": [],
+    "tables": [
+      {
+        "rows": 1,
+        "cols": 3,
+        "headers": [
+          "Фаза 1",
+          "Фаза 2",
+          "Температура пересечения, °C"
+        ],
+        "cells": [
+          [
+            "GP_MAT",
+            "LIQUID",
+            "605.8393698256082"
+          ]
+        ]
+      },
+      {
+        "rows": null,
+        "cols": null,
+        "headers": [],
+        "cells": []
+      },
+      {
+        "rows": null,
+        "cols": null,
+        "headers": [],
+        "cells": []
+      }
+    ],
+    "charts": 1,
+    "switches": [],
+    "expanders": [
+      "Таблицы энергий"
+    ]
+  },
+  "status": "ok",
+  "frames": [
+    "S09_al_umolch.png"
+  ],
+  "free_gib_after": 7.16,
+  "taskkill": [
+    "Успешно: Процесс, с идентификатором 3472, дочерний процесса 11720, был завершен.",
+    "Ошибка: Не удается найти процесс \"11720\"."
+  ]
+}
