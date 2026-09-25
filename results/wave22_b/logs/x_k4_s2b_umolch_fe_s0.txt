@@ -1,0 +1,12 @@
+# 2026-09-25T14:07:55 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_b/scripts/kwn_run.py --tag s2b_umolch_fe_s0 --cell umolch_fe --progress 60
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+ЖУРНАЛ стена=60 с; t=6.69504 с (0.00186 ч); шаг=1945; доля=0.0172 %; x_C=0.009124
+ЖУРНАЛ стена=120 с; t=14.2869 с (0.003969 ч); шаг=4183; доля=0.0363 %; x_C=0.009086
+ЖУРНАЛ стена=180 с; t=21.708 с (0.00603 ч); шаг=6389; доля=0.0544 %; x_C=0.00905
+ЖУРНАЛ стена=240 с; t=29.0503 с (0.00807 ч); шаг=8589; доля=0.0719 %; x_C=0.009015
+ЖУРНАЛ стена=300 с; t=36.3827 с (0.01011 ч); шаг=10803; доля=0.0888 %; x_C=0.008982
+ЖУРНАЛ стена=360 с; t=43.4052 с (0.01206 ч); шаг=12939; доля=0.1047 %; x_C=0.00895
+ЖУРНАЛ стена=420 с; t=50.5676 с (0.01405 ч); шаг=15133; доля=0.1204 %; x_C=0.008919
+ИТОГ {"tag": "s2b_umolch_fe_s0", "status": "limit", "error": "предел 1800 с", "wall_s": 478.63, "peak_rss_gib": 0.342, "rows": 17259, "final_time_s": 57.45765087444125, "stop": null, "final_fraction_pct": 0.13523986543836544, "final_radius_nm": 0.50625, "quality_all_passed": null, "raw_nonpositive_calls": {"calls": 69033, "stage": 0, "post": 0, "first_t": null, "min_raw_over_x0": 0.9563074093066342}}
+ZAMER: код=2; стена=484.8 с; пик RSS=0.344 ГиБ (360780 КиБ)

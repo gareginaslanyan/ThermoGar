@@ -1,0 +1,130 @@
+{
+  "tag": "s2b_umolch_al_s0",
+  "cell": "umolch_al",
+  "pythonhashseed": "0",
+  "changed_inputs": {},
+  "kawin_overrides": {
+    "constraints": {},
+    "iterator": "rk4 (умолчание GenericModel.solve)",
+    "minDtFrac": "1e-8 (умолчание)",
+    "maxDtFrac": "1 (умолчание)",
+    "dt_growth_cap": null
+  },
+  "app_step_limit": {
+    "class": "_StepLimitedPrecipitateModel",
+    "K_in_code": 4.0,
+    "K_used": 4.0
+  },
+  "arguments": {
+    "database_key": "al",
+    "balance": "AL",
+    "composition_text": "Cu=4",
+    "units": "at",
+    "matrix_phase": "FCC_A1",
+    "precipitate_phase": "THETA_AL2CU",
+    "schedule_mode": "isothermal",
+    "temperature_c": 200.0,
+    "duration_h": 24.0,
+    "profile_text": "",
+    "gamma": 0.15,
+    "matrix_vm": 10.0,
+    "precip_vm": 10.0,
+    "nucleation_type": "BULK",
+    "bulk_n0": 1e+28,
+    "grain_size_um": 100.0,
+    "dislocation_density": 5000000000000.0,
+    "gb_energy": 0.3,
+    "cmin_nm": 0.2,
+    "cmax_nm": 10.0,
+    "bins": 80,
+    "input_provenance": "Объявленный сценарий, не данные материала",
+    "input_confirmation": true
+  },
+  "sources": {
+    "DATABASE_DEFINITIONS['al']": "app/ThermoGar_app.py:355",
+    "DEFAULTS": "app/thermogar_precipitation.py:87",
+    "DEFAULT_INPUT_PROVENANCE": "app/thermogar_precipitation.py:99",
+    "NUCLEATION_TYPES": "app/thermogar_precipitation.py:101",
+    "виджет bulk_n0": "app/thermogar_precipitation.py:1680",
+    "виджет grain_size_um": "app/thermogar_precipitation.py:1687",
+    "виджет dislocation_density": "app/thermogar_precipitation.py:1694",
+    "виджет gb_energy": "app/thermogar_precipitation.py:1701",
+    "виджет cmin_nm": "app/thermogar_precipitation.py:1710",
+    "виджет cmax_nm": "app/thermogar_precipitation.py:1717",
+    "виджет bins": "app/thermogar_precipitation.py:1724"
+  },
+  "versions": {
+    "python": "3.11.15",
+    "pycalphad": "0.11.2",
+    "kawin": "0.5.0",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "limit_s": 1800.0,
+  "database": {
+    "path": "/home/user/ThermoGar/databases/converted/al/mc_al_v2037_with_mobility.thermogar.tdb",
+    "label": "Алюминиевые сплавы — mc_al 2.037"
+  },
+  "status": "ok",
+  "error": "",
+  "wall_s": 10.67,
+  "peak_rss_gib": 0.313,
+  "rows": 377,
+  "final_time_s": 86400.0,
+  "stop": false,
+  "stop_note": "",
+  "warnings": [],
+  "quality": {
+    "Время возрастает": "пройдена",
+    "Температура конечна": "пройдена",
+    "Объёмная доля 0–1": "пройдена",
+    "Радиус неотрицателен": "пройдена",
+    "Плотность неотрицательна": "пройдена",
+    "Состав матрицы допустим": "пройдена",
+    "Объёмная доля не упёрлась в 100 %": "пройдена",
+    "Ширина класса меньше критического радиуса": "пройдена",
+    "Зародыш не меньше минимального радиуса сетки": "пройдена"
+  },
+  "quality_all_passed": true,
+  "final_fraction_pct": 0.0,
+  "max_fraction_pct": 0.0,
+  "final_radius_nm": 0.0,
+  "final_density_m3": 0.0,
+  "summary_table": {
+    "Первое обнаружение выделений": "не обнаружены",
+    "Максимальная объёмная доля": "0",
+    "Итоговая объёмная доля": "0",
+    "Итоговый средний радиус": "0",
+    "Итоговая плотность частиц": "0",
+    "Пик скорости зарождения": "3.51006e+08",
+    "Растворение после максимума": "нет",
+    "Укрупнение на плато": "не выявлено"
+  },
+  "final_psd_bins": 80,
+  "stop_diagnostics": {},
+  "balance": {
+    "CU": {
+      "x0": 0.04,
+      "max_abs_residual_unclamped": 0.0,
+      "max_rel_residual_unclamped": 0.0,
+      "clamped_steps": 0,
+      "first_clamped_step": null,
+      "first_clamped_time_s": null,
+      "residual_at_first_clamp": null,
+      "raw_at_first_clamp": null,
+      "fconc_over_x0_at_first_clamp": null,
+      "residual_last": 0.0,
+      "raw_last": 0.04,
+      "x_last": 0.04,
+      "min_x": 0.04
+    }
+  },
+  "steps": 377,
+  "raw_nonpositive_calls": {
+    "calls": 1504,
+    "stage": 0,
+    "post": 0,
+    "first_t": null,
+    "min_raw_over_x0": 1.0
+  }
+}

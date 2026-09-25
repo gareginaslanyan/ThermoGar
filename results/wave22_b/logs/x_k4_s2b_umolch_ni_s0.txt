@@ -1,0 +1,14 @@
+# 2026-09-25T14:07:55 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_b/scripts/kwn_run.py --tag s2b_umolch_ni_s0 --cell umolch_ni --progress 60
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+ЖУРНАЛ стена=60 с; t=20835 с (5.787 ч); шаг=3675; доля=25.8750 %; x_AL=0.1203
+ЖУРНАЛ стена=120 с; t=75744.8 с (21.04 ч); шаг=8446; доля=25.9357 %; x_AL=0.1203
+ЖУРНАЛ стена=180 с; t=167659 с (46.57 ч); шаг=13135; доля=25.9940 %; x_AL=0.1202
+ЖУРНАЛ стена=240 с; t=326588 с (90.72 ч); шаг=17866; доля=26.0077 %; x_AL=0.1202
+2026-09-25 14:12:11.509 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:12:11.621 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:12:11.777 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:12:11.915 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:12:11.998 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "s2b_umolch_ni_s0", "status": "ok", "error": "", "wall_s": 250.73, "peak_rss_gib": 0.364, "rows": 18733, "final_time_s": 360000.0, "stop": false, "final_fraction_pct": 25.99413183548913, "final_radius_nm": 92.22740060277654, "quality_all_passed": true, "raw_nonpositive_calls": {"calls": 74928, "stage": 0, "post": 0, "first_t": null, "min_raw_over_x0": 0.8003899794950379}}
+ZAMER: код=0; стена=257.0 с; пик RSS=0.364 ГиБ (381592 КиБ)
