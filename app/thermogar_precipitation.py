@@ -42,6 +42,7 @@ from thermogar_release_policy import (
     release_status,
 )
 from thermogar_release_ui import (
+    FoldedFields,
     action_row,
     release_calculation_button,
     release_download_button,
@@ -1589,6 +1590,10 @@ def render_precipitation_section(
             key=f"{widget_prefix}_{mode_key}_bins",
         )
         st.caption("Сетка адаптивная и может расширяться при росте частиц.")
+    precipitation_folded = FoldedFields()
+    precipitation_folded.note("Минимальный радиус, нм", cmin_nm, 0.2)
+    precipitation_folded.note("Начальный максимальный радиус, нм", cmax_nm, 10.0)
+    precipitation_folded.note("Классов размеров", bins, 80)
 
     if demo:
         input_provenance = "SYNTHETIC_EDUCATIONAL_DEMO_NOT_MATERIAL_INPUT"
@@ -1612,7 +1617,7 @@ def render_precipitation_section(
     # содержательные проверки ввода (состав, фазы, γ, Vm, сетка) на месте.
     research_scenario_declared = True
 
-    with action_row("precipitation"):
+    with action_row("precipitation", precipitation_folded):
         precipitation_clicked = release_calculation_button(
             "Рассчитать кинетику выделений",
             type="primary",

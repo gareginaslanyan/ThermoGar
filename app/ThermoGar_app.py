@@ -244,7 +244,12 @@ from thermogar_release_policy import (
     preset_phases,
 )
 from thermogar_release_ui import (
+    BLOCK_MODEL,
+    BLOCK_PHASES,
+    BLOCK_PRECISION,
+    FoldedFields,
     action_row,
+    folded_block,
     release_calculation_button,
     release_download_button,
     verified_equilibrium_button,
@@ -1544,30 +1549,39 @@ def bind_b4b_physical_context(
 def _b4b_requested_phases(
     context: verified_loaders.BoundDatabaseContext,
     key: str,
+    folded: FoldedFields | None = None,
 ) -> tuple[tuple[str, ...], str]:
     automatic = tuple(
         phase
         for phase in context.phase_policy.eligible_phases
         if phase != restricted_fe.C15_PHASE
     )
-    manual = st.checkbox(
-        "Выбрать фазы вручную",
-        key=f"{key}_manual",
-    )
-    if not manual:
-        st.caption("Автоматические фазы: " + ", ".join(automatic))
-        return (), "Автоматически"
-    options = automatic + (
-        () if restricted_fe.C15_PHASE in automatic else (restricted_fe.C15_PHASE,)
-    )
-    selected = tuple(
-        st.multiselect(
-            "Фазы",
-            options=options,
-            default=list(automatic),
-            key=f"{key}_tokens",
+    folded = folded if folded is not None else FoldedFields()
+    # Решение владельца 25.09.2026, п. 9 (2): выбор фаз — в свёрнутом блоке.
+    with folded_block(BLOCK_PHASES):
+        manual = folded.note(
+            "Выбрать фазы вручную",
+            st.checkbox(
+                "Выбрать фазы вручную",
+                key=f"{key}_manual",
+            ),
+            False,
         )
-    )
+        if not manual:
+            st.caption("Автоматические фазы: " + ", ".join(automatic))
+            return (), "Автоматически"
+        options = automatic + (
+            () if restricted_fe.C15_PHASE in automatic else (restricted_fe.C15_PHASE,)
+        )
+        selected = tuple(
+            st.multiselect(
+                "Фазы",
+                options=options,
+                default=list(automatic),
+                key=f"{key}_tokens",
+            )
+        )
+        folded.note("Фазы", selected, automatic)
     return selected, "Вручную"
 
 
@@ -1725,14 +1739,16 @@ def render_b4b_density_single(
         step=10.0,
         key=f"physical_temperature_{database_key}",
     )
+    density_folded = FoldedFields()
     requested, phase_mode = _b4b_requested_phases(
         context,
         "physical_single",
+        density_folded,
     )
     too_cold = density_below_pdb_text(temperature_c, physical_overrides)
     if too_cold is not None:
         st.error(too_cold)
-        with action_row("physical_single"):
+        with action_row("physical_single", density_folded):
             st.button(
                 "Рассчитать плотность и объёмные доли",
                 type="primary",
@@ -1766,7 +1782,7 @@ def render_b4b_density_single(
     state_key = "_thermogar_vlb_b4b_result_property_density_single"
     _b4b_refresh_result(state_key, decision)
     _b4b_refresh_overrides(state_key, physical_overrides)
-    with action_row("physical_single"):
+    with action_row("physical_single", density_folded):
         density_clicked = verified_physical_button(
             decision,
             "Рассчитать плотность и объёмные доли",
@@ -1891,12 +1907,15 @@ def render_b4b_density_temperature(
         maximum_c = st.number_input("Температура до, °C", value=float(default_max_c), step=10.0, key=f"physical_t_max_{database_key}")
     with columns[2]:
         step_c = st.number_input("Шаг температуры, °C", min_value=0.1, value=float(default_step_c), step=5.0, key=f"physical_t_step_{database_key}")
-    requested, _phase_mode = _b4b_requested_phases(context, "physical_scan")
+    scan_folded = FoldedFields()
+    requested, _phase_mode = _b4b_requested_phases(
+        context, "physical_scan", scan_folded
+    )
     # Скан начинается с minimum_c: ниже границы PDB счёт не запускается (BL-49).
     too_cold = density_below_pdb_text(minimum_c, physical_overrides)
     if too_cold is not None:
         st.error(too_cold)
-        with action_row("physical_scan"):
+        with action_row("physical_scan", scan_folded):
             st.button(
                 "Построить плотность по температуре",
                 type="primary",
@@ -1940,7 +1959,7 @@ def render_b4b_density_temperature(
     state_key = "_thermogar_vlb_b4b_result_property_density_temperature"
     _b4b_refresh_result(state_key, decision)
     _b4b_refresh_overrides(state_key, physical_overrides)
-    with action_row("physical_scan"):
+    with action_row("physical_scan", scan_folded):
         density_scan_clicked = verified_physical_button(
             decision,
             "Построить плотность по температуре",
@@ -2201,7 +2220,10 @@ def render_b4b2_elastic_properties(
         step=10.0,
         key=f"b4b2_elastic_temperature_{database_key}",
     )
-    requested, _phase_mode = _b4b_requested_phases(context, "b4b2_elastic_prepare")
+    prepare_folded = FoldedFields()
+    requested, _phase_mode = _b4b_requested_phases(
+        context, "b4b2_elastic_prepare", prepare_folded
+    )
     try:
         prepare_inputs = verified_properties.make_prepare_inputs(
             balance=balance,
@@ -2233,7 +2255,7 @@ def render_b4b2_elastic_properties(
     _b4b_refresh_overrides(vrh_state_key, physical_overrides)
     if prepare_decision is not None:
         _b4b_refresh_result(prepare_state_key, prepare_decision)
-        with action_row("elastic_prepare"):
+        with action_row("elastic_prepare", prepare_folded):
             prepare_clicked = verified_physical_button(
                 prepare_decision,
                 "Получить фазовые доли",
@@ -2433,10 +2455,13 @@ def render_b4b2_strengthening(
         ),
         key=f"b4b2_strengthening_rule_{database_key}",
     )
+    # Поля блоков механизмов считаются в подписи «Не по умолчанию».
+    strengthening_folded = FoldedFields()
+    note = strengthening_folded.note
     with st.expander("Hall–Petch"):
-        use_hall = st.checkbox("Учитывать Hall–Petch", key=f"b4b2_hall_use_{database_key}")
-        hall_k = st.number_input("k_y, МПа·м¹ᐟ²", min_value=0.0, value=0.1, key=f"b4b2_hall_k_{database_key}")
-        grain = st.number_input("Размер зерна, мкм", min_value=1e-12, value=10.0, key=f"b4b2_hall_grain_{database_key}")
+        use_hall = note("Учитывать Hall–Petch", st.checkbox("Учитывать Hall–Petch", key=f"b4b2_hall_use_{database_key}"), False)
+        hall_k = note("k_y, МПа·м¹ᐟ²", st.number_input("k_y, МПа·м¹ᐟ²", min_value=0.0, value=0.1, key=f"b4b2_hall_k_{database_key}"), 0.1)
+        grain = note("Размер зерна, мкм", st.number_input("Размер зерна, мкм", min_value=1e-12, value=10.0, key=f"b4b2_hall_grain_{database_key}"), 10.0)
     vrh_state = st.session_state.get("_thermogar_vlb_b4b_result_property_elastic_vrh")
     hill_digest = (
         vrh_state.get("hill_witness_digest")
@@ -2450,22 +2475,22 @@ def render_b4b2_strengthening(
         key=f"b4b2_strengthening_hill_{database_key}",
     )
     with st.expander("Taylor"):
-        use_taylor = st.checkbox("Учитывать Taylor", key=f"b4b2_taylor_use_{database_key}")
-        taylor_factor = st.number_input("M (Taylor)", min_value=1e-12, value=3.0, key=f"b4b2_taylor_m_{database_key}")
-        alpha = st.number_input("α", min_value=1e-12, value=0.3, key=f"b4b2_taylor_alpha_{database_key}")
-        shear = st.number_input("G, ГПа (Taylor)", min_value=1e-12, value=80.0, disabled=use_hill, key=f"b4b2_taylor_g_{database_key}")
-        burgers = st.number_input("b, нм (Taylor)", min_value=1e-12, value=0.25, key=f"b4b2_taylor_b_{database_key}")
-        dislocations = st.number_input("Плотность дислокаций, м⁻²", min_value=1e-12, value=1e12, key=f"b4b2_taylor_rho_{database_key}")
+        use_taylor = note("Учитывать Taylor", st.checkbox("Учитывать Taylor", key=f"b4b2_taylor_use_{database_key}"), False)
+        taylor_factor = note("M (Taylor)", st.number_input("M (Taylor)", min_value=1e-12, value=3.0, key=f"b4b2_taylor_m_{database_key}"), 3.0)
+        alpha = note("α", st.number_input("α", min_value=1e-12, value=0.3, key=f"b4b2_taylor_alpha_{database_key}"), 0.3)
+        shear = note("G, ГПа (Taylor)", st.number_input("G, ГПа (Taylor)", min_value=1e-12, value=80.0, disabled=use_hill, key=f"b4b2_taylor_g_{database_key}"), 80.0)
+        burgers = note("b, нм (Taylor)", st.number_input("b, нм (Taylor)", min_value=1e-12, value=0.25, key=f"b4b2_taylor_b_{database_key}"), 0.25)
+        dislocations = note("Плотность дислокаций, м⁻²", st.number_input("Плотность дислокаций, м⁻²", min_value=1e-12, value=1e12, key=f"b4b2_taylor_rho_{database_key}"), 1e12)
     solid_enabled = st.checkbox("Твёрдорастворный вклад", key=f"b4b2_solid_use_{database_key}")
     solid = st.number_input("Твёрдорастворный вклад, МПа", min_value=0.0, value=0.0, disabled=not solid_enabled, key=f"b4b2_solid_{database_key}")
     with st.expander("Orowan"):
-        use_orowan = st.checkbox("Учитывать Orowan", key=f"b4b2_orowan_use_{database_key}")
-        orowan_m = st.number_input("M (Orowan)", min_value=1e-12, value=3.0, key=f"b4b2_orowan_m_{database_key}")
-        orowan_g = st.number_input("G, ГПа (Orowan)", min_value=1e-12, value=80.0, disabled=use_hill, key=f"b4b2_orowan_g_{database_key}")
-        orowan_b = st.number_input("b, нм (Orowan)", min_value=1e-12, value=0.25, key=f"b4b2_orowan_b_{database_key}")
-        orowan_nu = st.number_input("ν (Orowan) (-0.999–0.499)", min_value=-0.999, max_value=0.499, value=0.3, disabled=use_hill, key=f"b4b2_orowan_nu_{database_key}")
-        radius = st.number_input("Радиус частиц, нм", min_value=1e-12, value=10.0, key=f"b4b2_orowan_radius_{database_key}")
-        spacing = st.number_input("Расстояние между частицами, нм", min_value=1e-12, value=100.0, key=f"b4b2_orowan_spacing_{database_key}")
+        use_orowan = note("Учитывать Orowan", st.checkbox("Учитывать Orowan", key=f"b4b2_orowan_use_{database_key}"), False)
+        orowan_m = note("M (Orowan)", st.number_input("M (Orowan)", min_value=1e-12, value=3.0, key=f"b4b2_orowan_m_{database_key}"), 3.0)
+        orowan_g = note("G, ГПа (Orowan)", st.number_input("G, ГПа (Orowan)", min_value=1e-12, value=80.0, disabled=use_hill, key=f"b4b2_orowan_g_{database_key}"), 80.0)
+        orowan_b = note("b, нм (Orowan)", st.number_input("b, нм (Orowan)", min_value=1e-12, value=0.25, key=f"b4b2_orowan_b_{database_key}"), 0.25)
+        orowan_nu = note("ν (Orowan) (-0.999–0.499)", st.number_input("ν (Orowan) (-0.999–0.499)", min_value=-0.999, max_value=0.499, value=0.3, disabled=use_hill, key=f"b4b2_orowan_nu_{database_key}"), 0.3)
+        radius = note("Радиус частиц, нм", st.number_input("Радиус частиц, нм", min_value=1e-12, value=10.0, key=f"b4b2_orowan_radius_{database_key}"), 10.0)
+        spacing = note("Расстояние между частицами, нм", st.number_input("Расстояние между частицами, нм", min_value=1e-12, value=100.0, key=f"b4b2_orowan_spacing_{database_key}"), 100.0)
     other_enabled = st.checkbox("Другой вклад", key=f"b4b2_other_use_{database_key}")
     other = st.number_input("Другой вклад, МПа", min_value=0.0, value=0.0, disabled=not other_enabled, key=f"b4b2_other_{database_key}")
     inputs = verified_properties.make_strengthening_inputs(
@@ -2513,7 +2538,7 @@ def render_b4b2_strengthening(
     )
     state_key = "_thermogar_vlb_b4b_result_property_strengthening"
     _b4b_refresh_result(state_key, decision)
-    with action_row("strengthening"):
+    with action_row("strengthening", strengthening_folded):
         strengthening_clicked = verified_physical_button(
             decision,
             "Рассчитать вклады",
@@ -2862,6 +2887,7 @@ def phase_selection_editor(
     candidate_phases: list[str],
     key_prefix: str,
     default_phase_mode: str = PHASE_MODE_ALL,
+    folded: FoldedFields | None = None,
 ) -> tuple[list[str], str, str]:
     """Показать управление фазами и вернуть выбранные фазы.
 
@@ -2883,10 +2909,7 @@ def phase_selection_editor(
         database_key,
         candidate_phases,
     )
-    with st.expander(
-        "Управление фазами / метастабильный расчёт",
-        expanded=False,
-    ):
+    with folded_block(BLOCK_PHASES):
         all_phases = list(candidate_phases)
         fast_phases = effective_release_phases(
             database_key,
@@ -2916,6 +2939,14 @@ def phase_selection_editor(
                 horizontal=True,
                 key=f"{key_prefix}_phase_set_{database_key}",
             )
+            if folded is not None:
+                folded.note(
+                    "Набор фаз",
+                    phase_mode,
+                    PHASE_MODE_FAST
+                    if default_phase_mode == PHASE_MODE_FAST
+                    else PHASE_MODE_ALL,
+                )
             st.caption(PHASE_MODE_HELP)
             if phase_mode == PHASE_MODE_FAST:
                 dropped = sorted(set(all_phases) - set(fast_phases))
@@ -2950,6 +2981,12 @@ def phase_selection_editor(
             horizontal=True,
             key=f"{key_prefix}_phase_mode_{database_key}",
         )
+        if folded is not None:
+            folded.note(
+                "Какие фазы учитывать",
+                mode,
+                "Автоматически — все совместимые фазы",
+            )
 
         if mode.startswith("Автоматически"):
             st.caption(
@@ -7423,6 +7460,7 @@ with calculation_tab:
 
 with single_tab:
     st.subheader("Равновесие при одной температуре")
+    single_folded = FoldedFields()
 
     single_temperature = st.number_input(
         "Температура, °C",
@@ -7457,6 +7495,7 @@ with single_tab:
             single_candidate_phases,
             "single",
             PHASE_MODE_ALL,
+            single_folded,
         )
     except Exception as preview_error:
         render_friendly_error(
@@ -7502,7 +7541,7 @@ with single_tab:
         single_feature_decision,
     )
 
-    with action_row("single"):
+    with action_row("single", single_folded):
         if type(single_feature_decision) in (
             verified_loaders.FeatureRequest,
             verified_loaders.RejectedFeatureReceipt,
@@ -7750,12 +7789,18 @@ with temperature_tab:
             key=f"t_step_{database_key}",
         )
 
-    display_threshold = st.number_input(
-        "Показывать на графике фазы с максимумом не менее, %",
-        min_value=0.0,
-        value=0.1,
-        step=0.1,
-    )
+    temperature_folded = FoldedFields()
+    with folded_block(BLOCK_PRECISION):
+        display_threshold = temperature_folded.note(
+            "Показывать на графике фазы с максимумом не менее, %",
+            st.number_input(
+                "Показывать на графике фазы с максимумом не менее, %",
+                min_value=0.0,
+                value=0.1,
+                step=0.1,
+            ),
+            0.1,
+        )
 
     try:
         temperature_candidate_phases = (
@@ -7785,6 +7830,7 @@ with temperature_tab:
             temperature_candidate_phases,
             "temperature",
             PHASE_MODE_FAST,
+            temperature_folded,
         )
     except Exception as preview_error:
         render_friendly_error(
@@ -7853,7 +7899,7 @@ with temperature_tab:
         temperature_feature_decision,
     )
 
-    with action_row("temperature"):
+    with action_row("temperature", temperature_folded):
         if type(temperature_feature_decision) in (
             verified_loaders.FeatureRequest,
             verified_loaders.RejectedFeatureReceipt,
@@ -8097,13 +8143,19 @@ with concentration_tab:
         key=f"concentration_temperature_{database_key}",
     )
 
-    concentration_threshold = st.number_input(
-        "Показывать на графике фазы с максимумом не менее, %",
-        min_value=0.0,
-        value=0.1,
-        step=0.1,
-        key="concentration_threshold",
-    )
+    concentration_folded = FoldedFields()
+    with folded_block(BLOCK_PRECISION):
+        concentration_threshold = concentration_folded.note(
+            "Показывать на графике фазы с максимумом не менее, %",
+            st.number_input(
+                "Показывать на графике фазы с максимумом не менее, %",
+                min_value=0.0,
+                value=0.1,
+                step=0.1,
+                key="concentration_threshold",
+            ),
+            0.1,
+        )
 
     try:
         (
@@ -8135,6 +8187,7 @@ with concentration_tab:
             concentration_candidate_phases,
             "concentration",
             PHASE_MODE_FAST,
+            concentration_folded,
         )
     except Exception as preview_error:
         render_friendly_error(
@@ -8204,7 +8257,7 @@ with concentration_tab:
         concentration_feature_decision,
     )
 
-    with action_row("concentration"):
+    with action_row("concentration", concentration_folded):
         if type(concentration_feature_decision) in (
             verified_loaders.FeatureRequest,
             verified_loaders.RejectedFeatureReceipt,
@@ -8482,14 +8535,6 @@ with phase_diagram_tab:
             step=float(diagram_defaults["c_step"]),
             key=f"binary_c_max_{database_key}_{right_element}",
         )
-        c_step = st.number_input(
-            f"Шаг по составу, {units_suffix(binary_units)}",
-            min_value=0.001,
-            value=float(diagram_defaults["c_step"]),
-            step=float(diagram_defaults["c_step"]),
-            key=f"binary_c_step_{database_key}_{right_element}",
-        )
-
         diagram_t_min = st.number_input(
             "Температура от, °C",
             value=float(diagram_defaults["t_min"]),
@@ -8502,24 +8547,48 @@ with phase_diagram_tab:
             step=10.0,
             key=f"binary_t_max_{database_key}",
         )
-        diagram_t_step = st.number_input(
-            "Шаг по температуре, °C",
-            min_value=0.1,
-            value=float(diagram_defaults["t_step"]),
-            step=5.0,
-            key=f"binary_t_step_{database_key}",
-        )
-
-        show_tielines = st.checkbox(
-            "Показывать линии связи в двухфазных областях",
-            value=False,
-            key=f"binary_tielines_{database_key}",
-        )
-        label_nodes = st.checkbox(
-            "Показывать узловые точки",
-            value=False,
-            key=f"binary_nodes_{database_key}",
-        )
+        binary_folded = FoldedFields()
+        with folded_block(BLOCK_PRECISION):
+            c_step = binary_folded.note(
+                f"Шаг по составу, {units_suffix(binary_units)}",
+                st.number_input(
+                    f"Шаг по составу, {units_suffix(binary_units)}",
+                    min_value=0.001,
+                    value=float(diagram_defaults["c_step"]),
+                    step=float(diagram_defaults["c_step"]),
+                    key=f"binary_c_step_{database_key}_{right_element}",
+                ),
+                float(diagram_defaults["c_step"]),
+            )
+            diagram_t_step = binary_folded.note(
+                "Шаг по температуре, °C",
+                st.number_input(
+                    "Шаг по температуре, °C",
+                    min_value=0.1,
+                    value=float(diagram_defaults["t_step"]),
+                    step=5.0,
+                    key=f"binary_t_step_{database_key}",
+                ),
+                float(diagram_defaults["t_step"]),
+            )
+            show_tielines = binary_folded.note(
+                "Показывать линии связи в двухфазных областях",
+                st.checkbox(
+                    "Показывать линии связи в двухфазных областях",
+                    value=False,
+                    key=f"binary_tielines_{database_key}",
+                ),
+                False,
+            )
+            label_nodes = binary_folded.note(
+                "Показывать узловые точки",
+                st.checkbox(
+                    "Показывать узловые точки",
+                    value=False,
+                    key=f"binary_nodes_{database_key}",
+                ),
+                False,
+            )
 
         try:
             binary_candidate_phases = binary_phase_candidates(
@@ -8539,6 +8608,7 @@ with phase_diagram_tab:
                 binary_candidate_phases,
                 "binary_diagram",
                 PHASE_MODE_FAST,
+                binary_folded,
             )
         except Exception as preview_error:
             render_friendly_error(
@@ -8557,7 +8627,7 @@ with phase_diagram_tab:
                 "но для читаемого графика лучше оставить основные фазы."
             )
 
-        with action_row("binary"):
+        with action_row("binary", binary_folded):
             binary_clicked = release_calculation_button(
                 "Построить диаграмму состояния",
                 type="primary",
@@ -8857,17 +8927,6 @@ with phase_diagram_tab:
                 f"{variable_element}"
             ),
         )
-        isopleth_c_step = st.number_input(
-            "Шаг по составу, ат.%",
-            min_value=0.001,
-            value=float(isopleth_defaults["c_step"]),
-            step=float(isopleth_defaults["c_step"]),
-            key=(
-                f"isopleth_c_step_{database_key}_{balance}_"
-                f"{variable_element}"
-            ),
-        )
-
         isopleth_t_min = st.number_input(
             "Температура от, °C",
             value=float(isopleth_defaults["t_min"]),
@@ -8880,19 +8939,42 @@ with phase_diagram_tab:
             step=10.0,
             key=f"isopleth_t_max_{database_key}",
         )
-        isopleth_t_step = st.number_input(
-            "Шаг по температуре, °C",
-            min_value=0.1,
-            value=float(isopleth_defaults["t_step"]),
-            step=5.0,
-            key=f"isopleth_t_step_{database_key}",
-        )
-
-        isopleth_label_nodes = st.checkbox(
-            "Показывать узловые точки",
-            value=False,
-            key=f"isopleth_nodes_{database_key}",
-        )
+        isopleth_folded = FoldedFields()
+        with folded_block(BLOCK_PRECISION):
+            isopleth_c_step = isopleth_folded.note(
+                "Шаг по составу, ат.%",
+                st.number_input(
+                    "Шаг по составу, ат.%",
+                    min_value=0.001,
+                    value=float(isopleth_defaults["c_step"]),
+                    step=float(isopleth_defaults["c_step"]),
+                    key=(
+                        f"isopleth_c_step_{database_key}_{balance}_"
+                        f"{variable_element}"
+                    ),
+                ),
+                float(isopleth_defaults["c_step"]),
+            )
+            isopleth_t_step = isopleth_folded.note(
+                "Шаг по температуре, °C",
+                st.number_input(
+                    "Шаг по температуре, °C",
+                    min_value=0.1,
+                    value=float(isopleth_defaults["t_step"]),
+                    step=5.0,
+                    key=f"isopleth_t_step_{database_key}",
+                ),
+                float(isopleth_defaults["t_step"]),
+            )
+            isopleth_label_nodes = isopleth_folded.note(
+                "Показывать узловые точки",
+                st.checkbox(
+                    "Показывать узловые точки",
+                    value=False,
+                    key=f"isopleth_nodes_{database_key}",
+                ),
+                False,
+            )
 
         try:
             fixed_preview = parse_composition(
@@ -8950,6 +9032,7 @@ with phase_diagram_tab:
                 isopleth_candidates,
                 f"isopleth_{balance}_{variable_element}",
                 PHASE_MODE_FAST,
+                isopleth_folded,
             )
         except Exception as preview_error:
             render_friendly_error(
@@ -8969,7 +9052,7 @@ with phase_diagram_tab:
                 "но для читаемого графика лучше оставить основные фазы."
             )
 
-        with action_row("isopleth"):
+        with action_row("isopleth", isopleth_folded):
             isopleth_clicked = release_calculation_button(
                 "Построить многокомпонентное сечение",
                 type="primary",
@@ -9346,37 +9429,55 @@ with phase_diagram_tab:
             step=10.0,
             key=f"ternary_temperature_{database_key}",
         )
-        ternary_step = st.number_input(
-            "Шаг поиска границ, ат.% (0.5–10)",
-            min_value=0.5,
-            max_value=10.0,
-            value=float(ternary_defaults["step"]),
-            step=0.5,
-            key=f"ternary_step_{database_key}",
-            help=(
-                "Меньший шаг точнее, но расчёт длится дольше. "
-                "Для первого запуска используйте 2.5–5 ат.%."
-            ),
-        )
-        ternary_show_tielines = st.checkbox(
-            "Показывать линии связи в двухфазных областях",
-            value=True,
-            key=f"ternary_tielines_{database_key}",
-        )
-        ternary_tieline_every = st.number_input(
-            "Показывать каждую N-ю линию связи (1–50)",
-            min_value=1,
-            max_value=50,
-            value=int(ternary_defaults["tieline_every"]),
-            step=1,
-            disabled=not ternary_show_tielines,
-            key=f"ternary_tieline_every_{database_key}",
-        )
-        ternary_label_nodes = st.checkbox(
-            "Показывать точки трёхфазного равновесия",
-            value=False,
-            key=f"ternary_nodes_{database_key}",
-        )
+        ternary_folded = FoldedFields()
+        with folded_block(BLOCK_PRECISION):
+            ternary_step = ternary_folded.note(
+                "Шаг поиска границ, ат.% (0.5–10)",
+                st.number_input(
+                    "Шаг поиска границ, ат.% (0.5–10)",
+                    min_value=0.5,
+                    max_value=10.0,
+                    value=float(ternary_defaults["step"]),
+                    step=0.5,
+                    key=f"ternary_step_{database_key}",
+                    help=(
+                        "Меньший шаг точнее, но расчёт длится дольше. "
+                        "Для первого запуска используйте 2.5–5 ат.%."
+                    ),
+                ),
+                float(ternary_defaults["step"]),
+            )
+            ternary_show_tielines = ternary_folded.note(
+                "Показывать линии связи в двухфазных областях",
+                st.checkbox(
+                    "Показывать линии связи в двухфазных областях",
+                    value=True,
+                    key=f"ternary_tielines_{database_key}",
+                ),
+                True,
+            )
+            ternary_tieline_every = ternary_folded.note(
+                "Показывать каждую N-ю линию связи (1–50)",
+                st.number_input(
+                    "Показывать каждую N-ю линию связи (1–50)",
+                    min_value=1,
+                    max_value=50,
+                    value=int(ternary_defaults["tieline_every"]),
+                    step=1,
+                    disabled=not ternary_show_tielines,
+                    key=f"ternary_tieline_every_{database_key}",
+                ),
+                int(ternary_defaults["tieline_every"]),
+            )
+            ternary_label_nodes = ternary_folded.note(
+                "Показывать точки трёхфазного равновесия",
+                st.checkbox(
+                    "Показывать точки трёхфазного равновесия",
+                    value=False,
+                    key=f"ternary_nodes_{database_key}",
+                ),
+                False,
+            )
 
         st.info(
             "Как читать вершины: в нижней левой вершине 100 % элемента C, "
@@ -9403,6 +9504,7 @@ with phase_diagram_tab:
                 ternary_candidate_phases,
                 "ternary_diagram",
                 PHASE_MODE_FAST,
+                ternary_folded,
             )
         except Exception as preview_error:
             render_friendly_error(
@@ -9422,7 +9524,7 @@ with phase_diagram_tab:
                 "оставить основные фазы."
             )
 
-        with action_row("ternary"):
+        with action_row("ternary", ternary_folded):
             ternary_clicked = release_calculation_button(
                 "Построить тройную диаграмму",
                 type="primary",
@@ -9715,15 +9817,6 @@ with phase_diagram_tab:
             ),
         )
 
-        map_units_label = st.radio(
-            "Единицы состава на треугольнике",
-            ["атомные %", "массовые %"],
-            index=0 if map_defaults["units"] == "at" else 1,
-            horizontal=True,
-            key=f"ternary_map_units_{database_key}",
-        )
-        map_units = "at" if map_units_label == "атомные %" else "wt"
-
         map_temperature = st.number_input(
             "Температура, °C",
             value=float(map_defaults["temperature"]),
@@ -9731,39 +9824,66 @@ with phase_diagram_tab:
             key=f"ternary_map_temperature_{database_key}",
         )
 
-        map_step = st.number_input(
-            "Желаемый шаг сетки, % (2–20)",
-            min_value=2.0,
-            max_value=20.0,
-            value=float(map_defaults["step"]),
-            step=0.5,
-            help=(
-                "Число узлов растёт как (100/шаг + 1)(100/шаг + 2)/2: "
-                "20 % — 21 узел, 10 % — 66, 5 % — 231, 2 % — 1326. "
-                "Начните с шага по умолчанию и уменьшайте его только "
-                "для интересующей области."
-            ),
-            key=f"ternary_map_step_{database_key}",
-        )
+        map_folded = FoldedFields()
+        with folded_block(BLOCK_PRECISION):
+            map_units_label = map_folded.note(
+                "Единицы состава на треугольнике",
+                st.radio(
+                    "Единицы состава на треугольнике",
+                    ["атомные %", "массовые %"],
+                    index=0 if map_defaults["units"] == "at" else 1,
+                    horizontal=True,
+                    key=f"ternary_map_units_{database_key}",
+                ),
+                "атомные %" if map_defaults["units"] == "at" else "массовые %",
+            )
+            map_units = "at" if map_units_label == "атомные %" else "wt"
 
-        map_threshold = st.number_input(
-            "Провести границу появления фазы при доле, мол.% (0–100)",
-            min_value=0.0,
-            max_value=100.0,
-            value=float(map_defaults["appearance_threshold"]),
-            step=0.1,
-            key=f"ternary_map_threshold_{database_key}",
-        )
+            map_step = map_folded.note(
+                "Желаемый шаг сетки, % (2–20)",
+                st.number_input(
+                    "Желаемый шаг сетки, % (2–20)",
+                    min_value=2.0,
+                    max_value=20.0,
+                    value=float(map_defaults["step"]),
+                    step=0.5,
+                    help=(
+                        "Число узлов растёт как (100/шаг + 1)(100/шаг + 2)/2: "
+                        "20 % — 21 узел, 10 % — 66, 5 % — 231, 2 % — 1326. "
+                        "Начните с шага по умолчанию и уменьшайте его только "
+                        "для интересующей области."
+                    ),
+                    key=f"ternary_map_step_{database_key}",
+                ),
+                float(map_defaults["step"]),
+            )
 
-        map_color_scale_mode = st.radio(
-            "Шкала цвета",
-            [
+            map_threshold = map_folded.note(
+                "Провести границу появления фазы при доле, мол.% (0–100)",
+                st.number_input(
+                    "Провести границу появления фазы при доле, мол.% (0–100)",
+                    min_value=0.0,
+                    max_value=100.0,
+                    value=float(map_defaults["appearance_threshold"]),
+                    step=0.1,
+                    key=f"ternary_map_threshold_{database_key}",
+                ),
+                float(map_defaults["appearance_threshold"]),
+            )
+
+            map_color_scale_mode = map_folded.note(
+                "Шкала цвета",
+                st.radio(
+                    "Шкала цвета",
+                    [
+                        "Фиксированная 0–100 %",
+                        "По данным — лучше видны малые доли",
+                    ],
+                    horizontal=True,
+                    key=f"ternary_map_color_scale_{database_key}",
+                ),
                 "Фиксированная 0–100 %",
-                "По данным — лучше видны малые доли",
-            ],
-            horizontal=True,
-            key=f"ternary_map_color_scale_{database_key}",
-        )
+            )
 
         interval_count, actual_step, map_point_count = (
             ternary_grid_definition(float(map_step))
@@ -9803,6 +9923,7 @@ with phase_diagram_tab:
                 map_candidate_phases,
                 "ternary_phase_map",
                 PHASE_MODE_FAST,
+                map_folded,
             )
         except Exception as preview_error:
             render_friendly_error(
@@ -9857,7 +9978,7 @@ with phase_diagram_tab:
                 "конкурирующие фазы."
             )
 
-        with action_row("ternary_map"):
+        with action_row("ternary_map", map_folded):
             ternary_map_clicked = release_calculation_button(
                 "Построить карту доли фазы",
                 type="primary",
@@ -10288,27 +10409,44 @@ with solidification_tab:
                 "Для mc_fe 2.062 расчёт ограничен верхней границей базы "
                 "2000 K (1726.85 °C)."
             )
-        solidification_start_c = st.number_input(**solidification_start_kwargs)
-        solidification_step_c = st.number_input(
-            "Шаг охлаждения, °C",
-            min_value=0.1,
-            value=float(defaults["step_temperature_c"]),
-            step=1.0,
-            key=f"solidification_step_{database_key}",
-        )
-
-        with st.expander("Точность и критерии", expanded=False):
-            solidification_auto_start = st.checkbox(
-                "Автоматически повысить температуру до однофазного расплава",
-                value=True,
-                key=f"solidification_auto_start_{database_key}",
+        solidification_folded = FoldedFields()
+        solidification_note = solidification_folded.note
+        with folded_block(BLOCK_PRECISION):
+            solidification_start_c = solidification_note(
+                "Начальная температура, °C",
+                st.number_input(**solidification_start_kwargs),
+                float(defaults["start_temperature_c"]),
             )
-            solidification_start_increment_c = st.number_input(
+            solidification_step_c = solidification_note(
+                "Шаг охлаждения, °C",
+                st.number_input(
+                    "Шаг охлаждения, °C",
+                    min_value=0.1,
+                    value=float(defaults["step_temperature_c"]),
+                    step=1.0,
+                    key=f"solidification_step_{database_key}",
+                ),
+                float(defaults["step_temperature_c"]),
+            )
+            solidification_auto_start = solidification_note(
+                "Автоматически повысить температуру до однофазного расплава",
+                st.checkbox(
+                    "Автоматически повысить температуру до однофазного расплава",
+                    value=True,
+                    key=f"solidification_auto_start_{database_key}",
+                ),
+                True,
+            )
+            solidification_start_increment_c = solidification_note(
                 "Шаг автоматического повышения, °C",
-                min_value=1.0,
-                value=50.0,
-                step=10.0,
-                key=f"solidification_start_increment_{database_key}",
+                st.number_input(
+                    "Шаг автоматического повышения, °C",
+                    min_value=1.0,
+                    value=50.0,
+                    step=10.0,
+                    key=f"solidification_start_increment_{database_key}",
+                ),
+                50.0,
             )
             if database_key == "fe":
                 solidification_max_start_c = st.number_input(
@@ -10331,6 +10469,11 @@ with solidification_tab:
                     step=100.0,
                     key=f"solidification_max_start_13_1_{database_key}",
                 )
+            solidification_note(
+                "Максимальная проверяемая температура, °C",
+                solidification_max_start_c,
+                float(FE_DATABASE_MAX_T_C) if database_key == "fe" else 3000.0,
+            )
             solidification_scheil_stop_percent = st.number_input(
                 "Scheil: остановить при остатке расплава, %",
                 min_value=0.0001,
@@ -10379,6 +10522,35 @@ with solidification_tab:
                 value=True,
                 key=f"solidification_adaptive_{database_key}",
             )
+            for (
+                solidification_label,
+                solidification_value,
+                solidification_default,
+            ) in (
+                (
+                    "Scheil: остановить при остатке расплава, %",
+                    solidification_scheil_stop_percent,
+                    0.01,
+                ),
+                ("Порог появления фазы, %", solidification_appearance_percent, 0.01),
+                ("Показывать на графиках фазы от, %", solidification_display_percent, 0.1),
+                ("Плотность начального поиска состояний", solidification_pdens, 50),
+                (
+                    "Точность поиска равновесного солидуса, °C",
+                    solidification_binary_tol_c,
+                    0.1,
+                ),
+                (
+                    "Адаптивно уточнять состояния рядом с равновесием",
+                    solidification_adaptive,
+                    True,
+                ),
+            ):
+                solidification_note(
+                    solidification_label,
+                    solidification_value,
+                    solidification_default,
+                )
 
         try:
             solidification_candidate_phases = (
@@ -10411,6 +10583,7 @@ with solidification_tab:
                 solidification_candidate_phases,
                 "solidification",
                 PHASE_MODE_FAST,
+                solidification_folded,
             )
             if solidification_candidate_phases
             else ([], "Автоматически", "")
@@ -10421,7 +10594,7 @@ with solidification_tab:
                 "Для расчёта затвердевания нужно оставить фазу LIQUID."
             )
 
-        with action_row("solidification"):
+        with action_row("solidification", solidification_folded):
             solidification_clicked = release_calculation_button(
                 "Рассчитать затвердевание",
                 type="primary",
@@ -11099,24 +11272,34 @@ with energy_tab:
             step=25.0,
             key=f"energy_t_max_{database_key}",
         )
-        energy_t_step = st.number_input(
-            "Шаг температуры, °C",
-            min_value=0.1,
-            value=float(energy_defaults["t_step"]),
-            step=5.0,
-            key=f"energy_t_step_{database_key}",
-        )
-        energy_view = st.radio(
-            "Что показать на графике",
-            [
+        energy_folded = FoldedFields()
+        with folded_block(BLOCK_PRECISION):
+            energy_t_step = energy_folded.note(
+                "Шаг температуры, °C",
+                st.number_input(
+                    "Шаг температуры, °C",
+                    min_value=0.1,
+                    value=float(energy_defaults["t_step"]),
+                    step=5.0,
+                    key=f"energy_t_step_{database_key}",
+                ),
+                float(energy_defaults["t_step"]),
+            )
+            energy_view = energy_folded.note(
+                "Что показать на графике",
+                st.radio(
+                    "Что показать на графике",
+                    [
+                        "Относительно минимальной энергии выбранных фаз",
+                        "Абсолютная молярная энергия GM",
+                    ],
+                    horizontal=True,
+                    key=f"energy_view_{database_key}",
+                ),
                 "Относительно минимальной энергии выбранных фаз",
-                "Абсолютная молярная энергия GM",
-            ],
-            horizontal=True,
-            key=f"energy_view_{database_key}",
-        )
+            )
 
-        with action_row("energy_curve"):
+        with action_row("energy_curve", energy_folded):
             energy_curve_clicked = release_calculation_button(
                 "Рассчитать энергии фаз",
                 type="primary",
@@ -11335,28 +11518,6 @@ with energy_tab:
             key=f"driving_target_{database_key}",
         ) if driving_candidate_phases else ""
 
-        exclude_target = st.checkbox(
-            "Исключить выбранную фазу из исходного равновесия",
-            value=True,
-            help=(
-                "Так рассчитывается термодинамический стимул появления фазы, "
-                "которой ещё нет в исходном наборе."
-            ),
-            key=f"driving_exclude_target_{database_key}",
-        )
-
-        default_reference_phases = [
-            phase_name
-            for phase_name in driving_candidate_phases
-            if not (exclude_target and phase_name == driving_target)
-        ]
-        driving_reference_phases = st.multiselect(
-            "Фазы исходного равновесия",
-            options=driving_candidate_phases,
-            default=default_reference_phases,
-            key=f"driving_reference_phases_{database_key}_{driving_target}_{exclude_target}",
-        )
-
         driving_t_min = st.number_input(
             "Температура от, °C",
             value=float(energy_defaults["t_min"]),
@@ -11369,15 +11530,52 @@ with energy_tab:
             step=25.0,
             key=f"driving_t_max_{database_key}",
         )
-        driving_t_step = st.number_input(
-            "Шаг температуры, °C",
-            min_value=0.1,
-            value=float(energy_defaults["t_step"]),
-            step=5.0,
-            key=f"driving_t_step_{database_key}",
-        )
+        driving_folded = FoldedFields()
+        with folded_block(BLOCK_PRECISION):
+            driving_t_step = driving_folded.note(
+                "Шаг температуры, °C",
+                st.number_input(
+                    "Шаг температуры, °C",
+                    min_value=0.1,
+                    value=float(energy_defaults["t_step"]),
+                    step=5.0,
+                    key=f"driving_t_step_{database_key}",
+                ),
+                float(energy_defaults["t_step"]),
+            )
 
-        with action_row("driving_force"):
+        with folded_block(BLOCK_PHASES):
+            exclude_target = driving_folded.note(
+                "Исключить выбранную фазу из исходного равновесия",
+                st.checkbox(
+                    "Исключить выбранную фазу из исходного равновесия",
+                    value=True,
+                    help=(
+                        "Так рассчитывается термодинамический стимул появления фазы, "
+                        "которой ещё нет в исходном наборе."
+                    ),
+                    key=f"driving_exclude_target_{database_key}",
+                ),
+                True,
+            )
+
+            default_reference_phases = [
+                phase_name
+                for phase_name in driving_candidate_phases
+                if not (exclude_target and phase_name == driving_target)
+            ]
+            driving_reference_phases = driving_folded.note(
+                "Фазы исходного равновесия",
+                st.multiselect(
+                    "Фазы исходного равновесия",
+                    options=driving_candidate_phases,
+                    default=default_reference_phases,
+                    key=f"driving_reference_phases_{database_key}_{driving_target}_{exclude_target}",
+                ),
+                default_reference_phases,
+            )
+
+        with action_row("driving_force", driving_folded):
             driving_force_clicked = release_calculation_button(
                 "Рассчитать движущую силу",
                 type="primary",
@@ -11572,14 +11770,6 @@ with energy_tab:
             step=float(energy_defaults["c_step"]),
             key=f"tzero_c_max_{database_key}_{tzero_variable}",
         )
-        tzero_c_step = st.number_input(
-            f"{element_symbol(tzero_variable)}: шаг, {units_suffix(tzero_units)}",
-            min_value=0.001,
-            value=float(energy_defaults["c_step"]),
-            step=float(energy_defaults["c_step"]),
-            key=f"tzero_c_step_{database_key}_{tzero_variable}",
-        )
-
         try:
             tzero_fixed = parse_composition(tzero_fixed_text)
             tzero_components = sorted(
@@ -11662,7 +11852,21 @@ with energy_tab:
             key=f"tzero_t_max_{database_key}",
         )
 
-        with action_row("tzero"):
+        tzero_folded = FoldedFields()
+        with folded_block(BLOCK_PRECISION):
+            tzero_c_step = tzero_folded.note(
+                f"{element_symbol(tzero_variable)}: шаг, {units_suffix(tzero_units)}",
+                st.number_input(
+                    f"{element_symbol(tzero_variable)}: шаг, {units_suffix(tzero_units)}",
+                    min_value=0.001,
+                    value=float(energy_defaults["c_step"]),
+                    step=float(energy_defaults["c_step"]),
+                    key=f"tzero_c_step_{database_key}_{tzero_variable}",
+                ),
+                float(energy_defaults["c_step"]),
+            )
+
+        with action_row("tzero", tzero_folded):
             tzero_clicked = release_calculation_button(
                 "Рассчитать T₀",
                 type="primary",

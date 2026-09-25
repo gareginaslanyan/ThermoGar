@@ -8,6 +8,8 @@ own. Capability decisions that still exist belong to the verified loaders.
 from __future__ import annotations
 
 from contextlib import contextmanager
+import math
+import re
 from typing import Any, Callable, Iterator
 
 import streamlit as st
@@ -43,17 +45,82 @@ def rejection_help_text(decision: RejectedFeatureReceipt) -> str:
     return REJECTION_HELP_TEXTS.get(str(code), REJECTION_HELP_FALLBACK)
 
 
+# Решения владельца 25.09.2026, п. 9 (2, 3, 4): редкие параметры свёрнуты в
+# блоки с этими названиями; над кнопкой расчёта — подпись о полях свёрнутых
+# блоков, которые отличаются от умолчания базы.
+BLOCK_PRECISION = "Точность и критерии"
+BLOCK_PHASES = "Управление фазами / метастабильный расчёт"
+BLOCK_MODEL = "Параметры модели"
+NOT_DEFAULT_PREFIX = "Не по умолчанию: "
+
+# Хвост границ в подписи поля: « (0.5–10)», « (-200–2000)».
+_BOUNDS_TAIL = re.compile(r"\s*\([^()]*\d[^()]*–[^()]*\d[^()]*\)\s*$")
+
+
+def field_label_without_bounds(label: str) -> str:
+    """Подпись поля как на экране, без хвоста границ « (мин–макс)»."""
+
+    return _BOUNDS_TAIL.sub("", str(label))
+
+
+def same_as_default(value: Any, default: Any) -> bool:
+    """Значение равно умолчанию: числа — с допуском 1e-9 отн., списки — как множества."""
+
+    if isinstance(value, bool) or isinstance(default, bool):
+        return bool(value) == bool(default)
+    if isinstance(value, (int, float)) and isinstance(default, (int, float)):
+        return math.isclose(float(value), float(default), rel_tol=1e-9, abs_tol=0.0)
+    if isinstance(value, (list, tuple, set, frozenset)) or isinstance(
+        default, (list, tuple, set, frozenset)
+    ):
+        return set(value or ()) == set(default or ())
+    return value == default
+
+
+class FoldedFields:
+    """Поля свёрнутых блоков одного экрана, которые отличаются от умолчания."""
+
+    def __init__(self) -> None:
+        self.changed: list[str] = []
+
+    def note(self, label: str, value: Any, default: Any) -> Any:
+        if not same_as_default(value, default):
+            text = field_label_without_bounds(label)
+            if text not in self.changed:
+                self.changed.append(text)
+        return value
+
+    def caption_text(self) -> str | None:
+        if not self.changed:
+            return None
+        return NOT_DEFAULT_PREFIX + "; ".join(self.changed) + "."
+
+
+def folded_block(title: str) -> Any:
+    """Свёрнутый блок редких параметров."""
+
+    return st.expander(title, expanded=False)
+
+
 # Решение владельца 25.09.2026, п. 9 (1В): строка основной кнопки — контейнер
 # с ключом tg_action_<экран>; style.css прижимает его к нижнему краю окна.
 ACTION_ROW_PREFIX = "tg_action_"
 
 
 @contextmanager
-def action_row(screen: str, *, sticky: bool = True) -> Iterator[None]:
-    """Строка кнопки: кнопка и причина неактивности под ней."""
+def action_row(
+    screen: str,
+    folded: FoldedFields | None = None,
+    *,
+    sticky: bool = True,
+) -> Iterator[None]:
+    """Строка кнопки: подпись «Не по умолчанию» (если есть), кнопка, причина."""
 
     key = f"{ACTION_ROW_PREFIX}{screen}" if sticky else screen
     with st.container(key=key):
+        text = folded.caption_text() if folded is not None else None
+        if text:
+            st.caption(text)
         yield
 
 

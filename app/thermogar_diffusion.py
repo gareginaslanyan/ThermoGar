@@ -42,7 +42,10 @@ from thermogar_release_policy import (
     release_status,
 )
 from thermogar_release_ui import (
+    BLOCK_MODEL,
+    FoldedFields,
     action_row,
+    folded_block,
     release_calculation_button,
     release_download_button,
 )
@@ -1391,56 +1394,15 @@ def _common_inputs(
         persist_state="session",
     )
 
-    length_col, interface_col, time_col, nodes_col = st.columns(4)
-    with length_col:
-        length_um = st.number_input(
-            "Длина области, мкм",
-            min_value=1.0,
-            value=float(defaults["length_um"]),
-            step=10.0,
-            key=f"{prefix}_length_{database_key}",
-            persist_state="session",
-        )
-    with interface_col:
-        interface_pct = st.number_input(
-            "Граница пары, % (1–99)",
-            min_value=1.0,
-            max_value=99.0,
-            value=float(defaults["interface_pct"]),
-            step=1.0,
-            key=f"{prefix}_interface_{database_key}",
-            persist_state="session",
-        )
-    with time_col:
-        time_h = st.number_input(
-            "Время, ч",
-            min_value=0.001,
-            value=float(defaults["time_h"]),
-            step=1.0,
-            key=f"{prefix}_time_{database_key}",
-            persist_state="session",
-        )
-    with nodes_col:
-        nodes = st.number_input(
-            "Ячеек (12–160)",
-            min_value=12,
-            max_value=160,
-            value=int(defaults["nodes"]),
-            step=4,
-            key=f"{prefix}_nodes_{database_key}",
-            persist_state="session",
-        )
-
-    input_provenance = st.text_area(
-        "Источник и назначение исходных данных диффузии",
-        value=DEFAULT_INPUT_PROVENANCE,
-        help=(
-            "Строка попадает в лист «Параметры» Excel, в историю расчётов и "
-            "в JSON происхождения. Укажите источник состава, температуры и "
-            "времени; значение по умолчанию помечает их как объявленный "
-            "сценарий без экспериментальной проверки."
-        ),
-        key=f"{prefix}_input_provenance_{database_key}",
+    # Решение владельца 25.09.2026, п. 9 (2): «Время, ч» — отдельной строкой
+    # на месте прежней строки из четырёх полей; длина, граница пары, ячейки и
+    # источник — в блоке «Параметры модели» (_model_parameter_inputs).
+    time_h = st.number_input(
+        "Время, ч",
+        min_value=0.001,
+        value=float(defaults["time_h"]),
+        step=1.0,
+        key=f"{prefix}_time_{database_key}",
         persist_state="session",
     )
     # Раздел целиком объявлен исследовательским: подпись под заголовком и
@@ -1457,15 +1419,78 @@ def _common_inputs(
         "left_text": left_text,
         "right_text": right_text,
         "temperature_C": float(temperature_C),
-        "length_um": float(length_um),
-        "interface_pct": float(interface_pct),
         "time_h": float(time_h),
-        "nodes": int(nodes),
-        "input_provenance": (
-            str(input_provenance).strip() or DEFAULT_INPUT_PROVENANCE
-        ),
         "input_confirmation": research_scenario_declared,
     }
+
+
+def _model_parameter_inputs(
+    common: dict[str, Any],
+    *,
+    database_key: str,
+    prefix: str,
+    folded: FoldedFields,
+) -> None:
+    """Поля блока «Параметры модели», общие для пары и гомогенизации.
+
+    Вызывается внутри ``folded_block(BLOCK_MODEL)``; дописывает значения в
+    ``common``.
+    """
+
+    defaults = DEFAULTS.get(database_key, DEFAULTS["ni"])
+    length_um = st.number_input(
+        "Длина области, мкм",
+        min_value=1.0,
+        value=float(defaults["length_um"]),
+        step=10.0,
+        key=f"{prefix}_length_{database_key}",
+        persist_state="session",
+    )
+    folded.note("Длина области, мкм", length_um, float(defaults["length_um"]))
+    interface_pct = st.number_input(
+        "Граница пары, % (1–99)",
+        min_value=1.0,
+        max_value=99.0,
+        value=float(defaults["interface_pct"]),
+        step=1.0,
+        key=f"{prefix}_interface_{database_key}",
+        persist_state="session",
+    )
+    folded.note(
+        "Граница пары, % (1–99)", interface_pct, float(defaults["interface_pct"])
+    )
+    nodes = st.number_input(
+        "Ячеек (12–160)",
+        min_value=12,
+        max_value=160,
+        value=int(defaults["nodes"]),
+        step=4,
+        key=f"{prefix}_nodes_{database_key}",
+        persist_state="session",
+    )
+    folded.note("Ячеек (12–160)", nodes, int(defaults["nodes"]))
+    input_provenance = st.text_area(
+        "Источник и назначение исходных данных диффузии",
+        value=DEFAULT_INPUT_PROVENANCE,
+        help=(
+            "Строка попадает в лист «Параметры» Excel, в историю расчётов и "
+            "в JSON происхождения. Укажите источник состава, температуры и "
+            "времени; значение по умолчанию помечает их как объявленный "
+            "сценарий без экспериментальной проверки."
+        ),
+        key=f"{prefix}_input_provenance_{database_key}",
+        persist_state="session",
+    )
+    common.update(
+        {
+            "length_um": float(length_um),
+            "interface_pct": float(interface_pct),
+            "nodes": int(nodes),
+            "input_provenance": (
+                str(input_provenance).strip() or DEFAULT_INPUT_PROVENANCE
+            ),
+        }
+    )
 
 
 def render_kinetics_section(
@@ -1568,12 +1593,21 @@ def render_kinetics_section(
                 persist_state="session",
             )
 
+            single_folded = FoldedFields()
+            with folded_block(BLOCK_MODEL):
+                _model_parameter_inputs(
+                    common,
+                    database_key=database_key,
+                    prefix="kin_single",
+                    folded=single_folded,
+                )
+
             st.info(
                 "Границы закрыты: поток через левый и правый торцы равен нулю. "
                 "Составы задаются в ат.% или мас.%, в расчёте используются атомные доли."
             )
 
-            with action_row("diffusion_single"):
+            with action_row("diffusion_single", single_folded):
                 single_clicked = release_calculation_button(
                     "Рассчитать однофазную диффузию",
                     type="primary",
@@ -1695,36 +1729,51 @@ def render_kinetics_section(
             ),
         )
 
-        hom_label = st.selectbox(
-            "Модель эффективной подвижности",
-            list(HOMOGENIZATION_FUNCTIONS),
-            index=0,
-            key=f"kin_hom_function_{database_key}",
-            persist_state="session",
-        )
-        parameter_col1, parameter_col2 = st.columns(2)
-        with parameter_col1:
-            eps = st.number_input(
-                "Сглаживающий коэффициент ε (0–0.2)",
-                min_value=0.0,
-                max_value=0.2,
-                value=0.01,
-                step=0.01,
-                format="%.3f",
-                key=f"kin_hom_eps_{database_key}",
+        homogenization_folded = FoldedFields()
+        with folded_block(BLOCK_MODEL):
+            _model_parameter_inputs(
+                common,
+                database_key=database_key,
+                prefix="kin_hom",
+                folded=homogenization_folded,
+            )
+            hom_label = st.selectbox(
+                "Модель эффективной подвижности",
+                list(HOMOGENIZATION_FUNCTIONS),
+                index=0,
+                key=f"kin_hom_function_{database_key}",
                 persist_state="session",
             )
-        with parameter_col2:
-            labyrinth_factor = st.number_input(
-                "Лабиринтный фактор (1–2)",
-                min_value=1.0,
-                max_value=2.0,
-                value=1.5,
-                step=0.1,
-                key=f"kin_hom_lab_{database_key}",
-                persist_state="session",
-                disabled=HOMOGENIZATION_FUNCTIONS[hom_label] != "lab",
+            homogenization_folded.note(
+                "Модель эффективной подвижности",
+                hom_label,
+                list(HOMOGENIZATION_FUNCTIONS)[0],
             )
+            parameter_col1, parameter_col2 = st.columns(2)
+            with parameter_col1:
+                eps = st.number_input(
+                    "Сглаживающий коэффициент ε (0–0.2)",
+                    min_value=0.0,
+                    max_value=0.2,
+                    value=0.01,
+                    step=0.01,
+                    format="%.3f",
+                    key=f"kin_hom_eps_{database_key}",
+                    persist_state="session",
+                )
+            with parameter_col2:
+                labyrinth_factor = st.number_input(
+                    "Лабиринтный фактор (1–2)",
+                    min_value=1.0,
+                    max_value=2.0,
+                    value=1.5,
+                    step=0.1,
+                    key=f"kin_hom_lab_{database_key}",
+                    persist_state="session",
+                    disabled=HOMOGENIZATION_FUNCTIONS[hom_label] != "lab",
+                )
+            homogenization_folded.note("Сглаживающий коэффициент ε (0–0.2)", eps, 0.01)
+            homogenization_folded.note("Лабиринтный фактор (1–2)", labyrinth_factor, 1.5)
 
         st.info(
             "Рекомендуемый первый вариант — нижняя граница Хашина—Штрикмана. "
@@ -1732,7 +1781,7 @@ def render_kinetics_section(
             "к неизвестной геометрии фаз."
         )
 
-        with action_row("diffusion_homogenization"):
+        with action_row("diffusion_homogenization", homogenization_folded):
             homogenization_clicked = release_calculation_button(
                 "Рассчитать гомогенизацию",
                 type="primary",
