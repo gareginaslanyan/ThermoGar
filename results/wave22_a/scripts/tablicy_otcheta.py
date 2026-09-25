@@ -112,6 +112,33 @@ def main() -> None:
         peak = "—" if s is None else comma(s.get("peak_rss_gib", 0), ".3f")
         print(f"| {label} | {seed} | {cell(s)} | {reached} | {rows(s)} | {wall(s)} | {peak} |")
 
+    print("\n### Сходимость по сетке (ячейка приложения, (0,2; 10), 3,6 с, зерно 0)\n")
+    print("| классов | умолчания kawin | minComposition 1e-8 | шаг ≤ 2× предыдущего (сверх kawin) |")
+    print("|---:|---|---|---|")
+    for bins in (30, 40, 60, 80):
+        default = load(f"a2_setka_b{bins}_c02_s0")
+        mincomp = load("a2_kawin_mincomp1e-8_s0" if bins == 40 else f"a2_skhod_mincomp1e-8_b{bins}_s0")
+        cap = load("a2_extra_cap2_s0" if bins == 40 else f"a2_skhod_cap2_b{bins}_s0")
+
+        def full(s: dict | None) -> str:
+            if s is None or s.get("status") != "ok":
+                return cell(s)
+            if s.get("stop"):
+                return cell(s)
+            return (f"{comma(s['final_fraction_pct'], '.4f')} %, R {comma(s['final_radius_nm'], '.4g')} нм, "
+                    f"N {comma(s['final_density_m3'], '.3e')} м⁻³; {s['rows']} стр., {comma(s['wall_s'], '.0f')} с")
+
+        print(f"| {bins} | {full(default)} | {full(mincomp)} | {full(cap)} |")
+
+    print("\n### Сверх задания: шаг ≤ 2× предыдущего на 0,05 ч, сетка (0,2; 10) × 80\n")
+    print("| зерно | исход | дошёл до, с | строк | стена, с | пик, ГиБ |")
+    print("|---:|---|---:|---:|---:|---:|")
+    for seed in (0, 1, 2):
+        s = load(f"a2_extra_005h_cap2_s{seed}")
+        reached = "—" if s is None else comma(s.get("final_time_s", 0), ".5g")
+        peak = "—" if s is None else comma(s.get("peak_rss_gib", 0), ".3f")
+        print(f"| {seed} | {cell(s)} | {reached} | {rows(s)} | {wall(s)} | {peak} |")
+
     total = 0.0
     count = 0
     peak = 0.0
