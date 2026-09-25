@@ -433,6 +433,10 @@ def test_solidification(database_key: str, method: str) -> None:
     assert set(results) == expected
     assert not state["summary"].empty
 
+    # 21-И (N-4): кнопки выгрузки — в виде «Выгрузка» переключателя.
+    session.at.segmented_control(key="solidification_result_view").set_value(
+        "Выгрузка"
+    ).run()
     assert_xlsx(session.download("ThermoGar_solidification.xlsx"), sheets=2)
     assert_png(session.download("ThermoGar_liquid_fraction.png"))
     archive = session.download("ThermoGar_solidification_results.zip")

@@ -1664,32 +1664,39 @@ def render_precipitation_section(
         return
     for warning in getattr(result, "warnings", ()) or ():
         st.warning(warning)
-    # BL-35. Текст отказа — и над вкладками, и строкой в таблице проверок.
+    # BL-35. Текст отказа — и над переключателем видов (21-И; до того вкладки),
+    # и строкой в таблице проверок.
     if getattr(result, "stop_note", ""):
         st.error(result.stop_note)
     if (result.quality["Статус"] == "пройдена").all():
         st.success("Внутренние численные проверки пройдены.")
     else:
         st.error("Одна или несколько внутренних проверок не пройдены.")
-    overview, kinetics_tab, psd_tab, export_tab = st.tabs(
-        ["Итоги", "Кинетика и состав", "Распределение размеров", "Экспорт и ограничения"]
+    result_view = st.segmented_control(
+        "Кинетика выделений",
+        ["Итоги", "Кинетика и состав", "Распределение размеров", "Экспорт и ограничения"],
+        default="Итоги",
+        required=True,
+        label_visibility="collapsed",
+        key="precipitation_result_view",
+        persist_state="session",
     )
-    with overview:
+    if result_view == "Итоги":
         st.dataframe(element_columns_for_display(result.summary), width="stretch", hide_index=True)
         st.pyplot(resolve_figure(result.figures["fraction"], _theme()))
         st.pyplot(resolve_figure(result.figures["radius_density"], _theme()))
         st.dataframe(result.quality, width="stretch", hide_index=True)
-    with kinetics_tab:
+    elif result_view == "Кинетика и состав":
         st.pyplot(resolve_figure(result.figures["nucleation"], _theme()))
         st.pyplot(resolve_figure(result.figures["composition"], _theme()))
         st.dataframe(element_columns_for_display(result.kinetics), width="stretch", hide_index=True)
         with st.expander("Составы матрицы и межфазного равновесия"):
             st.dataframe(element_columns_for_display(result.matrix_composition), width="stretch", hide_index=True)
             st.dataframe(element_columns_for_display(result.interface_composition), width="stretch", hide_index=True)
-    with psd_tab:
+    elif result_view == "Распределение размеров":
         st.pyplot(resolve_figure(result.figures["psd"], _theme()))
         st.dataframe(result.psd, width="stretch", hide_index=True)
-    with export_tab:
+    elif result_view == "Экспорт и ограничения":
         release_download_button("Скачать Excel", data=_excel(result), file_name=f"ThermoGar_precipitation_{result.phase}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", key=f"{widget_prefix}_download_excel")
         release_download_button("Скачать состояние модели, NPZ", data=result.npz, file_name=f"ThermoGar_precipitation_{result.phase}.npz", mime="application/octet-stream", key=f"{widget_prefix}_download_npz")
         release_download_button("Скачать происхождение, JSON", data=result.provenance, file_name=f"ThermoGar_precipitation_{result.phase}_provenance.json", mime="application/json", key=f"{widget_prefix}_download_json")

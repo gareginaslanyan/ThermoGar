@@ -1254,6 +1254,7 @@ def _result_display(
         ["атомные %", "массовые %"],
         horizontal=True,
         key=f"{state_key}_output_units",
+        persist_state="session",
     )
 
     if output_units == "атомные %":
@@ -1351,6 +1352,7 @@ def _common_inputs(
         format_func=element_symbol,
         index=available.index(default_balance),
         key=f"{prefix}_balance_{database_key}",
+        persist_state="session",
     )
     units_label = st.radio(
         "Единицы исходных составов",
@@ -1358,6 +1360,7 @@ def _common_inputs(
         index=0 if defaults["units"] == "at" else 1,
         horizontal=True,
         key=f"{prefix}_units_{database_key}",
+        persist_state="session",
     )
     units = "at" if units_label == "атомные %" else "wt"
 
@@ -1368,6 +1371,7 @@ def _common_inputs(
             value=defaults["left"],
             help="Остаток до 100 % считается элементом-основой.",
             key=f"{prefix}_left_{database_key}",
+            persist_state="session",
         )
     with right_col:
         right_text = st.text_area(
@@ -1375,6 +1379,7 @@ def _common_inputs(
             value=defaults["right"],
             help="Используйте тот же набор элементов; отсутствующий элемент считается равным 0 %.",
             key=f"{prefix}_right_{database_key}",
+            persist_state="session",
         )
 
     temperature_C = st.number_input(
@@ -1382,6 +1387,7 @@ def _common_inputs(
         value=float(defaults["temperature_C"]),
         step=10.0,
         key=f"{prefix}_temperature_{database_key}",
+        persist_state="session",
     )
 
     length_col, interface_col, time_col, nodes_col = st.columns(4)
@@ -1392,6 +1398,7 @@ def _common_inputs(
             value=float(defaults["length_um"]),
             step=10.0,
             key=f"{prefix}_length_{database_key}",
+            persist_state="session",
         )
     with interface_col:
         interface_pct = st.number_input(
@@ -1401,6 +1408,7 @@ def _common_inputs(
             value=float(defaults["interface_pct"]),
             step=1.0,
             key=f"{prefix}_interface_{database_key}",
+            persist_state="session",
         )
     with time_col:
         time_h = st.number_input(
@@ -1409,6 +1417,7 @@ def _common_inputs(
             value=float(defaults["time_h"]),
             step=1.0,
             key=f"{prefix}_time_{database_key}",
+            persist_state="session",
         )
     with nodes_col:
         nodes = st.number_input(
@@ -1418,6 +1427,7 @@ def _common_inputs(
             value=int(defaults["nodes"]),
             step=4,
             key=f"{prefix}_nodes_{database_key}",
+            persist_state="session",
         )
 
     input_provenance = st.text_area(
@@ -1430,6 +1440,7 @@ def _common_inputs(
             "сценарий без экспериментальной проверки."
         ),
         key=f"{prefix}_input_provenance_{database_key}",
+        persist_state="session",
     )
     # Раздел целиком объявлен исследовательским: подпись под заголовком и
     # блок «Ограничения исследовательского diffusion mode» в конце вкладки.
@@ -1496,15 +1507,21 @@ def render_kinetics_section(
 
     kinetics_table, diffusing_species, kinetic_phases = _kinetic_summary(db)
 
-    single_tab, homogenization_tab, coverage_tab = st.tabs(
+    diffusion_view = st.segmented_control(
+        "Диффузия и гомогенизация",
         [
             "Однофазная пара",
             "Многофазная гомогенизация",
             "Покрытие базы подвижностей",
-        ]
+        ],
+        default="Однофазная пара",
+        required=True,
+        label_visibility="collapsed",
+        key="kinetics_diffusion_view",
+        persist_state="session",
     )
 
-    with single_tab:
+    if diffusion_view == "Однофазная пара":
         st.markdown("### Однофазная диффузионная пара")
         st.caption(
             "Во всей области принудительно используется одна выбранная фаза. "
@@ -1547,6 +1564,7 @@ def render_kinetics_section(
                 phase_options,
                 index=default_index,
                 key=f"kin_single_phase_{database_key}",
+                persist_state="session",
             )
 
             st.info(
@@ -1611,7 +1629,7 @@ def render_kinetics_section(
                     figure_to_png,
                 )
 
-    with homogenization_tab:
+    elif diffusion_view == "Многофазная гомогенизация":
         st.markdown("### Многофазная гомогенизация")
         st.caption(
             "Каждая ячейка считается локально равновесной. Поток определяется "
@@ -1667,6 +1685,7 @@ def render_kinetics_section(
             phase_options,
             default=default_phases,
             key=f"kin_hom_phases_{database_key}",
+            persist_state="session",
             help=(
                 "Исследовательский режим разрешает только фазы, для которых в объединённой "
                 "базе найдены параметры подвижности."
@@ -1678,6 +1697,7 @@ def render_kinetics_section(
             list(HOMOGENIZATION_FUNCTIONS),
             index=0,
             key=f"kin_hom_function_{database_key}",
+            persist_state="session",
         )
         parameter_col1, parameter_col2 = st.columns(2)
         with parameter_col1:
@@ -1689,6 +1709,7 @@ def render_kinetics_section(
                 step=0.01,
                 format="%.3f",
                 key=f"kin_hom_eps_{database_key}",
+                persist_state="session",
             )
         with parameter_col2:
             labyrinth_factor = st.number_input(
@@ -1698,6 +1719,7 @@ def render_kinetics_section(
                 value=1.5,
                 step=0.1,
                 key=f"kin_hom_lab_{database_key}",
+                persist_state="session",
                 disabled=HOMOGENIZATION_FUNCTIONS[hom_label] != "lab",
             )
 
@@ -1772,7 +1794,7 @@ def render_kinetics_section(
                 figure_to_png,
             )
 
-    with coverage_tab:
+    elif diffusion_view == "Покрытие базы подвижностей":
         st.markdown("### Что доступно в базе подвижностей")
         metric_col1, metric_col2, metric_col3 = st.columns(3)
         with metric_col1:

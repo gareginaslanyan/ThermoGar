@@ -10804,16 +10804,22 @@ with solidification_tab:
                 for method_key, result in results.items()
             }
 
-            summary_subtab, phases_subtab, liquid_subtab, export_subtab = st.tabs(
+            solidification_view = st.segmented_control(
+                "Затвердевание",
                 [
                     "Сводка",
                     "Твёрдые фазы",
                     "Остаточный расплав",
                     "Выгрузка",
-                ]
+                ],
+                default="Сводка",
+                required=True,
+                label_visibility="collapsed",
+                key="solidification_result_view",
+                persist_state="session",
             )
 
-            with summary_subtab:
+            if solidification_view == "Сводка":
                 st.markdown("### Основные температуры")
                 st.dataframe(
                     element_columns_for_display(state["summary"]),
@@ -10857,7 +10863,7 @@ with solidification_tab:
                         if error_record is not None:
                             render_error_record(*error_record)
 
-            with phases_subtab:
+            elif solidification_view == "Твёрдые фазы":
                 phase_method_key = st.selectbox(
                     "Какой метод показать",
                     options=list(results),
@@ -10866,6 +10872,7 @@ with solidification_tab:
                         key,
                     ),
                     key="solidification_phase_method",
+                    persist_state="session",
                 )
                 st.pyplot(
                     chart_figure(phase_figures[phase_method_key]),
@@ -10890,7 +10897,7 @@ with solidification_tab:
                         hide_index=True,
                     )
 
-            with liquid_subtab:
+            elif solidification_view == "Остаточный расплав":
                 liquid_elements = [
                     component
                     for component in state["components"]
@@ -10901,12 +10908,14 @@ with solidification_tab:
                     liquid_elements,
                     format_func=element_symbol,
                     key="solidification_liquid_element",
+                    persist_state="session",
                 )
                 liquid_units_label = st.radio(
                     "Единицы состава расплава",
                     ["атомные %", "массовые %"],
                     horizontal=True,
                     key="solidification_liquid_units",
+                    persist_state="session",
                 )
                 liquid_units = (
                     "at"
@@ -10931,6 +10940,7 @@ with solidification_tab:
                         key,
                     ),
                     key="solidification_liquid_method",
+                    persist_state="session",
                 )
                 st.dataframe(
                     element_columns_for_display(state["liquid_tables"][liquid_method_key]),
@@ -10942,7 +10952,7 @@ with solidification_tab:
                     "может быть недостаточен; такую область нужно проверять отдельно."
                 )
 
-            with export_subtab:
+            elif solidification_view == "Выгрузка":
                 st.markdown("### Скачать результаты")
                 export_liquid_elements = [
                     component
