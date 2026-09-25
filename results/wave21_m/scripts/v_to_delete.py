@@ -1,4 +1,4 @@
-"""21-L: move what is not needed into _to_delete\21l_<what>\ with a sha256 inventory
+"""21-M copy (targets 21m_<what>). 21-L: move what is not needed into _to_delete\21l_<what>\ with a sha256 inventory
 (opis_sha256.txt: sha256, bytes, source path). Nothing is deleted."""
 
 import hashlib
@@ -30,11 +30,10 @@ def move(sources: list[Path], target: Path) -> None:
 
 temp = Path(os.environ["TEMP"])
 what = sys.argv[1]
-if what == "state":
-    move([temp / "tg21l_state", temp / "tg21l_tests_state"], ROOT / "_to_delete" / "21l_state")
-elif what == "logi":
-    move(sorted((ROOT / "results/wave21_l/10b/logi").glob("*_app.log")), ROOT / "_to_delete" / "21l_logi")
-elif what == "proby":
-    ten = ROOT / "results/wave21_l/10b"
-    move(sorted(ten.glob("*sboy*.png")) + sorted((ten / "runs").glob("*_povtor.json"))
-         + sorted((ten / "runs").glob("*_povtor2.json")), ROOT / "_to_delete" / "21l_proby")
+# 21-M copy: targets _to_deletem_<what>\.
+if what == "pycache_app":
+    move([ROOT / "app" / "__pycache__"], ROOT / "_to_delete" / "21m_pycache_app")
+elif what == "state":
+    move(sorted(p for p in temp.glob("tg21m_*") if p.is_dir()), ROOT / "_to_delete" / "21m_state")
+else:
+    raise SystemExit(f"unknown: {what}")

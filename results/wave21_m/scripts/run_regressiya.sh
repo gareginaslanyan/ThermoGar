@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
+# 21-M, step 7 (copy of 21-I): output results/wave21_m/testy, state tg21m_tests_state.
 # 21-I, step 5 (copy of 21-Z): full regression, one heavy stream. Run from the w21b root:
-#   bash results/wave21_i/scripts/run_regressiya.sh [name ...]
+#   bash results/wave21_m/scripts/run_regressiya.sh [name ...]
 # Every tools/test_*.py by pytest -B, every tools/*_test.py by python -B (main).
 # tools/test_ui_f.py: one process only with >= 6.0 GiB free (tasks/RULES.md),
 # otherwise two groups; THERMOGAR_MEMLOG in both cases.
-# Full output of every run: results/wave21_i/testy/<name>.log; progress: _hod.log.
+# Full output of every run: results/wave21_m/testy/<name>.log; progress: _hod.log.
 set -u
 PY="/d/Pets/ThermoGar/.venv-windows/Scripts/python.exe"
-OUT="results/wave21_i/testy"
+OUT="results/wave21_m/testy"
 mkdir -p "$OUT"
 export MPLBACKEND=Agg
 export PYTHONHASHSEED=0
 export PYTHONUTF8=1
-export THERMOGAR_STATE_ROOT="$(cygpath -w "$TEMP")\tg21i_tests_state"
+export THERMOGAR_STATE_ROOT="$(cygpath -w "$TEMP")\tg21m_tests_state"
 
 free_gib() {
     powershell -NoProfile -Command "[math]::Round((Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory/1MB,2)" | tr -d '\r' | tr ',' '.'
