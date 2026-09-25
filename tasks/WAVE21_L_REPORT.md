@@ -270,4 +270,34 @@ DOM (прогон 53, `kompakt_ni.json` → `bez_stiley[].dom`): на 19 экр�
 
 ## Git
 
-<<GIT>>
+Вывод снят после `git push -u origin wave21-l`, до этого коммита. Сам этот раздел добавлен следующим коммитом «docs(21-Л): отчёт — вывод git после пуша».
+
+`git push -u origin wave21-l`:
+
+```
+To https://github.com/gareginaslanyan/ThermoGar.git
+ * [new branch]      wave21-l -> wave21-l
+branch 'wave21-l' set up to track 'origin/wave21-l'.
+```
+
+`git ls-remote origin main wave21-l`:
+
+```
+458e3a82cb80ae8255d184c9e1b733b844a537a4	refs/heads/main
+985fd5958b3b9f94b0692ead78be13352f9fe028	refs/heads/wave21-l
+```
+
+`git log --oneline 458e3a82cb80ae8255d184c9e1b733b844a537a4..wave21-l`:
+
+```
+985fd59 docs(21-Л): отчёт, строка 21-Л в реестре
+726c265 results(21-Л): прогон умолчаний и кандидатов 10Б, пробы 9Б стилями
+97f6f21 docs(21-Л): реестр — приёмка 21-И и 21-К, строка 21-Л, BL-65
+fbc4f86 docs(21-Л): задание
+```
+
+`git status --short`:
+
+```
+?? _to_delete/
+```
