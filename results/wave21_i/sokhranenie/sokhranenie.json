@@ -1,0 +1,49 @@
+{
+  "frames": [
+    "s1_diffuziya_do.png",
+    "s2_diffuziya_pokrytie.png",
+    "s3_diffuziya_posle.png",
+    "s4_zatverdevanie_do.png",
+    "s5_zatverdevanie_svodka.png",
+    "s6_zatverdevanie_posle.png"
+  ],
+  "warnings": {
+    "s1_diffuziya_do.png": [],
+    "s2_diffuziya_pokrytie.png": [],
+    "s3_diffuziya_posle.png": [],
+    "s4_zatverdevanie_do.png": [],
+    "s5_zatverdevanie_svodka.png": [],
+    "s6_zatverdevanie_posle.png": []
+  },
+  "diffusion": {
+    "field": "Левая сторона",
+    "initial": "C=0.1, Cr=8",
+    "set": "Cr=12, Al=4",
+    "before": "Cr=12, Al=4",
+    "away": {
+      "checked": "Покрытие базы подвижностей",
+      "left_fields": 0
+    },
+    "after": "Cr=12, Al=4",
+    "checked_after": "Однофазная пара",
+    "same": true
+  },
+  "solidification": {
+    "field": "Элемент в остаточном расплаве",
+    "options": [
+      "Al",
+      "Cu",
+      "Mg"
+    ],
+    "initial": "Al",
+    "set": "Cu",
+    "before": "Cu",
+    "away": {
+      "checked": "Сводка",
+      "selects": 0
+    },
+    "after": "Cu",
+    "checked_after": "Остаточный расплав",
+    "same": true
+  }
+}
