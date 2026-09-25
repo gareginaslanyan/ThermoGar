@@ -7,7 +7,8 @@ own. Capability decisions that still exist belong to the verified loaders.
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from contextlib import contextmanager
+from typing import Any, Callable, Iterator
 
 import streamlit as st
 
@@ -40,6 +41,20 @@ def rejection_help_text(decision: RejectedFeatureReceipt) -> str:
 
     code = getattr(decision.reason_code, "value", decision.reason_code)
     return REJECTION_HELP_TEXTS.get(str(code), REJECTION_HELP_FALLBACK)
+
+
+# Решение владельца 25.09.2026, п. 9 (1В): строка основной кнопки — контейнер
+# с ключом tg_action_<экран>; style.css прижимает его к нижнему краю окна.
+ACTION_ROW_PREFIX = "tg_action_"
+
+
+@contextmanager
+def action_row(screen: str, *, sticky: bool = True) -> Iterator[None]:
+    """Строка кнопки: кнопка и причина неактивности под ней."""
+
+    key = f"{ACTION_ROW_PREFIX}{screen}" if sticky else screen
+    with st.container(key=key):
+        yield
 
 
 def release_download_button(*args: Any, **kwargs: Any) -> bool:

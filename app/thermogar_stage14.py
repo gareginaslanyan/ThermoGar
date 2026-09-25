@@ -36,6 +36,7 @@ from thermogar_release_policy import (
     release_status,
 )
 from thermogar_release_ui import (
+    action_row,
     release_calculation_button,
     release_download_button,
 )
@@ -1332,11 +1333,13 @@ def render_diagnostics(
     file_table = database_file_table(project_root, database_definitions)
     _render_table_with_technical_columns(file_table)
 
-    if release_calculation_button(
-        "Проверить базы и запустить три контрольных расчёта",
-        type="primary",
-        key="stage10_run_smoke_tests",
-    ):
+    with action_row("installation_check"):
+        smoke_clicked = release_calculation_button(
+            "Проверить базы и запустить три контрольных расчёта",
+            type="primary",
+            key="stage10_run_smoke_tests",
+        )
+    if smoke_clicked:
         with st.status(
             "Загружаем базы и выполняем контрольные расчёты…",
             expanded=True,

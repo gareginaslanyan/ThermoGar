@@ -42,6 +42,7 @@ from thermogar_release_policy import (
     release_status,
 )
 from thermogar_release_ui import (
+    action_row,
     release_calculation_button,
     release_download_button,
 )
@@ -1572,11 +1573,13 @@ def render_kinetics_section(
                 "Составы задаются в ат.% или мас.%, в расчёте используются атомные доли."
             )
 
-            if release_calculation_button(
-                "Рассчитать однофазную диффузию",
-                type="primary",
-                key=f"kin_single_run_{database_key}",
-            ):
+            with action_row("diffusion_single"):
+                single_clicked = release_calculation_button(
+                    "Рассчитать однофазную диффузию",
+                    type="primary",
+                    key=f"kin_single_run_{database_key}",
+                )
+            if single_clicked:
                 try:
                     with st.spinner("Расчёт диффузионного профиля…"):
                         result = run_diffusion(
@@ -1729,12 +1732,14 @@ def render_kinetics_section(
             "к неизвестной геометрии фаз."
         )
 
-        if release_calculation_button(
-            "Рассчитать гомогенизацию",
-            type="primary",
-            key=f"kin_hom_run_{database_key}",
-            disabled=not homogenization_possible,
-        ):
+        with action_row("diffusion_homogenization"):
+            homogenization_clicked = release_calculation_button(
+                "Рассчитать гомогенизацию",
+                type="primary",
+                key=f"kin_hom_run_{database_key}",
+                disabled=not homogenization_possible,
+            )
+        if homogenization_clicked:
             try:
                 if len(phases) < 2:
                     raise UserValueError("Для многофазной гомогенизации выберите минимум две фазы.")

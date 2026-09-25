@@ -89,3 +89,18 @@ div[class*="st-key-quick_example_card_"] {
 .st-key-thermogar_theme_watch {
     display: none;
 }
+
+/* Решение владельца 25.09.2026, п. 9 (1В): строка основной кнопки расчёта
+   прилипает к нижнему краю окна, пока её место ниже. Строка — st.container
+   с ключом tg_action_<экран>; его обёртка stLayoutWrapper лежит прямо в длинном
+   вертикальном блоке вкладки (Streamlit 1.62), поэтому подпись над кнопкой,
+   кнопка и причина под ней прилипают вместе. Кнопка остаётся своей ширины.
+   Кнопки форм и строка «Рассчитать Voigt–Reuss–Hill» — на своих местах. */
+div[data-testid="stVerticalBlock"] > div[data-testid="stLayoutWrapper"]:has(> [class*="st-key-tg_action_"]) {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    background-color: light-dark(#F8F8F9, #17181B);
+    border-top: 1px solid light-dark(#CFD1D5, #33373E);
+    padding: 12px 0;
+}

@@ -244,6 +244,7 @@ from thermogar_release_policy import (
     preset_phases,
 )
 from thermogar_release_ui import (
+    action_row,
     release_calculation_button,
     release_download_button,
     verified_equilibrium_button,
@@ -1731,12 +1732,13 @@ def render_b4b_density_single(
     too_cold = density_below_pdb_text(temperature_c, physical_overrides)
     if too_cold is not None:
         st.error(too_cold)
-        st.button(
-            "Рассчитать плотность и объёмные доли",
-            type="primary",
-            key="physical_single_calculate",
-            disabled=True,
-        )
+        with action_row("physical_single"):
+            st.button(
+                "Рассчитать плотность и объёмные доли",
+                type="primary",
+                key="physical_single_calculate",
+                disabled=True,
+            )
         return
     try:
         inputs = verified_physical.make_physical_inputs(
@@ -1764,12 +1766,14 @@ def render_b4b_density_single(
     state_key = "_thermogar_vlb_b4b_result_property_density_single"
     _b4b_refresh_result(state_key, decision)
     _b4b_refresh_overrides(state_key, physical_overrides)
-    if verified_physical_button(
-        decision,
-        "Рассчитать плотность и объёмные доли",
-        type="primary",
-        key="physical_single_calculate",
-    ):
+    with action_row("physical_single"):
+        density_clicked = verified_physical_button(
+            decision,
+            "Рассчитать плотность и объёмные доли",
+            type="primary",
+            key="physical_single_calculate",
+        )
+    if density_clicked:
         try:
             assert type(decision) is verified_loaders.FeatureRequest
             with acquire_b4b_execution(
@@ -1892,12 +1896,13 @@ def render_b4b_density_temperature(
     too_cold = density_below_pdb_text(minimum_c, physical_overrides)
     if too_cold is not None:
         st.error(too_cold)
-        st.button(
-            "Построить плотность по температуре",
-            type="primary",
-            key="physical_scan_calculate",
-            disabled=True,
-        )
+        with action_row("physical_scan"):
+            st.button(
+                "Построить плотность по температуре",
+                type="primary",
+                key="physical_scan_calculate",
+                disabled=True,
+            )
         return
     try:
         if maximum_c <= minimum_c:
@@ -1935,12 +1940,14 @@ def render_b4b_density_temperature(
     state_key = "_thermogar_vlb_b4b_result_property_density_temperature"
     _b4b_refresh_result(state_key, decision)
     _b4b_refresh_overrides(state_key, physical_overrides)
-    if verified_physical_button(
-        decision,
-        "Построить плотность по температуре",
-        type="primary",
-        key="physical_scan_calculate",
-    ):
+    with action_row("physical_scan"):
+        density_scan_clicked = verified_physical_button(
+            decision,
+            "Построить плотность по температуре",
+            type="primary",
+            key="physical_scan_calculate",
+        )
+    if density_scan_clicked:
         try:
             assert type(decision) is verified_loaders.FeatureRequest
             # Температурный скан плотности многоточечный, поэтому идёт в
@@ -2226,12 +2233,14 @@ def render_b4b2_elastic_properties(
     _b4b_refresh_overrides(vrh_state_key, physical_overrides)
     if prepare_decision is not None:
         _b4b_refresh_result(prepare_state_key, prepare_decision)
-        if verified_physical_button(
-            prepare_decision,
-            "Получить фазовые доли",
-            type="primary",
-            key="b4b2_elastic_prepare_calculate",
-        ):
+        with action_row("elastic_prepare"):
+            prepare_clicked = verified_physical_button(
+                prepare_decision,
+                "Получить фазовые доли",
+                type="primary",
+                key="b4b2_elastic_prepare_calculate",
+            )
+        if prepare_clicked:
             try:
                 assert type(prepare_decision) is verified_loaders.FeatureRequest
                 with acquire_b4b_execution(prepare_decision, THERMOGAR_PATHS) as lease:
@@ -2321,12 +2330,14 @@ def render_b4b2_elastic_properties(
         )
         return
     _b4b_refresh_result(vrh_state_key, vrh_decision)
-    if verified_physical_button(
-        vrh_decision,
-        "Рассчитать Voigt–Reuss–Hill",
-        type="primary",
-        key="b4b2_elastic_vrh_calculate",
-    ):
+    with action_row("b4b2_elastic_vrh_action", sticky=False):
+        vrh_clicked = verified_physical_button(
+            vrh_decision,
+            "Рассчитать Voigt–Reuss–Hill",
+            type="primary",
+            key="b4b2_elastic_vrh_calculate",
+        )
+    if vrh_clicked:
         try:
             assert type(vrh_decision) is verified_loaders.FeatureRequest
             with acquire_b4b_execution(vrh_decision, THERMOGAR_PATHS) as lease:
@@ -2502,12 +2513,14 @@ def render_b4b2_strengthening(
     )
     state_key = "_thermogar_vlb_b4b_result_property_strengthening"
     _b4b_refresh_result(state_key, decision)
-    if verified_physical_button(
-        decision,
-        "Рассчитать вклады",
-        type="primary",
-        key="b4b2_strengthening_calculate",
-    ):
+    with action_row("strengthening"):
+        strengthening_clicked = verified_physical_button(
+            decision,
+            "Рассчитать вклады",
+            type="primary",
+            key="b4b2_strengthening_calculate",
+        )
+    if strengthening_clicked:
         try:
             assert type(decision) is verified_loaders.FeatureRequest
             with acquire_b4b_execution(decision, THERMOGAR_PATHS) as lease:
@@ -7489,25 +7502,26 @@ with single_tab:
         single_feature_decision,
     )
 
-    if type(single_feature_decision) in (
-        verified_loaders.FeatureRequest,
-        verified_loaders.RejectedFeatureReceipt,
-    ):
-        single_clicked = verified_equilibrium_button(
-            single_feature_decision,
-            "Рассчитать равновесие",
-            type="primary",
-            key="single_calculate",
-        )
-    else:
-        st.button(
-            "Рассчитать равновесие",
-            type="primary",
-            key="single_calculate",
-            disabled=True,
-            help="Параметры расчёта некорректны.",
-        )
-        single_clicked = False
+    with action_row("single"):
+        if type(single_feature_decision) in (
+            verified_loaders.FeatureRequest,
+            verified_loaders.RejectedFeatureReceipt,
+        ):
+            single_clicked = verified_equilibrium_button(
+                single_feature_decision,
+                "Рассчитать равновесие",
+                type="primary",
+                key="single_calculate",
+            )
+        else:
+            st.button(
+                "Рассчитать равновесие",
+                type="primary",
+                key="single_calculate",
+                disabled=True,
+                help="Параметры расчёта некорректны.",
+            )
+            single_clicked = False
 
     if single_clicked:
         try:
@@ -7839,25 +7853,26 @@ with temperature_tab:
         temperature_feature_decision,
     )
 
-    if type(temperature_feature_decision) in (
-        verified_loaders.FeatureRequest,
-        verified_loaders.RejectedFeatureReceipt,
-    ):
-        temperature_clicked = verified_equilibrium_button(
-            temperature_feature_decision,
-            "Построить график по температуре",
-            type="primary",
-            key="temperature_calculate",
-        )
-    else:
-        st.button(
-            "Построить график по температуре",
-            type="primary",
-            key="temperature_calculate",
-            disabled=True,
-            help="Параметры температурного скана некорректны.",
-        )
-        temperature_clicked = False
+    with action_row("temperature"):
+        if type(temperature_feature_decision) in (
+            verified_loaders.FeatureRequest,
+            verified_loaders.RejectedFeatureReceipt,
+        ):
+            temperature_clicked = verified_equilibrium_button(
+                temperature_feature_decision,
+                "Построить график по температуре",
+                type="primary",
+                key="temperature_calculate",
+            )
+        else:
+            st.button(
+                "Построить график по температуре",
+                type="primary",
+                key="temperature_calculate",
+                disabled=True,
+                help="Параметры температурного скана некорректны.",
+            )
+            temperature_clicked = False
 
     if temperature_clicked:
         try:
@@ -8189,25 +8204,26 @@ with concentration_tab:
         concentration_feature_decision,
     )
 
-    if type(concentration_feature_decision) in (
-        verified_loaders.FeatureRequest,
-        verified_loaders.RejectedFeatureReceipt,
-    ):
-        concentration_clicked = verified_equilibrium_button(
-            concentration_feature_decision,
-            "Построить график по составу",
-            type="primary",
-            key="concentration_calculate",
-        )
-    else:
-        st.button(
-            "Построить график по составу",
-            type="primary",
-            key="concentration_calculate",
-            disabled=True,
-            help="Параметры скана по составу некорректны.",
-        )
-        concentration_clicked = False
+    with action_row("concentration"):
+        if type(concentration_feature_decision) in (
+            verified_loaders.FeatureRequest,
+            verified_loaders.RejectedFeatureReceipt,
+        ):
+            concentration_clicked = verified_equilibrium_button(
+                concentration_feature_decision,
+                "Построить график по составу",
+                type="primary",
+                key="concentration_calculate",
+            )
+        else:
+            st.button(
+                "Построить график по составу",
+                type="primary",
+                key="concentration_calculate",
+                disabled=True,
+                help="Параметры скана по составу некорректны.",
+            )
+            concentration_clicked = False
 
     if concentration_clicked:
         try:
@@ -8541,11 +8557,13 @@ with phase_diagram_tab:
                 "но для читаемого графика лучше оставить основные фазы."
             )
 
-        if release_calculation_button(
-            "Построить диаграмму состояния",
-            type="primary",
-            key="binary_calculate",
-        ):
+        with action_row("binary"):
+            binary_clicked = release_calculation_button(
+                "Построить диаграмму состояния",
+                type="primary",
+                key="binary_calculate",
+            )
+        if binary_clicked:
             try:
                 if c_max <= c_min:
                     raise UserValueError(
@@ -8951,11 +8969,13 @@ with phase_diagram_tab:
                 "но для читаемого графика лучше оставить основные фазы."
             )
 
-        if release_calculation_button(
-            "Построить многокомпонентное сечение",
-            type="primary",
-            key="isopleth_calculate",
-        ):
+        with action_row("isopleth"):
+            isopleth_clicked = release_calculation_button(
+                "Построить многокомпонентное сечение",
+                type="primary",
+                key="isopleth_calculate",
+            )
+        if isopleth_clicked:
             try:
                 fixed_entered = parse_composition(
                     fixed_composition_text
@@ -9402,11 +9422,13 @@ with phase_diagram_tab:
                 "оставить основные фазы."
             )
 
-        if release_calculation_button(
-            "Построить тройную диаграмму",
-            type="primary",
-            key="ternary_calculate",
-        ):
+        with action_row("ternary"):
+            ternary_clicked = release_calculation_button(
+                "Построить тройную диаграмму",
+                type="primary",
+                key="ternary_calculate",
+            )
+        if ternary_clicked:
             try:
                 if ternary_step <= 0:
                     raise UserValueError(
@@ -9835,11 +9857,13 @@ with phase_diagram_tab:
                 "конкурирующие фазы."
             )
 
-        if release_calculation_button(
-            "Построить карту доли фазы",
-            type="primary",
-            key="ternary_map_calculate",
-        ):
+        with action_row("ternary_map"):
+            ternary_map_clicked = release_calculation_button(
+                "Построить карту доли фазы",
+                type="primary",
+                key="ternary_map_calculate",
+            )
+        if ternary_map_clicked:
             try:
                 if map_target_phase is None:
                     raise UserValueError("Сначала выберите фазу для карты.")
@@ -10397,15 +10421,17 @@ with solidification_tab:
                 "Для расчёта затвердевания нужно оставить фазу LIQUID."
             )
 
-        if release_calculation_button(
-            "Рассчитать затвердевание",
-            type="primary",
-            key="solidification_calculate",
-            disabled=(
-                not selected_solidification_phases
-                or "LIQUID" not in selected_solidification_phases
-            ),
-        ):
+        with action_row("solidification"):
+            solidification_clicked = release_calculation_button(
+                "Рассчитать затвердевание",
+                type="primary",
+                key="solidification_calculate",
+                disabled=(
+                    not selected_solidification_phases
+                    or "LIQUID" not in selected_solidification_phases
+                ),
+            )
+        if solidification_clicked:
             try:
                 if float(solidification_max_start_c) < float(solidification_start_c):
                     raise UserValueError(
@@ -11090,11 +11116,13 @@ with energy_tab:
             key=f"energy_view_{database_key}",
         )
 
-        if release_calculation_button(
-            "Рассчитать энергии фаз",
-            type="primary",
-            key="energy_curve_calculate",
-        ):
+        with action_row("energy_curve"):
+            energy_curve_clicked = release_calculation_button(
+                "Рассчитать энергии фаз",
+                type="primary",
+                key="energy_curve_calculate",
+            )
+        if energy_curve_clicked:
             try:
                 entered = parse_composition(composition_text)
                 (
@@ -11349,11 +11377,13 @@ with energy_tab:
             key=f"driving_t_step_{database_key}",
         )
 
-        if release_calculation_button(
-            "Рассчитать движущую силу",
-            type="primary",
-            key="driving_force_calculate",
-        ):
+        with action_row("driving_force"):
+            driving_force_clicked = release_calculation_button(
+                "Рассчитать движущую силу",
+                type="primary",
+                key="driving_force_calculate",
+            )
+        if driving_force_clicked:
             try:
                 if not driving_target:
                     raise UserValueError("Не выбрана фаза для расчёта.")
@@ -11632,11 +11662,13 @@ with energy_tab:
             key=f"tzero_t_max_{database_key}",
         )
 
-        if release_calculation_button(
-            "Рассчитать T₀",
-            type="primary",
-            key="tzero_calculate",
-        ):
+        with action_row("tzero"):
+            tzero_clicked = release_calculation_button(
+                "Рассчитать T₀",
+                type="primary",
+                key="tzero_calculate",
+            )
+        if tzero_clicked:
             try:
                 if not phase_one or not phase_two:
                     raise UserValueError("Выберите две фазы.")

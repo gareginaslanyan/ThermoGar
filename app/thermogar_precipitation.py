@@ -42,6 +42,7 @@ from thermogar_release_policy import (
     release_status,
 )
 from thermogar_release_ui import (
+    action_row,
     release_calculation_button,
     release_download_button,
 )
@@ -1611,11 +1612,13 @@ def render_precipitation_section(
     # содержательные проверки ввода (состав, фазы, γ, Vm, сетка) на месте.
     research_scenario_declared = True
 
-    if release_calculation_button(
-        "Рассчитать кинетику выделений",
-        type="primary",
-        key=f"{widget_prefix}_{mode_key}_calculate",
-    ):
+    with action_row("precipitation"):
+        precipitation_clicked = release_calculation_button(
+            "Рассчитать кинетику выделений",
+            type="primary",
+            key=f"{widget_prefix}_{mode_key}_calculate",
+        )
+    if precipitation_clicked:
         try:
             with st.spinner("Расчёт KWN может занять несколько минут…"):
                 result = run_precipitation(
