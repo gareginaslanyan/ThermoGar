@@ -1,0 +1,105 @@
+﻿тема;экран;шаг Tab;тег;role;testid;key;подпись;элемент с кольцом;box-shadow;outline;класс кольца
+Light;Расчёты / Одна температура;0;div;tab;stTab;;Одна температура;div[stTab];rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(31, 96, 193);primary_poluprozrachnyi
+Light;Расчёты / Одна температура;1;a;;stHeaderActionElements;;Link to heading;a;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(19, 59, 139);primary_poluprozrachnyi
+Light;Расчёты / Одна температура;2;input;;stNumberInputField;st-key-single_temperature_fe;Температура, °C;input[stNumberInputField];none;none 3px rgb(35, 37, 41);net
+Light;Расчёты / Одна температура;3;summary;;stExpander;;keyboard_arrow_right Управление фазами / метастабильный расч;summary;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(35, 37, 41);primary_poluprozrachnyi
+Light;Расчёты / Одна температура;4;button;;stBaseButton-primary;st-key-single_calculate;Рассчитать равновесие;button[stBaseButton-primary];rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(255, 255, 255);primary_poluprozrachnyi
+Light;Затвердевание;0;div;tab;stTab;;Затвердевание;div[stTab];rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(31, 96, 193);primary_poluprozrachnyi
+Light;Затвердевание;1;a;;stHeaderActionElements;;Link to heading;a;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(19, 59, 139);primary_poluprozrachnyi
+Light;Затвердевание;2;input;;stRadioOption;st-key-solidification_method_fe;Метод расчёта;input;none;auto 1px rgb(16, 16, 16);drugoi
+Light;Затвердевание;3;summary;;stExpander;;keyboard_arrow_right Точность и критерии;summary;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(35, 37, 41);primary_poluprozrachnyi
+Light;Затвердевание;4;summary;;stExpander;;keyboard_arrow_right Управление фазами / метастабильный расч;summary;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(35, 37, 41);primary_poluprozrachnyi
+Light;Затвердевание;5;button;;stBaseButton-primary;st-key-solidification_calculate;Рассчитать затвердевание;button[stBaseButton-primary];rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(255, 255, 255);primary_poluprozrachnyi
+Light;Кинетика / Диффузия и гомогенизация / Однофазная пара;0;div;tab;stTab;;Диффузия и гомогенизация;div[stTab];rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(31, 96, 193);primary_poluprozrachnyi
+Light;Кинетика / Диффузия и гомогенизация / Однофазная пара;1;a;;stHeaderActionElements;;Link to heading;a;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(19, 59, 139);primary_poluprozrachnyi
+Light;Кинетика / Диффузия и гомогенизация / Однофазная пара;2;button;radio;stButtonGroup;st-key-kinetics_diffusion_view;Диффузия и гомогенизация;button;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(31, 96, 193);primary_poluprozrachnyi
+Light;Кинетика / Диффузия и гомогенизация / Однофазная пара;3;a;;stHeaderActionElements;;Link to heading;a;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(19, 59, 139);primary_poluprozrachnyi
+Light;Кинетика / Диффузия и гомогенизация / Однофазная пара;4;input;combobox;stSelectbox;st-key-kin_single_balance_fe;Элемент-основа;input;none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Диффузия и гомогенизация / Однофазная пара;5;input;;stRadioOption;st-key-kin_single_units_fe;Единицы исходных составов;input;none;auto 1px rgb(16, 16, 16);drugoi
+Light;Кинетика / Диффузия и гомогенизация / Однофазная пара;6;button;;stTooltipHoverTarget;st-key-kin_single_left_fe;Help for Левая сторона;button;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(35, 37, 41);primary_poluprozrachnyi
+Light;Кинетика / Диффузия и гомогенизация / Однофазная пара;7;textarea;;stTextAreaRootElement;st-key-kin_single_left_fe;Левая сторона;textarea;none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Диффузия и гомогенизация / Однофазная пара;8;button;;stTooltipHoverTarget;st-key-kin_single_right_fe;Help for Правая сторона;button;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(35, 37, 41);primary_poluprozrachnyi
+Light;Кинетика / Диффузия и гомогенизация / Однофазная пара;9;textarea;;stTextAreaRootElement;st-key-kin_single_right_fe;Правая сторона;textarea;none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Диффузия и гомогенизация / Однофазная пара;10;input;;stNumberInputField;st-key-kin_single_temperature_fe;Температура выдержки, °C;input[stNumberInputField];none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Диффузия и гомогенизация / Однофазная пара;11;input;;stNumberInputField;st-key-kin_single_time_fe;Время, ч;input[stNumberInputField];none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Диффузия и гомогенизация / Однофазная пара;12;input;combobox;stSelectbox;st-key-kin_single_phase_fe;Фаза для всего профиля;input;none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Диффузия и гомогенизация / Однофазная пара;13;summary;;stExpander;;keyboard_arrow_right Параметры модели;summary;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(35, 37, 41);primary_poluprozrachnyi
+Light;Кинетика / Диффузия и гомогенизация / Однофазная пара;14;button;;stBaseButton-primary;st-key-kin_single_run_fe;Рассчитать однофазную диффузию;button[stBaseButton-primary];rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(255, 255, 255);primary_poluprozrachnyi
+Light;Кинетика / Выделения;0;div;tab;stTab;;Выделения;div[stTab];rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(31, 96, 193);primary_poluprozrachnyi
+Light;Кинетика / Выделения;1;a;;stHeaderActionElements;;Link to heading;a;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(19, 59, 139);primary_poluprozrachnyi
+Light;Кинетика / Выделения;2;input;combobox;stSelectbox;st-key-precipitation_fe_preset;Набор исходных параметров;input;none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Выделения;3;input;combobox;stSelectbox;st-key-precipitation_fe_user_matrix;Матричная фаза;input;none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Выделения;4;input;combobox;stSelectbox;st-key-precipitation_fe_user_precipitate;Фаза-выделение;input;none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Выделения;5;input;;stRadioOption;st-key-precipitation_fe_user_temperature_mode;Температурный режим;input;none;auto 1px rgb(16, 16, 16);drugoi
+Light;Кинетика / Выделения;6;input;;stNumberInputField;st-key-precipitation_fe_user_temperature_c;Температура, °C;input[stNumberInputField];none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Выделения;7;input;;stNumberInputField;st-key-precipitation_fe_user_duration_h;Время выдержки, ч;input[stNumberInputField];none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Выделения;8;summary;;stExpander;;keyboard_arrow_down Параметры модели KWN;summary;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(35, 37, 41);primary_poluprozrachnyi
+Light;Кинетика / Выделения;9;input;;stNumberInputField;st-key-precipitation_fe_user_gamma;Межфазная энергия, Дж/м²;input[stNumberInputField];none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Выделения;10;input;;stNumberInputField;st-key-precipitation_fe_user_matrix_vm;Молярный объём матрицы, см³/моль;input[stNumberInputField];none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Выделения;11;input;;stNumberInputField;st-key-precipitation_fe_user_precip_vm;Молярный объём выделения, см³/моль;input[stNumberInputField];none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Выделения;12;input;combobox;stSelectbox;st-key-precipitation_fe_user_nucleation_type;Центры зарождения;input;none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Выделения;13;input;;stNumberInputField;st-key-precipitation_fe_user_bulk_n0;Плотность объёмных центров, 1/м³;input[stNumberInputField];none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Выделения;14;input;;stNumberInputField;st-key-precipitation_fe_user_grain_size_um;Средний размер зерна, мкм;input[stNumberInputField];none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Выделения;15;input;;stNumberInputField;st-key-precipitation_fe_user_dislocation_density;Плотность дислокаций, 1/м²;input[stNumberInputField];none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Выделения;16;input;;stNumberInputField;st-key-precipitation_fe_user_gb_energy;Энергия границы зерна, Дж/м²;input[stNumberInputField];none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Выделения;17;summary;;stExpander;;keyboard_arrow_right Численная сетка размеров;summary;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(35, 37, 41);primary_poluprozrachnyi
+Light;Кинетика / Выделения;18;button;;stTooltipHoverTarget;st-key-precipitation_fe_user_input_provenance;Help for Источник и применимость физических входов;button;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(35, 37, 41);primary_poluprozrachnyi
+Light;Кинетика / Выделения;19;textarea;;stTextAreaRootElement;st-key-precipitation_fe_user_input_provenance;Источник и применимость физических входов;textarea;none;none 3px rgb(35, 37, 41);net
+Light;Кинетика / Выделения;20;button;;stBaseButton-primary;st-key-precipitation_fe_user_calculate;Рассчитать кинетику выделений;button[stBaseButton-primary];rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(255, 255, 255);primary_poluprozrachnyi
+Light;Свойства / Покрытие физической базы;0;div;tab;stTab;;Покрытие физической базы;div[stTab];rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(31, 96, 193);primary_poluprozrachnyi
+Light;Свойства / Покрытие физической базы;1;a;;stHeaderActionElements;;Link to heading;a;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(19, 59, 139);primary_poluprozrachnyi
+Light;Свойства / Покрытие физической базы;2;summary;;stExpander;;keyboard_arrow_right Технические сведения;summary;rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(35, 37, 41);primary_poluprozrachnyi
+Light;Свойства / Покрытие физической базы;3;button;;stBaseButton-secondary;st-key-physical_coverage_view;Обновить покрытие физической базы;button[stBaseButton-secondary];rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(35, 37, 41);primary_poluprozrachnyi
+Light;Свойства / Покрытие физической базы;4;button;;stBaseButton-secondary;st-key-physical_database_self_test;Проверить чтение физической базы;button[stBaseButton-secondary];rgba(31, 96, 193, 0.5) 0px 0px 0px 3.6px;none 3px rgb(35, 37, 41);primary_poluprozrachnyi
+Dark;Расчёты / Одна температура;0;div;tab;stTab;;Одна температура;div[stTab];rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(92, 151, 232);primary_poluprozrachnyi
+Dark;Расчёты / Одна температура;1;a;;stHeaderActionElements;;Link to heading;a;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(156, 192, 242);primary_poluprozrachnyi
+Dark;Расчёты / Одна температура;2;input;;stNumberInputField;st-key-single_temperature_fe;Температура, °C;input[stNumberInputField];none;none 3px rgb(236, 237, 239);net
+Dark;Расчёты / Одна температура;3;summary;;stExpander;;keyboard_arrow_right Управление фазами / метастабильный расч;summary;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(236, 237, 239);primary_poluprozrachnyi
+Dark;Расчёты / Одна температура;4;button;;stBaseButton-primary;st-key-single_calculate;Рассчитать равновесие;button[stBaseButton-primary];rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(23, 24, 27);primary_poluprozrachnyi
+Dark;Затвердевание;0;div;tab;stTab;;Затвердевание;div[stTab];rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(92, 151, 232);primary_poluprozrachnyi
+Dark;Затвердевание;1;a;;stHeaderActionElements;;Link to heading;a;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(156, 192, 242);primary_poluprozrachnyi
+Dark;Затвердевание;2;input;;stRadioOption;st-key-solidification_method_fe;Метод расчёта;input;none;auto 1px rgb(16, 16, 16);drugoi
+Dark;Затвердевание;3;summary;;stExpander;;keyboard_arrow_right Точность и критерии;summary;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(236, 237, 239);primary_poluprozrachnyi
+Dark;Затвердевание;4;summary;;stExpander;;keyboard_arrow_right Управление фазами / метастабильный расч;summary;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(236, 237, 239);primary_poluprozrachnyi
+Dark;Затвердевание;5;button;;stBaseButton-primary;st-key-solidification_calculate;Рассчитать затвердевание;button[stBaseButton-primary];rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(23, 24, 27);primary_poluprozrachnyi
+Dark;Кинетика / Диффузия и гомогенизация / Однофазная пара;0;div;tab;stTab;;Диффузия и гомогенизация;div[stTab];rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(92, 151, 232);primary_poluprozrachnyi
+Dark;Кинетика / Диффузия и гомогенизация / Однофазная пара;1;a;;stHeaderActionElements;;Link to heading;a;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(156, 192, 242);primary_poluprozrachnyi
+Dark;Кинетика / Диффузия и гомогенизация / Однофазная пара;2;button;radio;stButtonGroup;st-key-kinetics_diffusion_view;Диффузия и гомогенизация;button;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(92, 151, 232);primary_poluprozrachnyi
+Dark;Кинетика / Диффузия и гомогенизация / Однофазная пара;3;a;;stHeaderActionElements;;Link to heading;a;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(156, 192, 242);primary_poluprozrachnyi
+Dark;Кинетика / Диффузия и гомогенизация / Однофазная пара;4;input;combobox;stSelectbox;st-key-kin_single_balance_fe;Элемент-основа;input;none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Диффузия и гомогенизация / Однофазная пара;5;input;;stRadioOption;st-key-kin_single_units_fe;Единицы исходных составов;input;none;auto 1px rgb(16, 16, 16);drugoi
+Dark;Кинетика / Диффузия и гомогенизация / Однофазная пара;6;button;;stTooltipHoverTarget;st-key-kin_single_left_fe;Help for Левая сторона;button;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(236, 237, 239);primary_poluprozrachnyi
+Dark;Кинетика / Диффузия и гомогенизация / Однофазная пара;7;textarea;;stTextAreaRootElement;st-key-kin_single_left_fe;Левая сторона;textarea;none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Диффузия и гомогенизация / Однофазная пара;8;button;;stTooltipHoverTarget;st-key-kin_single_right_fe;Help for Правая сторона;button;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(236, 237, 239);primary_poluprozrachnyi
+Dark;Кинетика / Диффузия и гомогенизация / Однофазная пара;9;textarea;;stTextAreaRootElement;st-key-kin_single_right_fe;Правая сторона;textarea;none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Диффузия и гомогенизация / Однофазная пара;10;input;;stNumberInputField;st-key-kin_single_temperature_fe;Температура выдержки, °C;input[stNumberInputField];none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Диффузия и гомогенизация / Однофазная пара;11;input;;stNumberInputField;st-key-kin_single_time_fe;Время, ч;input[stNumberInputField];none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Диффузия и гомогенизация / Однофазная пара;12;input;combobox;stSelectbox;st-key-kin_single_phase_fe;Фаза для всего профиля;input;none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Диффузия и гомогенизация / Однофазная пара;13;summary;;stExpander;;keyboard_arrow_right Параметры модели;summary;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(236, 237, 239);primary_poluprozrachnyi
+Dark;Кинетика / Диффузия и гомогенизация / Однофазная пара;14;button;;stBaseButton-primary;st-key-kin_single_run_fe;Рассчитать однофазную диффузию;button[stBaseButton-primary];rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(23, 24, 27);primary_poluprozrachnyi
+Dark;Кинетика / Выделения;0;div;tab;stTab;;Выделения;div[stTab];rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(92, 151, 232);primary_poluprozrachnyi
+Dark;Кинетика / Выделения;1;a;;stHeaderActionElements;;Link to heading;a;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(156, 192, 242);primary_poluprozrachnyi
+Dark;Кинетика / Выделения;2;input;combobox;stSelectbox;st-key-precipitation_fe_preset;Набор исходных параметров;input;none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Выделения;3;input;combobox;stSelectbox;st-key-precipitation_fe_user_matrix;Матричная фаза;input;none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Выделения;4;input;combobox;stSelectbox;st-key-precipitation_fe_user_precipitate;Фаза-выделение;input;none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Выделения;5;input;;stRadioOption;st-key-precipitation_fe_user_temperature_mode;Температурный режим;input;none;auto 1px rgb(16, 16, 16);drugoi
+Dark;Кинетика / Выделения;6;input;;stNumberInputField;st-key-precipitation_fe_user_temperature_c;Температура, °C;input[stNumberInputField];none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Выделения;7;input;;stNumberInputField;st-key-precipitation_fe_user_duration_h;Время выдержки, ч;input[stNumberInputField];none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Выделения;8;summary;;stExpander;;keyboard_arrow_down Параметры модели KWN;summary;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(236, 237, 239);primary_poluprozrachnyi
+Dark;Кинетика / Выделения;9;input;;stNumberInputField;st-key-precipitation_fe_user_gamma;Межфазная энергия, Дж/м²;input[stNumberInputField];none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Выделения;10;input;;stNumberInputField;st-key-precipitation_fe_user_matrix_vm;Молярный объём матрицы, см³/моль;input[stNumberInputField];none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Выделения;11;input;;stNumberInputField;st-key-precipitation_fe_user_precip_vm;Молярный объём выделения, см³/моль;input[stNumberInputField];none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Выделения;12;input;combobox;stSelectbox;st-key-precipitation_fe_user_nucleation_type;Центры зарождения;input;none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Выделения;13;input;;stNumberInputField;st-key-precipitation_fe_user_bulk_n0;Плотность объёмных центров, 1/м³;input[stNumberInputField];none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Выделения;14;input;;stNumberInputField;st-key-precipitation_fe_user_grain_size_um;Средний размер зерна, мкм;input[stNumberInputField];none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Выделения;15;input;;stNumberInputField;st-key-precipitation_fe_user_dislocation_density;Плотность дислокаций, 1/м²;input[stNumberInputField];none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Выделения;16;input;;stNumberInputField;st-key-precipitation_fe_user_gb_energy;Энергия границы зерна, Дж/м²;input[stNumberInputField];none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Выделения;17;summary;;stExpander;;keyboard_arrow_right Численная сетка размеров;summary;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(236, 237, 239);primary_poluprozrachnyi
+Dark;Кинетика / Выделения;18;button;;stTooltipHoverTarget;st-key-precipitation_fe_user_input_provenance;Help for Источник и применимость физических входов;button;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(236, 237, 239);primary_poluprozrachnyi
+Dark;Кинетика / Выделения;19;textarea;;stTextAreaRootElement;st-key-precipitation_fe_user_input_provenance;Источник и применимость физических входов;textarea;none;none 3px rgb(236, 237, 239);net
+Dark;Кинетика / Выделения;20;button;;stBaseButton-primary;st-key-precipitation_fe_user_calculate;Рассчитать кинетику выделений;button[stBaseButton-primary];rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(23, 24, 27);primary_poluprozrachnyi
+Dark;Свойства / Покрытие физической базы;0;div;tab;stTab;;Покрытие физической базы;div[stTab];rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(92, 151, 232);primary_poluprozrachnyi
+Dark;Свойства / Покрытие физической базы;1;a;;stHeaderActionElements;;Link to heading;a;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(156, 192, 242);primary_poluprozrachnyi
+Dark;Свойства / Покрытие физической базы;2;summary;;stExpander;;keyboard_arrow_right Технические сведения;summary;rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(236, 237, 239);primary_poluprozrachnyi
+Dark;Свойства / Покрытие физической базы;3;button;;stBaseButton-secondary;st-key-physical_coverage_view;Обновить покрытие физической базы;button[stBaseButton-secondary];rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(236, 237, 239);primary_poluprozrachnyi
+Dark;Свойства / Покрытие физической базы;4;button;;stBaseButton-secondary;st-key-physical_database_self_test;Проверить чтение физической базы;button[stBaseButton-secondary];rgba(92, 151, 232, 0.5) 0px 0px 0px 3.6px;none 3px rgb(236, 237, 239);primary_poluprozrachnyi

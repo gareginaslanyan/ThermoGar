@@ -1237,12 +1237,12 @@ def _result_display(
             else result.phase_figure
         ),
     )
-    metric_col1, metric_col2, metric_col3 = st.columns(3)
+    # Решение владельца 25.09.2026, п. 10 (16Б): плитки «Метод» нет — метод
+    # виден на переключателе вида.
+    metric_col1, metric_col2 = st.columns(2)
     with metric_col1:
-        st.metric("Метод", result.method_label)
-    with metric_col2:
         st.metric("Время выдержки, ч", f"{result.actual_time_s / 3600.0:.3g}")
-    with metric_col3:
+    with metric_col2:
         st.metric("Макс. ошибка баланса, u-доля", f"{result.max_balance_error:.3e}")
 
     if result.max_balance_error <= 1e-6:

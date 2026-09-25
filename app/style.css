@@ -71,6 +71,21 @@ div[data-testid="stButtonGroup"] button[data-variant="segmented_control"][aria-c
     background-color: light-dark(rgba(31, 96, 193, 0.1), rgba(92, 151, 232, 0.1));
 }
 
+/* Решение владельца 25.09.2026, п. 10 (14Б): кольцо фокуса — сплошной primary
+   той же толщины (0.2rem = 3.6 px). Streamlit 1.62 рисует его box-shadow
+   rgba(primary, 0.5): к окну 2.18:1 / 2.44:1. Элементы — по обходу Tab 21-М
+   (results/wave21_m/fokus): основная и вторичная кнопки, вариант переключателя,
+   вкладка, заголовок раскрытия, ссылка-якорь заголовка, кнопка подсказки.
+   Фон кнопки в фокусе (21-З) задан отдельным правилом выше. */
+button[data-testid^="stBaseButton-"]:focus-visible,
+div[data-testid="stButtonGroup"] button:focus-visible,
+[data-testid="stTab"]:focus-visible,
+div[data-testid="stExpander"] summary:focus-visible,
+[data-testid="stHeaderActionElements"] a:focus-visible,
+[data-testid="stTooltipHoverTarget"] button:focus-visible {
+    box-shadow: 0 0 0 0.2rem light-dark(#1F60C1, #5C97E8);
+}
+
 /* Отступление от S-4, решение владельца 24.09.2026 (1Г, 2Б, 4Б); проверка S-5 — 21-Е.
    Подсказка «Press Enter to apply» под полями не выводится. */
 [data-testid="InputInstructions"] {

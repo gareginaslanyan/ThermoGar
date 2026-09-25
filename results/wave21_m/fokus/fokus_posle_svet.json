@@ -1,0 +1,2431 @@
+[
+  {
+    "in_main": true,
+    "tag": "div",
+    "role": "tab",
+    "type": null,
+    "testid": "stTab",
+    "wrapper": "stTabs",
+    "key": null,
+    "label": "Одна температура",
+    "focus_visible": true,
+    "box": [
+      90,
+      263,
+      127,
+      45
+    ],
+    "chain": [
+      {
+        "tag": "div",
+        "testid": "stTab",
+        "cls": "st-emotion-cache-1morxgn e1ac7blb4",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(31, 96, 193)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(31, 96, 193)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-1c0hz53 e1ac7blb3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-1ofqig9 e1ac7blb2",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stTabs",
+        "cls": "stTabs st-emotion-cache-8atqhb e1ac7blb0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "react-aria5395053910-:r19:-tab-0||Одна температура|DIV|90,263",
+    "step": 0,
+    "screen": "Расчёты / Одна температура",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "a",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stHeaderActionElements",
+    "key": null,
+    "label": "Link to heading",
+    "focus_visible": true,
+    "box": [
+      451,
+      345,
+      18,
+      18
+    ],
+    "chain": [
+      {
+        "tag": "a",
+        "testid": null,
+        "cls": "st-emotion-cache-1y95vbk e1h5cy171",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(19, 59, 139)",
+        "outline_offset": "1px",
+        "border": "none 0px rgb(19, 59, 139)"
+      },
+      {
+        "tag": "span",
+        "testid": "stHeaderActionElements",
+        "cls": "st-emotion-cache-gi0tri e1h5cy173",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "||Link to heading|A|451,345",
+    "step": 1,
+    "screen": "Расчёты / Одна температура",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": null,
+    "type": "number",
+    "testid": "stNumberInputField",
+    "wrapper": "stNumberInputContainer",
+    "key": "st-key-single_temperature_fe",
+    "label": "Температура, °C",
+    "focus_visible": true,
+    "box": [
+      91,
+      416,
+      1186,
+      40
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": "stNumberInputField",
+        "cls": "st-emotion-cache-1dufyfw e1rv0tzo3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stNumberInputContainer",
+        "cls": "st-emotion-cache-1rz4w3e e1rv0tzo0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(34, 97, 191)"
+      }
+    ],
+    "uid": ":r282:|st-key-single_temperature_fe|Температура, °C|INPUT|91,416",
+    "step": 2,
+    "screen": "Расчёты / Одна температура",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "summary",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stExpander",
+    "key": null,
+    "label": "keyboard_arrow_right Управление фазами / метастабильный расч",
+    "focus_visible": true,
+    "box": [
+      91,
+      475,
+      1258,
+      43
+    ],
+    "chain": [
+      {
+        "tag": "summary",
+        "testid": null,
+        "cls": "st-emotion-cache-1we3du1 e1wbovuq4",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "details",
+        "testid": null,
+        "cls": "st-emotion-cache-1w8abf0 e1wbovuq1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(207, 209, 213)"
+      },
+      {
+        "tag": "div",
+        "testid": "stExpander",
+        "cls": "stExpander st-emotion-cache-8atqhb e1wbovuq0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "||keyboard_arrow_right Управление фазами / метастабильный расч|SUMMARY|91,475",
+    "step": 3,
+    "screen": "Расчёты / Одна температура",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "button",
+    "role": null,
+    "type": null,
+    "testid": "stBaseButton-primary",
+    "wrapper": "stButton",
+    "key": "st-key-single_calculate",
+    "label": "Рассчитать равновесие",
+    "focus_visible": true,
+    "box": [
+      90,
+      548,
+      190,
+      45
+    ],
+    "chain": [
+      {
+        "tag": "button",
+        "testid": "stBaseButton-primary",
+        "cls": "st-emotion-cache-jrjs2o el831t61",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(255, 255, 255)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(21, 63, 127)"
+      },
+      {
+        "tag": "div",
+        "testid": "stButton",
+        "cls": "stButton st-emotion-cache-8atqhb e1zj3zg0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "|st-key-single_calculate|Рассчитать равновесие|BUTTON|90,548",
+    "step": 4,
+    "screen": "Расчёты / Одна температура",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "div",
+    "role": "tab",
+    "type": null,
+    "testid": "stTab",
+    "wrapper": "stTabs",
+    "key": null,
+    "label": "Затвердевание",
+    "focus_visible": true,
+    "box": [
+      263,
+      200,
+      106,
+      45
+    ],
+    "chain": [
+      {
+        "tag": "div",
+        "testid": "stTab",
+        "cls": "st-emotion-cache-1morxgn e1ac7blb4",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(31, 96, 193)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(31, 96, 193)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-1c0hz53 e1ac7blb3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-1ofqig9 e1ac7blb2",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stTabs",
+        "cls": "stTabs st-emotion-cache-8atqhb e1ac7blb0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "react-aria5395053910-:r15:-tab-2||Затвердевание|DIV|263,200",
+    "step": 0,
+    "screen": "Затвердевание",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "a",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stHeaderActionElements",
+    "key": null,
+    "label": "Link to heading",
+    "focus_visible": true,
+    "box": [
+      249,
+      282,
+      18,
+      18
+    ],
+    "chain": [
+      {
+        "tag": "a",
+        "testid": null,
+        "cls": "st-emotion-cache-1y95vbk e1h5cy171",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(19, 59, 139)",
+        "outline_offset": "1px",
+        "border": "none 0px rgb(19, 59, 139)"
+      },
+      {
+        "tag": "span",
+        "testid": "stHeaderActionElements",
+        "cls": "st-emotion-cache-gi0tri e1h5cy173",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "||Link to heading|A|249,282",
+    "step": 1,
+    "screen": "Затвердевание",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": null,
+    "type": "radio",
+    "testid": null,
+    "wrapper": "stRadioOption",
+    "key": "st-key-solidification_method_fe",
+    "label": "Метод расчёта",
+    "focus_visible": true,
+    "box": [
+      89,
+      647,
+      13,
+      13
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": null,
+        "cls": "",
+        "box_shadow": "none",
+        "outline": "auto 1px rgb(16, 16, 16)",
+        "outline_offset": "2px",
+        "border": "none 0px rgb(0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "testid": null,
+        "cls": "",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "label",
+        "testid": "stRadioOption",
+        "cls": "st-emotion-cache-1crewbv etak9231",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "|st-key-solidification_method_fe|Метод расчёта|INPUT|89,647",
+    "step": 2,
+    "screen": "Затвердевание",
+    "ring": "drugoi"
+  },
+  {
+    "in_main": true,
+    "tag": "summary",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stExpander",
+    "key": null,
+    "label": "keyboard_arrow_right Точность и критерии",
+    "focus_visible": true,
+    "box": [
+      91,
+      746,
+      1258,
+      43
+    ],
+    "chain": [
+      {
+        "tag": "summary",
+        "testid": null,
+        "cls": "st-emotion-cache-1we3du1 e1wbovuq4",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "details",
+        "testid": null,
+        "cls": "st-emotion-cache-1w8abf0 e1wbovuq1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(207, 209, 213)"
+      },
+      {
+        "tag": "div",
+        "testid": "stExpander",
+        "cls": "stExpander st-emotion-cache-8atqhb e1wbovuq0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "||keyboard_arrow_right Точность и критерии|SUMMARY|91,746",
+    "step": 3,
+    "screen": "Затвердевание",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "summary",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stExpander",
+    "key": null,
+    "label": "keyboard_arrow_right Управление фазами / метастабильный расч",
+    "focus_visible": true,
+    "box": [
+      91,
+      807,
+      1258,
+      43
+    ],
+    "chain": [
+      {
+        "tag": "summary",
+        "testid": null,
+        "cls": "st-emotion-cache-1we3du1 e1wbovuq4",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "details",
+        "testid": null,
+        "cls": "st-emotion-cache-1w8abf0 e1wbovuq1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(207, 209, 213)"
+      },
+      {
+        "tag": "div",
+        "testid": "stExpander",
+        "cls": "stExpander st-emotion-cache-8atqhb e1wbovuq0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "||keyboard_arrow_right Управление фазами / метастабильный расч|SUMMARY|91,807",
+    "step": 4,
+    "screen": "Затвердевание",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "button",
+    "role": null,
+    "type": null,
+    "testid": "stBaseButton-primary",
+    "wrapper": "stButton",
+    "key": "st-key-solidification_calculate",
+    "label": "Рассчитать затвердевание",
+    "focus_visible": true,
+    "box": [
+      90,
+      843,
+      213,
+      45
+    ],
+    "chain": [
+      {
+        "tag": "button",
+        "testid": "stBaseButton-primary",
+        "cls": "st-emotion-cache-jrjs2o el831t61",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(255, 255, 255)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(21, 63, 127)"
+      },
+      {
+        "tag": "div",
+        "testid": "stButton",
+        "cls": "stButton st-emotion-cache-8atqhb e1zj3zg0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "|st-key-solidification_calculate|Рассчитать затвердевание|BUTTON|90,843",
+    "step": 5,
+    "screen": "Затвердевание",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "div",
+    "role": "tab",
+    "type": null,
+    "testid": "stTab",
+    "wrapper": "stTabs",
+    "key": null,
+    "label": "Диффузия и гомогенизация",
+    "focus_visible": true,
+    "box": [
+      90,
+      263,
+      194,
+      45
+    ],
+    "chain": [
+      {
+        "tag": "div",
+        "testid": "stTab",
+        "cls": "st-emotion-cache-1morxgn e1ac7blb4",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(31, 96, 193)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(31, 96, 193)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-1c0hz53 e1ac7blb3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-1ofqig9 e1ac7blb2",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stTabs",
+        "cls": "stTabs st-emotion-cache-8atqhb e1ac7blb0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "react-aria5395053910-:rbo:-tab-0||Диффузия и гомогенизация|DIV|90,263",
+    "step": 0,
+    "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "a",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stHeaderActionElements",
+    "key": null,
+    "label": "Link to heading",
+    "focus_visible": true,
+    "box": [
+      374,
+      345,
+      18,
+      18
+    ],
+    "chain": [
+      {
+        "tag": "a",
+        "testid": null,
+        "cls": "st-emotion-cache-1y95vbk e1h5cy171",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(19, 59, 139)",
+        "outline_offset": "1px",
+        "border": "none 0px rgb(19, 59, 139)"
+      },
+      {
+        "tag": "span",
+        "testid": "stHeaderActionElements",
+        "cls": "st-emotion-cache-gi0tri e1h5cy173",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "||Link to heading|A|374,345",
+    "step": 1,
+    "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "button",
+    "role": "radio",
+    "type": "button",
+    "testid": null,
+    "wrapper": "stButtonGroup",
+    "key": "st-key-kinetics_diffusion_view",
+    "label": "Диффузия и гомогенизация",
+    "focus_visible": true,
+    "box": [
+      90,
+      498,
+      162,
+      36
+    ],
+    "chain": [
+      {
+        "tag": "button",
+        "testid": null,
+        "cls": "st-emotion-cache-1ks8b0n el831t628",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(31, 96, 193)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(31, 96, 193)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-ngb49a el831t625",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stButtonGroup",
+        "cls": "stButtonGroup st-emotion-cache-68zbsl el831t621",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "|st-key-kinetics_diffusion_view|Диффузия и гомогенизация|BUTTON|90,498",
+    "step": 2,
+    "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "a",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stHeaderActionElements",
+    "key": null,
+    "label": "Link to heading",
+    "focus_visible": true,
+    "box": [
+      429,
+      569,
+      18,
+      18
+    ],
+    "chain": [
+      {
+        "tag": "a",
+        "testid": null,
+        "cls": "st-emotion-cache-1y95vbk e1h5cy171",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(19, 59, 139)",
+        "outline_offset": "1px",
+        "border": "none 0px rgb(19, 59, 139)"
+      },
+      {
+        "tag": "span",
+        "testid": "stHeaderActionElements",
+        "cls": "st-emotion-cache-gi0tri e1h5cy173",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "||Link to heading|A|429,569",
+    "step": 3,
+    "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": "combobox",
+    "type": "text",
+    "testid": null,
+    "wrapper": "stSelectbox",
+    "key": "st-key-kin_single_balance_fe",
+    "label": "Элемент-основа",
+    "focus_visible": true,
+    "box": [
+      91,
+      730,
+      1222,
+      43
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": null,
+        "cls": "st-emotion-cache-p9lbz9 e1fp86qc1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-e0nore e1fp86qc0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(31, 96, 193)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "react-aria-ComboBox",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stSelectbox",
+        "cls": "stSelectbox",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "react-aria5395053910-:rc2:|st-key-kin_single_balance_fe|Элемент-основа|INPUT|91,730",
+    "step": 4,
+    "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": null,
+    "type": "radio",
+    "testid": null,
+    "wrapper": "stRadioOption",
+    "key": "st-key-kin_single_units_fe",
+    "label": "Единицы исходных составов",
+    "focus_visible": true,
+    "box": [
+      213,
+      825,
+      13,
+      13
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": null,
+        "cls": "",
+        "box_shadow": "none",
+        "outline": "auto 1px rgb(16, 16, 16)",
+        "outline_offset": "2px",
+        "border": "none 0px rgb(0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "testid": null,
+        "cls": "",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "label",
+        "testid": "stRadioOption",
+        "cls": "st-emotion-cache-1crewbv etak9231",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "|st-key-kin_single_units_fe|Единицы исходных составов|INPUT|213,825",
+    "step": 5,
+    "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+    "ring": "drugoi"
+  },
+  {
+    "in_main": true,
+    "tag": "button",
+    "role": null,
+    "type": "button",
+    "testid": null,
+    "wrapper": "stTooltipHoverTarget",
+    "key": "st-key-kin_single_left_fe",
+    "label": "Help for Левая сторона",
+    "focus_visible": true,
+    "box": [
+      693,
+      882,
+      18,
+      18
+    ],
+    "chain": [
+      {
+        "tag": "button",
+        "testid": null,
+        "cls": "st-emotion-cache-uab8bo eqmt79k0",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "span",
+        "testid": "stTooltipHoverTarget",
+        "cls": "stTooltipHoverTarget",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "|st-key-kin_single_left_fe|Help for Левая сторона|BUTTON|693,882",
+    "step": 6,
+    "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "textarea",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stTextAreaRootElement",
+    "key": "st-key-kin_single_left_fe",
+    "label": "Левая сторона",
+    "focus_visible": true,
+    "box": [
+      91,
+      426,
+      619,
+      92
+    ],
+    "chain": [
+      {
+        "tag": "textarea",
+        "testid": null,
+        "cls": "st-emotion-cache-1yjofni e1wz7dbj2",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stTextAreaRootElement",
+        "cls": "st-emotion-cache-1k9mfye e1wz7dbj1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(31, 96, 193)"
+      }
+    ],
+    "uid": ":r2sd:|st-key-kin_single_left_fe|Левая сторона|TEXTAREA|91,426",
+    "step": 7,
+    "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "button",
+    "role": null,
+    "type": "button",
+    "testid": null,
+    "wrapper": "stTooltipHoverTarget",
+    "key": "st-key-kin_single_right_fe",
+    "label": "Help for Правая сторона",
+    "focus_visible": true,
+    "box": [
+      1332,
+      398,
+      18,
+      18
+    ],
+    "chain": [
+      {
+        "tag": "button",
+        "testid": null,
+        "cls": "st-emotion-cache-uab8bo eqmt79k0",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "span",
+        "testid": "stTooltipHoverTarget",
+        "cls": "stTooltipHoverTarget",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "|st-key-kin_single_right_fe|Help for Правая сторона|BUTTON|1332,398",
+    "step": 8,
+    "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "textarea",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stTextAreaRootElement",
+    "key": "st-key-kin_single_right_fe",
+    "label": "Правая сторона",
+    "focus_visible": true,
+    "box": [
+      730,
+      426,
+      619,
+      92
+    ],
+    "chain": [
+      {
+        "tag": "textarea",
+        "testid": null,
+        "cls": "st-emotion-cache-1yjofni e1wz7dbj2",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stTextAreaRootElement",
+        "cls": "st-emotion-cache-1k9mfye e1wz7dbj1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(31, 96, 193)"
+      }
+    ],
+    "uid": ":r2sg:|st-key-kin_single_right_fe|Правая сторона|TEXTAREA|730,426",
+    "step": 9,
+    "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": null,
+    "type": "number",
+    "testid": "stNumberInputField",
+    "wrapper": "stNumberInputContainer",
+    "key": "st-key-kin_single_temperature_fe",
+    "label": "Температура выдержки, °C",
+    "focus_visible": true,
+    "box": [
+      91,
+      569,
+      1186,
+      40
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": "stNumberInputField",
+        "cls": "st-emotion-cache-1dufyfw e1rv0tzo3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stNumberInputContainer",
+        "cls": "st-emotion-cache-1rz4w3e e1rv0tzo0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(34, 97, 191)"
+      }
+    ],
+    "uid": ":r2sj:|st-key-kin_single_temperature_fe|Температура выдержки, °C|INPUT|91,569",
+    "step": 10,
+    "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": null,
+    "type": "number",
+    "testid": "stNumberInputField",
+    "wrapper": "stNumberInputContainer",
+    "key": "st-key-kin_single_time_fe",
+    "label": "Время, ч",
+    "focus_visible": true,
+    "box": [
+      91,
+      662,
+      1186,
+      40
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": "stNumberInputField",
+        "cls": "st-emotion-cache-1dufyfw e1rv0tzo3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stNumberInputContainer",
+        "cls": "st-emotion-cache-1rz4w3e e1rv0tzo0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(34, 97, 191)"
+      }
+    ],
+    "uid": ":r2sp:|st-key-kin_single_time_fe|Время, ч|INPUT|91,662",
+    "step": 11,
+    "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": "combobox",
+    "type": "text",
+    "testid": null,
+    "wrapper": "stSelectbox",
+    "key": "st-key-kin_single_phase_fe",
+    "label": "Фаза для всего профиля",
+    "focus_visible": true,
+    "box": [
+      91,
+      753,
+      1222,
+      43
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": null,
+        "cls": "st-emotion-cache-p9lbz9 e1fp86qc1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-e0nore e1fp86qc0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(31, 96, 193)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "react-aria-ComboBox",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stSelectbox",
+        "cls": "stSelectbox",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "react-aria5395053910-:rcg:|st-key-kin_single_phase_fe|Фаза для всего профиля|INPUT|91,753",
+    "step": 12,
+    "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "summary",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stExpander",
+    "key": null,
+    "label": "keyboard_arrow_right Параметры модели",
+    "focus_visible": true,
+    "box": [
+      91,
+      814,
+      1258,
+      43
+    ],
+    "chain": [
+      {
+        "tag": "summary",
+        "testid": null,
+        "cls": "st-emotion-cache-1we3du1 e1wbovuq4",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "details",
+        "testid": null,
+        "cls": "st-emotion-cache-1w8abf0 e1wbovuq1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(207, 209, 213)"
+      },
+      {
+        "tag": "div",
+        "testid": "stExpander",
+        "cls": "stExpander st-emotion-cache-8atqhb e1wbovuq0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "||keyboard_arrow_right Параметры модели|SUMMARY|91,814",
+    "step": 13,
+    "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "button",
+    "role": null,
+    "type": null,
+    "testid": "stBaseButton-primary",
+    "wrapper": "stButton",
+    "key": "st-key-kin_single_run_fe",
+    "label": "Рассчитать однофазную диффузию",
+    "focus_visible": true,
+    "box": [
+      90,
+      843,
+      276,
+      45
+    ],
+    "chain": [
+      {
+        "tag": "button",
+        "testid": "stBaseButton-primary",
+        "cls": "st-emotion-cache-jrjs2o el831t61",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(255, 255, 255)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(21, 63, 127)"
+      },
+      {
+        "tag": "div",
+        "testid": "stButton",
+        "cls": "stButton st-emotion-cache-8atqhb e1zj3zg0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "|st-key-kin_single_run_fe|Рассчитать однофазную диффузию|BUTTON|90,843",
+    "step": 14,
+    "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "div",
+    "role": "tab",
+    "type": null,
+    "testid": "stTab",
+    "wrapper": "stTabs",
+    "key": null,
+    "label": "Выделения",
+    "focus_visible": true,
+    "box": [
+      302,
+      263,
+      78,
+      45
+    ],
+    "chain": [
+      {
+        "tag": "div",
+        "testid": "stTab",
+        "cls": "st-emotion-cache-1morxgn e1ac7blb4",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(31, 96, 193)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(31, 96, 193)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-1c0hz53 e1ac7blb3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-1ofqig9 e1ac7blb2",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stTabs",
+        "cls": "stTabs st-emotion-cache-8atqhb e1ac7blb0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "react-aria5395053910-:rbo:-tab-1||Выделения|DIV|302,263",
+    "step": 0,
+    "screen": "Кинетика / Выделения",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "a",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stHeaderActionElements",
+    "key": null,
+    "label": "Link to heading",
+    "focus_visible": true,
+    "box": [
+      308,
+      345,
+      18,
+      18
+    ],
+    "chain": [
+      {
+        "tag": "a",
+        "testid": null,
+        "cls": "st-emotion-cache-1y95vbk e1h5cy171",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(19, 59, 139)",
+        "outline_offset": "1px",
+        "border": "none 0px rgb(19, 59, 139)"
+      },
+      {
+        "tag": "span",
+        "testid": "stHeaderActionElements",
+        "cls": "st-emotion-cache-gi0tri e1h5cy173",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "||Link to heading|A|308,345",
+    "step": 1,
+    "screen": "Кинетика / Выделения",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": "combobox",
+    "type": "text",
+    "testid": null,
+    "wrapper": "stSelectbox",
+    "key": "st-key-precipitation_fe_preset",
+    "label": "Набор исходных параметров",
+    "focus_visible": true,
+    "box": [
+      91,
+      586,
+      1222,
+      43
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": null,
+        "cls": "st-emotion-cache-p9lbz9 e1fp86qc1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-e0nore e1fp86qc0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(31, 96, 193)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "react-aria-ComboBox",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stSelectbox",
+        "cls": "stSelectbox",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "react-aria5395053910-:rd0:|st-key-precipitation_fe_preset|Набор исходных параметров|INPUT|91,586",
+    "step": 2,
+    "screen": "Кинетика / Выделения",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": "combobox",
+    "type": "text",
+    "testid": null,
+    "wrapper": "stSelectbox",
+    "key": "st-key-precipitation_fe_user_matrix",
+    "label": "Матричная фаза",
+    "focus_visible": true,
+    "box": [
+      91,
+      745,
+      1222,
+      43
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": null,
+        "cls": "st-emotion-cache-p9lbz9 e1fp86qc1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-e0nore e1fp86qc0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(31, 96, 193)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "react-aria-ComboBox",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stSelectbox",
+        "cls": "stSelectbox",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "react-aria5395053910-:rde:|st-key-precipitation_fe_user_matrix|Матричная фаза|INPUT|91,745",
+    "step": 3,
+    "screen": "Кинетика / Выделения",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": "combobox",
+    "type": "text",
+    "testid": null,
+    "wrapper": "stSelectbox",
+    "key": "st-key-precipitation_fe_user_precipitate",
+    "label": "Фаза-выделение",
+    "focus_visible": true,
+    "box": [
+      91,
+      429,
+      1222,
+      43
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": null,
+        "cls": "st-emotion-cache-p9lbz9 e1fp86qc1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-e0nore e1fp86qc0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(31, 96, 193)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "react-aria-ComboBox",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stSelectbox",
+        "cls": "stSelectbox",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "react-aria5395053910-:rds:|st-key-precipitation_fe_user_precipitate|Фаза-выделение|INPUT|91,429",
+    "step": 4,
+    "screen": "Кинетика / Выделения",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": null,
+    "type": "radio",
+    "testid": null,
+    "wrapper": "stRadioOption",
+    "key": "st-key-precipitation_fe_user_temperature_mode",
+    "label": "Температурный режим",
+    "focus_visible": true,
+    "box": [
+      89,
+      523,
+      13,
+      13
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": null,
+        "cls": "",
+        "box_shadow": "none",
+        "outline": "auto 1px rgb(16, 16, 16)",
+        "outline_offset": "2px",
+        "border": "none 0px rgb(0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "testid": null,
+        "cls": "",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "label",
+        "testid": "stRadioOption",
+        "cls": "st-emotion-cache-1crewbv etak9231",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "|st-key-precipitation_fe_user_temperature_mode|Температурный режим|INPUT|89,523",
+    "step": 5,
+    "screen": "Кинетика / Выделения",
+    "ring": "drugoi"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": null,
+    "type": "number",
+    "testid": "stNumberInputField",
+    "wrapper": "stNumberInputContainer",
+    "key": "st-key-precipitation_fe_user_temperature_c",
+    "label": "Температура, °C",
+    "focus_visible": true,
+    "box": [
+      91,
+      615,
+      1186,
+      40
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": "stNumberInputField",
+        "cls": "st-emotion-cache-1dufyfw e1rv0tzo3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stNumberInputContainer",
+        "cls": "st-emotion-cache-1rz4w3e e1rv0tzo0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(34, 97, 191)"
+      }
+    ],
+    "uid": ":r2ts:|st-key-precipitation_fe_user_temperature_c|Температура, °C|INPUT|91,615",
+    "step": 6,
+    "screen": "Кинетика / Выделения",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": null,
+    "type": "number",
+    "testid": "stNumberInputField",
+    "wrapper": "stNumberInputContainer",
+    "key": "st-key-precipitation_fe_user_duration_h",
+    "label": "Время выдержки, ч",
+    "focus_visible": true,
+    "box": [
+      91,
+      708,
+      1186,
+      40
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": "stNumberInputField",
+        "cls": "st-emotion-cache-1dufyfw e1rv0tzo3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stNumberInputContainer",
+        "cls": "st-emotion-cache-1rz4w3e e1rv0tzo0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(36, 98, 190)"
+      }
+    ],
+    "uid": ":r2u2:|st-key-precipitation_fe_user_duration_h|Время выдержки, ч|INPUT|91,708",
+    "step": 7,
+    "screen": "Кинетика / Выделения",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "summary",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stExpander",
+    "key": null,
+    "label": "keyboard_arrow_down Параметры модели KWN",
+    "focus_visible": true,
+    "box": [
+      91,
+      767,
+      1258,
+      43
+    ],
+    "chain": [
+      {
+        "tag": "summary",
+        "testid": null,
+        "cls": "st-emotion-cache-1r6yqo1 e1wbovuq4",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "details",
+        "testid": null,
+        "cls": "st-emotion-cache-1w8abf0 e1wbovuq1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(207, 209, 213)"
+      },
+      {
+        "tag": "div",
+        "testid": "stExpander",
+        "cls": "stExpander st-emotion-cache-8atqhb e1wbovuq0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "||keyboard_arrow_down Параметры модели KWN|SUMMARY|91,767",
+    "step": 8,
+    "screen": "Кинетика / Выделения",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": null,
+    "type": "number",
+    "testid": "stNumberInputField",
+    "wrapper": "stNumberInputContainer",
+    "key": "st-key-precipitation_fe_user_gamma",
+    "label": "Межфазная энергия, Дж/м²",
+    "focus_visible": true,
+    "box": [
+      110,
+      860,
+      1148,
+      40
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": "stNumberInputField",
+        "cls": "st-emotion-cache-1dufyfw e1rv0tzo3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stNumberInputContainer",
+        "cls": "st-emotion-cache-1rz4w3e e1rv0tzo0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(36, 98, 190)"
+      }
+    ],
+    "uid": ":r2u8:|st-key-precipitation_fe_user_gamma|Межфазная энергия, Дж/м²|INPUT|110,860",
+    "step": 9,
+    "screen": "Кинетика / Выделения",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": null,
+    "type": "number",
+    "testid": "stNumberInputField",
+    "wrapper": "stNumberInputContainer",
+    "key": "st-key-precipitation_fe_user_matrix_vm",
+    "label": "Молярный объём матрицы, см³/моль",
+    "focus_visible": true,
+    "box": [
+      110,
+      430,
+      1148,
+      40
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": "stNumberInputField",
+        "cls": "st-emotion-cache-1dufyfw e1rv0tzo3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stNumberInputContainer",
+        "cls": "st-emotion-cache-1rz4w3e e1rv0tzo0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(34, 97, 191)"
+      }
+    ],
+    "uid": ":r2ue:|st-key-precipitation_fe_user_matrix_vm|Молярный объём матрицы, см³/моль|INPUT|110,430",
+    "step": 10,
+    "screen": "Кинетика / Выделения",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": null,
+    "type": "number",
+    "testid": "stNumberInputField",
+    "wrapper": "stNumberInputContainer",
+    "key": "st-key-precipitation_fe_user_precip_vm",
+    "label": "Молярный объём выделения, см³/моль",
+    "focus_visible": true,
+    "box": [
+      110,
+      522,
+      1148,
+      40
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": "stNumberInputField",
+        "cls": "st-emotion-cache-1dufyfw e1rv0tzo3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stNumberInputContainer",
+        "cls": "st-emotion-cache-1rz4w3e e1rv0tzo0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(36, 98, 190)"
+      }
+    ],
+    "uid": ":r2uk:|st-key-precipitation_fe_user_precip_vm|Молярный объём выделения, см³/моль|INPUT|110,522",
+    "step": 11,
+    "screen": "Кинетика / Выделения",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": "combobox",
+    "type": "text",
+    "testid": null,
+    "wrapper": "stSelectbox",
+    "key": "st-key-precipitation_fe_user_nucleation_type",
+    "label": "Центры зарождения",
+    "focus_visible": true,
+    "box": [
+      110,
+      613,
+      1184,
+      43
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": null,
+        "cls": "st-emotion-cache-p9lbz9 e1fp86qc1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-e0nore e1fp86qc0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(31, 96, 193)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "react-aria-ComboBox",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stSelectbox",
+        "cls": "stSelectbox",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "react-aria5395053910-:rea:|st-key-precipitation_fe_user_nucleation_type|Центры зарождения|INPUT|110,613",
+    "step": 12,
+    "screen": "Кинетика / Выделения",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": null,
+    "type": "number",
+    "testid": "stNumberInputField",
+    "wrapper": "stNumberInputContainer",
+    "key": "st-key-precipitation_fe_user_bulk_n0",
+    "label": "Плотность объёмных центров, 1/м³",
+    "focus_visible": true,
+    "box": [
+      110,
+      707,
+      1148,
+      40
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": "stNumberInputField",
+        "cls": "st-emotion-cache-1dufyfw e1rv0tzo3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stNumberInputContainer",
+        "cls": "st-emotion-cache-1rz4w3e e1rv0tzo0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(36, 98, 190)"
+      }
+    ],
+    "uid": ":r2uq:|st-key-precipitation_fe_user_bulk_n0|Плотность объёмных центров, 1/м³|INPUT|110,707",
+    "step": 13,
+    "screen": "Кинетика / Выделения",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": null,
+    "type": "number",
+    "testid": "stNumberInputField",
+    "wrapper": "stNumberInputContainer",
+    "key": "st-key-precipitation_fe_user_grain_size_um",
+    "label": "Средний размер зерна, мкм",
+    "focus_visible": true,
+    "box": [
+      110,
+      800,
+      1148,
+      40
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": "stNumberInputField",
+        "cls": "st-emotion-cache-1dufyfw e1rv0tzo3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stNumberInputContainer",
+        "cls": "st-emotion-cache-1rz4w3e e1rv0tzo0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(36, 98, 190)"
+      }
+    ],
+    "uid": ":r2v0:|st-key-precipitation_fe_user_grain_size_um|Средний размер зерна, мкм|INPUT|110,800",
+    "step": 14,
+    "screen": "Кинетика / Выделения",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": null,
+    "type": "number",
+    "testid": "stNumberInputField",
+    "wrapper": "stNumberInputContainer",
+    "key": "st-key-precipitation_fe_user_dislocation_density",
+    "label": "Плотность дислокаций, 1/м²",
+    "focus_visible": true,
+    "box": [
+      110,
+      860,
+      1148,
+      40
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": "stNumberInputField",
+        "cls": "st-emotion-cache-1dufyfw e1rv0tzo3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stNumberInputContainer",
+        "cls": "st-emotion-cache-1rz4w3e e1rv0tzo0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(34, 97, 191)"
+      }
+    ],
+    "uid": ":r2v6:|st-key-precipitation_fe_user_dislocation_density|Плотность дислокаций, 1/м²|INPUT|110,860",
+    "step": 15,
+    "screen": "Кинетика / Выделения",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "input",
+    "role": null,
+    "type": "number",
+    "testid": "stNumberInputField",
+    "wrapper": "stNumberInputContainer",
+    "key": "st-key-precipitation_fe_user_gb_energy",
+    "label": "Энергия границы зерна, Дж/м²",
+    "focus_visible": true,
+    "box": [
+      110,
+      430,
+      1148,
+      40
+    ],
+    "chain": [
+      {
+        "tag": "input",
+        "testid": "stNumberInputField",
+        "cls": "st-emotion-cache-1dufyfw e1rv0tzo3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stNumberInputContainer",
+        "cls": "st-emotion-cache-1rz4w3e e1rv0tzo0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(36, 98, 190)"
+      }
+    ],
+    "uid": ":r2vc:|st-key-precipitation_fe_user_gb_energy|Энергия границы зерна, Дж/м²|INPUT|110,430",
+    "step": 16,
+    "screen": "Кинетика / Выделения",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "summary",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stExpander",
+    "key": null,
+    "label": "keyboard_arrow_right Численная сетка размеров",
+    "focus_visible": true,
+    "box": [
+      91,
+      508,
+      1258,
+      43
+    ],
+    "chain": [
+      {
+        "tag": "summary",
+        "testid": null,
+        "cls": "st-emotion-cache-1we3du1 e1wbovuq4",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "details",
+        "testid": null,
+        "cls": "st-emotion-cache-1w8abf0 e1wbovuq1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(207, 209, 213)"
+      },
+      {
+        "tag": "div",
+        "testid": "stExpander",
+        "cls": "stExpander st-emotion-cache-8atqhb e1wbovuq0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "||keyboard_arrow_right Численная сетка размеров|SUMMARY|91,508",
+    "step": 17,
+    "screen": "Кинетика / Выделения",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "button",
+    "role": null,
+    "type": "button",
+    "testid": null,
+    "wrapper": "stTooltipHoverTarget",
+    "key": "st-key-precipitation_fe_user_input_provenance",
+    "label": "Help for Источник и применимость физических входов",
+    "focus_visible": true,
+    "box": [
+      1332,
+      573,
+      18,
+      18
+    ],
+    "chain": [
+      {
+        "tag": "button",
+        "testid": null,
+        "cls": "st-emotion-cache-uab8bo eqmt79k0",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "span",
+        "testid": "stTooltipHoverTarget",
+        "cls": "stTooltipHoverTarget",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "|st-key-precipitation_fe_user_input_provenance|Help for Источник и применимость физических входов|BUTTON|1332,573",
+    "step": 18,
+    "screen": "Кинетика / Выделения",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "textarea",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stTextAreaRootElement",
+    "key": "st-key-precipitation_fe_user_input_provenance",
+    "label": "Источник и применимость физических входов",
+    "focus_visible": true,
+    "box": [
+      91,
+      601,
+      1258,
+      92
+    ],
+    "chain": [
+      {
+        "tag": "textarea",
+        "testid": null,
+        "cls": "st-emotion-cache-1yjofni e1wz7dbj2",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stTextAreaRootElement",
+        "cls": "st-emotion-cache-1k9mfye e1wz7dbj1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(31, 96, 193)"
+      }
+    ],
+    "uid": ":r304:|st-key-precipitation_fe_user_input_provenance|Источник и применимость физических входов|TEXTAREA|91,601",
+    "step": 19,
+    "screen": "Кинетика / Выделения",
+    "ring": "net"
+  },
+  {
+    "in_main": true,
+    "tag": "button",
+    "role": null,
+    "type": null,
+    "testid": "stBaseButton-primary",
+    "wrapper": "stButton",
+    "key": "st-key-precipitation_fe_user_calculate",
+    "label": "Рассчитать кинетику выделений",
+    "focus_visible": true,
+    "box": [
+      90,
+      723,
+      254,
+      45
+    ],
+    "chain": [
+      {
+        "tag": "button",
+        "testid": "stBaseButton-primary",
+        "cls": "st-emotion-cache-jrjs2o el831t61",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(255, 255, 255)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(21, 63, 127)"
+      },
+      {
+        "tag": "div",
+        "testid": "stButton",
+        "cls": "stButton st-emotion-cache-8atqhb e1zj3zg0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "|st-key-precipitation_fe_user_calculate|Рассчитать кинетику выделений|BUTTON|90,723",
+    "step": 20,
+    "screen": "Кинетика / Выделения",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "div",
+    "role": "tab",
+    "type": null,
+    "testid": "stTab",
+    "wrapper": "stTabs",
+    "key": null,
+    "label": "Покрытие физической базы",
+    "focus_visible": true,
+    "box": [
+      602,
+      429,
+      195,
+      45
+    ],
+    "chain": [
+      {
+        "tag": "div",
+        "testid": "stTab",
+        "cls": "st-emotion-cache-1morxgn e1ac7blb4",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(31, 96, 193)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(31, 96, 193)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-1c0hz53 e1ac7blb3",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": null,
+        "cls": "st-emotion-cache-1ofqig9 e1ac7blb2",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "div",
+        "testid": "stTabs",
+        "cls": "stTabs st-emotion-cache-8atqhb e1ac7blb0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "react-aria5395053910-:ra9:-tab-4||Покрытие физической базы|DIV|602,429",
+    "step": 0,
+    "screen": "Свойства / Покрытие физической базы",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "a",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stHeaderActionElements",
+    "key": null,
+    "label": "Link to heading",
+    "focus_visible": true,
+    "box": [
+      417,
+      511,
+      18,
+      18
+    ],
+    "chain": [
+      {
+        "tag": "a",
+        "testid": null,
+        "cls": "st-emotion-cache-1y95vbk e1h5cy171",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(19, 59, 139)",
+        "outline_offset": "1px",
+        "border": "none 0px rgb(19, 59, 139)"
+      },
+      {
+        "tag": "span",
+        "testid": "stHeaderActionElements",
+        "cls": "st-emotion-cache-gi0tri e1h5cy173",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "||Link to heading|A|417,511",
+    "step": 1,
+    "screen": "Свойства / Покрытие физической базы",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "summary",
+    "role": null,
+    "type": null,
+    "testid": null,
+    "wrapper": "stExpander",
+    "key": null,
+    "label": "keyboard_arrow_right Технические сведения",
+    "focus_visible": true,
+    "box": [
+      91,
+      590,
+      1258,
+      43
+    ],
+    "chain": [
+      {
+        "tag": "summary",
+        "testid": null,
+        "cls": "st-emotion-cache-1we3du1 e1wbovuq4",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      },
+      {
+        "tag": "details",
+        "testid": null,
+        "cls": "st-emotion-cache-1w8abf0 e1wbovuq1",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(207, 209, 213)"
+      },
+      {
+        "tag": "div",
+        "testid": "stExpander",
+        "cls": "stExpander st-emotion-cache-8atqhb e1wbovuq0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "||keyboard_arrow_right Технические сведения|SUMMARY|91,590",
+    "step": 2,
+    "screen": "Свойства / Покрытие физической базы",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "button",
+    "role": null,
+    "type": null,
+    "testid": "stBaseButton-secondary",
+    "wrapper": "stButton",
+    "key": "st-key-physical_coverage_view",
+    "label": "Обновить покрытие физической базы",
+    "focus_visible": true,
+    "box": [
+      90,
+      650,
+      294,
+      45
+    ],
+    "chain": [
+      {
+        "tag": "button",
+        "testid": "stBaseButton-secondary",
+        "cls": "st-emotion-cache-1nc3htf el831t62",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(207, 209, 213)"
+      },
+      {
+        "tag": "div",
+        "testid": "stButton",
+        "cls": "stButton st-emotion-cache-8atqhb e1zj3zg0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "|st-key-physical_coverage_view|Обновить покрытие физической базы|BUTTON|90,650",
+    "step": 3,
+    "screen": "Свойства / Покрытие физической базы",
+    "ring": "primary_sploshnoi"
+  },
+  {
+    "in_main": true,
+    "tag": "button",
+    "role": null,
+    "type": null,
+    "testid": "stBaseButton-secondary",
+    "wrapper": "stButton",
+    "key": "st-key-physical_database_self_test",
+    "label": "Проверить чтение физической базы",
+    "focus_visible": true,
+    "box": [
+      90,
+      711,
+      282,
+      45
+    ],
+    "chain": [
+      {
+        "tag": "button",
+        "testid": "stBaseButton-secondary",
+        "cls": "st-emotion-cache-1nc3htf el831t62",
+        "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "solid 1px rgb(207, 209, 213)"
+      },
+      {
+        "tag": "div",
+        "testid": "stButton",
+        "cls": "stButton st-emotion-cache-8atqhb e1zj3zg0",
+        "box_shadow": "none",
+        "outline": "none 3px rgb(35, 37, 41)",
+        "outline_offset": "0px",
+        "border": "none 0px rgb(35, 37, 41)"
+      }
+    ],
+    "uid": "|st-key-physical_database_self_test|Проверить чтение физической базы|BUTTON|90,711",
+    "step": 4,
+    "screen": "Свойства / Покрытие физической базы",
+    "ring": "primary_sploshnoi"
+  }
+]

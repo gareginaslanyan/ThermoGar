@@ -2078,12 +2078,13 @@ def render_b4b_density_temperature(
         st.dataframe(table, width="stretch", hide_index=True)
         figure = None
         if not table.empty:
-            st.line_chart(table, x="Температура, K", y="Плотность сплава, кг/м³")
-            # PNG строится из сохранённых точек в теме прогона, кэш по теме.
+            # На экране и в PNG — один график из сохранённых точек в теме
+            # прогона, кэш по теме (решение владельца 25.09.2026, п. 10, 15Б).
             figure = state.setdefault(
                 "figure",
                 ThemedFigure(plot_density_temperature, table),
             )
+            st.pyplot(chart_figure(figure))
         _b4b_render_result_downloads(
             "physical_scan",
             {
@@ -3929,6 +3930,9 @@ def plot_density_temperature(
         "Плотность сплава, кг/м³",
         theme_type,
     )
+    # Решение владельца 25.09.2026, п. 10 (15Б): ось плотности — по данным,
+    # числа целиком, без смещения вида «+7.6e3» на узком диапазоне.
+    axes.ticklabel_format(axis="y", style="plain", useOffset=False)
     figure.tight_layout()
     return figure
 
@@ -10528,7 +10532,7 @@ with solidification_tab:
                 float(FE_DATABASE_MAX_T_C) if database_key == "fe" else 3000.0,
             )
             solidification_scheil_stop_percent = st.number_input(
-                "Scheil: остановить при остатке расплава, %",
+                "Scheil: остановить при остатке расплава, % (0.0001–5)",
                 min_value=0.0001,
                 max_value=5.0,
                 value=0.01,
@@ -10537,7 +10541,7 @@ with solidification_tab:
                 key=f"solidification_stop_{database_key}",
             )
             solidification_appearance_percent = st.number_input(
-                "Порог появления фазы, %",
+                "Порог появления фазы, % (0.0001–5)",
                 min_value=0.0001,
                 max_value=5.0,
                 value=0.01,
