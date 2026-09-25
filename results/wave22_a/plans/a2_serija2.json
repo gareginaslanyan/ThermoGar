@@ -1,0 +1,171 @@
+[
+ {
+  "tag": "a2_s1_dvizhushchaya_sila_v2",
+  "cmd": [
+   "results/wave22_a/scripts/dvizhushchaya_sila.py"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_extra_cap2_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--dt-growth-cap",
+   "2"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_extra_cap2_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--dt-growth-cap",
+   "2"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_extra_cap2_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--dt-growth-cap",
+   "2"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_005h_umolch_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "80",
+   "--duration-h",
+   "0.05",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_005h_mincomp1e-8_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "80",
+   "--duration-h",
+   "0.05",
+   "--constraint",
+   "minComposition=1e-8",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_005h_mincomp1e-8_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "80",
+   "--duration-h",
+   "0.05",
+   "--constraint",
+   "minComposition=1e-8",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_005h_mincomp1e-8_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "80",
+   "--duration-h",
+   "0.05",
+   "--constraint",
+   "minComposition=1e-8",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_extra_005h_cap2_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "80",
+   "--duration-h",
+   "0.05",
+   "--dt-growth-cap",
+   "2",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_extra_005h_cap2_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "80",
+   "--duration-h",
+   "0.05",
+   "--dt-growth-cap",
+   "2",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_extra_005h_cap2_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "80",
+   "--duration-h",
+   "0.05",
+   "--dt-growth-cap",
+   "2",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ }
+]

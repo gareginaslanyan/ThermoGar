@@ -46,7 +46,7 @@ import numpy as np  # noqa: E402
 
 import vhody  # noqa: E402
 
-PROBES = (0.0, 1e-12, 1e-9, 1e-6, 2.75e-5)
+PROBES = (0.0, 1e-12, 1e-11, 1e-9, 1e-8, 1e-6, 2.75e-5)
 
 
 def build(arguments: dict[str, Any]) -> dict[str, Any]:

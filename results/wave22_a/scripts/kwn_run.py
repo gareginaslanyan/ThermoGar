@@ -66,7 +66,8 @@ _IN_POST = [False]
 
 
 def install_overrides(constraints: dict[str, float], iterator: str | None,
-                      min_dt_frac: float | None, max_dt_frac: float | None) -> None:
+                      min_dt_frac: float | None, max_dt_frac: float | None,
+                      dt_growth_cap: float | None = None) -> None:
     from kawin.GenericModel import GenericModel
     from kawin.precipitation.PrecipitationParameters import Constraints
     from kawin.solver import Iterators
@@ -99,6 +100,24 @@ def install_overrides(constraints: dict[str, float], iterator: str | None,
         return original_solve(self, simTime, *args, **kwargs)
 
     GenericModel.solve = solve
+
+    if dt_growth_cap is not None:
+        # 22-А2, сверх настроек kawin: набросок для шага 3 — шаг не больше
+        # dt_growth_cap × предыдущего. В kawin 0.5.0 рост шага ограничен только
+        # при dt == dtMax (KWNEuler.py:347-348); иначе предел может отпустить
+        # шаг в десятки раз за один шаг.
+        from kawin.precipitation.KWNEuler import PrecipitateModel
+
+        original_get_dt = PrecipitateModel.getDt
+
+        def capped_get_dt(self: Any, dXdt: Any) -> float:
+            dt = original_get_dt(self, dXdt)
+            i = int(self.data.n)
+            if i > 0:
+                dt = min(dt, dt_growth_cap * float(self.data.time[i] - self.data.time[i - 1]))
+            return dt
+
+        PrecipitateModel.getDt = capped_get_dt
 
 
 def install_trace() -> None:
@@ -371,6 +390,8 @@ def main() -> int:
     parser.add_argument("--iterator", choices=("rk4", "euler"))
     parser.add_argument("--min-dt-frac", type=float)
     parser.add_argument("--max-dt-frac", type=float)
+    parser.add_argument("--dt-growth-cap", type=float,
+                        help="сверх настроек kawin: шаг не больше этого множителя от предыдущего")
     parser.add_argument("--trace", action="store_true")
     parser.add_argument("--no-npz", action="store_true")
     parser.add_argument("--limit-s", type=float, default=1800.0)
@@ -386,7 +407,7 @@ def main() -> int:
             changed[key] = value
             arguments[key] = value
     constraints = dict(args.constraint)
-    install_overrides(constraints, args.iterator, args.min_dt_frac, args.max_dt_frac)
+    install_overrides(constraints, args.iterator, args.min_dt_frac, args.max_dt_frac, args.dt_growth_cap)
     # Журнал — до трассы: обёртка трассы берёт postProcess, уже обёрнутый журналом.
     if args.progress > 0:
         install_progress(args.progress)
@@ -408,6 +429,7 @@ def main() -> int:
             "iterator": args.iterator or "rk4 (умолчание GenericModel.solve)",
             "minDtFrac": args.min_dt_frac if args.min_dt_frac is not None else "1e-8 (умолчание)",
             "maxDtFrac": args.max_dt_frac if args.max_dt_frac is not None else "1 (умолчание)",
+            "dt_growth_cap": args.dt_growth_cap,
         },
         "arguments": arguments,
         "sources": cell["sources"],

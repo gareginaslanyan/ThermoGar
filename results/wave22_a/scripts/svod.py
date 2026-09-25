@@ -49,6 +49,8 @@ def setting(summary: dict) -> str:
         parts.append(f"maxDtFrac={overrides['maxDtFrac']:g}")
     if isinstance(overrides.get("minDtFrac"), (int, float)):
         parts.append(f"minDtFrac={overrides['minDtFrac']:g}")
+    if overrides.get("dt_growth_cap"):
+        parts.append(f"шаг ≤ {overrides['dt_growth_cap']:g}×предыдущего (сверх kawin)")
     iterator = overrides.get("iterator", "")
     if iterator and not str(iterator).startswith("rk4 ("):
         parts.append(f"iterator={iterator}")
