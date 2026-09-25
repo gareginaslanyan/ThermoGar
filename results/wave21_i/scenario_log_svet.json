@@ -1,0 +1,54 @@
+[
+  {
+    "scenario": "zatverdevanie",
+    "title": "База «Алюминиевые сплавы», состав Al–4Cu–1Mg в массовых %"
+  },
+  {
+    "scenario": "zatverdevanie",
+    "title": "Метод расчёта — «Только Scheil–Gulliver»"
+  },
+  {
+    "scenario": "zatverdevanie",
+    "title": "Старт 700 °C, шаг охлаждения 10 °C"
+  },
+  {
+    "scenario": "zatverdevanie",
+    "title": "Сводка: ликвидус, солидус и последовательность фаз"
+  },
+  {
+    "scenario": "zatverdevanie",
+    "title": "Кривая доли твёрдой фазы"
+  },
+  {
+    "scenario": "zatverdevanie",
+    "title": "Подвкладка «Выгрузка»: результат в Excel"
+  },
+  {
+    "scenario": "kinetika",
+    "title": "Режим «Параметры пользователя»: состав берётся из боковой панели"
+  },
+  {
+    "scenario": "kinetika",
+    "title": "Пара «матрица — выделение»: FCC_A1 и GAMMA_PRIME"
+  },
+  {
+    "scenario": "kinetika",
+    "title": "Короткая выдержка: 800 °C, 1 ч"
+  },
+  {
+    "scenario": "kinetika",
+    "title": "Параметры KWN, которых нет в базе: γ, Vm и число центров зарождения"
+  },
+  {
+    "scenario": "kinetika",
+    "title": "Доля и средний размер частиц γ′ во времени"
+  },
+  {
+    "scenario": "kinetika",
+    "title": "Диффузионная пара: составы левой и правой половин"
+  },
+  {
+    "scenario": "kinetika",
+    "title": "Режим выдержки: 1200 °C, 100 ч, 80 ячеек на 2000 мкм"
+  }
+]

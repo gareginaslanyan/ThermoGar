@@ -138,6 +138,16 @@ def widget(app: AppTest, kind: str, key: str) -> Any:
     return matches[0]
 
 
+# 21-И (N-4): «Однофазная пара» и «Многофазная гомогенизация» — виды
+# переключателя, а не вкладки; в прогоне выводится только выбранный вид.
+DIFFUSION_VIEW_KEY = "kinetics_diffusion_view"
+HOMOGENIZATION_VIEW = "Многофазная гомогенизация"
+
+
+def select_view(app: AppTest, key: str, view: str) -> None:
+    app.segmented_control(key=key).set_value(view).run()
+
+
 def assert_no_traceback(app: AppTest) -> None:
     assert not app.exception, [element.message for element in app.exception]
 
@@ -211,11 +221,14 @@ def test_kinetics_section_renders(database_key: str) -> None:
     assert_no_traceback(app)
 
     single = widget(app, "button", f"kin_single_run_{database_key}")
-    homogenization = widget(app, "button", f"kin_hom_run_{database_key}")
     assert single.proto.disabled is False, (
         "Кнопка однофазной диффузии выключена без причины: "
         f"база {database_key}."
     )
+    single_view_checkboxes = [item.key for item in app.get("checkbox")]
+    select_view(app, DIFFUSION_VIEW_KEY, HOMOGENIZATION_VIEW)
+    assert_no_traceback(app)
+    homogenization = widget(app, "button", f"kin_hom_run_{database_key}")
     # Homogenization stays switched off only when the database has fewer than
     # two phases with a complete mobility set for the couple (mc_al).
     homogenization_possible = len(DIFFUSION_COUPLE[database_key][5]) >= 2
@@ -223,9 +236,9 @@ def test_kinetics_section_renders(database_key: str) -> None:
 
     # No leftover confirmation checkbox in front of either calculation.
     confirmations = [
-        item.key
-        for item in app.get("checkbox")
-        if item.key and ("kin_" in item.key or "precipitation_" in item.key)
+        key
+        for key in single_view_checkboxes + [item.key for item in app.get("checkbox")]
+        if key and ("kin_" in key or "precipitation_" in key)
     ]
     assert confirmations == [], confirmations
 
@@ -295,6 +308,7 @@ def test_diffusion_single_phase(database_key: str) -> None:
 @pytest.mark.parametrize("database_key", ("ni", "fe"))
 def test_diffusion_homogenization(database_key: str) -> None:
     app = start_app(database_key)
+    select_view(app, DIFFUSION_VIEW_KEY, HOMOGENIZATION_VIEW)
     set_diffusion_inputs(app, database_key, "kin_hom")
     phases = list(DIFFUSION_COUPLE[database_key][5][:2])
     app.session_state[f"kin_hom_phases_{database_key}"] = phases
@@ -335,6 +349,7 @@ def test_homogenization_unavailable_on_al_is_explained() -> None:
     """mc_al carries mobility for FCC_A1 only: say so instead of failing later."""
 
     app = start_app("al")
+    select_view(app, DIFFUSION_VIEW_KEY, HOMOGENIZATION_VIEW)
     set_diffusion_inputs(app, "al", "kin_hom")
     assert_no_traceback(app)
 
@@ -552,6 +567,9 @@ def test_diffusion_number_inputs_are_bounded(prefix: str) -> None:
 
     app = start_app("ni")
     assert_no_traceback(app)
+    if prefix == "kin_hom":
+        select_view(app, DIFFUSION_VIEW_KEY, HOMOGENIZATION_VIEW)
+        assert_no_traceback(app)
     bounds = {
         "length": (1.0, None),
         "interface": (1.0, 99.0),
@@ -701,6 +719,8 @@ def test_fe_shipped_defaults_are_the_declared_ones() -> None:
 
     assert widget(app, "number_input", "kin_single_temperature_fe").value == 900.0
     assert widget(app, "selectbox", "kin_single_phase_fe").value == "FCC_A1"
+    select_view(app, DIFFUSION_VIEW_KEY, HOMOGENIZATION_VIEW)
+    assert_no_traceback(app)
     assert sorted(
         widget(app, "multiselect", "kin_hom_phases_fe").value
     ) == ["BCC_A2", "FCC_A1"]
