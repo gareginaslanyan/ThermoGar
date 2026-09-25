@@ -15,7 +15,9 @@ Phases (argument, default all):
                   «Шаг по температуре, °C» = 20 — the caption «Не по умолчанию»
     knopki        «Вклады упрочнения» empty and with the source only;
                   «Упругие свойства», step 2 (after «Получить фазовые доли»)
-    umolch        defaults 5–9 after pressing the button, time of each
+    umolch        defaults 5–9 after pressing the button, time of each; the app
+                  is restarted before every case (restart_app, as progon_10b
+                  of 21-L: the worker pool keeps ~1 GiB per worker)
     zatverdevanie «Затвердевание» with «Точность и критерии» open
 
 Frames: results/wave21_m/kadry/; records: results/wave21_m/kadry_21m.json
@@ -28,6 +30,8 @@ the idle script (make_guide_screens.wait_idle), limit 15 minutes.
 from __future__ import annotations
 
 import json
+import os
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -258,13 +262,46 @@ UMOLCH = [
 ]
 
 
+def port_pids(port: int) -> set[int]:
+    out = subprocess.run(["netstat", "-ano", "-p", "TCP"], capture_output=True, text=True,
+                         encoding="oem", errors="replace").stdout
+    return {
+        int(parts[4]) for parts in (line.split() for line in out.splitlines())
+        if len(parts) >= 5 and parts[1].endswith(f":{port}") and parts[3] == "LISTENING"
+    }
+
+
+def restart_app() -> None:
+    """A new app process (as progon_10b of 21-L): the worker pool of the previous
+    calculation keeps about 1 GiB per worker. Same launcher as run_app.cmd."""
+
+    for pid in sorted(port_pids(kadry.PORT)):
+        subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True)
+    deadline = time.monotonic() + 30
+    while port_pids(kadry.PORT) and time.monotonic() < deadline:
+        time.sleep(1)
+    log = open(Path(os.environ["TEMP"]) / "tg21m_logs" / "app_8640_umolch.log", "ab")
+    subprocess.Popen(
+        ["cmd", "/c", str(Path(__file__).resolve().parent / "run_app.cmd")],
+        stdout=log, stderr=subprocess.STDOUT,
+        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP,
+    )
+    deadline = time.monotonic() + 180
+    while not mgs.app_is_ready(kadry.PORT):
+        if time.monotonic() > deadline:
+            raise RuntimeError("app did not start in 180 s")
+        time.sleep(1)
+
+
 def phase_umolch(browser, record: dict) -> None:
     out = record.setdefault("umolch", {})
     for theme in kadry.THEMES:
         slug = kadry.THEME_SLUG[theme]
         for case, base, path, button, decision in UMOLCH:
-            if kadry.free_gib() < kadry.MIN_FREE_GIB:
-                raise RuntimeError("STOP: free memory below 3 GiB")
+            restart_app()
+            free = kadry.free_gib()
+            if free < kadry.MIN_FREE_GIB:
+                raise RuntimeError(f"STOP: free memory {free:.2f} GiB below 3 GiB")
             context, page = new_page(browser, theme, base)
             for name in path:
                 if name == "Многофазная гомогенизация":
@@ -275,6 +312,7 @@ def phase_umolch(browser, record: dict) -> None:
             page.mouse.move(5, 5)
             entry = {
                 "base": base, "screen": " / ".join(path), "button": button, "decision": decision,
+                "free_gib_before": round(free, 2),
                 "seconds": round(seconds, 1), "idle": idle,
                 "metrics": page.evaluate(METRICS_JS),
                 "alerts": page.evaluate(kadry.FRAME_INFO_JS)["alerts"],
