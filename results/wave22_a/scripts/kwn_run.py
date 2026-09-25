@@ -175,6 +175,99 @@ def install_trace() -> None:
 
     PrecipitateModel._calcMassBalance = mass_balance
 
+    # 22-А2: зарождение и рост той же стадии — к той же строке трассы. При
+    # движущей силе < 0 kawin пропускает остальное (KWNBase.py:422-423), и
+    # скорость зарождения, Rcrit, Rnuc в Y остаются от предыдущей стадии —
+    # флаг stale это отмечает.
+    from kawin.precipitation.KWNBase import PrecipitateBase
+
+    def current_row(t: float, n: int) -> dict[str, Any]:
+        if MASS_BALANCE and MASS_BALANCE[-1]["n"] == n and MASS_BALANCE[-1]["t"] == float(t):
+            return MASS_BALANCE[-1]
+        row = {"n": n, "t": float(t), "post": bool(_IN_POST[0]), "stage": "без баланса"}
+        MASS_BALANCE.append(row)
+        return row
+
+    original_nucleation = PrecipitateBase._calcNucleationRate
+
+    def nucleation(self: Any, t: float, x: Any, Y: Any) -> Any:
+        Y = original_nucleation(self, t, x, Y)
+        row = current_row(t, int(self.data.n))
+        dg = float(Y.drivingForce[0, 0])
+        row.update({
+            "xC_nuc": float(np.atleast_1d(np.squeeze(Y.composition[0]))[0]),
+            "dG_J_m3": dg,
+            "J": float(Y.nucRate[0, 0]),
+            "Rcrit": float(Y.Rcrit[0, 0]),
+            "Rnuc": float(Y.Rnuc[0, 0]),
+            "beta": float(Y.impingement[0, 0]),
+            "stale": bool(dg < 0),
+        })
+        return Y
+
+    PrecipitateBase._calcNucleationRate = nucleation
+
+    original_growth = PrecipitateModel._growthRate
+
+    def growth_rate(self: Any, Y: Any) -> Any:
+        growth, Y = original_growth(self, Y)
+        row = current_row(float(Y.time[0]), int(self.data.n))
+        g = np.asarray(growth[0], float)
+        row.update({
+            "xEqAlpha_C": float(Y.xEqAlpha[0, 0, 0]),
+            "growth_max": float(np.max(g)) if g.size else float("nan"),
+            "growth_min": float(np.min(g)) if g.size else float("nan"),
+        })
+        return growth, Y
+
+    PrecipitateModel._growthRate = growth_rate
+
+    class CountingStdout:
+        """Пересылает вывод и считает предупреждения kawin по строкам трассы."""
+
+        def __init__(self, stream: Any) -> None:
+            self._stream = stream
+
+        def write(self, text: str) -> int:
+            if "Warning:" in text and MASS_BALANCE:
+                MASS_BALANCE[-1]["kawin_warnings"] = MASS_BALANCE[-1].get("kawin_warnings", 0) + 1
+            return self._stream.write(text)
+
+        def flush(self) -> None:
+            self._stream.flush()
+
+        def __getattr__(self, name: str) -> Any:
+            return getattr(self._stream, name)
+
+    sys.stdout = CountingStdout(sys.stdout)
+
+
+def install_progress(interval_s: float) -> None:
+    """Журнал модельного времени: строка раз в ``interval_s`` секунд стены."""
+
+    from kawin.precipitation.KWNBase import PrecipitateBase
+
+    started = time.perf_counter()
+    last = [started]
+    original_post = PrecipitateBase.postProcess
+
+    def post_process(self: Any, t: float, x: Any) -> Any:
+        result = original_post(self, t, x)
+        now = time.perf_counter()
+        if now - last[0] >= interval_s:
+            last[0] = now
+            n = int(self.data.n)
+            print(
+                f"ЖУРНАЛ стена={now - started:.0f} с; t={float(self.data.time[n]):.6g} с "
+                f"({float(self.data.time[n]) / 3600:.4g} ч); шаг={n}; "
+                f"доля={100 * float(np.sum(self.data.volFrac[n])):.4f} %; "
+                f"x_C={float(self.data.composition[n, 0]):.4g}",
+                flush=True,
+            )
+        return result
+
+    PrecipitateBase.postProcess = post_process
+
 
 # --------------------------------------------------------------------------- #
 # Разбор данных kawin
@@ -269,6 +362,10 @@ def main() -> int:
     parser.add_argument("--cmin", type=float)
     parser.add_argument("--cmax", type=float)
     parser.add_argument("--duration-h", type=float)
+    parser.add_argument("--bulk-n0", type=float)
+    parser.add_argument("--composition", help="строка состава вместо ячейки, те же единицы")
+    parser.add_argument("--progress", type=float, default=0.0,
+                        help="журнал модельного времени раз в столько секунд стены")
     parser.add_argument("--constraint", type=parse_constraint, action="append", default=[],
                         help="поле kawin Constraints=значение, повторяемый")
     parser.add_argument("--iterator", choices=("rk4", "euler"))
@@ -283,12 +380,16 @@ def main() -> int:
     arguments = dict(cell["arguments"])
     changed: dict[str, Any] = {}
     for key, value in (("bins", args.bins), ("cmin_nm", args.cmin), ("cmax_nm", args.cmax),
-                       ("duration_h", args.duration_h)):
+                       ("duration_h", args.duration_h), ("bulk_n0", args.bulk_n0),
+                       ("composition_text", args.composition)):
         if value is not None and value != arguments[key]:
             changed[key] = value
             arguments[key] = value
     constraints = dict(args.constraint)
     install_overrides(constraints, args.iterator, args.min_dt_frac, args.max_dt_frac)
+    # Журнал — до трассы: обёртка трассы берёт postProcess, уже обёрнутый журналом.
+    if args.progress > 0:
+        install_progress(args.progress)
     if args.trace:
         install_trace()
 
@@ -300,6 +401,7 @@ def main() -> int:
     summary: dict[str, Any] = {
         "tag": args.tag,
         "cell": args.cell,
+        "pythonhashseed": os.environ.get("PYTHONHASHSEED", "случайное"),
         "changed_inputs": changed,
         "kawin_overrides": {
             "constraints": constraints,
@@ -396,7 +498,7 @@ def main() -> int:
         write_trace(out_dir / f"{args.tag}_trace.csv.gz")
         summary["trace_rows"] = len(MASS_BALANCE)
         summary["trace_clamped_calls"] = {
-            element: int(sum(1 for row in MASS_BALANCE if row[f"raw_{element}"] < 0))
+            element: int(sum(1 for row in MASS_BALANCE if row.get(f"raw_{element}", 0.0) < 0))
             for element in solutes
         }
     (out_dir / f"{args.tag}.json").write_text(
