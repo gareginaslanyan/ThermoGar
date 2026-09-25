@@ -98,24 +98,46 @@ def main() -> None:
         print(f"| {seed} | {cell(s)} | {rows(s)} | {wall(s)} |")
     print(f"\nОстановились до 3,6 с: {stops} из {len(tags)}.")
 
-    print("\n### 2д. 0,05 ч (180 с), сетка раздела (0,2; 10) × 80\n")
-    print("| вариант | зерно | исход | дошёл до, с | строк | стена, с | пик, ГиБ |")
-    print("|---|---:|---|---:|---:|---:|---:|")
+    import numpy as np
+
+    def npz_facts(tag: str) -> tuple[str, str, str]:
+        path = DATA / f"{tag}.npz"
+        if not path.exists():
+            return "—", "—", "—"
+        with np.load(path) as archive:
+            t = archive["time"]
+            fv = np.sum(archive["volFrac"], axis=1)
+            fc = np.sum(archive["fconc"], axis=1)[:, 0]
+            x0 = archive["composition"][0, 0]
+        plateau = comma(float(t[int(np.argmax(fv > 0.0436))]), ".4g") if (fv > 0.0436).any() else "не достигнуто"
+        invalid = int(np.sum(fc > x0))
+        return comma(float(t[2] - t[1]), ".4g"), plateau, str(invalid)
+
+    print("\n### 2д. 0,05 ч (180 с), границы (0,2; 10) нм\n")
+    print("| вариант | классов | зерно | исход | дошёл до, с | второй шаг, с | доля > 4,36 % с, с | шагов с C в выделениях > C сплава | строк | стена, с | пик, ГиБ |")
+    print("|---|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|")
     for label, tag, seed in (
         ("умолчание раздела", "a2_005h_umolch_s0", 0),
         ("minComposition 1e-8", "a2_005h_mincomp1e-8_s0", 0),
         ("minComposition 1e-8", "a2_005h_mincomp1e-8_s1", 1),
         ("minComposition 1e-8", "a2_005h_mincomp1e-8_s2", 2),
+        ("сверх задания: шаг ≤ 2× предыдущего", "a2_extra_005h_cap2_s0", 0),
+        ("сверх задания: шаг ≤ 2× предыдущего", "a2_extra_005h_cap2_s1", 1),
+        ("сверх задания: шаг ≤ 2× предыдущего", "a2_extra_005h_cap2_s2", 2),
+        ("сверх задания: шаг ≤ 2× предыдущего", "a2_extra_005h_cap2_b40_s0", 0),
+        ("сверх задания: шаг ≤ 2× предыдущего", "a2_extra_005h_cap2_b120_s0", 0),
     ):
         s = load(tag)
         reached = "—" if s is None else comma(s.get("final_time_s", 0), ".5g")
         peak = "—" if s is None else comma(s.get("peak_rss_gib", 0), ".3f")
-        print(f"| {label} | {seed} | {cell(s)} | {reached} | {rows(s)} | {wall(s)} | {peak} |")
+        second, plateau, invalid = npz_facts(tag)
+        bins = "—" if s is None else s["arguments"]["bins"]
+        print(f"| {label} | {bins} | {seed} | {cell(s)} | {reached} | {second} | {plateau} | {invalid} | {rows(s)} | {wall(s)} | {peak} |")
 
     print("\n### Сходимость по сетке (ячейка приложения, (0,2; 10), 3,6 с, зерно 0)\n")
     print("| классов | умолчания kawin | minComposition 1e-8 | шаг ≤ 2× предыдущего (сверх kawin) |")
     print("|---:|---|---|---|")
-    for bins in (30, 40, 60, 80):
+    for bins in (30, 40, 60, 80, 120, 160):
         default = load(f"a2_setka_b{bins}_c02_s0")
         mincomp = load("a2_kawin_mincomp1e-8_s0" if bins == 40 else f"a2_skhod_mincomp1e-8_b{bins}_s0")
         cap = load("a2_extra_cap2_s0" if bins == 40 else f"a2_skhod_cap2_b{bins}_s0")
@@ -129,15 +151,6 @@ def main() -> None:
                     f"N {comma(s['final_density_m3'], '.3e')} м⁻³; {s['rows']} стр., {comma(s['wall_s'], '.0f')} с")
 
         print(f"| {bins} | {full(default)} | {full(mincomp)} | {full(cap)} |")
-
-    print("\n### Сверх задания: шаг ≤ 2× предыдущего на 0,05 ч, сетка (0,2; 10) × 80\n")
-    print("| зерно | исход | дошёл до, с | строк | стена, с | пик, ГиБ |")
-    print("|---:|---|---:|---:|---:|---:|")
-    for seed in (0, 1, 2):
-        s = load(f"a2_extra_005h_cap2_s{seed}")
-        reached = "—" if s is None else comma(s.get("final_time_s", 0), ".5g")
-        peak = "—" if s is None else comma(s.get("peak_rss_gib", 0), ".3f")
-        print(f"| {seed} | {cell(s)} | {reached} | {rows(s)} | {wall(s)} | {peak} |")
 
     total = 0.0
     count = 0

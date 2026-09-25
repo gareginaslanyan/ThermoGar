@@ -183,5 +183,54 @@ def main() -> None:
     plt.close(fig)
 
 
+def figure_005h() -> None:
+    """2д: доля и C в выделениях на 0,05 ч — умолчание, minComposition 1e-8, шаг ≤ 2× (зерно 0)."""
+
+    series = (
+        ("умолчание раздела", "a2_005h_umolch_s0", BLUE, "-"),
+        ("minComposition 1e-8", "a2_005h_mincomp1e-8_s0", ORANGE, "--"),
+        ("шаг ≤ 2× предыдущего", "a2_extra_005h_cap2_s0", AQUA, "-"),
+    )
+    fig, axes = plt.subplots(2, 1, figsize=(10, 6.8), sharex=True)
+    fig.patch.set_facecolor(SURFACE)
+    for axis in axes:
+        style(axis)
+    for label, tag, color, dash in series:
+        path = DATA / f"{tag}.npz"
+        if not path.exists():
+            continue
+        with np.load(path) as archive:
+            t = archive["time"]
+            fv = np.sum(archive["volFrac"], axis=1)
+            fc = np.sum(archive["fconc"], axis=1)[:, 0]
+            x0 = archive["composition"][0, 0]
+        keep = t > 0
+        axes[0].plot(t[keep], 100 * fv[keep], color=color, linestyle=dash, linewidth=1.6, label=label)
+        axes[1].plot(t[keep], fc[keep] / x0, color=color, linestyle=dash, linewidth=1.6, label=label)
+        if tag == "a2_extra_005h_cap2_s0":
+            i = int(np.argmin(np.abs(t - 0.45)))
+            axes[0].annotate("шаг ≤ 2× предыдущего: плато к 0,75 с", (t[i], 100 * fv[i]), xytext=(8, 0),
+                             textcoords="offset points", color=INK, fontsize=8, va="center")
+        elif tag == "a2_005h_umolch_s0":
+            i = int(np.argmin(np.abs(t - 8.0)))
+            axes[0].annotate("умолчание и minComposition 1e-8 (совпадают до 110 с):\nвторой шаг 22,7 с, выделение на 104–106 с",
+                             (t[i], 100 * fv[i]), xytext=(0, 14), textcoords="offset points", ha="center",
+                             color=INK, fontsize=8)
+    axes[0].set_xscale("log")
+    axes[0].set_ylabel("доля M23C6, %")
+    axes[1].axhline(1.0, color=MUTED, linewidth=1.0, linestyle=":")
+    axes[1].annotate("весь C сплава", (0.012, 1.0), xytext=(0, 4), textcoords="offset points", color=INK_2, fontsize=8)
+    axes[1].set_ylim(0.985, 1.006)
+    axes[1].set_ylabel("C в выделениях /\nC сплава")
+    axes[1].set_xlabel("время, с (логарифмическая шкала)")
+    axes[1].legend(frameon=False, fontsize=8, labelcolor=INK_2, loc="lower left")
+    axes[0].set_title("0,05 ч, сетка (0,2; 10) × 80, зерно 0: второй шаг 22,7 с у умолчания и minComposition",
+                      color=INK, fontsize=11, loc="left")
+    fig.tight_layout()
+    fig.savefig(BASE / "005h.png", dpi=150, facecolor=SURFACE)
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     main()
+    figure_005h()

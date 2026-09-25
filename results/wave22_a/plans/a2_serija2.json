@@ -235,6 +235,34 @@
   }
  },
  {
+  "tag": "a2_skhod_cap2_b120_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "120",
+   "--dt-growth-cap",
+   "2"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_skhod_cap2_b160_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "160",
+   "--dt-growth-cap",
+   "2"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
   "tag": "a2_005h_mincomp1e-8_s2",
   "args": [
    "--cell",
@@ -250,6 +278,42 @@
   ],
   "env": {
    "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_extra_005h_cap2_b40_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "40",
+   "--duration-h",
+   "0.05",
+   "--dt-growth-cap",
+   "2",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_extra_005h_cap2_b120_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "120",
+   "--duration-h",
+   "0.05",
+   "--dt-growth-cap",
+   "2",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
   }
  }
 ]

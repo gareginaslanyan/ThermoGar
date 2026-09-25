@@ -1,0 +1,33 @@
+# 2026-09-25T12:01:43 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_a/scripts/kwn_run.py --tag a2_extra_005h_cap2_s1 --cell app --bins 80 --duration-h 0.05 --dt-growth-cap 2 --progress 30
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+ЖУРНАЛ стена=30 с; t=0.899651 с (0.0002499 ч); шаг=857; доля=4.4098 %; x_C=3.535e-05
+ЖУРНАЛ стена=60 с; t=4.73073 с (0.001314 ч); шаг=2038; доля=4.4098 %; x_C=3.538e-05
+ЖУРНАЛ стена=90 с; t=8.64868 с (0.002402 ч); шаг=3234; доля=4.4099 %; x_C=3.527e-05
+ЖУРНАЛ стена=120 с; t=12.7568 с (0.003544 ч); шаг=4390; доля=4.4100 %; x_C=3.508e-05
+ЖУРНАЛ стена=150 с; t=17.559 с (0.004878 ч); шаг=5572; доля=4.4100 %; x_C=3.502e-05
+ЖУРНАЛ стена=180 с; t=22.165 с (0.006157 ч); шаг=6757; доля=4.4101 %; x_C=3.471e-05
+ЖУРНАЛ стена=210 с; t=27.1723 с (0.007548 ч); шаг=7912; доля=4.4103 %; x_C=3.44e-05
+ЖУРНАЛ стена=240 с; t=32.4232 с (0.009006 ч); шаг=9031; доля=4.4102 %; x_C=3.45e-05
+ЖУРНАЛ стена=270 с; t=38.0039 с (0.01056 ч); шаг=10181; доля=4.4102 %; x_C=3.458e-05
+ЖУРНАЛ стена=300 с; t=43.4848 с (0.01208 ч); шаг=11356; доля=4.4103 %; x_C=3.442e-05
+ЖУРНАЛ стена=330 с; t=50.0104 с (0.01389 ч); шаг=12513; доля=4.4103 %; x_C=3.436e-05
+ЖУРНАЛ стена=360 с; t=57.1375 с (0.01587 ч); шаг=13695; доля=4.4108 %; x_C=3.332e-05
+ЖУРНАЛ стена=390 с; t=64.385 с (0.01788 ч); шаг=14883; доля=4.4107 %; x_C=3.348e-05
+ЖУРНАЛ стена=420 с; t=73.0734 с (0.0203 ч); шаг=16066; доля=4.4104 %; x_C=3.421e-05
+ЖУРНАЛ стена=450 с; t=81.6628 с (0.02268 ч); шаг=17268; доля=4.4110 %; x_C=3.275e-05
+ЖУРНАЛ стена=480 с; t=91.1689 с (0.02532 ч); шаг=18437; доля=4.4111 %; x_C=3.258e-05
+ЖУРНАЛ стена=510 с; t=100.799 с (0.028 ч); шаг=19631; доля=4.4109 %; x_C=3.3e-05
+ЖУРНАЛ стена=540 с; t=111.214 с (0.03089 ч); шаг=20816; доля=4.4112 %; x_C=3.232e-05
+ЖУРНАЛ стена=570 с; t=120.936 с (0.03359 ч); шаг=21841; доля=4.4113 %; x_C=3.214e-05
+ЖУРНАЛ стена=600 с; t=132.087 с (0.03669 ч); шаг=23025; доля=4.4112 %; x_C=3.246e-05
+ЖУРНАЛ стена=630 с; t=143.464 с (0.03985 ч); шаг=24217; доля=4.4114 %; x_C=3.189e-05
+ЖУРНАЛ стена=660 с; t=154.588 с (0.04294 ч); шаг=25390; доля=4.4114 %; x_C=3.19e-05
+ЖУРНАЛ стена=690 с; t=166.551 с (0.04626 ч); шаг=26539; доля=4.4115 %; x_C=3.18e-05
+2026-09-25 12:13:47.228 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 12:13:47.328 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 12:13:47.510 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 12:13:47.649 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 12:13:47.735 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "a2_extra_005h_cap2_s1", "status": "ok", "error": "", "wall_s": 719.32, "peak_rss_gib": 0.366, "rows": 27670, "final_time_s": 180.0, "stop": false, "final_fraction_pct": 4.411596744384461, "final_radius_nm": 18.8678524601997, "quality_all_passed": true}
+ZAMER: код=0; стена=725.0 с; пик RSS=0.375 ГиБ (392836 КиБ)
