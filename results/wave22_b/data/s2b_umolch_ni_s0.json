@@ -1,0 +1,132 @@
+{
+  "tag": "s2b_umolch_ni_s0",
+  "cell": "umolch_ni",
+  "pythonhashseed": "0",
+  "changed_inputs": {},
+  "kawin_overrides": {
+    "constraints": {},
+    "iterator": "rk4 (умолчание GenericModel.solve)",
+    "minDtFrac": "1e-8 (умолчание)",
+    "maxDtFrac": "1 (умолчание)",
+    "dt_growth_cap": null
+  },
+  "app_step_limit": {
+    "class": "_StepLimitedPrecipitateModel",
+    "K_in_code": 2.0,
+    "K_used": 2.0
+  },
+  "arguments": {
+    "database_key": "ni",
+    "balance": "NI",
+    "composition_text": "Al=15",
+    "units": "at",
+    "matrix_phase": "FCC_A1",
+    "precipitate_phase": "GAMMA_PRIME",
+    "schedule_mode": "isothermal",
+    "temperature_c": 800.0,
+    "duration_h": 100.0,
+    "profile_text": "",
+    "gamma": 0.023,
+    "matrix_vm": 6.57,
+    "precip_vm": 6.57,
+    "nucleation_type": "BULK",
+    "bulk_n0": 1e+28,
+    "grain_size_um": 100.0,
+    "dislocation_density": 5000000000000.0,
+    "gb_energy": 0.3,
+    "cmin_nm": 0.2,
+    "cmax_nm": 10.0,
+    "bins": 80,
+    "input_provenance": "Объявленный сценарий, не данные материала",
+    "input_confirmation": true
+  },
+  "sources": {
+    "DATABASE_DEFINITIONS['ni']": "app/ThermoGar_app.py:325",
+    "DEFAULTS": "app/thermogar_precipitation.py:87",
+    "DEFAULT_INPUT_PROVENANCE": "app/thermogar_precipitation.py:99",
+    "NUCLEATION_TYPES": "app/thermogar_precipitation.py:101",
+    "виджет bulk_n0": "app/thermogar_precipitation.py:1681",
+    "виджет grain_size_um": "app/thermogar_precipitation.py:1688",
+    "виджет dislocation_density": "app/thermogar_precipitation.py:1695",
+    "виджет gb_energy": "app/thermogar_precipitation.py:1702",
+    "виджет cmin_nm": "app/thermogar_precipitation.py:1711",
+    "виджет cmax_nm": "app/thermogar_precipitation.py:1718",
+    "виджет bins": "app/thermogar_precipitation.py:1725"
+  },
+  "versions": {
+    "python": "3.11.15",
+    "pycalphad": "0.11.2",
+    "kawin": "0.5.0",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "limit_s": 1800.0,
+  "database": {
+    "path": "/home/user/ThermoGar/databases/converted/mc_ni_v2036_with_mobility.garcalc.tdb",
+    "label": "Никелевые сплавы — mc_ni 2.036"
+  },
+  "status": "ok",
+  "error": "",
+  "wall_s": 153.59,
+  "peak_rss_gib": 0.363,
+  "rows": 10605,
+  "final_time_s": 360000.0,
+  "stop": false,
+  "stop_note": "",
+  "warnings": [
+    "Критический радиус зародыша 0.268 нм (оценка при 800.0 °C по начальному составу) меньше предела модели 0.3 нм, и модель считает зарождение от этого предела. Поэтому скорость зарождения на начальной стадии не классическая для этой движущей силы, и начало выделения на графиках может быть искажено."
+  ],
+  "quality": {
+    "Время возрастает": "пройдена",
+    "Температура конечна": "пройдена",
+    "Объёмная доля 0–1": "пройдена",
+    "Радиус неотрицателен": "пройдена",
+    "Плотность неотрицательна": "пройдена",
+    "Состав матрицы допустим": "пройдена",
+    "Объёмная доля не упёрлась в 100 %": "пройдена",
+    "Ширина класса меньше критического радиуса": "пройдена",
+    "Зародыш не меньше минимального радиуса сетки": "пройдена"
+  },
+  "quality_all_passed": true,
+  "final_fraction_pct": 26.033514161669675,
+  "max_fraction_pct": 26.055676905307802,
+  "final_radius_nm": 92.18702959541493,
+  "final_density_m3": 6.585857941527953e+19,
+  "summary_table": {
+    "Первое обнаружение выделений": "1.635e-05",
+    "Максимальная объёмная доля": "26.0557",
+    "Итоговая объёмная доля": "26.0335",
+    "Итоговый средний радиус": "92.187",
+    "Итоговая плотность частиц": "6.58586e+19",
+    "Пик скорости зарождения": "2.76638e+26",
+    "Растворение после максимума": "нет",
+    "Укрупнение на плато": "да"
+  },
+  "final_psd_bins": 120,
+  "stop_diagnostics": {},
+  "balance": {
+    "AL": {
+      "x0": 0.15,
+      "max_abs_residual_unclamped": 2.7755575615628914e-17,
+      "max_rel_residual_unclamped": 1.8503717077085943e-16,
+      "clamped_steps": 0,
+      "first_clamped_step": null,
+      "first_clamped_time_s": null,
+      "residual_at_first_clamp": null,
+      "raw_at_first_clamp": null,
+      "fconc_over_x0_at_first_clamp": null,
+      "residual_last": 0.0,
+      "raw_last": 0.1201271921118613,
+      "x_last": 0.1201271921118613,
+      "min_x": 0.12009277000765341
+    }
+  },
+  "steps": 10605,
+  "raw_nonpositive_calls": {
+    "calls": 42416,
+    "stage": 0,
+    "post": 0,
+    "first_t": null,
+    "min_raw_over_x0": 0.8006184667176894
+  }
+}

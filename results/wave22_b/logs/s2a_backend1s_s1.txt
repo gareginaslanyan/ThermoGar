@@ -1,0 +1,11 @@
+# 2026-09-25T14:22:49 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_b/scripts/kwn_run.py --tag s2a_backend1s_s1 --cell backend --progress 30
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+ЖУРНАЛ стена=30 с; t=0.853895 с (0.0002372 ч); шаг=1025; доля=4.3988 %; x_C=5.605e-05
+2026-09-25 14:23:26.683 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:23:26.762 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:23:26.886 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:23:26.997 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:23:27.053 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "s2a_backend1s_s1", "status": "ok", "error": "", "wall_s": 32.48, "peak_rss_gib": 0.32, "rows": 1159, "final_time_s": 1.0, "stop": false, "final_fraction_pct": 4.400920715116322, "final_radius_nm": 4.276996803678328, "quality_all_passed": true, "raw_nonpositive_calls": {"calls": 4632, "stage": 0, "post": 0, "first_t": null, "min_raw_over_x0": 0.005350127966495224}}
+ZAMER: код=0; стена=38.2 с; пик RSS=0.323 ГиБ (338924 КиБ)

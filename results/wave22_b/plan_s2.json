@@ -272,5 +272,60 @@
   "env": {
    "PYTHONHASHSEED": "0"
   }
+ },
+ {
+  "tag": "x_umolch_fe_001h_s0",
+  "args": [
+   "--cell",
+   "umolch_fe",
+   "--duration-h",
+   "0.01",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "x_718_trace_s0",
+  "args": [
+   "--cell",
+   "718",
+   "--trace",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "x_718_b200_s0",
+  "args": [
+   "--cell",
+   "718",
+   "--bins",
+   "200",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "x_718_mindt1e-10_s0",
+  "args": [
+   "--cell",
+   "718",
+   "--min-dt-frac",
+   "1e-10",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
  }
 ]

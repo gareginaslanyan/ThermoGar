@@ -1,0 +1,11 @@
+# 2026-09-25T14:21:05 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_b/scripts/kwn_run.py --tag s2a_app_s7 --cell app --progress 30
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+ЖУРНАЛ стена=30 с; t=1.60693 с (0.0004464 ч); шаг=860; доля=4.4089 %; x_C=3.742e-05
+2026-09-25 14:21:57.591 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:21:57.686 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:21:57.821 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:21:57.950 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:21:58.015 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "s2a_app_s7", "status": "ok", "error": "", "wall_s": 47.75, "peak_rss_gib": 0.347, "rows": 1568, "final_time_s": 3.6, "stop": false, "final_fraction_pct": 4.409464206477504, "final_radius_nm": 9.516927202632406, "quality_all_passed": true, "raw_nonpositive_calls": {"calls": 6268, "stage": 0, "post": 0, "first_t": null, "min_raw_over_x0": 0.003848826203387369}}
+ZAMER: код=0; стена=53.2 с; пик RSS=0.350 ГиБ (366888 КиБ)

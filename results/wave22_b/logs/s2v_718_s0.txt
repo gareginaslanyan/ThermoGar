@@ -1,0 +1,11 @@
+# 2026-09-25T14:16:37 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_b/scripts/kwn_run.py --tag s2v_718_s0 --cell 718 --progress 60
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+2026-09-25 14:17:00.829 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:17:00.937 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:17:01.094 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:17:01.203 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:17:01.263 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "s2v_718_s0", "status": "ok", "error": "", "wall_s": 18.47, "peak_rss_gib": 0.413, "rows": 218, "final_time_s": 3.8852540723606666, "stop": true, "final_fraction_pct": 5.297069319200993, "final_radius_nm": 0.5428660917261978, "quality_all_passed": false, "raw_nonpositive_calls": {"calls": 868, "stage": 1, "post": 1, "first_t": 3.808346964004662, "min_raw_over_x0": -0.008372716167708294}}
+stop_note: Расчёт остановлен на 3.885 с модельного времени (0.001079 ч): доля Ti в матрице стала -0.009864 ат.%, баланс масс нарушен. Показана часть расчёта до остановки. Причина: при движущей силе по базе зарождение практически безбарьерное, и выделение вычерпывает добавки из матрицы быстрее, чем модель это выдерживает.
+ZAMER: код=0; стена=24.6 с; пик RSS=0.416 ГиБ (435920 КиБ)

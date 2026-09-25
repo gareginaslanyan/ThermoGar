@@ -1,0 +1,138 @@
+{
+  "tag": "s2a_backend36_s2",
+  "cell": "backend",
+  "pythonhashseed": "2",
+  "changed_inputs": {
+    "duration_h": 0.001
+  },
+  "kawin_overrides": {
+    "constraints": {},
+    "iterator": "rk4 (умолчание GenericModel.solve)",
+    "minDtFrac": "1e-8 (умолчание)",
+    "maxDtFrac": "1 (умолчание)",
+    "dt_growth_cap": null
+  },
+  "app_step_limit": {
+    "class": "_StepLimitedPrecipitateModel",
+    "K_in_code": 2.0,
+    "K_used": 2.0
+  },
+  "arguments": {
+    "database_key": "fe",
+    "balance": "FE",
+    "composition_text": "C=0.2, CR=11.5",
+    "units": "wt",
+    "matrix_phase": "BCC_A2",
+    "precipitate_phase": "M23C6",
+    "schedule_mode": "isothermal",
+    "temperature_c": 700.0,
+    "duration_h": 0.001,
+    "profile_text": "",
+    "gamma": 0.3,
+    "matrix_vm": 7.09,
+    "precip_vm": 7.09,
+    "nucleation_type": "BULK",
+    "bulk_n0": 1e+30,
+    "grain_size_um": 100.0,
+    "dislocation_density": 5000000000000.0,
+    "gb_energy": 0.3,
+    "cmin_nm": 0.5,
+    "cmax_nm": 10.0,
+    "bins": 30,
+    "input_provenance": "SYNTHETIC_BACKEND_REGRESSION_NOT_MATERIAL_INPUT",
+    "input_confirmation": true
+  },
+  "sources": {
+    "CASES['fe']": "tools/test_backend_calculations.py:260",
+    "run_precipitation в test_kwn_module": "tools/test_backend_calculations.py:1063"
+  },
+  "versions": {
+    "python": "3.11.15",
+    "pycalphad": "0.11.2",
+    "kawin": "0.5.0",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "limit_s": 1800.0,
+  "database": {
+    "path": "/home/user/ThermoGar/databases/converted/fe/mc_fe_v2062_with_mobility.thermogar.tdb",
+    "label": "Стали и Fe-сплавы — mc_fe 2.062"
+  },
+  "status": "ok",
+  "error": "",
+  "wall_s": 75.83,
+  "peak_rss_gib": 0.321,
+  "rows": 3174,
+  "final_time_s": 3.6,
+  "stop": false,
+  "stop_note": "",
+  "warnings": [],
+  "quality": {
+    "Время возрастает": "пройдена",
+    "Температура конечна": "пройдена",
+    "Объёмная доля 0–1": "пройдена",
+    "Радиус неотрицателен": "пройдена",
+    "Плотность неотрицательна": "пройдена",
+    "Состав матрицы допустим": "пройдена",
+    "Объёмная доля не упёрлась в 100 %": "пройдена",
+    "Ширина класса меньше критического радиуса": "пройдена",
+    "Зародыш не меньше минимального радиуса сетки": "пройдена"
+  },
+  "quality_all_passed": true,
+  "final_fraction_pct": 4.404065474341706,
+  "max_fraction_pct": 4.404065474341706,
+  "final_radius_nm": 5.581622290775839,
+  "final_density_m3": 4.961099504278793e+22,
+  "summary_table": {
+    "Первое обнаружение выделений": "8.34167e-06",
+    "Максимальная объёмная доля": "4.40407",
+    "Итоговая объёмная доля": "4.40407",
+    "Итоговый средний радиус": "5.58162",
+    "Итоговая плотность частиц": "4.9611e+22",
+    "Пик скорости зарождения": "3.02849e+24",
+    "Растворение после максимума": "нет",
+    "Укрупнение на плато": "да"
+  },
+  "final_psd_bins": 65,
+  "stop_diagnostics": {},
+  "balance": {
+    "C": {
+      "x0": 0.009154515665669952,
+      "max_abs_residual_unclamped": 0.0,
+      "max_rel_residual_unclamped": 0.0,
+      "clamped_steps": 0,
+      "first_clamped_step": null,
+      "first_clamped_time_s": null,
+      "residual_at_first_clamp": null,
+      "raw_at_first_clamp": null,
+      "fconc_over_x0_at_first_clamp": null,
+      "residual_last": 0.0,
+      "raw_last": 4.462121092839712e-05,
+      "x_last": 4.462121092839712e-05,
+      "min_x": 4.462121092839712e-05
+    },
+    "CR": {
+      "x0": 0.12159408493866455,
+      "max_abs_residual_unclamped": 0.0,
+      "max_rel_residual_unclamped": 0.0,
+      "clamped_steps": 0,
+      "first_clamped_step": null,
+      "first_clamped_time_s": null,
+      "residual_at_first_clamp": null,
+      "raw_at_first_clamp": null,
+      "fconc_over_x0_at_first_clamp": null,
+      "residual_last": 0.0,
+      "raw_last": 0.0992613066874517,
+      "x_last": 0.0992613066874517,
+      "min_x": 0.0992613066874517
+    }
+  },
+  "steps": 3174,
+  "raw_nonpositive_calls": {
+    "calls": 12692,
+    "stage": 0,
+    "post": 0,
+    "first_t": null,
+    "min_raw_over_x0": 0.004589310865366335
+  }
+}

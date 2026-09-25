@@ -1,0 +1,6 @@
+# 2026-09-25T14:25:47 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_b/scripts/kwn_run.py --tag x_k15_umolch_fe_s0 --cell umolch_fe --k-cap 1.5 --progress 60
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+ЖУРНАЛ стена=60 с; t=6.89744 с (0.001916 ч); шаг=2048; доля=4.4099 %; x_C=3.526e-05
+ЖУРНАЛ стена=120 с; t=20.3982 с (0.005666 ч); шаг=4448; доля=4.4102 %; x_C=3.465e-05
+ЖУРНАЛ стена=180 с; t=36.1621 с (0.01005 ч); шаг=6764; доля=4.4103 %; x_C=3.422e-05

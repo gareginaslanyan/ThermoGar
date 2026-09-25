@@ -21,6 +21,21 @@ def load(tag: str) -> dict[str, Any] | None:
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
 
 
+def load_a2(tag: str) -> dict[str, Any] | None:
+    """Прогон 22-А2 из ветки origin/wave22-a (для строк «до» из 22-А2)."""
+
+    import subprocess
+
+    try:
+        text = subprocess.run(
+            ["git", "show", f"origin/wave22-a:results/wave22_a/data/{tag}.json"],
+            cwd=BASE.parents[1], capture_output=True, text=True, check=True,
+        ).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    return json.loads(text)
+
+
 def comma(value: Any, fmt: str) -> str:
     if value is None:
         return "—"
@@ -47,11 +62,18 @@ def npz(tag: str) -> dict[str, Any]:
     }
 
 
+# Прогон, остановленный вручную сигналом предела (см. logs/x_k4_s2b_umolch_fe_s0_zametka.txt).
+MANUAL_STOP = {"x_k4_s2b_umolch_fe_s0"}
+
+
 def outcome(s: dict[str, Any] | None) -> str:
     if s is None:
         return "—"
     if s.get("status") == "limit":
-        return f"снят по пределу на {comma(s.get('final_time_s'), '.5g')} с"
+        if s.get("tag") in MANUAL_STOP or f"x_k4_{s.get('tag')}" in MANUAL_STOP:
+            return f"прерван вручную на {comma(s.get('final_time_s'), '.5g')} с"
+        limit = s.get("limit_s", 1800)
+        return f"снят по пределу {comma(limit, 'g')} с на {comma(s.get('final_time_s'), '.5g')} с"
     if s.get("status") != "ok":
         return "ошибка"
     if s.get("stop"):
@@ -140,12 +162,54 @@ def main() -> None:
         ("fe, 0,05 ч — после", "s2b_umolch_fe_s0"),
     ):
         print(row(label, tag))
+    a2 = load_a2("a2_005h_umolch_s0")
+    if a2:
+        print(f"| fe, 0,05 ч — до правки (22-А2) | a2_005h_umolch_s0 | {outcome(a2)} | "
+              f"{comma(a2.get('final_fraction_pct'), '.6g')} | {comma(a2.get('final_radius_nm'), '.5g')} | "
+              f"{a2.get('rows')} | {comma(a2.get('wall_s'), '.0f')} | {comma(a2.get('peak_rss_gib'), '.3f')} | "
+              f"перелёт (22-А2) | 0 | — |")
 
     print("\n### Шаг 2 в. 718 (15-В), 700 °C, 95 мДж/м², зерно 0\n")
     print(HEADER)
     for label, tag in (
-        ("до правки", "do_718_s0"), ("после (K = 4)", "s2v_718_s0"),
-        ("сверх задания: K = 2", "x_718_k2_s0"), ("сверх задания: K = 1,5", "x_718_k15_s0"),
+        ("до правки", "do_718_s0"), ("после (K = 2)", "s2v_718_s0"),
+        ("сверх задания: K = 4", "x_k4_s2v_718_s0"), ("сверх задания: K = 1,5", "x_718_k15_s0"),
+    ):
+        print(row(label, tag))
+
+    print("\n### Умолчание стали 0,05 ч по K: первые шаги и ход доли (зерно 0)\n")
+    print("| вариант | тег | исход | дошёл до, с | первые шаги, с | доля при 0,75 с, % | R при 0,75 с, нм | "
+          "доля в конце, % | R в конце, нм | строк | стена, с |")
+    print("|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|")
+    for label, tag in (
+        ("K = 2 (в коде)", "s2b_umolch_fe_s0"),
+        ("K = 4, прерван вручную", "x_k4_s2b_umolch_fe_s0"),
+        ("K = 1,5, сверх задания", "x_k15_umolch_fe_s0"),
+        ("проба K = 4, 45 с", "x_probe_umolch_fe_k4_45s"),
+        ("проба K = 2, 45 с", "x_probe_umolch_fe_k2_45s"),
+    ):
+        s = load(tag)
+        path = DATA / f"{tag}.npz"
+        if s is None or not path.exists():
+            print(f"| {label} | {tag} | не посчитан |" + " —|"*8)
+            continue
+        with np.load(path) as archive:
+            time = np.asarray(archive["time"], float)
+            fv = np.asarray(archive["volFrac"], float).sum(axis=1)
+            radius = np.asarray(archive["Ravg"], float)[:, 0]
+        i = min(int(np.searchsorted(time, 0.75)), len(time) - 1)
+        steps = " → ".join(comma(x, ".4g") for x in np.diff(time)[:4])
+        print(f"| {label} | {tag} | {outcome(s)} | {comma(s['final_time_s'], '.5g')} | {steps} | "
+              f"{comma(100*fv[i], '.4g')} | {comma(1e9*radius[i], '.4g')} | {comma(s['final_fraction_pct'], '.5g')} | "
+              f"{comma(s['final_radius_nm'], '.5g')} | {s['rows']} | {comma(s['wall_s'], '.0f')} |")
+
+    print("\n### Шаг 2 при K = 4 (прерван, заменён K = 2), зерно 0 и ячейка приложения на зёрнах 0–3\n")
+    print(HEADER)
+    for label, tag in (
+        ("fe, приложения, 3,6 с, зерно 0", "x_k4_s2a_app_s0"), ("fe, приложения, 3,6 с, зерно 1", "x_k4_s2a_app_s1"),
+        ("fe, приложения, 3,6 с, зерно 2", "x_k4_s2a_app_s2"), ("fe, приложения, 3,6 с, зерно 3", "x_k4_s2a_app_s3"),
+        ("ni, 100 ч", "x_k4_s2b_umolch_ni_s0"), ("al, 24 ч", "x_k4_s2b_umolch_al_s0"),
+        ("fe, 0,05 ч (прерван вручную)", "x_k4_s2b_umolch_fe_s0"), ("718", "x_k4_s2v_718_s0"),
     ):
         print(row(label, tag))
 

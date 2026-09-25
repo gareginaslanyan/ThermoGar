@@ -1,0 +1,35 @@
+# 2026-09-25T14:28:30 $ python -B -m pytest -p no:cacheprovider -v -rA --durations=0 tools/test_precipitation_grid.py tools/test_wave15_z.py::test_run_precipitation_warns_when_nucleus_exceeds_cmax tools/test_wave15_z.py::test_run_precipitation_is_silent_when_cmax_covers_nucleus
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0 -- /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python
+rootdir: /home/user/ThermoGar
+plugins: timeout-2.4.0, anyio-4.15.1, cov-7.1.0
+collecting ... collected 34 items
+
+tools/test_precipitation_grid.py::test_kawin_puts_nucleus_below_cmin_into_last_class PASSED [  2%]
+tools/test_precipitation_grid.py::test_kawin_puts_nucleus_into_class_wider_than_nucleus PASSED [  5%]
+tools/test_precipitation_grid.py::test_quality_passes_on_resolved_grid PASSED [  8%]
+tools/test_precipitation_grid.py::test_volume_fraction_of_one_is_not_a_passed_check PASSED [ 11%]
+tools/test_precipitation_grid.py::test_volume_fraction_ceiling_checked_without_grid_arguments PASSED [ 14%]
+tools/test_precipitation_grid.py::test_quality_flags_class_wider_than_critical_radius PASSED [ 17%]
+tools/test_precipitation_grid.py::test_quality_flags_nucleus_below_minimum_radius PASSED [ 20%]
+tools/test_precipitation_grid.py::test_quality_ignores_steps_without_nucleation PASSED [ 23%]
+tools/test_precipitation_grid.py::test_check_size_grid_refuses_class_wider_than_critical_radius PASSED [ 26%]
+tools/test_precipitation_grid.py::test_check_size_grid_refuses_nucleus_below_minimum_radius PASSED [ 29%]
+tools/test_precipitation_grid.py::test_check_size_grid_uses_strictest_temperature_of_profile PASSED [ 32%]
+tools/test_precipitation_grid.py::test_check_size_grid_accepts_default_grid_and_empty_estimates PASSED [ 35%]
+tools/test_precipitation_grid.py::test_refusal_ratio_is_the_zero_of_the_grain_boundary_barrier PASSED [ 38%]
+tools/test_precipitation_grid.py::test_check_refuses_bulk_without_barrier_wording PASSED [ 41%]
+tools/test_precipitation_grid.py::test_check_refuses_grain_boundaries_with_the_derived_reason PASSED [ 44%]
+tools/test_precipitation_grid.py::test_check_warns_between_floor_and_refusal_ratio[False] PASSED [ 47%]
+tools/test_precipitation_grid.py::test_check_warns_between_floor_and_refusal_ratio[True] PASSED [ 50%]
+tools/test_precipitation_grid.py::test_check_is_silent_without_clamp PASSED [ 52%]
+tools/test_precipitation_grid.py::test_check_boundary_from_both_sides[False] PASSED [ 55%]
+tools/test_precipitation_grid.py::test_check_boundary_from_both_sides[True] PASSED [ 58%]
+tools/test_precipitation_grid.py::test_check_takes_the_worst_temperature_of_a_profile PASSED [ 61%]
+tools/test_precipitation_grid.py::test_composition_accepts_ten_solutes PASSED [ 64%]
+tools/test_precipitation_grid.py::test_composition_refuses_eleven_solutes_as_measured_limit PASSED [ 67%]
+tools/test_precipitation_grid.py::test_run_precipitation_refuses_coarse_grid_before_solving PASSED [ 70%]
+tools/test_precipitation_grid.py::test_run_precipitation_refuses_minimum_radius_above_nucleus PASSED [ 73%]
+tools/test_precipitation_grid.py::test_run_precipitation_on_resolved_grid_passes_all_checks PASSED [ 76%]
+tools/test_precipitation_grid.py::test_run_precipitation_refuses_bulk_case_a5_before_solving PASSED [ 79%]
+tools/test_precipitation_grid.py::test_run_precipitation_refuses_grain_boundary_case_a5_before_solving PASSED [ 82%]
