@@ -1,0 +1,66 @@
+{
+  "Light": {
+    "theme_method": "default session (System theme, browser prefers light)",
+    "app_background": "rgb(248, 248, 249)",
+    "messages": {
+      "error_input": "QQ=5",
+      "restored": "Al=15",
+      "alerts": {
+        "error": {
+          "fg": "#A62A1E",
+          "bg": "#FDF0EE",
+          "ratio": 6.35,
+          "icon": null,
+          "iconRatio": null,
+          "shownOnScreen": true,
+          "sample": "Элемента Qq нет в базе «Никелевые сплавы — mc_ni 2.036».",
+          "fontSize": "18px"
+        },
+        "warning": null,
+        "info": {
+          "fg": "#133B8B",
+          "bg": "#EFF6FA",
+          "ratio": 9.49,
+          "icon": null,
+          "iconRatio": null,
+          "shownOnScreen": true,
+          "sample": "Элементов: 22 · Фаз: 99",
+          "fontSize": "18px"
+        },
+        "success": null
+      }
+    }
+  },
+  "Dark": {
+    "theme_method": "URL query ?embed_options=dark_theme",
+    "app_background": "rgb(23, 24, 27)",
+    "messages": {
+      "error_input": "QQ=5",
+      "restored": "Al=15",
+      "alerts": {
+        "error": {
+          "fg": "#F5A79F",
+          "bg": "#2E1512",
+          "ratio": 8.85,
+          "icon": null,
+          "iconRatio": null,
+          "shownOnScreen": true,
+          "sample": "Элемента Qq нет в базе «Никелевые сплавы — mc_ni 2.036».",
+          "fontSize": "18px"
+        },
+        "warning": null,
+        "info": {
+          "fg": "#9CC0F2",
+          "bg": "#16233B",
+          "ratio": 8.4,
+          "icon": null,
+          "iconRatio": null,
+          "shownOnScreen": true,
+          "sample": "Элементов: 22 · Фаз: 99",
+          "fontSize": "18px"
+        },
+        "success": null
+      }
+    }
+  }
+}

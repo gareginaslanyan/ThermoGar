@@ -1,0 +1,45 @@
+{
+  "сценарий": "kadry.py --phases kadry --only start,raschety (состояния 01–05), Light, затем Dark; одно приложение на прогон, свежая папка состояния",
+  "прогоны": [
+    {
+      "прогон": "76aeb42 (до 21-Е)",
+      "строк журнала": 16190,
+      "missing ScriptRunContext": 16133,
+      "Session state does not function when running a script without `streamlit run`": 8,
+      "Warning: to view a Streamlit app on a browser (голый режим)": 8,
+      "Traceback": 0,
+      "SecureIOError": 0,
+      "записей errors.jsonl": 0
+    },
+    {
+      "прогон": "wave21-z 8b7dee4 (до правки ШАГА 3)",
+      "строк журнала": 14704,
+      "missing ScriptRunContext": 14411,
+      "Session state does not function when running a script without `streamlit run`": 8,
+      "Warning: to view a Streamlit app on a browser (голый режим)": 8,
+      "Traceback": 12,
+      "SecureIOError": 4,
+      "записей errors.jsonl": 4
+    },
+    {
+      "прогон": "wave21-z, промежуточная правка: только parent_process()",
+      "строк журнала": 14957,
+      "missing ScriptRunContext": 14664,
+      "Session state does not function when running a script without `streamlit run`": 8,
+      "Warning: to view a Streamlit app on a browser (голый режим)": 8,
+      "Traceback": 12,
+      "SecureIOError": 4,
+      "записей errors.jsonl": 4
+    },
+    {
+      "прогон": "wave21-z f783a61 (после правки)",
+      "строк журнала": 16529,
+      "missing ScriptRunContext": 16472,
+      "Session state does not function when running a script without `streamlit run`": 8,
+      "Warning: to view a Streamlit app on a browser (голый режим)": 8,
+      "Traceback": 0,
+      "SecureIOError": 0,
+      "записей errors.jsonl": 0
+    }
+  ]
+}

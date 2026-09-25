@@ -541,13 +541,16 @@ def test_batch_accepts_both_separators_and_both_encodings(app, separator, bom):
     at.run()
     assert not section_errors(at)
     # The preview frame is canonical: aliases resolved, units normalised.
+    # 21-Ж (предпросмотр пакета): подписи столбцов словами.
     preview = next(
         frame.value
         for frame in at.dataframe
-        if "database" in getattr(frame.value, "columns", [])
+        if {"База", "Основа", "Единицы"} <= set(getattr(frame.value, "columns", []))
+        # На странице есть другая таблица с теми же подписями (одна строка).
+        and len(frame.value) == 3
     )
-    assert list(preview["database"]) == ["ni", "al", "fe"]
-    assert list(preview["units"]) == ["at", "wt", "wt"]
+    assert list(preview["База"]) == ["ni", "al", "fe"]
+    assert list(preview["Единицы"]) == ["at", "wt", "wt"]
     assert widget(at.button, "batch_calculate_button").label
 
 

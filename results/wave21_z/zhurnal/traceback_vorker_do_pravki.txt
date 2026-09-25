@@ -1,0 +1,59 @@
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar-w21b\app\thermogar_precipitation.py", line 1414, in render_precipitation_section
+    elements, _x_at, _x_wt = _composition_vectors(db, balance, composition, units)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar-w21b\app\thermogar_precipitation.py", line 329, in _composition_vectors
+    raise UserValueError("Укажите хотя бы одну добавку.")
+thermogar_user_errors.UserValueError: Укажите хотя бы одну добавку.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Pets\ThermoGar-w21b\app\thermogar_secure_io.py", line 570, in exclusive_writer
+    lock_descriptor = os.open(
+                      ^^^^^^^^
+FileExistsError: [Errno 17] File exists: 'C:\\Users\\gareg\\AppData\\Local\\Temp\\tg21z_state\\logs\\stage14\\errors.jsonl.thermogar.lock'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\spawn.py", line 131, in _main
+    prepare(preparation_data)
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\spawn.py", line 246, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\multiprocessing\spawn.py", line 297, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 291, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Pets\ThermoGar-w21b\app\ThermoGar_app.py", line 11900, in <module>
+    render_precipitation_section(
+  File "D:\Pets\ThermoGar-w21b\app\thermogar_precipitation.py", line 1417, in render_precipitation_section
+    render_error(error, context="кинетика выделений", title="Состав не принят.")
+  File "D:\Pets\ThermoGar-w21b\app\ThermoGar_app.py", line 276, in render_friendly_error
+    _render_friendly_error(
+  File "D:\Pets\ThermoGar-w21b\app\thermogar_stage14.py", line 1507, in render_friendly_error
+    render_user_error(
+  File "D:\Pets\ThermoGar-w21b\app\thermogar_stage14.py", line 481, in render_user_error
+    render_error_details(error, context=context, paths=paths, extra=extra)
+  File "D:\Pets\ThermoGar-w21b\app\thermogar_stage14.py", line 417, in render_error_details
+    error_id, payload = log_user_error(
+                        ^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar-w21b\app\thermogar_stage14.py", line 435, in log_user_error
+    return _write_error_log(paths, error, context, extra)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar-w21b\app\thermogar_stage14.py", line 395, in _write_error_log
+    atomic_update_bytes(
+  File "D:\Pets\ThermoGar-w21b\app\thermogar_secure_io.py", line 761, in atomic_update_bytes
+    with exclusive_writer(path, canonical_root=canonical_root) as destination:
+  File "C:\Users\gareg\AppData\Local\Python\pythoncore-3.11-64\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "D:\Pets\ThermoGar-w21b\app\thermogar_secure_io.py", line 576, in exclusive_writer
+    raise SecureIOError(
+thermogar_secure_io.SecureIOError: Workspace writer is already active or requires recovery: errors.jsonl.thermogar.lock

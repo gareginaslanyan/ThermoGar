@@ -13,6 +13,7 @@ from io import BytesIO
 from pathlib import Path
 import hashlib
 import json
+import multiprocessing
 import platform
 import re
 import sys
@@ -363,6 +364,18 @@ def _write_error_log(
 
     if not isinstance(paths, ThermoGarPaths):
         raise TypeError("paths must be a ThermoGarPaths instance")
+    # Воркер пула (spawn) заново исполняет скрипт приложения как __mp_main__
+    # без сеанса (BL-54): его ошибки — не ошибки пользователя, в журнал они
+    # не пишутся. Иначе воркеры дописывают errors.jsonl и падают на его
+    # блокировке при подъёме пула (21-З). Пока скрипт исполняется
+    # (multiprocessing.spawn.prepare), parent_process() ещё None; признак
+    # воркера — модуль sys.modules["__mp_main__"] с именем «__mp_main__»
+    # (в родителе это псевдоним «__main__»).
+    rerun_as_mp_main = (
+        getattr(sys.modules.get("__mp_main__"), "__name__", "") == "__mp_main__"
+    )
+    if multiprocessing.parent_process() is not None or rerun_as_mp_main:
+        return error_id, payload
     directory = ensure_plain_directory(paths.stage14_errors_path.parent)
     log_path = paths.stage14_errors_path
     encoded_entry = (
@@ -1227,7 +1240,10 @@ def render_quick_examples(queue_context_load: Callable[..., None]) -> None:
     ]
 
     for label, description, context, widget_state in examples:
-        with st.container(border=True):
+        with st.container(
+            border=True,
+            key=f"quick_example_card_{context['database_key']}",
+        ):
             st.markdown(f"#### {label}")
             st.caption(description)
             if st.button(

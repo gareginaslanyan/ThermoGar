@@ -41,12 +41,25 @@ div[data-testid="stMultiSelect"] div[role="group"]:not(:focus-within) {
 }
 
 /* Отступление от S-4, решение владельца 24.09.2026 (1Г, 2Б, 4Б); проверка S-5 — 21-Е.
-   Текст основной кнопки во всех состояниях: белый на #1F60C1, #17181B на #5C97E8. */
-button[data-testid="stBaseButton-primary"],
-button[data-testid="stBaseButton-primary"] *,
-button[data-testid="stBaseButton-primaryFormSubmit"],
-button[data-testid="stBaseButton-primaryFormSubmit"] * {
+   Текст активной основной кнопки: белый на #1F60C1, #17181B на #5C97E8.
+   Неактивную кнопку Streamlit рисует сам: фон прозрачный, текст fadedText40 (21-З). */
+button[data-testid="stBaseButton-primary"]:not(:disabled),
+button[data-testid="stBaseButton-primary"]:not(:disabled) *,
+button[data-testid="stBaseButton-primaryFormSubmit"]:not(:disabled),
+button[data-testid="stBaseButton-primaryFormSubmit"]:not(:disabled) * {
     color: light-dark(#FFFFFF, #17181B) !important;
+}
+
+/* 21-З: наведение и фокус активной основной кнопки. Streamlit затемняет primary
+   на 15 %: в тёмной теме #1F6DDB, текст #17181B на нём 3.61:1. Здесь — #153F7F
+   (как у Streamlit) и #4587DE (ступень 400): текст 10.25:1 и 4.88:1.
+   В нажатии фон остаётся штатным — primary. */
+button[data-testid="stBaseButton-primary"]:not(:disabled):not(:active):hover,
+button[data-testid="stBaseButton-primary"]:not(:disabled):not(:active):focus-visible,
+button[data-testid="stBaseButton-primaryFormSubmit"]:not(:disabled):not(:active):hover,
+button[data-testid="stBaseButton-primaryFormSubmit"]:not(:disabled):not(:active):focus-visible {
+    background-color: light-dark(#153F7F, #4587DE);
+    border-color: light-dark(#153F7F, #4587DE);
 }
 
 /* Отступление от S-4, решение владельца 24.09.2026 (1Г, 2Б, 4Б); проверка S-5 — 21-Е.
@@ -55,9 +68,11 @@ button[data-testid="stBaseButton-primaryFormSubmit"] * {
     display: none;
 }
 
-/* А-8: белые поверхности на холодном фоне — раскрытия и формы. */
+/* А-8: белые поверхности на холодном фоне — раскрытия, формы и карточки
+   «Учебные примеры» (контейнер с рамкой, ключ quick_example_card_<база>). */
 div[data-testid="stExpander"] details,
-div[data-testid="stForm"] {
+div[data-testid="stForm"],
+div[class*="st-key-quick_example_card_"] {
     background-color: light-dark(#FFFFFF, #1F2226);
 }
 
