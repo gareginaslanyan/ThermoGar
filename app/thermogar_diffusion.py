@@ -104,7 +104,8 @@ DEFAULTS = {
         "time_h": 100.0,
         "nodes": 80,
         "single_phase": "FCC_A1",
-        "homogenization_phases": ["FCC_A1", "BCC_A2"],
+        # Решение владельца 25.09.2026, п. 10 (9).
+        "homogenization_phases": ["FCC_A1", "NIAL"],
     },
     "al": {
         "balance": "AL",

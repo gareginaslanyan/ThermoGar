@@ -1,0 +1,49 @@
+{
+  "inputs": {
+    "isopleth_c_min_ni_NI_AL": 0.0,
+    "isopleth_c_max_ni_NI_AL": 30.0,
+    "isopleth_t_min_ni": 625.0,
+    "isopleth_t_max_ni": 1625.0,
+    "isopleth_c_step_ni_NI_AL": 2.0,
+    "isopleth_t_step_ni": 50.0,
+    "isopleth_fixed_ni_NI_AL": "Cr=8",
+    "variable": "AL"
+  },
+  "seconds": 48.1,
+  "errors": [],
+  "exceptions": [],
+  "rows": 282,
+  "columns": [
+    "Тип",
+    "Группа",
+    "Фаза / набор фаз",
+    "Точка",
+    "Состав, доля",
+    "Состав, ат.%",
+    "Температура, K",
+    "Температура, °C"
+  ],
+  "lines": 38,
+  "nodes": 1,
+  "line_phases": [
+    "BCC_B2",
+    "FCC_A1",
+    "GAMMA_PRIME",
+    "LIQUID",
+    "NIAL"
+  ],
+  "all_phase_values": [
+    "BCC_B2",
+    "FCC_A1",
+    "FCC_A1 + GAMMA_PRIME",
+    "FCC_A1 + NIAL",
+    "GAMMA_PRIME",
+    "GAMMA_PRIME + LIQUID",
+    "LIQUID",
+    "LIQUID + NIAL",
+    "NIAL"
+  ],
+  "temperature_range_c": [
+    625.0
+  ]
+}

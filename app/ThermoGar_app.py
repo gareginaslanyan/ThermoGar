@@ -359,9 +359,10 @@ DATABASE_DEFINITIONS = {
         ),
         "default_units": "wt",
         "default_temperature": 700.0,
-        "default_t_min": 400.0,
-        "default_t_max": 1200.0,
-        "default_t_step": 400.0,
+        # Решение владельца 25.09.2026, п. 10 (5): 500–900 °C шагом 100.
+        "default_t_min": 500.0,
+        "default_t_max": 900.0,
+        "default_t_step": 100.0,
     },
     "al": {
         "label": "Алюминиевые сплавы — mc_al 2.037",
@@ -548,19 +549,29 @@ BINARY_DIAGRAM_DEFAULTS = {
 }
 
 
+# «Изменение состава»: изменяемый элемент по умолчанию и его «от / до / шаг»
+# в единицах базы (решение владельца 25.09.2026, п. 10: 6 — сталь, 7 — Al).
+# Для других элементов и для ni — прежние 0 / 20 / шаг 1 (сталь — 10).
+CONCENTRATION_SCAN_DEFAULTS = {
+    "fe": {"variable": "C", "c_min": 0.1, "c_max": 0.5, "c_step": 0.1},
+    "al": {"variable": "CU", "c_min": 1.0, "c_max": 5.0, "c_step": 1.0},
+}
+
 # Шаги по умолчанию подобраны так, чтобы «нажал и получил» укладывалось в
 # одну-две минуты на этой машине. Более подробную сетку пользователь
 # задаёт вручную теми же полями.
 ISOPLETH_DEFAULTS = {
+    # Решение владельца 25.09.2026, п. 10 (8Б): Al 0–30 ат.% шагом 2, Cr=8,
+    # 625–1625 °C шагом 50.
     "ni": {
         "variable": "AL",
-        "fixed": "CR=15, CO=10",
+        "fixed": "CR=8",
         "c_min": 0.0,
-        "c_max": 10.0,
-        "c_step": 1.0,
-        "t_min": 900.0,
-        "t_max": 1500.0,
-        "t_step": 25.0,
+        "c_max": 30.0,
+        "c_step": 2.0,
+        "t_min": 625.0,
+        "t_max": 1625.0,
+        "t_step": 50.0,
     },
     "fe": {
         "variable": "C",
@@ -8114,10 +8125,30 @@ with concentration_tab:
         if element != balance
     ]
 
+    # Решение владельца 25.09.2026, п. 10 (6, 7): по умолчанию меняется C
+    # на стали и Cu на алюминии; ni — как было (первый элемент списка).
+    default_concentration_element = CONCENTRATION_SCAN_DEFAULTS.get(
+        database_key, {}
+    ).get("variable")
     variable_element = st.selectbox(
         "Изменяемый элемент",
         variable_candidates,
+        index=(
+            variable_candidates.index(default_concentration_element)
+            if default_concentration_element in variable_candidates
+            else 0
+        ),
         format_func=element_symbol,
+    )
+    concentration_range_defaults = (
+        CONCENTRATION_SCAN_DEFAULTS[database_key]
+        if CONCENTRATION_SCAN_DEFAULTS.get(database_key, {}).get("variable")
+        == variable_element
+        else {
+            "c_min": 0.0,
+            "c_max": 20.0,
+            "c_step": 10.0 if database_key == "fe" else 1.0,
+        }
     )
 
     st.caption(
@@ -8138,7 +8169,7 @@ with concentration_tab:
         c_min = st.number_input(
             f"{element_symbol(variable_element)}: от, {units_suffix(units)}",
             min_value=0.0,
-            value=0.0,
+            value=float(concentration_range_defaults["c_min"]),
             step=1.0,
         )
 
@@ -8146,7 +8177,7 @@ with concentration_tab:
         c_max = st.number_input(
             f"{element_symbol(variable_element)}: до, {units_suffix(units)}",
             min_value=0.0,
-            value=20.0,
+            value=float(concentration_range_defaults["c_max"]),
             step=1.0,
         )
 
@@ -8154,7 +8185,7 @@ with concentration_tab:
         c_step = st.number_input(
             f"{element_symbol(variable_element)}: шаг, {units_suffix(units)}",
             min_value=0.01,
-            value=10.0 if database_key == "fe" else 1.0,
+            value=float(concentration_range_defaults["c_step"]),
             step=0.5,
         )
 
