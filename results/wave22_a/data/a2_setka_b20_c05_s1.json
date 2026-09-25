@@ -1,0 +1,70 @@
+{
+  "tag": "a2_setka_b20_c05_s1",
+  "cell": "app",
+  "pythonhashseed": "1",
+  "changed_inputs": {
+    "bins": 20,
+    "cmin_nm": 0.5
+  },
+  "kawin_overrides": {
+    "constraints": {},
+    "iterator": "rk4 (умолчание GenericModel.solve)",
+    "minDtFrac": "1e-8 (умолчание)",
+    "maxDtFrac": "1 (умолчание)"
+  },
+  "arguments": {
+    "database_key": "fe",
+    "balance": "FE",
+    "composition_text": "C=0.20, Cr=11.5, Ni=0.7",
+    "units": "wt",
+    "matrix_phase": "BCC_A2",
+    "precipitate_phase": "M23C6",
+    "schedule_mode": "isothermal",
+    "temperature_c": 700.0,
+    "duration_h": 0.001,
+    "profile_text": "",
+    "gamma": 0.3,
+    "matrix_vm": 7.09,
+    "precip_vm": 7.09,
+    "nucleation_type": "BULK",
+    "bulk_n0": 1e+28,
+    "grain_size_um": 100.0,
+    "dislocation_density": 5000000000000.0,
+    "gb_energy": 0.3,
+    "cmin_nm": 0.5,
+    "cmax_nm": 10.0,
+    "bins": 20,
+    "input_provenance": "Объявленный сценарий, не данные материала",
+    "input_confirmation": true
+  },
+  "sources": {
+    "KWN_CELL": "tools/test_ui_g.py:84",
+    "SHORT_TIME_H": "tools/test_ui_g.py:91",
+    "KWN_BINS": "tools/test_ui_g.py:98",
+    "SIDEBAR_ALLOY": "tools/test_ui_g.py:65",
+    "default_composition fe": "app/ThermoGar_app.py:339",
+    "DEFAULTS": "app/thermogar_precipitation.py:87",
+    "DEFAULT_INPUT_PROVENANCE": "app/thermogar_precipitation.py:99",
+    "NUCLEATION_TYPES": "app/thermogar_precipitation.py:101",
+    "виджет bulk_n0": "app/thermogar_precipitation.py:1538",
+    "виджет grain_size_um": "app/thermogar_precipitation.py:1545",
+    "виджет dislocation_density": "app/thermogar_precipitation.py:1552",
+    "виджет gb_energy": "app/thermogar_precipitation.py:1559",
+    "виджет cmin_nm": "app/thermogar_precipitation.py:1568",
+    "виджет cmax_nm": "app/thermogar_precipitation.py:1575",
+    "виджет bins_section": "app/thermogar_precipitation.py:1582"
+  },
+  "versions": {
+    "python": "3.11.15",
+    "pycalphad": "0.11.2",
+    "kawin": "0.5.0",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "limit_s": 1800.0,
+  "traceback": "Traceback (most recent call last):\n  File \"/home/user/ThermoGar/results/wave22_a/scripts/kwn_run.py\", line 431, in main\n    result = tp.run_precipitation(\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/user/ThermoGar/app/thermogar_precipitation.py\", line 1174, in run_precipitation\n    _check_size_grid(nucleus_estimates, cmin_nm, cmax_nm, int(bins))\n  File \"/home/user/ThermoGar/app/thermogar_precipitation.py\", line 863, in _check_size_grid\n    raise UserValueError(\nthermogar_user_errors.UserValueError: Сетка размеров слишком грубая: ширина класса 0.475 нм не меньше критического радиуса зародыша 0.469 нм (оценка при 700.0 °C по начальному составу). Зародыши попали бы в класс шире себя, объём выделений был бы завышен, и расчёт показал бы ложную объёмную долю вплоть до 100 %. Уменьшите «Начальный максимальный радиус» или возьмите больше классов: при этом диапазоне нужно не меньше 21.\n",
+  "status": "error",
+  "error": "UserValueError: Сетка размеров слишком грубая: ширина класса 0.475 нм не меньше критического радиуса зародыша 0.469 нм (оценка при 700.0 °C по начальному составу). Зародыши попали бы в класс шире себя, объём выделений был бы завышен, и расчёт показал бы ложную объёмную долю вплоть до 100 %. Уменьшите «Начальный максимальный радиус» или возьмите больше классов: при этом диапазоне нужно не меньше 21.",
+  "wall_s": 6.12,
+  "peak_rss_gib": 0.337
+}
