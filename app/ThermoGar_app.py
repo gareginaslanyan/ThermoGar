@@ -243,6 +243,11 @@ from thermogar_release_policy import (
     phase_mode_note,
     preset_phases,
 )
+from thermogar_properties import (
+    STRENGTHENING_CONFIRMATION_TEXT,
+    STRENGTHENING_PROVENANCE_TEXT,
+    elastic_rows_missing_text,
+)
 from thermogar_release_ui import (
     BLOCK_MODEL,
     BLOCK_PHASES,
@@ -2352,13 +2357,19 @@ def render_b4b2_elastic_properties(
         )
         return
     _b4b_refresh_result(vrh_state_key, vrh_decision)
+    # Решение владельца 11Б (25.09.2026): пока таблица фаз неполна, кнопка
+    # неактивна, под ней — первая причина фразой раздела.
+    vrh_missing = elastic_rows_missing_text(phase_rows)
     with action_row("b4b2_elastic_vrh_action", sticky=False):
         vrh_clicked = verified_physical_button(
             vrh_decision,
             "Рассчитать Voigt–Reuss–Hill",
             type="primary",
             key="b4b2_elastic_vrh_calculate",
+            disabled=vrh_missing is not None,
         )
+        if vrh_missing is not None:
+            st.caption(vrh_missing)
     if vrh_clicked:
         try:
             assert type(vrh_decision) is verified_loaders.FeatureRequest
@@ -2538,13 +2549,24 @@ def render_b4b2_strengthening(
     )
     state_key = "_thermogar_vlb_b4b_result_property_strengthening"
     _b4b_refresh_result(state_key, decision)
+    # Решение владельца 11Б (25.09.2026): пока обязательное не заполнено,
+    # кнопка неактивна, под ней — что заполнить.
+    if not str(provenance or "").strip():
+        strengthening_missing = STRENGTHENING_PROVENANCE_TEXT
+    elif not confirmation:
+        strengthening_missing = STRENGTHENING_CONFIRMATION_TEXT
+    else:
+        strengthening_missing = None
     with action_row("strengthening", strengthening_folded):
         strengthening_clicked = verified_physical_button(
             decision,
             "Рассчитать вклады",
             type="primary",
             key="b4b2_strengthening_calculate",
+            disabled=strengthening_missing is not None,
         )
+        if strengthening_missing is not None:
+            st.caption(strengthening_missing)
     if strengthening_clicked:
         try:
             assert type(decision) is verified_loaders.FeatureRequest
