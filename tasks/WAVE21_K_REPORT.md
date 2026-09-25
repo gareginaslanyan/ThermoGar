@@ -56,4 +56,28 @@
 
 ## Git
 
-<!-- GIT -->
+Состояние после пуша коммита с отчётом (перед этим, последним коммитом, который дописывает только раздел «Git»).
+
+`git push -u origin wave21-k`: `* [new branch]      wave21-k -> wave21-k`, `branch 'wave21-k' set up to track 'origin/wave21-k'.`
+
+`git ls-remote origin wave21-k`:
+
+```
+32e78a51d0020a776e9c9223c0df3fa321c0b473	refs/heads/wave21-k
+```
+
+`git log --oneline 2899375..wave21-k`:
+
+```
+32e78a5 docs(21-К): отчёт
+d3a02a0 docs(21-К): опись форм и предложение по 9Б и 10Б
+639204d docs(21-К): задание дословно
+```
+
+`git status --short`:
+
+```
+?? _to_delete/
+```
+
+В main ничего не вливалось. Вершину ветки после этого коммита исполнитель сообщает в ответе мастеру.
