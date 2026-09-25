@@ -64,9 +64,10 @@ button[data-testid="stBaseButton-primaryFormSubmit"]:not(:disabled):not(:active)
 
 /* 21-И: выбранный вариант переключателя (st.segmented_control). Streamlit 1.62
    при наведении и фокусе поднимает фон primary с альфы 0.1 до 0.2: текст primary
-   на нём 4.24:1 и 4.40:1. Здесь фон остаётся как в покое; кольцо фокуса штатное. */
-button[data-testid="stBaseButton-segmented_controlActive"]:not(:disabled):hover,
-button[data-testid="stBaseButton-segmented_controlActive"]:not(:disabled):focus-visible {
+   на нём 4.24:1 и 4.40:1. Здесь фон остаётся как в покое; кольцо фокуса штатное.
+   В 1.62 вариант — button role="radio" без data-testid, выбранный — aria-checked="true". */
+div[data-testid="stButtonGroup"] button[data-variant="segmented_control"][aria-checked="true"]:not(:disabled):hover,
+div[data-testid="stButtonGroup"] button[data-variant="segmented_control"][aria-checked="true"]:not(:disabled):focus-visible {
     background-color: light-dark(rgba(31, 96, 193, 0.1), rgba(92, 151, 232, 0.1));
 }
 

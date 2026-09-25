@@ -268,7 +268,11 @@ def _css_rules() -> list[tuple[list[str], dict[str, str]]]:
 
 
 def test_selected_option_keeps_rest_background_on_hover_and_focus() -> None:
-    marker = 'button[data-testid="stBaseButton-segmented_controlActive"]'
+    # В 1.62 вариант — button role="radio" без data-testid (сверено по DOM, 21-И).
+    marker = (
+        'div[data-testid="stButtonGroup"] '
+        'button[data-variant="segmented_control"][aria-checked="true"]'
+    )
     rules = [
         (selector, declarations)
         for selectors, declarations in _css_rules()
