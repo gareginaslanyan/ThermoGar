@@ -1,0 +1,75 @@
+{
+  "run": "55",
+  "theme": "Dark",
+  "css": "/* 21-L 9B b): probe only, injected into the open page (not app/style.css).\n   Sticky primary button: the wrapper stElementContainer (class st-key-<key> of the\n   button) lies directly in the long stVerticalBlock of the tab panel (DOM of run 53,\n   9b/kompakt_ni.json, \"dom\"). It sticks to the bottom edge of the window while its\n   place is below the window and stands in its place when the page is scrolled past it.\n   Strip under the button: window colour; line above: border colour of the blocks.\n   Version 2: the wrapper is as wide as the button (st.button width=\"content\"), so the\n   strip of version 1 (9b/v1_uzkaya_polosa/) covered only the button; width: 100%\n   makes the strip span the column. */\n[data-testid=\"stVerticalBlock\"] > [data-testid=\"stElementContainer\"]:has(button[data-testid=\"stBaseButton-primary\"]) {\n    position: sticky;\n    bottom: 0;\n    z-index: 2;\n    width: 100%;\n    background-color: light-dark(#F8F8F9, #17181B);\n    border-top: 1px solid light-dark(#CFD1D5, #33373E);\n    padding: 12px 0;\n}\n",
+  "top_views": {
+    "Диаграммы / Бинарная T–X": [
+      {
+        "text": "Построить диаграмму состояния",
+        "testid": "stBaseButton-primary",
+        "form": false,
+        "column": false,
+        "sticky": true,
+        "sticky_testid": "stElementContainer",
+        "button_bottom": 888,
+        "wrapper": {
+          "top": 830,
+          "bottom": 900,
+          "bg": "rgb(23, 24, 27)",
+          "border_top": "rgb(51, 55, 62) 1px"
+        }
+      }
+    ],
+    "Кинетика / Выделения": [
+      {
+        "text": "Рассчитать кинетику выделений",
+        "testid": "stBaseButton-primary",
+        "form": false,
+        "column": false,
+        "sticky": true,
+        "sticky_testid": "stElementContainer",
+        "button_bottom": 888,
+        "wrapper": {
+          "top": 830,
+          "bottom": 900,
+          "bg": "rgb(23, 24, 27)",
+          "border_top": "rgb(51, 55, 62) 1px"
+        }
+      }
+    ]
+  },
+  "calc_s": 19.9,
+  "after_calc": {
+    "viewport_h": 900,
+    "wrapper": {
+      "top": -82,
+      "bottom": -12
+    },
+    "image": {
+      "top": 46,
+      "bottom": 855
+    },
+    "overlap_px": 0,
+    "stuck_to_bottom": false
+  },
+  "after_calc_top": {
+    "viewport_h": 900,
+    "wrapper": {
+      "top": 830,
+      "bottom": 900
+    },
+    "image": {
+      "top": 1750,
+      "bottom": 2559
+    },
+    "overlap_px": 0,
+    "stuck_to_bottom": true
+  },
+  "frames": [
+    "lipkaya_binarnaya_tx_nachalo_tyomn.png",
+    "lipkaya_vydeleniya_nachalo_tyomn.png",
+    "lipkaya_binarnaya_tx_rezultat_tyomn.png",
+    "lipkaya_binarnaya_tx_rezultat_nachalo_tyomn.png"
+  ],
+  "state_root": "C:\\Users\\gareg\\AppData\\Local\\Temp\\tg21l_state\\55_2"
+}

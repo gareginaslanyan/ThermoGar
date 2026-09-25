@@ -1,0 +1,74 @@
+{
+  "id": "16",
+  "screen": "S05",
+  "base": "fe",
+  "variant": "umolch",
+  "step": "",
+  "note": "",
+  "changes": [],
+  "stem": "S05_fe_umolch",
+  "free_gib_before": 7.14,
+  "state_root": "C:\\Users\\gareg\\AppData\\Local\\Temp\\tg21l_state\\16",
+  "app_start_s": 1.5,
+  "sidebar": {
+    "database": "Стали и Fe-сплавы — mc_fe 2.062",
+    "balance": "Fe",
+    "units": "массовые %",
+    "additions": "C=0.20, Cr=11.5, Ni=0.7",
+    "sidebar_width": 300,
+    "sidebar_right": 300,
+    "default_ok": true
+  },
+  "fields_before": {},
+  "fields_after": {},
+  "button": "Построить многокомпонентное сечение",
+  "calc_s": 68.0,
+  "finished": true,
+  "result": {
+    "button_found": true,
+    "button_disabled": false,
+    "alerts": [
+      {
+        "kind": "warning",
+        "where": "above",
+        "text": ""
+      },
+      {
+        "kind": "info",
+        "where": "above",
+        "text": "На сечении выбрано больше семи фаз. Расчёт допустим, но для читаемого графика лучше оставить основные фазы."
+      },
+      {
+        "kind": "warning",
+        "where": "below",
+        "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки). Автор базы вводил фазы Лавеса под дуплексные нержавеющие и корпусные стали — для таких марок результат может быть неполным."
+      }
+    ],
+    "texts": [
+      "Набор фаз: быстрый (20 из 32)"
+    ],
+    "metrics": [],
+    "tables": [
+      {
+        "rows": null,
+        "cols": null,
+        "headers": [],
+        "cells": []
+      }
+    ],
+    "charts": 1,
+    "switches": [],
+    "expanders": [
+      "Таблица рассчитанных границ"
+    ]
+  },
+  "status": "ok",
+  "frames": [
+    "S05_fe_umolch.png"
+  ],
+  "free_gib_after": 5.98,
+  "taskkill": [
+    "Успешно: Процесс, с идентификатором 19604, дочерний процесса 9196, был завершен.\nУспешно: Процесс, с идентификатором 9196, дочерний процесса 10852, был завершен.",
+    "Ошибка: Не удается завершить процесс с идентификатором 19604, дочерний процесса 9196.\nПричина: Ни один из экземпляров этого задания не запущен."
+  ]
+}

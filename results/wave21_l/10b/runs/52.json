@@ -1,0 +1,55 @@
+{
+  "id": "52",
+  "screen": "S19",
+  "base": "fe",
+  "variant": "umolch",
+  "step": "",
+  "note": "",
+  "changes": [],
+  "stem": "S19_fe_umolch",
+  "free_gib_before": 7.56,
+  "state_root": "C:\\Users\\gareg\\AppData\\Local\\Temp\\tg21l_state\\52",
+  "app_start_s": 1.5,
+  "sidebar": {
+    "database": "Стали и Fe-сплавы — mc_fe 2.062",
+    "balance": "Fe",
+    "units": "массовые %",
+    "additions": "C=0.20, Cr=11.5, Ni=0.7",
+    "sidebar_width": 300,
+    "sidebar_right": 300,
+    "default_ok": true
+  },
+  "fields_before": {},
+  "fields_after": {},
+  "button": "Рассчитать кинетику выделений",
+  "calc_s": 900.4,
+  "finished": false,
+  "status": "не завершён за 15 мин",
+  "result": {
+    "button_found": true,
+    "button_disabled": false,
+    "alerts": [
+      {
+        "kind": "info",
+        "where": "above",
+        "text": "Межфазную энергию, молярные объёмы и центры зарождения база не задаёт: введите их ниже по источнику или по калибровке."
+      }
+    ],
+    "texts": [
+      "Расчёт KWN может занять несколько минут…"
+    ],
+    "metrics": [],
+    "tables": [],
+    "charts": 0,
+    "switches": [],
+    "expanders": []
+  },
+  "frames": [
+    "S19_fe_umolch_nezavershen.png"
+  ],
+  "free_gib_after": 6.04,
+  "taskkill": [
+    "Успешно: Процесс, с идентификатором 13400, дочерний процесса 6932, был завершен.\nУспешно: Процесс, с идентификатором 6932, дочерний процесса 10852, был завершен.",
+    "Ошибка: Не удается найти процесс \"13400\"."
+  ]
+}

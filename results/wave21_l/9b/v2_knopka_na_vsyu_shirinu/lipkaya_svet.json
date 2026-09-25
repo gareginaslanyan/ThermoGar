@@ -1,0 +1,704 @@
+{
+  "run": "54",
+  "theme": "Light",
+  "css": "/* 21-L 9B b): probe only, injected into the open page (not app/style.css).\n   Sticky primary button: the wrapper stElementContainer (class st-key-<key> of the\n   button) lies directly in the long stVerticalBlock of the tab panel (DOM of run 53,\n   9b/kompakt_ni.json, \"dom\"). It sticks to the bottom edge of the window while its\n   place is below the window and stands in its place when the page is scrolled past it.\n   Strip under the button: window colour; line above: border colour of the blocks.\n   Version 2: the wrapper is as wide as the button (st.button width=\"content\"), so the\n   strip of version 1 (9b/v1_uzkaya_polosa/) covered only the button; width: 100%\n   makes the strip span the column. */\n[data-testid=\"stVerticalBlock\"] > [data-testid=\"stElementContainer\"]:has(button[data-testid=\"stBaseButton-primary\"]) {\n    position: sticky;\n    bottom: 0;\n    z-index: 2;\n    width: 100%;\n    background-color: light-dark(#F8F8F9, #17181B);\n    border-top: 1px solid light-dark(#CFD1D5, #33373E);\n    padding: 12px 0;\n}\n",
+  "sidebar": {
+    "open": false,
+    "present": true,
+    "expanded": "false",
+    "right": -300,
+    "width": 0,
+    "after_database": {
+      "open": false,
+      "present": true,
+      "expanded": "false",
+      "right": -300,
+      "width": 0
+    }
+  },
+  "screens": [
+    {
+      "screen": "Расчёты / Одна температура",
+      "first_element": "stHeading Равновесие при одной температуре",
+      "first_top": 326,
+      "button": "Рассчитать равновесие",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 548,
+      "button_bottom": 593,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Рассчитать равновесие",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 593,
+          "wrapper": {
+            "top": 535,
+            "bottom": 605,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Расчёты / Температурный диапазон",
+      "first_element": "stHeading Изменение фазовых долей с температурой",
+      "first_top": 326,
+      "button": "Построить график по температуре",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 641,
+      "button_bottom": 686,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Построить график по температуре",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 686,
+          "wrapper": {
+            "top": 628,
+            "bottom": 698,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Расчёты / Изменение состава",
+      "first_element": "stHeading Изменение фазовых долей с концентрацией",
+      "first_top": 326,
+      "button": "Построить график по составу",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Построить график по составу",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Диаграммы / Бинарная T–X",
+      "first_element": "stMarkdown Бинарная система",
+      "first_top": 448,
+      "button": "Построить диаграмму состояния",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Построить диаграмму состояния",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Диаграммы / Многокомпонентное T–X",
+      "first_element": "stMarkdown Многокомпонентное сечение",
+      "first_top": 448,
+      "button": "Построить многокомпонентное сечение",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Построить многокомпонентное сечение",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Диаграммы / Тройная при T = const",
+      "first_element": "stMarkdown Тройная изотермическая диаграмма",
+      "first_top": 448,
+      "button": "Построить тройную диаграмму",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Построить тройную диаграмму",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Диаграммы / Карта доли фазы",
+      "first_element": "stMarkdown Карта количества выбранной фазы",
+      "first_top": 448,
+      "button": "Построить карту доли фазы",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Построить карту доли фазы",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Затвердевание",
+      "first_element": "stHeading Затвердевание",
+      "first_top": 263,
+      "button": "Рассчитать затвердевание",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Рассчитать затвердевание",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Энергии / Энергии фаз",
+      "first_element": "stMarkdown Энергия Гиббса фаз при фиксированном сос",
+      "first_top": 473,
+      "button": "Рассчитать энергии фаз",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Рассчитать энергии фаз",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Энергии / Движущая сила",
+      "first_element": "stMarkdown Движущая сила образования выбранной фазы",
+      "first_top": 473,
+      "button": "Рассчитать движущую силу",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Рассчитать движущую силу",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Энергии / T₀",
+      "first_element": "stMarkdown Температура T₀ равенства энергий двух фа",
+      "first_top": 473,
+      "button": "Рассчитать T₀",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Рассчитать T₀",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Свойства / Плотность",
+      "first_element": "stMarkdown Плотность при одной температуре",
+      "first_top": 492,
+      "button": "Рассчитать плотность и объёмные доли",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Рассчитать плотность и объёмные доли",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Свойства / Плотность по T",
+      "first_element": "stMarkdown Плотность и объёмные доли по температуре",
+      "first_top": 492,
+      "button": "Построить плотность по температуре",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Построить плотность по температуре",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Свойства / Упругие свойства",
+      "first_element": "stMarkdown Упругие свойства по фазовым долям",
+      "first_top": 492,
+      "button": "Получить фазовые доли",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Получить фазовые доли",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Свойства / Вклады упрочнения",
+      "first_element": "stMarkdown Вклады механизмов упрочнения",
+      "first_top": 492,
+      "button": "Рассчитать вклады",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Рассчитать вклады",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+      "first_element": "stHeading Диффузия и гомогенизация",
+      "first_top": 326,
+      "button": "Рассчитать однофазную диффузию",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Рассчитать однофазную диффузию",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Кинетика / Диффузия и гомогенизация / Многофазная гомогенизация",
+      "first_element": "stHeading Диффузия и гомогенизация",
+      "first_top": 326,
+      "button": "Рассчитать гомогенизацию",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Рассчитать гомогенизацию",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Кинетика / Выделения",
+      "first_element": "stHeading Кинетика выделений",
+      "first_top": 326,
+      "button": "Рассчитать кинетику выделений",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Рассчитать кинетику выделений",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Проекты и данные / Марки и составы",
+      "first_element": "stHeading Библиотека марок и составов",
+      "first_top": 326,
+      "button": "Сохранить текущий состав",
+      "button_testid": "stBaseButton-primaryFormSubmit",
+      "button_top": 929,
+      "button_bottom": 974,
+      "first_screen": false,
+      "wrapper": [
+        {
+          "text": "Сохранить текущий состав",
+          "testid": "stBaseButton-primaryFormSubmit",
+          "form": true,
+          "column": false,
+          "sticky": false,
+          "sticky_testid": null,
+          "button_bottom": 974,
+          "wrapper": null
+        },
+        {
+          "text": "Загрузить состав в программу",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": true,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 1359,
+          "wrapper": {
+            "top": 1301,
+            "bottom": 1371,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    },
+    {
+      "screen": "Проекты и данные / Проекты и история",
+      "first_element": "stHeading Проекты и история",
+      "first_top": 326,
+      "button": "Сохранить проект в папке ThermoGar",
+      "button_testid": "stBaseButton-primaryFormSubmit",
+      "button_top": 861,
+      "button_bottom": 906,
+      "first_screen": false,
+      "wrapper": [
+        {
+          "text": "Сохранить проект в папке ThermoGar",
+          "testid": "stBaseButton-primaryFormSubmit",
+          "form": true,
+          "column": false,
+          "sticky": false,
+          "sticky_testid": null,
+          "button_bottom": 906,
+          "wrapper": null
+        }
+      ]
+    },
+    {
+      "screen": "Проекты и данные / Проверка установки",
+      "first_element": "stHeading Проверка установки и контрольные расчёты",
+      "first_top": 326,
+      "button": "Проверить базы и запустить три контрольных расчёта",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 843,
+      "button_bottom": 888,
+      "first_screen": true,
+      "wrapper": [
+        {
+          "text": "Проверить базы и запустить три контрольных расчёта",
+          "testid": "stBaseButton-primary",
+          "form": false,
+          "column": false,
+          "sticky": true,
+          "sticky_testid": "stElementContainer",
+          "button_bottom": 888,
+          "wrapper": {
+            "top": 830,
+            "bottom": 900,
+            "bg": "rgb(248, 248, 249)",
+            "border_top": "rgb(207, 209, 213) 1px"
+          }
+        }
+      ]
+    }
+  ],
+  "forms_columns": {
+    "Проекты и данные / Марки и составы": [
+      {
+        "text": "Сохранить текущий состав",
+        "testid": "stBaseButton-primaryFormSubmit",
+        "form": true,
+        "column": false,
+        "sticky": false,
+        "sticky_testid": null,
+        "button_bottom": 974,
+        "wrapper": null
+      },
+      {
+        "text": "Загрузить состав в программу",
+        "testid": "stBaseButton-primary",
+        "form": false,
+        "column": true,
+        "sticky": true,
+        "sticky_testid": "stElementContainer",
+        "button_bottom": 1359,
+        "wrapper": {
+          "top": 1301,
+          "bottom": 1371,
+          "bg": "rgb(248, 248, 249)",
+          "border_top": "rgb(207, 209, 213) 1px"
+        }
+      }
+    ],
+    "Проекты и данные / Проекты и история": [
+      {
+        "text": "Сохранить проект в папке ThermoGar",
+        "testid": "stBaseButton-primaryFormSubmit",
+        "form": true,
+        "column": false,
+        "sticky": false,
+        "sticky_testid": null,
+        "button_bottom": 906,
+        "wrapper": null
+      }
+    ]
+  },
+  "top_views": {
+    "Диаграммы / Бинарная T–X": [
+      {
+        "text": "Построить диаграмму состояния",
+        "testid": "stBaseButton-primary",
+        "form": false,
+        "column": false,
+        "sticky": true,
+        "sticky_testid": "stElementContainer",
+        "button_bottom": 888,
+        "wrapper": {
+          "top": 830,
+          "bottom": 900,
+          "bg": "rgb(248, 248, 249)",
+          "border_top": "rgb(207, 209, 213) 1px"
+        }
+      }
+    ],
+    "Кинетика / Выделения": [
+      {
+        "text": "Рассчитать кинетику выделений",
+        "testid": "stBaseButton-primary",
+        "form": false,
+        "column": false,
+        "sticky": true,
+        "sticky_testid": "stElementContainer",
+        "button_bottom": 888,
+        "wrapper": {
+          "top": 830,
+          "bottom": 900,
+          "bg": "rgb(248, 248, 249)",
+          "border_top": "rgb(207, 209, 213) 1px"
+        }
+      }
+    ]
+  },
+  "calc_s": 21.0,
+  "after_calc": {
+    "viewport_h": 900,
+    "wrapper": {
+      "top": -82,
+      "bottom": -12
+    },
+    "image": {
+      "top": 46,
+      "bottom": 855
+    },
+    "overlap_px": 0,
+    "stuck_to_bottom": false
+  },
+  "after_calc_top": {
+    "viewport_h": 900,
+    "wrapper": {
+      "top": 830,
+      "bottom": 900
+    },
+    "image": {
+      "top": 1750,
+      "bottom": 2559
+    },
+    "overlap_px": 0,
+    "stuck_to_bottom": true
+  },
+  "frames": [
+    "lipkaya_binarnaya_tx_nachalo_svet.png",
+    "lipkaya_vydeleniya_nachalo_svet.png",
+    "lipkaya_binarnaya_tx_rezultat_svet.png",
+    "lipkaya_binarnaya_tx_rezultat_nachalo_svet.png"
+  ],
+  "state_root": "C:\\Users\\gareg\\AppData\\Local\\Temp\\tg21l_state\\54_2"
+}

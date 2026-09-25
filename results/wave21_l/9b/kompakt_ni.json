@@ -1,0 +1,2469 @@
+{
+  "run": "53",
+  "theme": "Light",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "sidebar": {
+    "open": false,
+    "present": true,
+    "expanded": "false",
+    "right": -300,
+    "width": 0,
+    "after_database": {
+      "open": false,
+      "present": true,
+      "expanded": "false",
+      "right": -300,
+      "width": 0
+    }
+  },
+  "bez_stiley": [
+    {
+      "screen": "Расчёты / Одна температура",
+      "first_element": "stHeading Равновесие при одной температуре",
+      "first_top": 326,
+      "button": "Рассчитать равновесие",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 535,
+      "button_bottom": 580,
+      "first_screen": true,
+      "dom": [
+        {
+          "text": "Рассчитать равновесие",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 535,
+          "bottom": 580,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-single_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 254
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 272
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 317
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 317
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 317
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 335
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 380
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 380
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 472
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 760
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Расчёты / Температурный диапазон",
+      "first_element": "stHeading Изменение фазовых долей с температурой",
+      "first_top": 326,
+      "button": "Построить график по температуре",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 628,
+      "button_bottom": 673,
+      "first_screen": true,
+      "dom": [
+        {
+          "text": "Построить график по температуре",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 628,
+          "bottom": 673,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-temperature_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 347
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 365
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 410
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 410
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 410
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 428
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 473
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 473
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 565
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 853
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Расчёты / Изменение состава",
+      "first_element": "stHeading Изменение фазовых долей с концентрацией",
+      "first_top": 326,
+      "button": "Построить график по составу",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1020,
+      "button_bottom": 1065,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Построить график по составу",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1020,
+          "bottom": 1065,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-concentration_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 740
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 758
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 803
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 803
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 803
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 821
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 866
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 866
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 957
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 1245
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Диаграммы / Бинарная T–X",
+      "first_element": "stMarkdown Бинарная система",
+      "first_top": 448,
+      "button": "Построить диаграмму состояния",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1622,
+      "button_bottom": 1667,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Построить диаграмму состояния",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1622,
+          "bottom": 1667,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-binary_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1220
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1238
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1283
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1283
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1405
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1423
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1468
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1468
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1559
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 1847
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Диаграммы / Многокомпонентное T–X",
+      "first_element": "stMarkdown Многокомпонентное сечение",
+      "first_top": 448,
+      "button": "Построить многокомпонентное сечение",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1611,
+      "button_bottom": 1656,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Построить многокомпонентное сечение",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1611,
+          "bottom": 1656,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-isopleth_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1208
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1226
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1271
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1271
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1393
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1411
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1456
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1456
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1548
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 1836
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Диаграммы / Тройная при T = const",
+      "first_element": "stMarkdown Тройная изотермическая диаграмма",
+      "first_top": 448,
+      "button": "Построить тройную диаграмму",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1530,
+      "button_bottom": 1575,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Построить тройную диаграмму",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1530,
+          "bottom": 1575,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-ternary_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1127
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1145
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1190
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1190
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1312
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1330
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1375
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1375
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1467
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 1755
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Диаграммы / Карта доли фазы",
+      "first_element": "stMarkdown Карта количества выбранной фазы",
+      "first_top": 448,
+      "button": "Построить карту доли фазы",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1785,
+      "button_bottom": 1830,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Построить карту доли фазы",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1785,
+          "bottom": 1830,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-ternary_map_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1382
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1400
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1445
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1445
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1567
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1585
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1630
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1630
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1722
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 2010
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Затвердевание",
+      "first_element": "stHeading Затвердевание",
+      "first_top": 263,
+      "button": "Рассчитать затвердевание",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1052,
+      "button_bottom": 1097,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Рассчитать затвердевание",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1052,
+          "bottom": 1097,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-solidification_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 835
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 853
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 898
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 898
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 989
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 1277
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Энергии / Энергии фаз",
+      "first_element": "stMarkdown Энергия Гиббса фаз при фиксированном сос",
+      "first_top": 473,
+      "button": "Рассчитать энергии фаз",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1083,
+      "button_bottom": 1128,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Рассчитать энергии фаз",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1083,
+          "bottom": 1128,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-energy_curve_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 655
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 673
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 718
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 718
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 865
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 883
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 928
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 928
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1020
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 1308
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Энергии / Движущая сила",
+      "first_element": "stMarkdown Движущая сила образования выбранной фазы",
+      "first_top": 473,
+      "button": "Рассчитать движущую силу",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1189,
+      "button_bottom": 1234,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Рассчитать движущую силу",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1189,
+          "bottom": 1234,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-driving_force_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 761
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 779
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 824
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 824
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 971
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 989
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1034
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1034
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1126
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 1414
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Энергии / T₀",
+      "first_element": "stMarkdown Температура T₀ равенства энергий двух фа",
+      "first_top": 473,
+      "button": "Рассчитать T₀",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1762,
+      "button_bottom": 1807,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Рассчитать T₀",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1762,
+          "bottom": 1807,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-tzero_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1334
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1352
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1397
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1397
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1544
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1562
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1607
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1607
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1699
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 1987
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Свойства / Плотность",
+      "first_element": "stMarkdown Плотность при одной температуре",
+      "first_top": 492,
+      "button": "Рассчитать плотность и объёмные доли",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1027,
+      "button_bottom": 1072,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Рассчитать плотность и объёмные доли",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1027,
+          "bottom": 1072,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-physical_single_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 580
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 598
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 643
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 643
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 809
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 827
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 872
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 872
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 964
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 1252
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Свойства / Плотность по T",
+      "first_element": "stMarkdown Плотность и объёмные доли по температуре",
+      "first_top": 492,
+      "button": "Построить плотность по температуре",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1027,
+      "button_bottom": 1072,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Построить плотность по температуре",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1027,
+          "bottom": 1072,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-physical_scan_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 580
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 598
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 643
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 643
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 809
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 827
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 872
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 872
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 964
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 1252
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Свойства / Упругие свойства",
+      "first_element": "stMarkdown Упругие свойства по фазовым долям",
+      "first_top": 492,
+      "button": "Получить фазовые доли",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1093,
+      "button_bottom": 1138,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Получить фазовые доли",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1093,
+          "bottom": 1138,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-b4b2_elastic_prepare_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 647
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 665
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 710
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 710
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 876
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 894
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 939
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 939
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1030
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 1318
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Свойства / Вклады упрочнения",
+      "first_element": "stMarkdown Вклады механизмов упрочнения",
+      "first_top": 492,
+      "button": "Рассчитать вклады",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1508,
+      "button_bottom": 1553,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Рассчитать вклады",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1508,
+          "bottom": 1553,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-b4b2_strengthening_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1061
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1079
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1124
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1124
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1290
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1308
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1353
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1353
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1445
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 1733
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+      "first_element": "stHeading Диффузия и гомогенизация",
+      "first_top": 326,
+      "button": "Рассчитать однофазную диффузию",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1576,
+      "button_bottom": 1621,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Рассчитать однофазную диффузию",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1576,
+          "bottom": 1621,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-kin_single_run_ni",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1296
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1314
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1359
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1359
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1359
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1377
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1422
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1422
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1513
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 1801
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Кинетика / Диффузия и гомогенизация / Многофазная гомогенизация",
+      "first_element": "stHeading Диффузия и гомогенизация",
+      "first_top": 326,
+      "button": "Рассчитать гомогенизацию",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1786,
+      "button_bottom": 1831,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Рассчитать гомогенизацию",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1786,
+          "bottom": 1831,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-kin_hom_run_ni",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1506
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1524
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1569
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1569
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1569
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1587
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1632
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1632
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1723
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 2011
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Кинетика / Выделения",
+      "first_element": "stHeading Кинетика выделений",
+      "first_top": 326,
+      "button": "Рассчитать кинетику выделений",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 2200,
+      "button_bottom": 2245,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Рассчитать кинетику выделений",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 2200,
+          "bottom": 2245,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-precipitation_ni_user_calculate",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1919
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1937
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1982
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1982
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1982
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 2000
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 2045
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 2045
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 2137
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 2425
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Проекты и данные / Марки и составы",
+      "first_element": "stHeading Библиотека марок и составов",
+      "first_top": 326,
+      "button": "Сохранить текущий состав",
+      "button_testid": "stBaseButton-primaryFormSubmit",
+      "button_top": 929,
+      "button_bottom": 974,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Сохранить текущий состав",
+          "testid": "stBaseButton-primaryFormSubmit",
+          "disabled": false,
+          "top": 929,
+          "bottom": 974,
+          "chain": [
+            {
+              "testid": "stFormSubmitButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-FormSubmitter-alloy_save_form-------------------------",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 323
+            },
+            {
+              "testid": "stForm",
+              "key": null,
+              "position": "static",
+              "height": 359
+            },
+            {
+              "testid": "stLayoutWrapper",
+              "key": null,
+              "position": "static",
+              "height": 359
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1249
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1267
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1312
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1312
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1312
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1330
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1375
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1375
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1466
+            }
+          ]
+        },
+        {
+          "text": "Загрузить состав в программу",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1301,
+          "bottom": 1346,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-alloy_load_button",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stColumn",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stHorizontalBlock",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stLayoutWrapper",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1249
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1267
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1312
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1312
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1312
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1330
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1375
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1375
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1466
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Проекты и данные / Проекты и история",
+      "first_element": "stHeading Проекты и история",
+      "first_top": 326,
+      "button": "Сохранить проект в папке ThermoGar",
+      "button_testid": "stBaseButton-primaryFormSubmit",
+      "button_top": 861,
+      "button_bottom": 906,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Сохранить проект в папке ThermoGar",
+          "testid": "stBaseButton-primaryFormSubmit",
+          "disabled": false,
+          "top": 861,
+          "bottom": 906,
+          "chain": [
+            {
+              "testid": "stFormSubmitButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-FormSubmitter-project_save_form--------------------------ThermoGar",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 323
+            },
+            {
+              "testid": "stForm",
+              "key": null,
+              "position": "static",
+              "height": 359
+            },
+            {
+              "testid": "stLayoutWrapper",
+              "key": null,
+              "position": "static",
+              "height": 359
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 845
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 863
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 908
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 908
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 908
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 926
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 971
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 971
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1063
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "screen": "Проекты и данные / Проверка установки",
+      "first_element": "stHeading Проверка установки и контрольные расчёты",
+      "first_top": 326,
+      "button": "Проверить базы и запустить три контрольных расчёта",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1541,
+      "button_bottom": 1586,
+      "first_screen": false,
+      "dom": [
+        {
+          "text": "Проверить базы и запустить три контрольных расчёта",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 1541,
+          "bottom": 1586,
+          "chain": [
+            {
+              "testid": "stButton",
+              "key": null,
+              "position": "static",
+              "height": 45
+            },
+            {
+              "testid": "stElementContainer",
+              "key": "st-key-stage10_run_smoke_tests",
+              "position": "relative",
+              "height": 45
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1321
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1339
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1384
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1384
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1384
+            },
+            {
+              "testid": "stTabPanel",
+              "key": null,
+              "position": "static",
+              "height": 1402
+            },
+            {
+              "testid": null,
+              "key": null,
+              "position": "static",
+              "height": 1447
+            },
+            {
+              "testid": "stTabs",
+              "key": null,
+              "position": "static",
+              "height": 1447
+            },
+            {
+              "testid": "stVerticalBlock",
+              "key": null,
+              "position": "static",
+              "height": 1539
+            },
+            {
+              "testid": "stMainBlockContainer",
+              "key": null,
+              "position": "static",
+              "height": 1827
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "header_before": {
+    "header_bottom": 67.5,
+    "tabs_top": 199.6875,
+    "padding_top": "108px",
+    "h1": [
+      {
+        "text": "ThermoGar",
+        "id": "thermo-gar",
+        "shown": true
+      }
+    ]
+  },
+  "padding_search": [
+    {
+      "padding_px": 0,
+      "tabs_top": 16,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 2,
+      "tabs_top": 18,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 4,
+      "tabs_top": 20,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 6,
+      "tabs_top": 22,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 8,
+      "tabs_top": 24,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 10,
+      "tabs_top": 26,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 12,
+      "tabs_top": 28,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 14,
+      "tabs_top": 30,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 16,
+      "tabs_top": 32,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 18,
+      "tabs_top": 34,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 20,
+      "tabs_top": 36,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 22,
+      "tabs_top": 38,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 24,
+      "tabs_top": 40,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 26,
+      "tabs_top": 42,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 28,
+      "tabs_top": 44,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 30,
+      "tabs_top": 46,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 32,
+      "tabs_top": 48,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 34,
+      "tabs_top": 50,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 36,
+      "tabs_top": 52,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 38,
+      "tabs_top": 54,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 40,
+      "tabs_top": 56,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 42,
+      "tabs_top": 58,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 44,
+      "tabs_top": 60,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 46,
+      "tabs_top": 62,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 48,
+      "tabs_top": 64,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 50,
+      "tabs_top": 66,
+      "header_bottom": 67.5
+    },
+    {
+      "padding_px": 52,
+      "tabs_top": 68,
+      "header_bottom": 67.5
+    }
+  ],
+  "chosen_padding_px": 52,
+  "css": "/* 21-L 9B a): probe only, injected into the open page (not app/style.css).\n   The app title st.title (app/ThermoGar_app.py:7011) is hidden. */\n[data-testid=\"stMain\"] [data-testid=\"stElementContainer\"]:has(> [data-testid=\"stHeading\"] h1) {\n    display: none;\n}\n[data-testid=\"stMainBlockContainer\"] {\n    padding-top: 52px;\n}\n",
+  "header_after": {
+    "header_bottom": 67.5,
+    "tabs_top": 68,
+    "padding_top": "52px",
+    "h1": [
+      {
+        "text": "ThermoGar",
+        "id": "thermo-gar",
+        "shown": false
+      }
+    ]
+  },
+  "kompakt": [
+    {
+      "screen": "Расчёты / Одна температура",
+      "first_element": "stHeading Равновесие при одной температуре",
+      "first_top": 194,
+      "button": "Рассчитать равновесие",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 403,
+      "button_bottom": 448,
+      "first_screen": true
+    },
+    {
+      "screen": "Расчёты / Температурный диапазон",
+      "first_element": "stHeading Изменение фазовых долей с температурой",
+      "first_top": 194,
+      "button": "Построить график по температуре",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 496,
+      "button_bottom": 541,
+      "first_screen": true
+    },
+    {
+      "screen": "Расчёты / Изменение состава",
+      "first_element": "stHeading Изменение фазовых долей с концентрацией",
+      "first_top": 194,
+      "button": "Построить график по составу",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 889,
+      "button_bottom": 934,
+      "first_screen": false
+    },
+    {
+      "screen": "Диаграммы / Бинарная T–X",
+      "first_element": "stMarkdown Бинарная система",
+      "first_top": 316,
+      "button": "Построить диаграмму состояния",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1491,
+      "button_bottom": 1536,
+      "first_screen": false
+    },
+    {
+      "screen": "Диаграммы / Многокомпонентное T–X",
+      "first_element": "stMarkdown Многокомпонентное сечение",
+      "first_top": 316,
+      "button": "Построить многокомпонентное сечение",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1479,
+      "button_bottom": 1524,
+      "first_screen": false
+    },
+    {
+      "screen": "Диаграммы / Тройная при T = const",
+      "first_element": "stMarkdown Тройная изотермическая диаграмма",
+      "first_top": 316,
+      "button": "Построить тройную диаграмму",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1398,
+      "button_bottom": 1443,
+      "first_screen": false
+    },
+    {
+      "screen": "Диаграммы / Карта доли фазы",
+      "first_element": "stMarkdown Карта количества выбранной фазы",
+      "first_top": 316,
+      "button": "Построить карту доли фазы",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1653,
+      "button_bottom": 1698,
+      "first_screen": false
+    },
+    {
+      "screen": "Затвердевание",
+      "first_element": "stHeading Затвердевание",
+      "first_top": 131,
+      "button": "Рассчитать затвердевание",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 921,
+      "button_bottom": 966,
+      "first_screen": false
+    },
+    {
+      "screen": "Энергии / Энергии фаз",
+      "first_element": "stMarkdown Энергия Гиббса фаз при фиксированном сос",
+      "first_top": 341,
+      "button": "Рассчитать энергии фаз",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 951,
+      "button_bottom": 996,
+      "first_screen": false
+    },
+    {
+      "screen": "Энергии / Движущая сила",
+      "first_element": "stMarkdown Движущая сила образования выбранной фазы",
+      "first_top": 341,
+      "button": "Рассчитать движущую силу",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1057,
+      "button_bottom": 1102,
+      "first_screen": false
+    },
+    {
+      "screen": "Энергии / T₀",
+      "first_element": "stMarkdown Температура T₀ равенства энергий двух фа",
+      "first_top": 341,
+      "button": "Рассчитать T₀",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1630,
+      "button_bottom": 1675,
+      "first_screen": false
+    },
+    {
+      "screen": "Свойства / Плотность",
+      "first_element": "stMarkdown Плотность при одной температуре",
+      "first_top": 360,
+      "button": "Рассчитать плотность и объёмные доли",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 895,
+      "button_bottom": 940,
+      "first_screen": false
+    },
+    {
+      "screen": "Свойства / Плотность по T",
+      "first_element": "stMarkdown Плотность и объёмные доли по температуре",
+      "first_top": 360,
+      "button": "Построить плотность по температуре",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 895,
+      "button_bottom": 940,
+      "first_screen": false
+    },
+    {
+      "screen": "Свойства / Упругие свойства",
+      "first_element": "stMarkdown Упругие свойства по фазовым долям",
+      "first_top": 360,
+      "button": "Получить фазовые доли",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 962,
+      "button_bottom": 1007,
+      "first_screen": false
+    },
+    {
+      "screen": "Свойства / Вклады упрочнения",
+      "first_element": "stMarkdown Вклады механизмов упрочнения",
+      "first_top": 360,
+      "button": "Рассчитать вклады",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1376,
+      "button_bottom": 1421,
+      "first_screen": false
+    },
+    {
+      "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+      "first_element": "stHeading Диффузия и гомогенизация",
+      "first_top": 194,
+      "button": "Рассчитать однофазную диффузию",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1445,
+      "button_bottom": 1490,
+      "first_screen": false
+    },
+    {
+      "screen": "Кинетика / Диффузия и гомогенизация / Многофазная гомогенизация",
+      "first_element": "stHeading Диффузия и гомогенизация",
+      "first_top": 194,
+      "button": "Рассчитать гомогенизацию",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1655,
+      "button_bottom": 1700,
+      "first_screen": false
+    },
+    {
+      "screen": "Кинетика / Выделения",
+      "first_element": "stHeading Кинетика выделений",
+      "first_top": 194,
+      "button": "Рассчитать кинетику выделений",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 2068,
+      "button_bottom": 2113,
+      "first_screen": false
+    },
+    {
+      "screen": "Проекты и данные / Марки и составы",
+      "first_element": "stHeading Библиотека марок и составов",
+      "first_top": 194,
+      "button": "Сохранить текущий состав",
+      "button_testid": "stBaseButton-primaryFormSubmit",
+      "button_top": 798,
+      "button_bottom": 843,
+      "first_screen": true
+    },
+    {
+      "screen": "Проекты и данные / Проекты и история",
+      "first_element": "stHeading Проекты и история",
+      "first_top": 194,
+      "button": "Сохранить проект в папке ThermoGar",
+      "button_testid": "stBaseButton-primaryFormSubmit",
+      "button_top": 730,
+      "button_bottom": 775,
+      "first_screen": true
+    },
+    {
+      "screen": "Проекты и данные / Проверка установки",
+      "first_element": "stHeading Проверка установки и контрольные расчёты",
+      "first_top": 194,
+      "button": "Проверить базы и запустить три контрольных расчёта",
+      "button_testid": "stBaseButton-primary",
+      "button_top": 1409,
+      "button_bottom": 1454,
+      "first_screen": false
+    }
+  ],
+  "frames": [
+    "kompakt_odna_temperatura_svet.png",
+    "kompakt_zatverdevanie_svet.png",
+    "kompakt_binarnaya_tx_svet.png"
+  ],
+  "state_root": "C:\\Users\\gareg\\AppData\\Local\\Temp\\tg21l_state\\53"
+}
