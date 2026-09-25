@@ -1,0 +1,5 @@
+[
+  {"tag": "do_umolch_ni_s0", "args": ["--cell", "umolch_ni", "--progress", "30"], "env": {"PYTHONHASHSEED": "0"}},
+  {"tag": "do_umolch_al_s0", "args": ["--cell", "umolch_al", "--progress", "30"], "env": {"PYTHONHASHSEED": "0"}},
+  {"tag": "do_718_s0", "args": ["--cell", "718", "--progress", "30"], "env": {"PYTHONHASHSEED": "0"}}
+]

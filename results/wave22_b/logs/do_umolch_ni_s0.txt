@@ -1,0 +1,18 @@
+# 2026-09-25T13:48:54 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_b/scripts/kwn_run.py --tag do_umolch_ni_s0 --cell umolch_ni --progress 30
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+ЖУРНАЛ стена=31 с; t=155.47 с (0.04319 ч); шаг=1588; доля=25.2838 %; x_AL=0.1211
+ЖУРНАЛ стена=61 с; t=20864.9 с (5.796 ч); шаг=3696; доля=25.9138 %; x_AL=0.1203
+ЖУРНАЛ стена=91 с; t=42255.4 с (11.74 ч); шаг=5980; доля=25.9512 %; x_AL=0.1202
+ЖУРНАЛ стена=121 с; t=71374.7 с (19.83 ч); шаг=8350; доля=25.9762 %; x_AL=0.1202
+ЖУРНАЛ стена=151 с; t=113935 с (31.65 ч); шаг=10731; доля=25.9839 %; x_AL=0.1202
+ЖУРНАЛ стена=181 с; t=173486 с (48.19 ч); шаг=13042; доля=25.9747 %; x_AL=0.1202
+ЖУРНАЛ стена=211 с; t=240471 с (66.8 ч); шаг=15445; доля=25.9964 %; x_AL=0.1202
+ЖУРНАЛ стена=241 с; t=314458 с (87.35 ч); шаг=17748; доля=25.9360 %; x_AL=0.1203
+2026-09-25 13:53:14.254 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:53:14.371 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:53:14.562 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:53:14.737 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:53:14.828 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "do_umolch_ni_s0", "status": "ok", "error": "", "wall_s": 255.08, "peak_rss_gib": 0.364, "rows": 18881, "final_time_s": 360000.0, "stop": false, "final_fraction_pct": 26.03173742794173, "final_radius_nm": 92.22835323266493, "quality_all_passed": true, "raw_nonpositive_calls": {"calls": 75520, "stage": 0, "post": 0, "first_t": null, "min_raw_over_x0": 0.8004476571001502}}
+ZAMER: код=0; стена=261.3 с; пик RSS=0.364 ГиБ (381468 КиБ)

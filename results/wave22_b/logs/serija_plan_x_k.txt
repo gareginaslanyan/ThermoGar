@@ -1,0 +1,4 @@
+2026-09-25T13:58:36 план results/wave22_b/plan_x_k.json: всего 3, к счёту 3, одновременно 3
+2026-09-25T13:58:36 старт x_k1.1_app_s0 --cell app --k-cap 1.1 --progress 30 env={'PYTHONHASHSEED': '0'}
+2026-09-25T13:58:36 старт x_k2_dtmax1e-4_app_s0 --cell app --k-cap 2 --max-dt-frac 1e-4 --progress 30 env={'PYTHONHASHSEED': '0'}
+2026-09-25T13:58:36 старт x_k4_dtmax1e-4_app_s0 --cell app --k-cap 4 --max-dt-frac 1e-4 --progress 30 env={'PYTHONHASHSEED': '0'}

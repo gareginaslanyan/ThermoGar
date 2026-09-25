@@ -1,0 +1,3 @@
+# 2026-09-25T13:58:36 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_b/scripts/kwn_run.py --tag x_k1.1_app_s0 --cell app --k-cap 1.1 --progress 30
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)

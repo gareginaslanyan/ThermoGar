@@ -1,0 +1,128 @@
+[
+ {
+  "tag": "k15_app_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--k-cap",
+   "1.5",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "k15_app_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--k-cap",
+   "1.5",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "1"
+  }
+ },
+ {
+  "tag": "k15_app_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--k-cap",
+   "1.5",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "2"
+  }
+ },
+ {
+  "tag": "k2_app_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--k-cap",
+   "2.0",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "k2_app_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--k-cap",
+   "2.0",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "1"
+  }
+ },
+ {
+  "tag": "k2_app_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--k-cap",
+   "2.0",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "2"
+  }
+ },
+ {
+  "tag": "k4_app_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--k-cap",
+   "4.0",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "k4_app_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--k-cap",
+   "4.0",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "1"
+  }
+ },
+ {
+  "tag": "k4_app_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--k-cap",
+   "4.0",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "2"
+  }
+ }
+]

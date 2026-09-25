@@ -1,0 +1,5 @@
+[
+  {"tag": "x_k1.1_app_s0", "args": ["--cell", "app", "--k-cap", "1.1", "--progress", "30"], "env": {"PYTHONHASHSEED": "0"}},
+  {"tag": "x_k2_dtmax1e-4_app_s0", "args": ["--cell", "app", "--k-cap", "2", "--max-dt-frac", "1e-4", "--progress", "30"], "env": {"PYTHONHASHSEED": "0"}},
+  {"tag": "x_k4_dtmax1e-4_app_s0", "args": ["--cell", "app", "--k-cap", "4", "--max-dt-frac", "1e-4", "--progress", "30"], "env": {"PYTHONHASHSEED": "0"}}
+]

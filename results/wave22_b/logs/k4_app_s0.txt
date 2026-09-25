@@ -1,0 +1,13 @@
+# 2026-09-25T13:54:59 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_b/scripts/kwn_run.py --tag k4_app_s0 --cell app --k-cap 4.0 --progress 30
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+ЖУРНАЛ стена=30 с; t=0.947511 с (0.0002632 ч); шаг=842; доля=4.4083 %; x_C=3.869e-05
+ЖУРНАЛ стена=60 с; t=2.01721 с (0.0005603 ч); шаг=2017; доля=4.4085 %; x_C=3.815e-05
+ЖУРНАЛ стена=90 с; t=3.48492 с (0.000968 ч); шаг=3195; доля=4.4088 %; x_C=3.763e-05
+2026-09-25 13:56:37.159 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:56:37.245 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:56:37.378 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:56:37.496 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:56:37.560 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "k4_app_s0", "status": "ok", "error": "", "wall_s": 92.04, "peak_rss_gib": 0.348, "rows": 3292, "final_time_s": 3.6, "stop": false, "final_fraction_pct": 4.40942815431337, "final_radius_nm": 9.33935884512843, "quality_all_passed": true, "raw_nonpositive_calls": {"calls": 13164, "stage": 0, "post": 0, "first_t": null, "min_raw_over_x0": 0.003071677885858931}}
+ZAMER: код=0; стена=98.2 с; пик RSS=0.351 ГиБ (368012 КиБ)
