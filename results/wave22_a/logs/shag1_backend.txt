@@ -1,0 +1,10 @@
+# 2026-09-25T10:23:00 $ python -B -X utf8 results/wave22_a/scripts/kwn_run.py --cell backend --tag shag1_backend
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+2026-09-25 10:23:55.750 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 10:23:55.836 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 10:23:55.977 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 10:23:56.091 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 10:23:56.166 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "shag1_backend", "status": "ok", "error": "", "wall_s": 50.8, "peak_rss_gib": 0.319, "rows": 2188, "final_time_s": 1.0, "stop": false, "final_fraction_pct": 4.396991818283394, "final_radius_nm": 3.404193221800413, "quality_all_passed": true}
+ZAMER: код=0; стена=56.3 с; пик RSS=0.323 ГиБ (338296 КиБ)
