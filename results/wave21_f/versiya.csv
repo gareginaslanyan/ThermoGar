@@ -1,0 +1,55 @@
+﻿файл:строка;текст;что это;что делать при выпуске;чем проверяется
+app/thermogar_release_policy.py:25;"APP_STAGE: Final = ""0.4.4""";поведение;заменить на 0.5.0;ничем напрямую: APP_STAGE ни с чем не сверяется (tools/thermogar_verified_state_test.py:83 берёт его же)
+app/thermogar_release_policy.py:26;"APP_VERSION: Final = ""0.4.4""";поведение;заменить на 0.5.0;tools/test_version_consistency.py:41 — все проверки теста сверяют файлы с APP_VERSION
+app/thermogar_release_policy.py:281;"f""{APP_VERSION}|release-surface|""";поведение;не трогать: RUNTIME_POLICY_GENERATION собирается из APP_VERSION (:280–284) и сменится сам;ничем
+app/thermogar_release_policy.py:315;"""version"": APP_VERSION,";поведение;не трогать: release_status()['version'] = APP_VERSION, идёт в JSON диагностики, диффузии, выделений;ничем
+app/ThermoGar_app.py:7111;"""ThermoGar 0.4.4 — исследовательское ПО. """;текст;заменить на 0.5.0;tools/test_version_consistency.py:115–119 (test_sidebar_caption) и :101–106 (первое упоминание, MUST_MENTION)
+app/ThermoGar_app.py:5755;"""Версия ThermoGar"": APP_VERSION,";поведение;"не трогать: берётся из APP_VERSION; лист «Происхождение» выгрузки Excel";ничем
+app/ThermoGar_app.py:7421;or previous_release_generation != RUNTIME_POLICY_GENERATION;поведение;не трогать: смена RUNTIME_POLICY_GENERATION сбрасывает результаты в состоянии сессии (:7423–7448);ничем
+app/ThermoGar_app.py:12552;"f""Версия {APP_VERSION}. Ниже описано то, что приложение делает """;текст;не трогать: «Версия {APP_VERSION}» на вкладке справки берётся из APP_VERSION;ничем
+app/thermogar_verified_state.py:287;"""app_stage"": APP_STAGE,";поведение;не трогать: приём файла проекта требует app_stage == APP_STAGE;ничем (сравнение версии проекта тестом не проверяется)
+app/thermogar_verified_state.py:288;"""app_version"": APP_VERSION,";поведение;не трогать: приём файла проекта требует app_version == APP_VERSION;ничем
+app/thermogar_verified_state.py:51;"""updated_at"", ""app_stage"", ""app_version"", ""release_class"",";поведение;не трогать: PROJECT_PAYLOAD_KEYS (:49–54) — 14 ключей, в том числе app_stage и app_version;tools/thermogar_verified_state_test.py:83–84
+app/thermogar_workspace.py:662;"""app_stage"": APP_STAGE,";поведение;"не трогать: validate_project_payload (:627) требует app_stage == APP_STAGE, иначе «Проект сохранён другой версией ThermoGar; автоматическое приведение не выполняется»";ничем
+app/thermogar_workspace.py:663;"""app_version"": APP_VERSION,";поведение;не трогать: validate_project_payload требует app_version == APP_VERSION;ничем
+app/thermogar_workspace.py:1386;"""app_stage"": APP_STAGE,";поведение;"не трогать: запись истории расчётов несёт app_stage; при чтении истории (:1454–1495) версия не сравнивается";ничем
+app/thermogar_workspace.py:1387;"""app_version"": APP_VERSION,";поведение;"не трогать: запись истории несёт app_version; при чтении не сравнивается";ничем
+app/thermogar_workspace.py:1618;"""app_stage"": APP_STAGE,";поведение;не трогать: новый проект пишется с app_stage = APP_STAGE;ничем
+app/thermogar_workspace.py:1619;"""app_version"": APP_VERSION,";поведение;не трогать: новый проект пишется с app_version = APP_VERSION;ничем
+app/thermogar_stage14.py:354;"""thermogar"": APP_VERSION,";поведение;не трогать: версия в записи журнала ошибок;ничем
+app/thermogar_stage14.py:947;"(""ThermoGar"", APP_VERSION),";текст;не трогать: строка «ThermoGar» таблицы окружения диагностики;ничем
+app/thermogar_stage14.py:1409;"""thermogar_version"": APP_VERSION,";поведение;не трогать: thermogar_version в JSON диагностики;ничем
+app/thermogar_stage14.py:1449;"(""ThermoGar"", APP_VERSION),";текст;не трогать: строка «ThermoGar» таблицы происхождения;ничем
+packaging/product-version.json:6;"""display_version"": ""0.4.4"",";текст;заменить на 0.5.0 (build_installer.ps1:60 берёт отсюда номер и имя установщика);tools/test_version_consistency.py:109–111 (test_product_version_json)
+packaging/product-version.json:7;"""vi_product_version"": ""0.4.4.0"",";текст;заменить на 0.5.0.0;tools/test_version_consistency.py:112
+README.md:1;# ThermoGar 0.4.4;текст;заменить на 0.5.0;tools/test_version_consistency.py:101–106 (первое упоминание, MUST_MENTION)
+README.md:101;**Установщик.** `ThermoGar-0.4.4-win64.exe` ставит программу вместе с;имя файла;заменить на ThermoGar-0.5.0-win64.exe;ничем: тест смотрит только первое упоминание (README.md:1)
+QUICK_START_THERMOGAR.md:1;# ThermoGar 0.4.4 — быстрый старт;текст;заменить на 0.5.0;tools/test_version_consistency.py:101–106
+USER_GUIDE_THERMOGAR.md:1;# ThermoGar 0.4.4 — руководство пользователя;текст;заменить на 0.5.0;tools/test_version_consistency.py:101–106
+USER_GUIDE_THERMOGAR.md:115;С версии 0.4.2 предупреждение называет число таких фаз и не больше пяти имён,;история;не трогать;ничем (не первое упоминание)
+HANDOFF.md:1;# HANDOFF — ThermoGar 0.4.4;текст;заменить на 0.5.0;ничем: HANDOFF.md не в перечне теста
+HANDOFF.md:10;"**Выпущено:** 0.4.4 от 2026-09-23; предыдущий выпуск 0.4.3 от 2026-09-19.";текст;"заменить: «Выпущено: 0.5.0 от <дата>; предыдущий выпуск 0.4.4 от 2026-09-23»";ничем
+HANDOFF.md:83;Результат — `dist\ThermoGar-0.4.3-win64.exe` и `dist\ThermoGar-0.4.3-win64.build.json` с размером,;имя файла;по желанию заменить на 0.5.0 (пример имени результата сборки, стоит 0.4.3 и в 0.4.4);ничем
+docs/FEATURES.md:1;# ThermoGar 0.4.4 — что умеет программа;текст;заменить на 0.5.0;tools/test_version_consistency.py:101–106
+docs/guide/README.md:1;# ThermoGar 0.4.4 — иллюстрированное руководство;текст;заменить на 0.5.0 (задача пересборки руководства);tools/test_version_consistency.py:101–106
+docs/guide/README.md:23;Всё руководство одной страницей — `ThermoGar_Guide_0.4.4.html` рядом с этим файлом: картинки;имя файла;заменить на ThermoGar_Guide_0.5.0.html;ничем: не первое упоминание
+docs/guide/ThermoGar_Guide_0.4.4.html:6;<title>ThermoGar 0.4.4 — иллюстрированное руководство</title>;имя файла;"новый файл: ThermoGar_Guide_0.5.0.html даст пересборка руководства; файл 0.4.4 не трогать (история)";tools/test_version_consistency.py:58 GUIDE_HTML, :65 MUST_MENTION — без файла 0.5.0 тест красный
+docs/guide/ThermoGar_Guide_0.4.4.html:33;"<h1 id=""thermogar-044-иллюстрированное-руководство"">ThermoGar 0.4.4 — иллюстрированное руководство</h1>";история;"не трогать; в новом HTML заголовок даст генератор (tools/make_guide_screens.py:47)";ничем
+docs/guide/ThermoGar_Guide_0.4.4.html:82;<p>Всё руководство одной страницей — <code>ThermoGar_Guide_0.4.4.html</code> рядом с этим файлом: картинки;история;"не трогать; в новом HTML имя даст docs/guide/README.md:23";ничем
+docs/guide/ThermoGar_Guide_0.4.3.html:6;<title>ThermoGar 0.4.3 — иллюстрированное руководство</title>;история;не трогать (так же 0.4.1 и 0.4.2, строки 6, 33, 82);ничем: прежние HTML исключены из перечня (test_version_consistency.py:19–20)
+tools/make_guide_screens.py:46;"HTML_NAME = ""ThermoGar_Guide_0.4.4.html""";имя файла;заменить на ThermoGar_Guide_0.5.0.html;tools/test_version_consistency.py:122–124 (test_guide_builder_names_current_version)
+tools/make_guide_screens.py:47;"HTML_TITLE = ""ThermoGar 0.4.4 — иллюстрированное руководство""";текст;заменить на «ThermoGar 0.5.0 — иллюстрированное руководство»;tools/test_version_consistency.py:125
+tools/make_guide_screens.py:1122;"""""""Сообщения 0.4.2 (17-Д): быстрый набор, пустое решение, остановка KWN,";история;не трогать (докстринг «Сообщения 0.4.2 (17-Д)»);ничем
+packaging/build_installer.ps1:14;.\packaging\build_installer.ps1 -Version 0.4.3 -KeepStage;текст;"по BL-61: поднять пример до 0.5.0 и внести файл в тест; на сборку не влияет (номер берётся из product-version.json, :57–64)";ничем (BL-61)
+THIRD_PARTY_NOTICES.txt:13007;typing-inspection 0.4.4;чужая версия;не трогать (версия пакета typing-inspection);ничем
+THIRD_PARTY_NOTICES.txt:330;colorama 0.4.6;чужая версия;не трогать (версия пакета colorama);ничем
+docs/DATABASES.md:645;базе» в разделе «Свойства» (BL-14, выпуск 0.4.2), по умолчанию включена.;история;не трогать;ничем
+docs/IZHSR_1476.md:47;**Версия программы — 0.4.0.** Расчёты идут путём самого приложения: свёртка фаз и составы фаз;история;не трогать (версия, на которой считалось исследование);ничем
+docs/LIMITS_OF_APPLICABILITY.md:168;`tasks/REGISTER.md`): до 0.4.2 вместо внятного отказа пользователь получал `ZeroDivisionError`.;история;не трогать;ничем
+docs/LIMITS_OF_APPLICABILITY.md:170;С выпуска 0.4.2 такой расчёт останавливается с объяснением (`BL-35`): когда добавка вычерпана из;история;не трогать;ничем
+tools/backend_reference.md:31;"Эталон перепроверен на коде выпуска 0.4.1 теми же пакетами: `-m ""not slow""` — **43 passed,";история;не трогать;ничем
+tools/backend_reference.md:212;ρ(T) хрома, оценка по правилу смеси), а не от сетки: `CHANGELOG.md`, раздел 0.4.0.;история;не трогать;ничем
+tools/test_version_consistency.py:18;Исторические упоминания ниже первого («С версии 0.4.2 …») не проверяются.;история;не трогать (докстринг);ничем
+tools/test_version_consistency.py:19;HTML руководства прежних версий (``ThermoGar_Guide_0.4.1.html``…) — история;история;не трогать (докстринг);ничем
+requirements_thermogar.txt:5;kawin==0.5.0;чужая версия;"не трогать: kawin==0.5.0 — версия пакета kawin совпадает с номером выпуска; поиск «0.5.0» после выпуска найдёт и её (ещё около 20 строк в app/, docs/, tools/)";ничем
+CHANGELOG.md:3;## 0.4.4 — 2026-09-23;история;"новый раздел «## 0.5.0 — <дата>» над разделом 0.4.4 (черновик — results/wave21_f/changelog_0.5.0.md); прежние разделы не трогать";ничем
