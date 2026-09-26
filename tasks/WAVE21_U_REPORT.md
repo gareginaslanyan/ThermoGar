@@ -140,3 +140,38 @@
 6. Замечено, не менялось (вне задания): предпросмотр загруженного пакетного CSV со строкой `""` в числовом столбце элемента даёт в журнале Streamlit «Serialization of dataframe to Arrow table was unsuccessful…» (автоисправление типов Streamlit); на экране это пустая ячейка, не «None».
 
 ## Git
+
+Вывод после `git push -u origin wave21-u` (коммит отчёта `ad1f49b`; этот раздел добавлен следующим коммитом «docs(21-У): отчёт — вывод git после пуша», в список ниже он не входит).
+
+`git push -u origin wave21-u`:
+
+```
+To https://github.com/gareginaslanyan/ThermoGar.git
+ * [new branch]      wave21-u -> wave21-u
+branch 'wave21-u' set up to track 'origin/wave21-u'.
+```
+
+`git ls-remote origin main wave21-u`:
+
+```
+3e2e31877e66a3c5f6144f707287369dcf990b22	refs/heads/main
+ad1f49b6d3df47cdb848fe861d111efb9e9d9af7	refs/heads/wave21-u
+```
+
+`git log --oneline 3e2e318..wave21-u`:
+
+```
+ad1f49b docs(21-У): отчёт, строка 21-У в реестре, BL-68, BL-70–BL-72
+6556f0c docs(21-У): кадры и замеры прочерка в пустых ячейках (T₀ стали, «Упругие свойства»)
+55dfe83 test(21-У): тесты BL-68 и BL-70–BL-72, полная регрессия
+18e4be2 fix(21-У): BL-70 — текст «Упругих свойств» без пробелов по краям, пустое «Примечание»; BL-71 — пустая ячейка элемента в пакете; BL-72 — None в паспорте базы стали
+5a9fe66 feat(21-У): BL-68 — прочерк «—» в пустых ячейках всех таблиц экрана (placeholder)
+dbb3949 docs(21-У): реестр — приёмки 21-Т и 21-С, решения владельца, ошибка мастера (21-С), BL-68–BL-72
+ff7713c docs(21-У): задание волны 21-У
+```
+
+`git status --short`:
+
+```
+?? _to_delete/
+```
