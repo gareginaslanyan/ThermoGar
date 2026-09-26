@@ -1,0 +1,12 @@
+# 2026-09-25T14:23:57 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_b/scripts/kwn_run.py --tag s2a_backend36_s1 --cell backend --duration-h 0.001 --progress 30
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+ЖУРНАЛ стена=30 с; t=0.886882 с (0.0002464 ч); шаг=1069; доля=4.4005 %; x_C=5.24e-05
+ЖУРНАЛ стена=60 с; t=2.62529 с (0.0007292 ч); шаг=2466; доля=4.4022 %; x_C=4.86e-05
+2026-09-25 14:25:16.485 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:25:16.575 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:25:16.707 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:25:16.827 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:25:16.895 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "s2a_backend36_s1", "status": "ok", "error": "", "wall_s": 74.73, "peak_rss_gib": 0.321, "rows": 3151, "final_time_s": 3.6, "stop": false, "final_fraction_pct": 4.404065618191408, "final_radius_nm": 5.581474212820289, "quality_all_passed": true, "raw_nonpositive_calls": {"calls": 12600, "stage": 0, "post": 0, "first_t": null, "min_raw_over_x0": 0.004633991056772849}}
+ZAMER: код=0; стена=80.2 с; пик RSS=0.325 ГиБ (340952 КиБ)

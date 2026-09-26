@@ -1,0 +1,331 @@
+[
+ {
+  "tag": "s2b_umolch_fe_s0",
+  "args": [
+   "--cell",
+   "umolch_fe",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "s2v_718_s0",
+  "args": [
+   "--cell",
+   "718",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "s2b_umolch_ni_s0",
+  "args": [
+   "--cell",
+   "umolch_ni",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "s2b_umolch_al_s0",
+  "args": [
+   "--cell",
+   "umolch_al",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "s2a_app_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "s2a_app_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "1"
+  }
+ },
+ {
+  "tag": "s2a_app_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "2"
+  }
+ },
+ {
+  "tag": "s2a_app_s3",
+  "args": [
+   "--cell",
+   "app",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "3"
+  }
+ },
+ {
+  "tag": "s2a_app_s4",
+  "args": [
+   "--cell",
+   "app",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "4"
+  }
+ },
+ {
+  "tag": "s2a_app_s5",
+  "args": [
+   "--cell",
+   "app",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "5"
+  }
+ },
+ {
+  "tag": "s2a_app_s6",
+  "args": [
+   "--cell",
+   "app",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "6"
+  }
+ },
+ {
+  "tag": "s2a_app_s7",
+  "args": [
+   "--cell",
+   "app",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "7"
+  }
+ },
+ {
+  "tag": "s2a_app_s8",
+  "args": [
+   "--cell",
+   "app",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "8"
+  }
+ },
+ {
+  "tag": "s2a_app_s9",
+  "args": [
+   "--cell",
+   "app",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "9"
+  }
+ },
+ {
+  "tag": "s2a_backend1s_s0",
+  "args": [
+   "--cell",
+   "backend",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "s2a_backend1s_s1",
+  "args": [
+   "--cell",
+   "backend",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "1"
+  }
+ },
+ {
+  "tag": "s2a_backend1s_s2",
+  "args": [
+   "--cell",
+   "backend",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "2"
+  }
+ },
+ {
+  "tag": "s2a_backend36_s0",
+  "args": [
+   "--cell",
+   "backend",
+   "--duration-h",
+   "0.001",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "s2a_backend36_s1",
+  "args": [
+   "--cell",
+   "backend",
+   "--duration-h",
+   "0.001",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "1"
+  }
+ },
+ {
+  "tag": "s2a_backend36_s2",
+  "args": [
+   "--cell",
+   "backend",
+   "--duration-h",
+   "0.001",
+   "--progress",
+   "30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "2"
+  }
+ },
+ {
+  "tag": "x_718_k15_s0",
+  "args": [
+   "--cell",
+   "718",
+   "--k-cap",
+   "1.5",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "x_k15_umolch_fe_s0",
+  "args": [
+   "--cell",
+   "umolch_fe",
+   "--k-cap",
+   "1.5",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "x_umolch_fe_001h_s0",
+  "args": [
+   "--cell",
+   "umolch_fe",
+   "--duration-h",
+   "0.01",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "x_718_trace_s0",
+  "args": [
+   "--cell",
+   "718",
+   "--trace",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "x_718_b200_s0",
+  "args": [
+   "--cell",
+   "718",
+   "--bins",
+   "200",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ },
+ {
+  "tag": "x_718_mindt1e-10_s0",
+  "args": [
+   "--cell",
+   "718",
+   "--min-dt-frac",
+   "1e-10",
+   "--progress",
+   "60"
+  ],
+  "env": {
+   "PYTHONHASHSEED": "0"
+  }
+ }
+]

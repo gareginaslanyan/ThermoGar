@@ -135,6 +135,23 @@ KWN_LONG_COMPOSITION_WARNING = (
     "каждая добавка удлиняет его примерно на 15 %."
 )
 
+# BL-43 (22-Б). kawin 0.5.0 (KWNEuler.getDt) сдерживает рост шага по времени,
+# только когда ни один из его пределов не сработал; сработавший предел
+# (например, по критическому радиусу на плато укрупнения) отпускает шаг в
+# 5–42 раза за раз, стадия RK4 уводит состав матрицы ниже нуля, и расчёт
+# стали шёл в остановку BL-35 (22-А, 22-А2). Шаг — не больше стольких
+# предыдущих. Серия 22-Б (1,5 / 2 / 4): на ячейке стали 3,6 с без остановок
+# и растворений за шаг все три, но при 4 на умолчании раздела (0,05 ч)
+# второй шаг 0,04 с перепрыгивает зарождение, как без ограничения; 2 — нет.
+KWN_DT_GROWTH_LIMIT = 2.0
+# Страховка: отрицательный состав матрицы kawin зажимает в minComposition
+# (по умолчанию 0), а при нуле движущая сила M23C6 не определена (22-А2).
+KWN_MIN_COMPOSITION = 1e-8
+# Признак остановки BL-35 в данных результата: наибольшая невязка баланса
+# масс на шагах до остановки не больше этой доли исходного содержания
+# добавки — «перелёт» (численный скачок одного шага), больше — «разрыв».
+KWN_BALANCE_RESIDUAL_LIMIT = 1e-12
+
 
 @dataclass
 class PrecipitationResult:
@@ -156,6 +173,10 @@ class PrecipitationResult:
     # BL-35. Текст отказа, если расчёт остановлен до конца выдержки из-за
     # недопустимого состава матрицы; пустая строка — расчёт дошёл до конца.
     stop_note: str = ""
+    # 22-Б. Сведения об остановке для данных результата, не для экрана:
+    # признак «перелёт» / «разрыв», невязка баланса масс до остановки, состав
+    # матрицы до зажима и записанный kawin; пустой словарь — остановки нет.
+    stop_diagnostics: dict[str, Any] = field(default_factory=dict)
 
 
 # BL-35. Одна фраза о причине отказа — общая для остановки по составу и для
@@ -188,13 +209,89 @@ def _matrix_composition_violation(
     return None
 
 
+def _raw_matrix_composition(data: Any, n: int) -> np.ndarray:
+    """Состав матрицы на шаге ``n`` из баланса масс, до зажима kawin (22-Б).
+
+    kawin считает его как (x0 − Σ fconc)/(1 − Σ f) и отрицательное зажимает в
+    ``minComposition`` (``KWNEuler._calcMassBalance``); здесь то же выражение
+    без зажима. При сумме долей 1 kawin состав не пересчитывает, а здесь
+    выходит ±inf или NaN — это тоже нарушение.
+    """
+
+    x0 = np.asarray(data.composition[0], float)
+    fconc = np.sum(np.asarray(data.fconc[n], float), axis=0)
+    remaining = 1.0 - float(np.sum(np.asarray(data.volFrac[n], float)))
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return (x0 - fconc) / remaining
+
+
+def _balance_residual(data: Any, steps: int) -> tuple[float, int | None]:
+    """Наибольшая невязка баланса масс на первых ``steps`` записанных шагах.
+
+    Невязка |x0 − [(1 − Σ f)·x + Σ fconc]| — в долях исходного содержания
+    добавки, только по добавкам, которые были в сплаве; ``x`` — состав, как
+    его записал kawin. Второе — индекс добавки с наибольшей невязкой.
+    """
+
+    x0 = np.asarray(data.composition[0], float)
+    present = np.flatnonzero(x0 > 0.0)
+    if steps <= 0 or not present.size:
+        return 0.0, None
+    x = np.asarray(data.composition[:steps], float)
+    fraction = np.sum(np.asarray(data.volFrac[:steps], float), axis=1)
+    fconc = np.sum(np.asarray(data.fconc[:steps], float), axis=1)
+    residual = np.abs(x0 - ((1.0 - fraction)[:, None]*x + fconc))[:, present]/x0[present]
+    worst = np.where(np.isfinite(residual), residual, np.inf).max(axis=0)
+    index = int(np.argmax(worst))
+    return float(worst[index]), int(present[index])
+
+
+def _stop_diagnostics(
+    data: Any, step: int, residual_steps: int, solutes: list[str], reason: str,
+    element: str | None = None, value: float | None = None,
+    dt_growth_limit: float | None = None,
+) -> dict[str, Any]:
+    """Сведения об остановке для данных результата (22-Б), не для экрана.
+
+    «Перелёт» — баланс масс до остановки сходился с точностью округления, и
+    состав матрицы ушёл за границу на одном шаге; «разрыв» — невязка больше
+    ``KWN_BALANCE_RESIDUAL_LIMIT`` уже на шагах до остановки.
+    """
+
+    residual, residual_index = _balance_residual(data, residual_steps)
+    raw = _raw_matrix_composition(data, step)
+    recorded = np.asarray(data.composition[step], float)
+    return {
+        "reason": reason,
+        "kind": "перелёт" if residual <= KWN_BALANCE_RESIDUAL_LIMIT else "разрыв",
+        "time_s": float(data.time[step]),
+        "step": int(step),
+        "element": element,
+        "value": value,
+        "residual_steps": int(residual_steps),
+        "residual_max_rel": residual,
+        "residual_element": None if residual_index is None else solutes[residual_index],
+        "residual_limit_rel": KWN_BALANCE_RESIDUAL_LIMIT,
+        "raw_composition": {name: float(item) for name, item in zip(solutes, raw)},
+        "recorded_composition": {name: float(item) for name, item in zip(solutes, recorded)},
+        "dt_growth_limit": dt_growth_limit,
+        "min_composition": KWN_MIN_COMPOSITION,
+    }
+
+
 class _MatrixCompositionStop:
     """Условие остановки kawin по составу матрицы (BL-35).
 
     ``KWNBase.postProcess`` после каждого принятого шага дописывает шаг в
     ``model.data`` и вызывает у условия ``testCondition(model)`` и
     ``isSatisfied()``; ``reset()`` вызывает ``KWNBase.reset``. Условие только
-    читает последний записанный состав и расчёт не меняет.
+    читает последний записанный шаг и расчёт не меняет.
+
+    22-Б: добавки, которые были в сплаве, проверяются по составу до зажима —
+    (x0 − Σ fconc)/(1 − Σ f) ≤ 0, то же, что Σ fconc ≥ x0. Записанный состав
+    kawin зажимает в ``minComposition``, и при ``KWN_MIN_COMPOSITION`` > 0
+    проверка по нему такие шаги пропускала бы. Добавки, которых в сплаве не
+    было, проверяются, как их записал kawin.
     """
 
     def __init__(self, solutes: list[str], balance: str, initial: Any) -> None:
@@ -208,24 +305,53 @@ class _MatrixCompositionStop:
         self._satisfiedTime = -1
         self.element: str | None = None
         self.value: float | None = None
+        self.step: int | None = None
 
     def testCondition(self, model: Any) -> None:
         if self._isSatisfied:
             return
         n = int(model.data.n)
+        recorded = np.asarray(model.data.composition[n], float).ravel()
+        checked = np.where(self._initial.ravel() > 0.0, _raw_matrix_composition(model.data, n), recorded)
         found = _matrix_composition_violation(
-            model.data.composition[n], self._solutes, self._balance, self._initial
+            checked, self._solutes, self._balance, self._initial
         )
         if found is not None:
             self._isSatisfied = True
             self._satisfiedTime = float(model.data.time[n])
             self.element, self.value = found
+            self.step = n
 
     def isSatisfied(self) -> bool:
         return self._isSatisfied
 
     def satisfiedTime(self) -> float:
         return self._satisfiedTime
+
+
+if PrecipitateModel is not None:
+
+    class _StepLimitedPrecipitateModel(PrecipitateModel):
+        """Модель kawin, у которой шаг растёт не быстрее ``DT_GROWTH_LIMIT`` раз (BL-43).
+
+        ``KWNEuler.getDt`` берёт наименьший из своих пределов шага и только
+        когда ни один не сработал, растит шаг на ``dtScale``; здесь к его
+        ответу добавлен ещё один предел — от предыдущего принятого шага.
+        Первый шаг (предыдущего нет) остаётся за kawin.
+        """
+
+        DT_GROWTH_LIMIT = KWN_DT_GROWTH_LIMIT
+
+        def getDt(self, dXdt: Any) -> float:
+            dt = super().getDt(dXdt)
+            n = int(self.data.n)
+            if n > 0:
+                previous = float(self.data.time[n] - self.data.time[n - 1])
+                dt = min(dt, self.DT_GROWTH_LIMIT*previous)
+            return dt
+
+else:  # pragma: no cover — без kawin расчёт выделений недоступен
+    _StepLimitedPrecipitateModel = None
 
 
 def _raised_in_pycalphad(error: BaseException) -> bool:
@@ -1138,7 +1264,11 @@ def run_precipitation(
         precip.volume.setVolume(float(precip_vm)*1e-6, "VM", 1)
         precip.nucleation.setNucleationType(nucleation_type)
 
-        built = PrecipitateModel(matrix, [precip], therm, temperature)
+        # BL-43 (22-Б): шаг по времени — не больше KWN_DT_GROWTH_LIMIT
+        # предыдущих; состав матрицы ниже нуля kawin зажимает не в 0, а в
+        # KWN_MIN_COMPOSITION.
+        built = _StepLimitedPrecipitateModel(matrix, [precip], therm, temperature)
+        built.setConstraints(minComposition=KWN_MIN_COMPOSITION)
         built.setPBMParameters(
             cMin=float(cmin_nm)*1e-9, cMax=float(cmax_nm)*1e-9, bins=int(bins),
             minBins=max(20, int(bins)//2), maxBins=max(80, int(bins)*2), adaptive=True,
@@ -1184,6 +1314,7 @@ def run_precipitation(
     composition_stop = _MatrixCompositionStop(solutes, balance, x_at[1:])
     model.addStoppingCondition(composition_stop)
     stop_note = ""
+    stop_diagnostics: dict[str, Any] = {}
     try:
         model.solve(final_time, verbose=False)
     except ZeroDivisionError as error:
@@ -1193,9 +1324,20 @@ def run_precipitation(
         stop_note = _solver_failure_note(
             float(model.data.time[last]), model.data.composition[last], solutes, balance
         )
+        # Шаг, на котором pycalphad поделил на ноль, не записан: невязка — по
+        # всем записанным шагам, состав — последнего из них.
+        stop_diagnostics = _stop_diagnostics(
+            model.data, last, last + 1, solutes, "pycalphad: деление на ноль",
+            dt_growth_limit=float(model.DT_GROWTH_LIMIT),
+        )
     if composition_stop.isSatisfied():
         stop_note = _composition_stop_note(
             composition_stop.satisfiedTime(), composition_stop.element, composition_stop.value
+        )
+        stop_diagnostics = _stop_diagnostics(
+            model.data, composition_stop.step, composition_stop.step, solutes,
+            "состав матрицы", composition_stop.element, composition_stop.value,
+            dt_growth_limit=float(model.DT_GROWTH_LIMIT),
         )
 
     data = model.data
@@ -1321,6 +1463,7 @@ def run_precipitation(
             if len(solutes) > KWN_SOLUTES_WITHOUT_TIME_WARNING else []
         ),
         stop_note=stop_note,
+        stop_diagnostics=stop_diagnostics,
     )
 
 

@@ -1,0 +1,8 @@
+# 2026-09-25T14:14:14 $ python -B results/wave22_b/scripts/kwn_run.py --cell umolch_fe --tag x_probe_umolch_fe_k2_45s --k-cap 2 --limit-s 45 --progress 15
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+ЖУРНАЛ стена=15 с; t=0.274827 с (7.634e-05 ч); шаг=310; доля=0.5139 %; x_C=0.008136
+ЖУРНАЛ стена=30 с; t=1.05293 с (0.0002925 ч); шаг=891; доля=4.4098 %; x_C=3.545e-05
+ЖУРНАЛ стена=45 с; t=3.10121 с (0.0008614 ч); шаг=1503; доля=4.4096 %; x_C=3.586e-05
+ИТОГ {"tag": "x_probe_umolch_fe_k2_45s", "status": "limit", "error": "предел 45 с", "wall_s": 45.0, "peak_rss_gib": 0.341, "rows": 1529, "final_time_s": 3.1672355115022333, "stop": null, "final_fraction_pct": 4.409326870730246, "final_radius_nm": 10.355883523609732, "quality_all_passed": null, "raw_nonpositive_calls": {"calls": 6116, "stage": 0, "post": 0, "first_t": null, "min_raw_over_x0": 0.0037234433113643097}}
+ZAMER: код=2; стена=50.7 с; пик RSS=0.344 ГиБ (360960 КиБ)

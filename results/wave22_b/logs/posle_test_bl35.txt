@@ -1,0 +1,82 @@
+# 2026-09-25T14:26:25 $ python -B -m pytest -p no:cacheprovider -v -rA --durations=0 tools/test_precipitation_bl35.py
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0 -- /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python
+rootdir: /home/user/ThermoGar
+plugins: timeout-2.4.0, anyio-4.15.1, cov-7.1.0
+collecting ... collected 11 items
+
+tools/test_precipitation_bl35.py::test_violation_is_mass_balance_without_threshold[row0-None] PASSED [  9%]
+tools/test_precipitation_bl35.py::test_violation_is_mass_balance_without_threshold[row1-expected1] PASSED [ 18%]
+tools/test_precipitation_bl35.py::test_violation_is_mass_balance_without_threshold[row2-expected2] PASSED [ 27%]
+tools/test_precipitation_bl35.py::test_violation_is_mass_balance_without_threshold[row3-expected3] PASSED [ 36%]
+tools/test_precipitation_bl35.py::test_violation_is_mass_balance_without_threshold[row4-expected4] PASSED [ 45%]
+tools/test_precipitation_bl35.py::test_violation_is_mass_balance_without_threshold[row5-expected5] PASSED [ 54%]
+tools/test_precipitation_bl35.py::test_solute_absent_from_start_may_stay_zero PASSED [ 63%]
+tools/test_precipitation_bl35.py::test_stop_condition_fires_on_first_bad_step_and_resets PASSED [ 72%]
+tools/test_precipitation_bl35.py::test_only_pycalphad_division_is_recognised PASSED [ 81%]
+tools/test_precipitation_bl35.py::test_quality_reports_stop_note_as_error PASSED [ 90%]
+tools/test_precipitation_bl35.py::test_718_run_ends_with_quality_error_not_exception PASSED [100%]
+
+=============================== warnings summary ===============================
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:10
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:10: DeprecationWarning: invalid escape sequence '\G'
+    '''
+
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:25
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:25: DeprecationWarning: invalid escape sequence '\G'
+    '''
+
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:62
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:62: DeprecationWarning: invalid escape sequence '\G'
+    '''
+
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:325
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:325: DeprecationWarning: invalid escape sequence '\g'
+    '''
+
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:340
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:340: DeprecationWarning: invalid escape sequence '\g'
+    '''
+
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/PopulationBalance.py:724
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/PopulationBalance.py:724: DeprecationWarning: invalid escape sequence '\i'
+    '''
+
+tools/test_precipitation_bl35.py::test_718_run_ends_with_quality_error_not_exception
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+    incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+______________ test_718_run_ends_with_quality_error_not_exception ______________
+----------------------------- Captured stderr call -----------------------------
+2026-09-25 14:26:49.883 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:26:50.092 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:26:50.218 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:26:50.314 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:26:50.373 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call -------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+============================== slowest durations ===============================
+19.12s call     tools/test_precipitation_bl35.py::test_718_run_ends_with_quality_error_not_exception
+0.03s call     tools/test_precipitation_bl35.py::test_quality_reports_stop_note_as_error
+
+(31 durations < 0.005s hidden.  Use -vv to show these durations.)
+=========================== short test summary info ============================
+PASSED tools/test_precipitation_bl35.py::test_violation_is_mass_balance_without_threshold[row0-None]
+PASSED tools/test_precipitation_bl35.py::test_violation_is_mass_balance_without_threshold[row1-expected1]
+PASSED tools/test_precipitation_bl35.py::test_violation_is_mass_balance_without_threshold[row2-expected2]
+PASSED tools/test_precipitation_bl35.py::test_violation_is_mass_balance_without_threshold[row3-expected3]
+PASSED tools/test_precipitation_bl35.py::test_violation_is_mass_balance_without_threshold[row4-expected4]
+PASSED tools/test_precipitation_bl35.py::test_violation_is_mass_balance_without_threshold[row5-expected5]
+PASSED tools/test_precipitation_bl35.py::test_solute_absent_from_start_may_stay_zero
+PASSED tools/test_precipitation_bl35.py::test_stop_condition_fires_on_first_bad_step_and_resets
+PASSED tools/test_precipitation_bl35.py::test_only_pycalphad_division_is_recognised
+PASSED tools/test_precipitation_bl35.py::test_quality_reports_stop_note_as_error
+PASSED tools/test_precipitation_bl35.py::test_718_run_ends_with_quality_error_not_exception
+======================= 11 passed, 7 warnings in 24.47s ========================
+ZAMER: код=0; стена=25.7 с; пик RSS=0.425 ГиБ (445880 КиБ)

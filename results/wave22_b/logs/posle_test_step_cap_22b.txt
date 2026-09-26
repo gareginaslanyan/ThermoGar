@@ -1,0 +1,77 @@
+# 2026-09-25T14:30:44 $ python -B -m pytest -p no:cacheprovider -v -rA --durations=0 tools/test_kwn_step_cap_22b.py
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0 -- /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python
+rootdir: /home/user/ThermoGar
+plugins: timeout-2.4.0, anyio-4.15.1, cov-7.1.0
+collecting ... collected 9 items
+
+tools/test_kwn_step_cap_22b.py::test_step_growth_limit_caps_kawin_step PASSED [ 11%]
+tools/test_kwn_step_cap_22b.py::test_run_uses_step_limit_and_min_composition PASSED [ 22%]
+tools/test_kwn_step_cap_22b.py::test_stop_fires_when_precipitates_hold_all_solute PASSED [ 33%]
+tools/test_kwn_step_cap_22b.py::test_stop_fires_when_precipitates_hold_exactly_all_solute PASSED [ 44%]
+tools/test_kwn_step_cap_22b.py::test_stop_does_not_fire_on_small_positive_matrix_content PASSED [ 55%]
+tools/test_kwn_step_cap_22b.py::test_solute_absent_from_alloy_is_checked_as_recorded PASSED [ 66%]
+tools/test_kwn_step_cap_22b.py::test_stop_fires_when_matrix_is_used_up PASSED [ 77%]
+tools/test_kwn_step_cap_22b.py::test_balance_kept_before_stop_is_overshoot PASSED [ 88%]
+tools/test_kwn_step_cap_22b.py::test_balance_broken_before_stop_is_gap PASSED [100%]
+
+=============================== warnings summary ===============================
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:10
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:10: DeprecationWarning: invalid escape sequence '\G'
+    '''
+
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:25
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:25: DeprecationWarning: invalid escape sequence '\G'
+    '''
+
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:62
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:62: DeprecationWarning: invalid escape sequence '\G'
+    '''
+
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:325
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:325: DeprecationWarning: invalid escape sequence '\g'
+    '''
+
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:340
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:340: DeprecationWarning: invalid escape sequence '\g'
+    '''
+
+../../../tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/PopulationBalance.py:724
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/PopulationBalance.py:724: DeprecationWarning: invalid escape sequence '\i'
+    '''
+
+tools/test_kwn_step_cap_22b.py::test_run_uses_step_limit_and_min_composition
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+    incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+_________________ test_run_uses_step_limit_and_min_composition _________________
+----------------------------- Captured stderr call -----------------------------
+2026-09-25 14:30:58.739 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:58.835 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:58.969 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:59.088 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:30:59.147 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call -------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+============================== slowest durations ===============================
+9.03s call     tools/test_kwn_step_cap_22b.py::test_run_uses_step_limit_and_min_composition
+
+(26 durations < 0.005s hidden.  Use -vv to show these durations.)
+=========================== short test summary info ============================
+PASSED tools/test_kwn_step_cap_22b.py::test_step_growth_limit_caps_kawin_step
+PASSED tools/test_kwn_step_cap_22b.py::test_run_uses_step_limit_and_min_composition
+PASSED tools/test_kwn_step_cap_22b.py::test_stop_fires_when_precipitates_hold_all_solute
+PASSED tools/test_kwn_step_cap_22b.py::test_stop_fires_when_precipitates_hold_exactly_all_solute
+PASSED tools/test_kwn_step_cap_22b.py::test_stop_does_not_fire_on_small_positive_matrix_content
+PASSED tools/test_kwn_step_cap_22b.py::test_solute_absent_from_alloy_is_checked_as_recorded
+PASSED tools/test_kwn_step_cap_22b.py::test_stop_fires_when_matrix_is_used_up
+PASSED tools/test_kwn_step_cap_22b.py::test_balance_kept_before_stop_is_overshoot
+PASSED tools/test_kwn_step_cap_22b.py::test_balance_broken_before_stop_is_gap
+======================== 9 passed, 7 warnings in 13.93s ========================
+ZAMER: код=0; стена=15.1 с; пик RSS=0.358 ГиБ (375472 КиБ)

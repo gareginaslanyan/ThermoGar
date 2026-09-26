@@ -1,0 +1,18 @@
+# 2026-09-25T13:58:36 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_b/scripts/kwn_run.py --tag x_k2_dtmax1e-4_app_s0 --cell app --k-cap 2 --max-dt-frac 1e-4 --progress 30
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+ЖУРНАЛ стена=30 с; t=0.295499 с (8.208e-05 ч); шаг=849; доля=0.7520 %; x_C=0.007659
+ЖУРНАЛ стена=60 с; t=0.717898 с (0.0001994 ч); шаг=2053; доля=4.3967 %; x_C=6.378e-05
+ЖУРНАЛ стена=90 с; t=1.14413 с (0.0003178 ч); шаг=3291; доля=4.4098 %; x_C=3.549e-05
+ЖУРНАЛ стена=120 с; t=1.61573 с (0.0004488 ч); шаг=4601; доля=4.4098 %; x_C=3.55e-05
+ЖУРНАЛ стена=150 с; t=2.06609 с (0.0005739 ч); шаг=5852; доля=4.4098 %; x_C=3.549e-05
+ЖУРНАЛ стена=180 с; t=2.54417 с (0.0007067 ч); шаг=7180; доля=4.4098 %; x_C=3.547e-05
+ЖУРНАЛ стена=210 с; t=2.99849 с (0.0008329 ч); шаг=8442; доля=4.4098 %; x_C=3.544e-05
+ЖУРНАЛ стена=240 с; t=3.45569 с (0.0009599 ч); шаг=9712; доля=4.4098 %; x_C=3.542e-05
+2026-09-25 14:02:50.069 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:02:50.161 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:02:50.299 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:02:50.415 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 14:02:50.496 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "x_k2_dtmax1e-4_app_s0", "status": "ok", "error": "", "wall_s": 248.95, "peak_rss_gib": 0.348, "rows": 10114, "final_time_s": 3.6, "stop": false, "final_fraction_pct": 4.409801909943077, "final_radius_nm": 10.075690240646844, "quality_all_passed": true, "raw_nonpositive_calls": {"calls": 40452, "stage": 0, "post": 0, "first_t": null, "min_raw_over_x0": 0.003866282482336887}}
+ZAMER: код=0; стена=254.9 с; пик RSS=0.354 ГиБ (371364 КиБ)

@@ -1,0 +1,133 @@
+{
+  "tag": "s2b_umolch_fe_s0",
+  "cell": "umolch_fe",
+  "pythonhashseed": "0",
+  "changed_inputs": {},
+  "kawin_overrides": {
+    "constraints": {},
+    "iterator": "rk4 (умолчание GenericModel.solve)",
+    "minDtFrac": "1e-8 (умолчание)",
+    "maxDtFrac": "1 (умолчание)",
+    "dt_growth_cap": null
+  },
+  "app_step_limit": {
+    "class": "_StepLimitedPrecipitateModel",
+    "K_in_code": 4.0,
+    "K_used": 4.0
+  },
+  "arguments": {
+    "database_key": "fe",
+    "balance": "FE",
+    "composition_text": "C=0.20, Cr=11.5, Ni=0.7",
+    "units": "wt",
+    "matrix_phase": "BCC_A2",
+    "precipitate_phase": "M23C6",
+    "schedule_mode": "isothermal",
+    "temperature_c": 700.0,
+    "duration_h": 0.05,
+    "profile_text": "",
+    "gamma": 0.3,
+    "matrix_vm": 7.09,
+    "precip_vm": 7.09,
+    "nucleation_type": "BULK",
+    "bulk_n0": 1e+28,
+    "grain_size_um": 100.0,
+    "dislocation_density": 5000000000000.0,
+    "gb_energy": 0.3,
+    "cmin_nm": 0.2,
+    "cmax_nm": 10.0,
+    "bins": 80,
+    "input_provenance": "Объявленный сценарий, не данные материала",
+    "input_confirmation": true
+  },
+  "sources": {
+    "DATABASE_DEFINITIONS['fe']": "app/ThermoGar_app.py:339",
+    "DEFAULTS": "app/thermogar_precipitation.py:87",
+    "DEFAULT_INPUT_PROVENANCE": "app/thermogar_precipitation.py:99",
+    "NUCLEATION_TYPES": "app/thermogar_precipitation.py:101",
+    "виджет bulk_n0": "app/thermogar_precipitation.py:1680",
+    "виджет grain_size_um": "app/thermogar_precipitation.py:1687",
+    "виджет dislocation_density": "app/thermogar_precipitation.py:1694",
+    "виджет gb_energy": "app/thermogar_precipitation.py:1701",
+    "виджет cmin_nm": "app/thermogar_precipitation.py:1710",
+    "виджет cmax_nm": "app/thermogar_precipitation.py:1717",
+    "виджет bins": "app/thermogar_precipitation.py:1724"
+  },
+  "versions": {
+    "python": "3.11.15",
+    "pycalphad": "0.11.2",
+    "kawin": "0.5.0",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "limit_s": 1800.0,
+  "database": {
+    "path": "/home/user/ThermoGar/databases/converted/fe/mc_fe_v2062_with_mobility.thermogar.tdb",
+    "label": "Стали и Fe-сплавы — mc_fe 2.062"
+  },
+  "status": "limit",
+  "error": "предел 1800 с",
+  "wall_s": 478.63,
+  "peak_rss_gib": 0.342,
+  "rows": 17259,
+  "final_time_s": 57.45765087444125,
+  "stop": null,
+  "final_fraction_pct": 0.13523986543836544,
+  "final_radius_nm": 0.50625,
+  "final_density_m3": 2.488404694598385e+24,
+  "balance": {
+    "C": {
+      "x0": 0.009157572527802665,
+      "max_abs_residual_unclamped": 0.0,
+      "max_rel_residual_unclamped": 0.0,
+      "clamped_steps": 0,
+      "first_clamped_step": null,
+      "first_clamped_time_s": null,
+      "residual_at_first_clamp": null,
+      "raw_at_first_clamp": null,
+      "fconc_over_x0_at_first_clamp": null,
+      "residual_last": 0.0,
+      "raw_last": 0.008889788447588597,
+      "x_last": 0.008889788447588597,
+      "min_x": 0.008889788447588597
+    },
+    "CR": {
+      "x0": 0.12163468745302858,
+      "max_abs_residual_unclamped": 0.0,
+      "max_rel_residual_unclamped": 0.0,
+      "clamped_steps": 0,
+      "first_clamped_step": null,
+      "first_clamped_time_s": null,
+      "residual_at_first_clamp": null,
+      "raw_at_first_clamp": null,
+      "fconc_over_x0_at_first_clamp": null,
+      "residual_last": 0.0,
+      "raw_last": 0.12097869329621165,
+      "x_last": 0.12097869329621165,
+      "min_x": 0.12097869329621165
+    },
+    "NI": {
+      "x0": 0.006559390231896955,
+      "max_abs_residual_unclamped": 0.0,
+      "max_rel_residual_unclamped": 0.0,
+      "clamped_steps": 0,
+      "first_clamped_step": null,
+      "first_clamped_time_s": null,
+      "residual_at_first_clamp": null,
+      "raw_at_first_clamp": null,
+      "fconc_over_x0_at_first_clamp": null,
+      "residual_last": 0.0,
+      "raw_last": 0.0065672451755480424,
+      "x_last": 0.0065672451755480424,
+      "min_x": 0.006559390231896955
+    }
+  },
+  "steps": 17259,
+  "raw_nonpositive_calls": {
+    "calls": 69033,
+    "stage": 0,
+    "post": 0,
+    "first_t": null,
+    "min_raw_over_x0": 0.9563074093066342
+  }
+}

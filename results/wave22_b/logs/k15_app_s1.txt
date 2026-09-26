@@ -1,0 +1,11 @@
+# 2026-09-25T13:53:21 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_b/scripts/kwn_run.py --tag k15_app_s1 --cell app --k-cap 1.5 --progress 30
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+ЖУРНАЛ стена=30 с; t=1.91133 с (0.0005309 ч); шаг=837; доля=4.4093 %; x_C=3.653e-05
+2026-09-25 13:54:06.711 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:54:06.833 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:54:06.976 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:54:07.093 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:54:07.155 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "k15_app_s1", "status": "ok", "error": "", "wall_s": 39.69, "peak_rss_gib": 0.348, "rows": 1219, "final_time_s": 3.6, "stop": false, "final_fraction_pct": 4.4095415123080395, "final_radius_nm": 9.587171329141048, "quality_all_passed": true, "raw_nonpositive_calls": {"calls": 4872, "stage": 0, "post": 0, "first_t": null, "min_raw_over_x0": 0.0038824417973775775}}
+ZAMER: код=0; стена=45.9 с; пик RSS=0.351 ГиБ (367856 КиБ)

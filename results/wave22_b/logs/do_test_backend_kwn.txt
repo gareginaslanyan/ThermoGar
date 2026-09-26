@@ -1,0 +1,101 @@
+# 2026-09-25T13:43:39 $ python -B -m pytest -p no:cacheprovider -v -rA --durations=0 tools/test_backend_calculations.py -k kwn
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0 -- /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python
+rootdir: /home/user/ThermoGar
+plugins: timeout-2.4.0, anyio-4.15.1, cov-7.1.0
+collecting ... collected 57 items / 51 deselected / 6 selected
+
+tools/test_backend_calculations.py::test_kwn_module[ni] PASSED           [ 16%]
+tools/test_backend_calculations.py::test_kwn_direct_kawin[ni] PASSED     [ 33%]
+tools/test_backend_calculations.py::test_kwn_module[al] PASSED           [ 50%]
+tools/test_backend_calculations.py::test_kwn_direct_kawin[al] PASSED     [ 66%]
+tools/test_backend_calculations.py::test_kwn_module[fe] PASSED           [ 83%]
+tools/test_backend_calculations.py::test_kwn_direct_kawin[fe] PASSED     [100%]
+
+=============================== warnings summary ===============================
+tools/test_backend_calculations.py::test_kwn_module[ni]
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:10: DeprecationWarning: invalid escape sequence '\G'
+    '''
+
+tools/test_backend_calculations.py::test_kwn_module[ni]
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:25: DeprecationWarning: invalid escape sequence '\G'
+    '''
+
+tools/test_backend_calculations.py::test_kwn_module[ni]
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:62: DeprecationWarning: invalid escape sequence '\G'
+    '''
+
+tools/test_backend_calculations.py::test_kwn_module[ni]
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:325: DeprecationWarning: invalid escape sequence '\g'
+    '''
+
+tools/test_backend_calculations.py::test_kwn_module[ni]
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:340: DeprecationWarning: invalid escape sequence '\g'
+    '''
+
+tools/test_backend_calculations.py::test_kwn_module[ni]
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/PopulationBalance.py:724: DeprecationWarning: invalid escape sequence '\i'
+    '''
+
+tools/test_backend_calculations.py::test_kwn_module[ni]
+tools/test_backend_calculations.py::test_kwn_direct_kawin[ni]
+tools/test_backend_calculations.py::test_kwn_module[al]
+tools/test_backend_calculations.py::test_kwn_direct_kawin[al]
+tools/test_backend_calculations.py::test_kwn_module[fe]
+tools/test_backend_calculations.py::test_kwn_direct_kawin[fe]
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+    incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+_____________________________ test_kwn_module[ni] ______________________________
+----------------------------- Captured stderr call -----------------------------
+2026-09-25 13:43:57.901 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:43:58.008 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:43:58.143 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:43:58.243 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:43:58.305 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+_____________________________ test_kwn_module[al] ______________________________
+----------------------------- Captured stderr call -----------------------------
+2026-09-25 13:44:10.920 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:44:10.972 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:44:11.219 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:44:11.267 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:44:11.324 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call -------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+_____________________________ test_kwn_module[fe] ______________________________
+----------------------------- Captured stderr call -----------------------------
+2026-09-25 13:45:17.432 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:45:17.468 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:45:17.716 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:45:17.814 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 13:45:17.871 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call -------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+============================== slowest durations ===============================
+61.62s call     tools/test_backend_calculations.py::test_kwn_module[fe]
+13.80s call     tools/test_backend_calculations.py::test_kwn_module[ni]
+6.79s call     tools/test_backend_calculations.py::test_kwn_direct_kawin[ni]
+6.20s call     tools/test_backend_calculations.py::test_kwn_direct_kawin[fe]
+6.14s call     tools/test_backend_calculations.py::test_kwn_module[al]
+5.00s call     tools/test_backend_calculations.py::test_kwn_direct_kawin[al]
+
+(12 durations < 0.005s hidden.  Use -vv to show these durations.)
+=========================== short test summary info ============================
+PASSED tools/test_backend_calculations.py::test_kwn_module[ni]
+PASSED tools/test_backend_calculations.py::test_kwn_direct_kawin[ni]
+PASSED tools/test_backend_calculations.py::test_kwn_module[al]
+PASSED tools/test_backend_calculations.py::test_kwn_direct_kawin[al]
+PASSED tools/test_backend_calculations.py::test_kwn_module[fe]
+PASSED tools/test_backend_calculations.py::test_kwn_direct_kawin[fe]
+========== 6 passed, 51 deselected, 12 warnings in 104.30s (0:01:44) ===========
+ZAMER: код=0; стена=105.8 с; пик RSS=0.441 ГиБ (462544 КиБ)
