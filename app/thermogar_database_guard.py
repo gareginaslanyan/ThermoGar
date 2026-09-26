@@ -612,4 +612,8 @@ def passport_dataframe(
         ("LAVES_PHASE не изменена", laves_unchanged),
         ("Проверка в MatCalc", "не проводилась"),
     ]
-    return pd.DataFrame([(k, str(v)) for k, v in rows], columns=["Поле", "Значение"])
+    # BL-72: пустое значение остаётся None — на экране прочерк (BL-68).
+    return pd.DataFrame(
+        [(k, None if v is None else str(v)) for k, v in rows],
+        columns=["Поле", "Значение"],
+    )

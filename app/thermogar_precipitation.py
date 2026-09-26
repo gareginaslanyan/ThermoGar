@@ -48,6 +48,7 @@ from thermogar_release_ui import (
     release_download_button,
 )
 from thermogar_user_errors import (
+    EMPTY_CELL_TEXT,
     UserRuntimeError,
     UserValueError,
     element_columns_for_display,
@@ -1846,20 +1847,20 @@ def render_precipitation_section(
         persist_state="session",
     )
     if result_view == "Итоги":
-        st.dataframe(element_columns_for_display(result.summary), width="stretch", hide_index=True)
+        st.dataframe(element_columns_for_display(result.summary), width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
         st.pyplot(resolve_figure(result.figures["fraction"], _theme()))
         st.pyplot(resolve_figure(result.figures["radius_density"], _theme()))
-        st.dataframe(result.quality, width="stretch", hide_index=True)
+        st.dataframe(result.quality, width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
     elif result_view == "Кинетика и состав":
         st.pyplot(resolve_figure(result.figures["nucleation"], _theme()))
         st.pyplot(resolve_figure(result.figures["composition"], _theme()))
-        st.dataframe(element_columns_for_display(result.kinetics), width="stretch", hide_index=True)
+        st.dataframe(element_columns_for_display(result.kinetics), width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
         with st.expander("Составы матрицы и межфазного равновесия"):
-            st.dataframe(element_columns_for_display(result.matrix_composition), width="stretch", hide_index=True)
-            st.dataframe(element_columns_for_display(result.interface_composition), width="stretch", hide_index=True)
+            st.dataframe(element_columns_for_display(result.matrix_composition), width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
+            st.dataframe(element_columns_for_display(result.interface_composition), width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
     elif result_view == "Распределение размеров":
         st.pyplot(resolve_figure(result.figures["psd"], _theme()))
-        st.dataframe(result.psd, width="stretch", hide_index=True)
+        st.dataframe(result.psd, width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
     elif result_view == "Экспорт и ограничения":
         release_download_button("Скачать Excel", data=_excel(result), file_name=f"ThermoGar_precipitation_{result.phase}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", key=f"{widget_prefix}_download_excel")
         release_download_button("Скачать состояние модели, NPZ", data=result.npz, file_name=f"ThermoGar_precipitation_{result.phase}.npz", mime="application/octet-stream", key=f"{widget_prefix}_download_npz")

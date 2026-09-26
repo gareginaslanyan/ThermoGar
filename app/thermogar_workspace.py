@@ -77,6 +77,7 @@ from thermogar_stage14 import (
     render_user_error,
 )
 from thermogar_user_errors import (
+    EMPTY_CELL_TEXT,
     UserRuntimeError,
     UserValueError,
     composition_columns_for_display,
@@ -1118,7 +1119,7 @@ def render_alloy_library(
         ]
     )
     st.markdown("### Текущий состав")
-    st.dataframe(composition_columns_for_display(current), width="stretch", hide_index=True)
+    st.dataframe(composition_columns_for_display(current), width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
 
     user_alloys = load_user_alloys(paths)
     with st.form("alloy_save_form", clear_on_submit=False):
@@ -1187,6 +1188,7 @@ def render_alloy_library(
         composition_columns_for_display(alloy_table(all_alloys, database_definitions)),
         width="stretch",
         hide_index=True,
+        placeholder=EMPTY_CELL_TEXT,
     )
 
     alloy_by_id = {item["id"]: item for item in all_alloys}
@@ -1844,6 +1846,7 @@ def render_projects_and_history(
                 composition_columns_for_display(table),
                 width="stretch",
                 hide_index=True,
+                placeholder=EMPTY_CELL_TEXT,
             )
 
             project_map = {
@@ -2069,6 +2072,7 @@ def render_projects_and_history(
                 history_display_dataframe(filtered),
                 width="stretch",
                 hide_index=True,
+                placeholder=EMPTY_CELL_TEXT,
             )
 
             restorable_entries: list[tuple[int, dict[str, Any]]] = []
@@ -2394,7 +2398,9 @@ def composition_from_row(
         ):
             continue
         value = row.get(column)
-        if pd.notna(value):
+        # BL-71: пустая ячейка элемента (после загрузки — строка "") — добавки
+        # нет, как NaN.
+        if pd.notna(value) and not (isinstance(value, str) and not value.strip()):
             entered[element] = float(value)
 
     if not entered:
@@ -2775,6 +2781,7 @@ def render_batch_calculation(
                 batch_preview_dataframe(source.head(25)),
                 width="stretch",
                 hide_index=True,
+                placeholder=EMPTY_CELL_TEXT,
             )
             st.caption(f"Строк в файле: {len(source)}. Максимум за один запуск: 100.")
 
@@ -2846,7 +2853,7 @@ def render_batch_calculation(
         else:
             st.success(f"Все составы рассчитаны: {completed}.")
 
-        st.dataframe(batch_summary_display(summary), width="stretch", hide_index=True)
+        st.dataframe(batch_summary_display(summary), width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
         if stored.get("error_record"):
             render_error_record(*stored["error_record"])
         if failed:
@@ -2855,6 +2862,7 @@ def render_batch_calculation(
                     batch_summary_display(summary[summary["Статус"] != "готово"]),
                     width="stretch",
                     hide_index=True,
+                    placeholder=EMPTY_CELL_TEXT,
                 )
 
         batch_export_decision = broker.export_decision()

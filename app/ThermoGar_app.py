@@ -261,6 +261,7 @@ from thermogar_release_ui import (
     verified_feature_button,
 )
 from thermogar_user_errors import (
+    EMPTY_CELL_TEXT,
     UserRuntimeError,
     UserValueError,
     element_columns_for_display,
@@ -1862,7 +1863,7 @@ def render_b4b_density_single(
             ],
             columns=["Параметр", "Значение"],
         )
-        st.dataframe(coverage, width="stretch", hide_index=True)
+        st.dataframe(coverage, width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
         if projection["alloy_density_kg_m3"] is None:
             # Пустое поле плотности само по себе ничего не объясняет:
             # у Al-состава для THETA_AL2CU в physical_data_v103.pdb нет
@@ -1890,9 +1891,9 @@ def render_b4b_density_single(
             )
         for warning_text in projection["warnings"]:
             st.warning(warning_text)
-        st.dataframe(element_columns_for_display(pd.DataFrame(projection["phase_rows"])), width="stretch", hide_index=True)
+        st.dataframe(element_columns_for_display(pd.DataFrame(projection["phase_rows"])), width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
         if projection["missing_rows"]:
-            st.dataframe(element_columns_for_display(pd.DataFrame(projection["missing_rows"])), width="stretch", hide_index=True)
+            st.dataframe(element_columns_for_display(pd.DataFrame(projection["missing_rows"])), width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
         _b4b_render_result_downloads(
             "physical_single",
             {
@@ -2082,7 +2083,7 @@ def render_b4b_density_temperature(
             state["projections"][0]["warnings"] if state["projections"] else ()
         ):
             st.warning(warning_text)
-        st.dataframe(table, width="stretch", hide_index=True)
+        st.dataframe(table, width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
         figure = None
         if not table.empty:
             # На экране и в PNG — один график из сохранённых точек в теме
@@ -2149,7 +2150,7 @@ def render_b4b_pdb_self_test(
             render_friendly_error(error, context="проверка физической базы")
     state = st.session_state.get(state_key)
     if type(state) is dict and state.get("database_key") == database_key:
-        st.dataframe(pd.DataFrame(state["projections"][0]["rows"]), width="stretch", hide_index=True)
+        st.dataframe(pd.DataFrame(state["projections"][0]["rows"]), width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
 
 
 def render_b4b_coverage(
@@ -2183,7 +2184,7 @@ def render_b4b_coverage(
     state = st.session_state.get(state_key)
     if type(state) is dict and state.get("database_key") == database_key:
         coverage_rows = pd.DataFrame(state["projections"][0]["rows"])
-        st.dataframe(coverage_rows, width="stretch", hide_index=True)
+        st.dataframe(coverage_rows, width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
         _b4b_render_result_downloads(
             "physical_coverage",
             {"Покрытие PDB": coverage_rows},
@@ -2341,6 +2342,7 @@ def render_b4b2_elastic_properties(
             **ELASTIC_EDITOR_COLUMN_LABELS,
         },
         key=f"b4b2_elastic_editor_{prepared_digest}",
+        placeholder=EMPTY_CELL_TEXT,
     )
     update_library = st.checkbox(
         "Обновить локальную библиотеку введёнными значениями",
@@ -2349,12 +2351,19 @@ def render_b4b2_elastic_properties(
     )
     phase_rows: list[dict[str, Any]] = []
     for record in edited.to_dict(orient="records"):
-        phase_rows.append(
-            {
-                field: _b4b2_editor_value(record.get(field))
-                for field in verified_properties.VRH_ROW_FIELDS
-            }
-        )
+        row = {
+            field: _b4b2_editor_value(record.get(field))
+            for field in verified_properties.VRH_ROW_FIELDS
+        }
+        # BL-70: проверенный путь принимает текст без пробелов по краям, а
+        # стёртое «Примечание» приходит из редактора как None. Пустоту
+        # обязательных полей по-прежнему ловит elastic_rows_missing_text.
+        for field in ("origin", "source", "note"):
+            if isinstance(row[field], str):
+                row[field] = row[field].strip()
+        if row["note"] is None:
+            row["note"] = ""
+        phase_rows.append(row)
     try:
         vrh_inputs = verified_properties.make_vrh_inputs(
             prepared_witness_digest=prepared_digest,
@@ -2411,7 +2420,7 @@ def render_b4b2_elastic_properties(
     if type(state) is dict and state.get("database_key") == database_key:
         projection = state["projection"]
         bounds_table = pd.DataFrame(projection["bounds_rows"])
-        st.dataframe(bounds_table, width="stretch", hide_index=True)
+        st.dataframe(bounds_table, width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
         summary = projection["summary"]
         metric_columns = st.columns(3)
         metric_columns[0].metric("E Hill, ГПа", f'{summary["E_Hill_GPa"]:.3f}')
@@ -2603,7 +2612,7 @@ def render_b4b2_strengthening(
     if type(state) is dict and state.get("database_key") == database_key:
         projection = state["projection"]
         contribution_table = pd.DataFrame(projection["contribution_rows"])
-        st.dataframe(contribution_table, width="stretch", hide_index=True)
+        st.dataframe(contribution_table, width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
         if projection["total_mpa"] is not None:
             st.metric("Итог, МПа", f'{projection["total_mpa"]:.3f}')
         _b4b_render_result_downloads(
@@ -3097,6 +3106,7 @@ def phase_selection_editor(
                 f"{key_prefix}_phase_editor_"
                 f"{database_key}_{signature}"
             ),
+            placeholder=EMPTY_CELL_TEXT,
         )
 
         selected = edited.loc[
@@ -7758,6 +7768,7 @@ with single_tab:
             element_columns_for_display(result["summary"]),
             width="stretch",
             hide_index=True,
+            placeholder=EMPTY_CELL_TEXT,
         )
         render_quality_panel(result["quality"])
 
@@ -7778,6 +7789,7 @@ with single_tab:
             element_columns_for_display(phase_table),
             width="stretch",
             hide_index=True,
+            placeholder=EMPTY_CELL_TEXT,
         )
 
         excel_bytes = dataframe_to_excel(
@@ -8081,6 +8093,7 @@ with temperature_tab:
             element_columns_for_display(result["data"]),
             width="stretch",
             hide_index=True,
+            placeholder=EMPTY_CELL_TEXT,
         )
         render_quality_panel(result["quality"])
 
@@ -8470,6 +8483,7 @@ with concentration_tab:
             element_columns_for_display(result["data"]),
             width="stretch",
             hide_index=True,
+            placeholder=EMPTY_CELL_TEXT,
         )
         render_quality_panel(result["quality"])
 
@@ -8886,6 +8900,7 @@ with phase_diagram_tab:
                         element_columns_for_display(result["boundaries"]),
                         width="stretch",
                         hide_index=True,
+                        placeholder=EMPTY_CELL_TEXT,
                     )
 
             excel_bytes = dataframe_to_excel(
@@ -9392,6 +9407,7 @@ with phase_diagram_tab:
                         element_columns_for_display(result["boundaries"]),
                         width="stretch",
                         hide_index=True,
+                        placeholder=EMPTY_CELL_TEXT,
                     )
 
             excel_bytes = dataframe_to_excel(
@@ -9790,6 +9806,7 @@ with phase_diagram_tab:
                         element_columns_for_display(result["boundaries"]),
                         width="stretch",
                         hide_index=True,
+                        placeholder=EMPTY_CELL_TEXT,
                     )
 
             excel_bytes = dataframe_to_excel(
@@ -10353,6 +10370,7 @@ with phase_diagram_tab:
                     element_columns_for_display(result["summary"]),
                     width="stretch",
                     hide_index=True,
+                    placeholder=EMPTY_CELL_TEXT,
                 )
 
             with st.expander(
@@ -10363,6 +10381,7 @@ with phase_diagram_tab:
                     element_columns_for_display(result["data"]),
                     width="stretch",
                     hide_index=True,
+                    placeholder=EMPTY_CELL_TEXT,
                 )
 
             excel_bytes = dataframe_to_excel(
@@ -11091,6 +11110,7 @@ with solidification_tab:
                     element_columns_for_display(state["summary"]),
                     width="stretch",
                     hide_index=True,
+                    placeholder=EMPTY_CELL_TEXT,
                 )
                 if state.get("solidus_bisected"):
                     st.warning(SOLIDUS_FALLBACK_WARNING)
@@ -11111,6 +11131,7 @@ with solidification_tab:
                         state["start_check"],
                         width="stretch",
                         hide_index=True,
+                        placeholder=EMPTY_CELL_TEXT,
                     )
                 if state["errors"]:
                     for method_key, error_text in state["errors"].items():
@@ -11149,18 +11170,21 @@ with solidification_tab:
                     element_columns_for_display(state["sequences"][phase_method_key]),
                     width="stretch",
                     hide_index=True,
+                    placeholder=EMPTY_CELL_TEXT,
                 )
                 st.markdown("### Итоговые количества фаз")
                 st.dataframe(
                     element_columns_for_display(state["final_phases"][phase_method_key]),
                     width="stretch",
                     hide_index=True,
+                    placeholder=EMPTY_CELL_TEXT,
                 )
                 with st.expander("Полная траектория расчёта"):
                     st.dataframe(
                         element_columns_for_display(state["paths"][phase_method_key]),
                         width="stretch",
                         hide_index=True,
+                        placeholder=EMPTY_CELL_TEXT,
                     )
 
             elif solidification_view == "Остаточный расплав":
@@ -11212,6 +11236,7 @@ with solidification_tab:
                     element_columns_for_display(state["liquid_tables"][liquid_method_key]),
                     width="stretch",
                     hide_index=True,
+                    placeholder=EMPTY_CELL_TEXT,
                 )
                 st.caption(
                     "При жидкостной несмешиваемости единичный состав LIQUID "
@@ -11494,6 +11519,7 @@ with energy_tab:
                     element_columns_for_display(energy_state["crossings"]),
                     width="stretch",
                     hide_index=True,
+                    placeholder=EMPTY_CELL_TEXT,
                 )
 
             with st.expander("Таблицы энергий"):
@@ -11502,12 +11528,14 @@ with energy_tab:
                     element_columns_for_display(energy_state["absolute"]),
                     width="stretch",
                     hide_index=True,
+                    placeholder=EMPTY_CELL_TEXT,
                 )
                 st.markdown("#### Энергия относительно минимума, Дж/моль")
                 st.dataframe(
                     element_columns_for_display(energy_state["relative"]),
                     width="stretch",
                     hide_index=True,
+                    placeholder=EMPTY_CELL_TEXT,
                 )
 
             st.info(
@@ -11743,11 +11771,13 @@ with energy_tab:
                     element_columns_for_display(driving_state["crossings"]),
                     width="stretch",
                     hide_index=True,
+                    placeholder=EMPTY_CELL_TEXT,
                 )
             st.dataframe(
                 element_columns_for_display(driving_state["data"]),
                 width="stretch",
                 hide_index=True,
+                placeholder=EMPTY_CELL_TEXT,
             )
             st.info(
                 "Движущая сила — только термодинамический стимул. Она не "
@@ -12037,6 +12067,7 @@ with energy_tab:
                 element_columns_for_display(tzero_state["data"]),
                 width="stretch",
                 hide_index=True,
+                placeholder=EMPTY_CELL_TEXT,
             )
             st.info(
                 "T₀ показывает равенство энергий двух фаз при одинаковом "
@@ -12509,6 +12540,7 @@ with reference_tab:
                 ),
                 width="stretch",
                 hide_index=True,
+                placeholder=EMPTY_CELL_TEXT,
             )
             with st.expander("Технические сведения", expanded=False):
                 st.dataframe(
@@ -12521,6 +12553,7 @@ with reference_tab:
                     ),
                     width="stretch",
                     hide_index=True,
+                    placeholder=EMPTY_CELL_TEXT,
                 )
         else:
             st.caption(
@@ -12535,6 +12568,7 @@ with reference_tab:
                 passport_table[~passport_technical],
                 width="stretch",
                 hide_index=True,
+                placeholder=EMPTY_CELL_TEXT,
             )
             manifest = load_profile_manifest(PROJECT_ROOT)
             with st.expander("Технические сведения", expanded=False):
@@ -12542,6 +12576,7 @@ with reference_tab:
                     passport_table[passport_technical],
                     width="stretch",
                     hide_index=True,
+                    placeholder=EMPTY_CELL_TEXT,
                 )
                 if manifest:
                     st.json(manifest)
@@ -12763,7 +12798,7 @@ with reference_tab:
                 ],
                 columns=["База", "Основа", "Единицы", "Добавки", "Температура"],
             )
-            st.dataframe(examples, width="stretch", hide_index=True)
+            st.dataframe(examples, width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
             st.caption(
                 "Для первой бинарной диаграммы: Ni–Al, "
                 "0–35 ат.% Al, 400–1600 °C. Для тройной: "
@@ -12858,6 +12893,7 @@ with reference_tab:
             reference_view[displayed_columns],
             width="stretch",
             hide_index=True,
+            placeholder=EMPTY_CELL_TEXT,
         )
 
         release_download_button(
