@@ -111,4 +111,14 @@
 
 ## Git
 
-<GIT>
+Вывод после пуша ветки (до этого коммита с выводом git; сам он — следующий на `wave21-s`), дословно:
+
+```
+$ git ls-remote origin wave21-s
+0a671c3d1e29768a33087e4643d232876956f9db	refs/heads/wave21-s
+$ git log --oneline origin/main..wave21-s
+0a671c3 docs(21-С): BL-68 — опись 64 таблиц, проба показа пустых ячеек, отчёт
+e5e23f8 docs(21-С): задание BL-68 — пустые ячейки таблиц «None»
+$ git status --short
+?? _to_delete/
+```
