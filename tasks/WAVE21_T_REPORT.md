@@ -111,4 +111,26 @@ a68a41704f4db6053d8c073c96c30938251be930	refs/heads/main
 
 ## Вывод git
 
-(ниже — после пуша ветки)
+После `git push -u origin wave21-t` (`* [new branch]      wave21-t -> wave21-t`). Вывод снят до коммита с этим разделом; сам этот коммит — следующий на `wave21-t`.
+
+`git ls-remote origin main wave21-t`:
+
+```
+976e7075c980add6002957ad54cdc36dd290771c	refs/heads/main
+57c06fe4f7ac47a5ba0c5e0cb924b4c890ae9221	refs/heads/wave21-t
+```
+
+`git log --oneline 976e707..wave21-t`:
+
+```
+57c06fe docs(21-Т): отчёт, строка 21-Т в реестре, BL-69
+c78be3c fix(21-Т): BL-69 — пик памяти процесса в замере тестов на Linux и macOS
+46bbc1a docs(21-Т): реестр — приёмки 21-О, 21-П, 21-Р, строки 21-Р, 21-С, 21-Т, BL-43, BL-66, BL-68, BL-69
+e600977 docs(21-Т): задание волны 21-Т
+```
+
+`git status --short`:
+
+```
+?? _to_delete/
+```
