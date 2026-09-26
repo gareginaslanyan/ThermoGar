@@ -1,0 +1,21 @@
+﻿№;замер;база;тема;величина;ноутбук;мастер / было;кадры
+1;Энергии → T₀, сталь по умолчанию (200–950 °C);fe;светлая;время счёта, с;13.6;;tzero_fe_umolch_svet.png, tzero_fe_umolch_svet_tablica.png
+2;Энергии → T₀, сталь по умолчанию (200–950 °C);fe;светлая;строк в Excel T0;21;21 (21-О);tzero_fe_umolch_svet.png, tzero_fe_umolch_svet_tablica.png
+3;Энергии → T₀, сталь по умолчанию (200–950 °C);fe;светлая;T₀ найдено, точек;18;18 (21-О);tzero_fe_umolch_svet.png, tzero_fe_umolch_svet_tablica.png
+4;Энергии → T₀, сталь по умолчанию (200–950 °C);fe;светлая;пустых «T₀, °C» / «T₀, K» в строках C 1.8–2.0 мас.% (Excel);3 / 3;3 / 3 (данные не меняются);tzero_fe_umolch_svet.png, tzero_fe_umolch_svet_tablica.png
+5;Энергии → T₀, сталь по умолчанию (200–950 °C);fe;светлая;строки C 1.8–2.0 мас.% на экране;прочерк «—» в «T₀, °C» и «T₀, K» (кадр);серое «None» (21-С);tzero_fe_umolch_svet.png, tzero_fe_umolch_svet_tablica.png
+6;Энергии → T₀, сталь по умолчанию (200–950 °C);fe;светлая;текст ячеек T₀ этих строк в доступной таблице сетки;'','' | '','' | '','';;tzero_fe_umolch_svet.png, tzero_fe_umolch_svet_tablica.png
+7;Энергии → T₀, сталь по умолчанию (200–950 °C);fe;тёмная;время счёта, с;13.6;;tzero_fe_umolch_tyomn.png, tzero_fe_umolch_tyomn_tablica.png
+8;Энергии → T₀, сталь по умолчанию (200–950 °C);fe;тёмная;строк в Excel T0;21;21 (21-О);tzero_fe_umolch_tyomn.png, tzero_fe_umolch_tyomn_tablica.png
+9;Энергии → T₀, сталь по умолчанию (200–950 °C);fe;тёмная;T₀ найдено, точек;18;18 (21-О);tzero_fe_umolch_tyomn.png, tzero_fe_umolch_tyomn_tablica.png
+10;Энергии → T₀, сталь по умолчанию (200–950 °C);fe;тёмная;пустых «T₀, °C» / «T₀, K» в строках C 1.8–2.0 мас.% (Excel);3 / 3;3 / 3 (данные не меняются);tzero_fe_umolch_tyomn.png, tzero_fe_umolch_tyomn_tablica.png
+11;Энергии → T₀, сталь по умолчанию (200–950 °C);fe;тёмная;строки C 1.8–2.0 мас.% на экране;прочерк «—» в «T₀, °C» и «T₀, K» (кадр);серое «None» (21-С);tzero_fe_umolch_tyomn.png, tzero_fe_umolch_tyomn_tablica.png
+12;Энергии → T₀, сталь по умолчанию (200–950 °C);fe;тёмная;текст ячеек T₀ этих строк в доступной таблице сетки;'','' | '','' | '','';;tzero_fe_umolch_tyomn.png, tzero_fe_umolch_tyomn_tablica.png
+13;Свойства → Упругие свойства, шаг 2, Ni по умолчанию;ni;светлая;время «Получить фазовые доли», с;9.5;;uprugie_shag2_svet.png, uprugie_shag2_svet_tablica.png
+14;Свойства → Упругие свойства, шаг 2, Ni по умолчанию;ni;светлая;фаз в редакторе;2;;uprugie_shag2_svet.png, uprugie_shag2_svet_tablica.png
+15;Свойства → Упругие свойства, шаг 2, Ni по умолчанию;ni;светлая;пустые E, ν, «Происхождение», «Источник», «Температура источника, °C»;прочерк «—» (кадр);серое «None» (21-М, 21-С);uprugie_shag2_svet.png, uprugie_shag2_svet_tablica.png
+16;Свойства → Упругие свойства, шаг 2, Ni по умолчанию;ni;светлая;"«Примечание» (пустая строка """")";пустая ячейка (кадр);пустая ячейка (21-С);uprugie_shag2_svet.png, uprugie_shag2_svet_tablica.png
+17;Свойства → Упругие свойства, шаг 2, Ni по умолчанию;ni;тёмная;время «Получить фазовые доли», с;9.6;;uprugie_shag2_tyomn.png, uprugie_shag2_tyomn_tablica.png
+18;Свойства → Упругие свойства, шаг 2, Ni по умолчанию;ni;тёмная;фаз в редакторе;2;;uprugie_shag2_tyomn.png, uprugie_shag2_tyomn_tablica.png
+19;Свойства → Упругие свойства, шаг 2, Ni по умолчанию;ni;тёмная;пустые E, ν, «Происхождение», «Источник», «Температура источника, °C»;прочерк «—» (кадр);серое «None» (21-М, 21-С);uprugie_shag2_tyomn.png, uprugie_shag2_tyomn_tablica.png
+20;Свойства → Упругие свойства, шаг 2, Ni по умолчанию;ni;тёмная;"«Примечание» (пустая строка """")";пустая ячейка (кадр);пустая ячейка (21-С);uprugie_shag2_tyomn.png, uprugie_shag2_tyomn_tablica.png

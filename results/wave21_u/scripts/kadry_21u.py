@@ -180,6 +180,9 @@ def frames(page, table, stem: str) -> list[str]:
 
 
 def scroll_grid_to_end(page, table) -> None:
+    # The wheel reaches the grid only while the grid is inside the window.
+    table.scroll_into_view_if_needed()
+    page.wait_for_timeout(300)
     box = table.bounding_box()
     page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
     for _ in range(6):
