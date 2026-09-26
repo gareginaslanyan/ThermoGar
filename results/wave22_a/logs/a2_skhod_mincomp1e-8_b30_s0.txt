@@ -1,0 +1,10 @@
+# 2026-09-25T11:46:23 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_a/scripts/kwn_run.py --tag a2_skhod_mincomp1e-8_b30_s0 --cell app --bins 30 --constraint minComposition=1e-8
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+2026-09-25 11:48:11.873 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 11:48:11.965 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 11:48:12.098 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 11:48:12.216 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 11:48:12.283 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "a2_skhod_mincomp1e-8_b30_s0", "status": "ok", "error": "", "wall_s": 103.84, "peak_rss_gib": 0.347, "rows": 3869, "final_time_s": 3.6, "stop": false, "final_fraction_pct": 4.280779535173545, "final_radius_nm": 9.40138547446186, "quality_all_passed": true}
+ZAMER: код=0; стена=109.6 с; пик RSS=0.350 ГиБ (367304 КиБ)

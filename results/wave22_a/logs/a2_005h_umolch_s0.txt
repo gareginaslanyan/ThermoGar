@@ -1,0 +1,40 @@
+# 2026-09-25T11:31:36 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_a/scripts/kwn_run.py --tag a2_005h_umolch_s0 --cell app --bins 80 --duration-h 0.05 --progress 30
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+ЖУРНАЛ стена=30 с; t=25.618 с (0.007116 ч); шаг=857; доля=0.0491 %; x_C=0.00906
+ЖУРНАЛ стена=60 с; t=29.4589 с (0.008183 ч); шаг=2003; доля=0.0584 %; x_C=0.009042
+ЖУРНАЛ стена=90 с; t=33.2208 с (0.009228 ч); шаг=3130; доля=0.0673 %; x_C=0.009024
+ЖУРНАЛ стена=120 с; t=36.9677 с (0.01027 ч); шаг=4257; доля=0.0761 %; x_C=0.009007
+ЖУРНАЛ стена=150 с; t=40.7497 с (0.01132 ч); шаг=5399; доля=0.0848 %; x_C=0.00899
+ЖУРНАЛ стена=180 с; t=44.4512 с (0.01235 ч); шаг=6521; доля=0.0933 %; x_C=0.008973
+ЖУРНАЛ стена=210 с; t=48.0962 с (0.01336 ч); шаг=7630; доля=0.1015 %; x_C=0.008957
+ЖУРНАЛ стена=240 с; t=51.8293 с (0.0144 ч); шаг=8770; доля=0.1098 %; x_C=0.00894
+ЖУРНАЛ стена=270 с; t=55.5292 с (0.01542 ч); шаг=9904; доля=0.1179 %; x_C=0.008924
+ЖУРНАЛ стена=300 с; t=59.219 с (0.01645 ч); шаг=11039; доля=0.1259 %; x_C=0.008908
+ЖУРНАЛ стена=330 с; t=62.857 с (0.01746 ч); шаг=12162; доля=0.1337 %; x_C=0.008893
+ЖУРНАЛ стена=360 с; t=66.4439 с (0.01846 ч); шаг=13273; доля=0.1413 %; x_C=0.008878
+ЖУРНАЛ стена=390 с; t=70.1054 с (0.01947 ч); шаг=14411; доля=0.1490 %; x_C=0.008863
+ЖУРНАЛ стена=420 с; t=73.7033 с (0.02047 ч); шаг=15533; доля=0.1564 %; x_C=0.008848
+ЖУРНАЛ стена=450 с; t=77.3213 с (0.02148 ч); шаг=16665; доля=0.1638 %; x_C=0.008833
+ЖУРНАЛ стена=480 с; t=80.9085 с (0.02247 ч); шаг=17791; доля=0.1711 %; x_C=0.008819
+ЖУРНАЛ стена=510 с; t=84.4683 с (0.02346 ч); шаг=18912; доля=0.1782 %; x_C=0.008805
+ЖУРНАЛ стена=540 с; t=88.0012 с (0.02444 ч); шаг=20028; доля=0.1852 %; x_C=0.008791
+ЖУРНАЛ стена=570 с; t=91.5138 с (0.02542 ч); шаг=21141; доля=0.1920 %; x_C=0.008777
+ЖУРНАЛ стена=600 с; t=94.9592 с (0.02638 ч); шаг=22236; доля=0.1987 %; x_C=0.008764
+ЖУРНАЛ стена=630 с; t=98.4508 с (0.02735 ч); шаг=23349; доля=0.2054 %; x_C=0.008751
+ЖУРНАЛ стена=660 с; t=101.904 с (0.02831 ч); шаг=24453; доля=0.2120 %; x_C=0.008738
+ЖУРНАЛ стена=690 с; t=105.338 с (0.02926 ч); шаг=25554; доля=0.2184 %; x_C=0.008725
+ЖУРНАЛ стена=720 с; t=106.49 с (0.02958 ч); шаг=26709; доля=4.3980 %; x_C=6.094e-05
+ЖУРНАЛ стена=750 с; t=107.416 с (0.02984 ч); шаг=27857; доля=4.4025 %; x_C=5.124e-05
+ЖУРНАЛ стена=780 с; t=108.28 с (0.03008 ч); шаг=29012; доля=4.4064 %; x_C=4.274e-05
+ЖУРНАЛ стена=810 с; t=109.066 с (0.0303 ч); шаг=30174; доля=4.4051 %; x_C=4.548e-05
+ЖУРНАЛ стена=840 с; t=109.61 с (0.03045 ч); шаг=31337; доля=4.4082 %; x_C=3.89e-05
+ЖУРНАЛ стена=870 с; t=110.423 с (0.03067 ч); шаг=32502; доля=4.4062 %; x_C=4.324e-05
+2026-09-25 11:46:20.734 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 11:46:20.869 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 11:46:21.027 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 11:46:21.154 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 11:46:21.224 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "a2_005h_umolch_s0", "status": "ok", "error": "", "wall_s": 879.41, "peak_rss_gib": 0.37, "rows": 32833, "final_time_s": 110.7350564649903, "stop": true, "final_fraction_pct": 4.433981449862976, "final_radius_nm": 5.668219476815794, "quality_all_passed": false}
+stop_note: Расчёт остановлен на 110.7 с модельного времени (0.03076 ч): доля C в матрице стала 0 ат.%, баланс масс нарушен. Показана часть расчёта до остановки. Причина: при движущей силе по базе зарождение практически безбарьерное, и выделение вычерпывает добавки из матрицы быстрее, чем модель это выдерживает.
+ZAMER: код=0; стена=885.2 с; пик RSS=0.379 ГиБ (397732 КиБ)

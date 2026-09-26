@@ -1,0 +1,11 @@
+# 2026-09-25T10:58:47 $ /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/bin/python -B -X utf8 /home/user/ThermoGar/results/wave22_a/scripts/kwn_run.py --tag a2_setka_b40_c02_s1 --cell app --bins 40 --cmin 0.2 --cmax 10
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+2026-09-25 11:00:05.158 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 11:00:05.242 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 11:00:05.385 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 11:00:05.495 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 11:00:05.552 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ИТОГ {"tag": "a2_setka_b40_c02_s1", "status": "ok", "error": "", "wall_s": 72.44, "peak_rss_gib": 0.346, "rows": 2582, "final_time_s": 2.430696151528883, "stop": true, "final_fraction_pct": 6.11145490695752, "final_radius_nm": 0.8180074585535162, "quality_all_passed": false}
+stop_note: Расчёт остановлен на 2.431 с модельного времени (0.0006752 ч): доля C в матрице стала 0 ат.%, баланс масс нарушен. Показана часть расчёта до остановки. Причина: при движущей силе по базе зарождение практически безбарьерное, и выделение вычерпывает добавки из матрицы быстрее, чем модель это выдерживает.
+ZAMER: код=0; стена=78.2 с; пик RSS=0.349 ГиБ (365788 КиБ)

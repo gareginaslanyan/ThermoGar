@@ -1,0 +1,83 @@
+[
+ {
+  "tag": "shag1_app_seed0_a",
+  "args": [
+   "--cell",
+   "app"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "shag1_app_seed0_b",
+  "args": [
+   "--cell",
+   "app"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "shag1_app_seed0_trace",
+  "args": [
+   "--cell",
+   "app",
+   "--trace"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "shag1_app_seed1",
+  "args": [
+   "--cell",
+   "app"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "shag1_app_seed2",
+  "args": [
+   "--cell",
+   "app"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "shag1_backend_seed0_a",
+  "args": [
+   "--cell",
+   "backend"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "shag1_backend_seed0_b",
+  "args": [
+   "--cell",
+   "backend"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "shag1_backend_seed1",
+  "args": [
+   "--cell",
+   "backend"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ }
+]

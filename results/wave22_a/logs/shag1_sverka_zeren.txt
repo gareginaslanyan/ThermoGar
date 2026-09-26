@@ -1,0 +1,27 @@
+Побитовое совпадение NPZ:
+  shag1_app_seed0_a == shag1_app_seed0_b: True
+  shag1_app_seed0_a == shag1_app_seed0_trace: True
+  shag1_backend_seed0_a == shag1_backend_seed0_b: True
+  shag2_app_trace == shag1_app_seed2: True
+
+Ячейка app: шагов и конец
+  shag1_app                шагов   545  t_конец 0.7646821061 с  x_C конец 0  доля 0.0626302
+  shag1_app_seed0_a        шагов  2133  t_конец 1.980708307 с  x_C конец 0  доля 0.061085
+  shag1_app_seed1          шагов  2582  t_конец 2.430696152 с  x_C конец 0  доля 0.0611145
+  shag1_app_seed2          шагов  2942  t_конец 3.109472523 с  x_C конец 0  доля 0.0637156
+Ячейка app: первое расхождение траекторий
+  shag1_app / shag1_app_seed0_a: rtol 1e-12: шаг 2 (volFrac, 0.02003 с); rtol 1e-09: шаг 226 (precipitateDensity, 0.448271 с); rtol 1e-06: шаг 544 (composition, 0.764682 с); rtol 0.001: шаг 544 (composition, 0.764682 с)
+  shag1_app / shag1_app_seed1: rtol 1e-12: шаг 2 (volFrac, 0.02003 с); rtol 1e-09: шаг 228 (precipitateDensity, 0.459263 с); rtol 1e-06: шаг 544 (composition, 0.764682 с); rtol 0.001: шаг 544 (composition, 0.764682 с)
+  shag1_app / shag1_app_seed2: rtol 1e-12: шаг 2 (volFrac, 0.02003 с); rtol 1e-09: шаг 226 (precipitateDensity, 0.448271 с); rtol 1e-06: шаг 544 (composition, 0.764682 с); rtol 0.001: шаг 544 (composition, 0.764682 с)
+  shag1_app_seed0_a / shag1_app_seed1: rtol 1e-12: шаг 2 (volFrac, 0.02003 с); rtol 1e-09: шаг 226 (precipitateDensity, 0.448271 с); rtol 1e-06: шаг 810 (composition, 0.924534 с); rtol 0.001: шаг 821 (composition, 0.965693 с)
+  shag1_app_seed0_a / shag1_app_seed2: rtol 1e-12: шаг 2 (volFrac, 0.02003 с); rtol 1e-09: шаг 227 (precipitateDensity, 0.453786 с); rtol 1e-06: шаг 810 (composition, 0.924534 с); rtol 0.001: шаг 821 (composition, 0.965693 с)
+  shag1_app_seed1 / shag1_app_seed2: rtol 1e-12: шаг 2 (volFrac, 0.02003 с); rtol 1e-09: шаг 227 (precipitateDensity, 0.453786 с); rtol 1e-06: шаг 810 (composition, 0.924534 с); rtol 0.001: шаг 821 (composition, 0.965873 с)
+
+Ячейка backend: шагов и конец
+  shag1_backend            шагов  2188  t_конец 1 с  x_C конец 5.99262e-05  доля 0.0439699
+  shag1_backend_seed0_a    шагов  2496  t_конец 1 с  x_C конец 6.10208e-05  доля 0.0439649
+  shag1_backend_seed1      шагов  2082  t_конец 1 с  x_C конец 6.00441e-05  доля 0.0439694
+Ячейка backend: первое расхождение траекторий
+  shag1_backend / shag1_backend_seed0_a: rtol 1e-12: шаг 2 (time, 0.341608 с); rtol 1e-09: шаг 90 (composition, 0.382088 с); rtol 1e-06: шаг 217 (composition, 0.399973 с); rtol 0.001: шаг 256 (composition, 0.413909 с)
+  shag1_backend / shag1_backend_seed1: rtol 1e-12: шаг 2 (time, 0.341608 с); rtol 1e-09: шаг 99 (composition, 0.382765 с); rtol 1e-06: шаг 217 (composition, 0.399973 с); rtol 0.001: шаг 256 (composition, 0.413909 с)
+  shag1_backend_seed0_a / shag1_backend_seed1: rtol 1e-12: шаг 2 (time, 0.341608 с); rtol 1e-09: шаг 102 (composition, 0.382944 с); rtol 1e-06: шаг 217 (composition, 0.399973 с); rtol 0.001: шаг 256 (composition, 0.413946 с)

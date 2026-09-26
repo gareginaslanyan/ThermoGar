@@ -1,0 +1,26 @@
+# 2026-09-25T10:14:15 $ python -B -X utf8 tools/thermogar_precipitation_test.py
+THERMOGAR SWR — KWN SOFTWARE REGRESSION
+Project: /home/user/ThermoGar
+Python: 3.11.15 x86_64
+pycalphad: 0.11.2
+kawin: 0.5.0
+IMPORT RESULT: PASSED
+API: MatrixParameters PrecipitateParameters PrecipitateModel TemperatureParameters MulticomponentThermodynamics
+DATABASE RESULT: PASSED — фаз 99
+/tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+  incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+2026-09-25 10:14:35.762 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 10:14:35.834 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 10:14:35.962 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 10:14:36.063 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-25 10:14:36.129 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+PASS: kinetics rows
+PASS: quality rows
+PASS: all quality passed
+PASS: PSD rows
+PASS: NPZ nonempty
+PASS: provenance nonempty
+Final time, s: 1.0
+Final volume fraction, %: 6.599577403175166
+RESULT: PASSED
+ZAMER: код=0; стена=20.9 с; пик RSS=0.388 ГиБ (406804 КиБ)

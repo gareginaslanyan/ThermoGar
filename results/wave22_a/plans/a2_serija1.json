@@ -1,0 +1,898 @@
+[
+ {
+  "tag": "a2_s1_trace_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--trace"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_setka_b20_c02_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "20",
+   "--cmin",
+   "0.2",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_setka_b20_c02_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "20",
+   "--cmin",
+   "0.2",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_setka_b20_c02_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "20",
+   "--cmin",
+   "0.2",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_setka_b20_c05_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "20",
+   "--cmin",
+   "0.5",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_setka_b20_c05_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "20",
+   "--cmin",
+   "0.5",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_setka_b20_c05_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "20",
+   "--cmin",
+   "0.5",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_setka_b30_c02_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "30",
+   "--cmin",
+   "0.2",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_setka_b30_c02_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "30",
+   "--cmin",
+   "0.2",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_setka_b30_c02_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "30",
+   "--cmin",
+   "0.2",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_setka_b30_c05_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "30",
+   "--cmin",
+   "0.5",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_setka_b30_c05_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "30",
+   "--cmin",
+   "0.5",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_setka_b30_c05_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "30",
+   "--cmin",
+   "0.5",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_setka_b40_c02_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "40",
+   "--cmin",
+   "0.2",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_setka_b40_c02_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "40",
+   "--cmin",
+   "0.2",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_setka_b40_c02_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "40",
+   "--cmin",
+   "0.2",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_setka_b40_c05_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "40",
+   "--cmin",
+   "0.5",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_setka_b40_c05_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "40",
+   "--cmin",
+   "0.5",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_setka_b40_c05_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "40",
+   "--cmin",
+   "0.5",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_setka_b60_c02_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "60",
+   "--cmin",
+   "0.2",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_setka_b60_c02_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "60",
+   "--cmin",
+   "0.2",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_setka_b60_c02_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "60",
+   "--cmin",
+   "0.2",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_setka_b60_c05_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "60",
+   "--cmin",
+   "0.5",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_setka_b60_c05_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "60",
+   "--cmin",
+   "0.5",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_setka_b60_c05_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "60",
+   "--cmin",
+   "0.5",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_setka_b80_c02_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "80",
+   "--cmin",
+   "0.2",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_setka_b80_c02_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "80",
+   "--cmin",
+   "0.2",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_setka_b80_c02_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "80",
+   "--cmin",
+   "0.2",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_setka_b80_c05_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "80",
+   "--cmin",
+   "0.5",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_setka_b80_c05_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "80",
+   "--cmin",
+   "0.5",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_setka_b80_c05_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--bins",
+   "80",
+   "--cmin",
+   "0.5",
+   "--cmax",
+   "10"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_otl_n30_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--bulk-n0",
+   "1e30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_otl_bezNi_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--composition",
+   "C=0.20, Cr=11.5"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_otl_backend36_s0",
+  "args": [
+   "--cell",
+   "backend",
+   "--duration-h",
+   "0.001"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_otl_n30_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--bulk-n0",
+   "1e30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_otl_bezNi_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--composition",
+   "C=0.20, Cr=11.5"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_otl_backend36_s1",
+  "args": [
+   "--cell",
+   "backend",
+   "--duration-h",
+   "0.001"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_otl_n30_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--bulk-n0",
+   "1e30"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_otl_bezNi_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--composition",
+   "C=0.20, Cr=11.5"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_otl_backend36_s2",
+  "args": [
+   "--cell",
+   "backend",
+   "--duration-h",
+   "0.001"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_zerno_s3",
+  "args": [
+   "--cell",
+   "app"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 3
+  }
+ },
+ {
+  "tag": "a2_zerno_s4",
+  "args": [
+   "--cell",
+   "app"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 4
+  }
+ },
+ {
+  "tag": "a2_zerno_s5",
+  "args": [
+   "--cell",
+   "app"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 5
+  }
+ },
+ {
+  "tag": "a2_zerno_s6",
+  "args": [
+   "--cell",
+   "app"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 6
+  }
+ },
+ {
+  "tag": "a2_zerno_s7",
+  "args": [
+   "--cell",
+   "app"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 7
+  }
+ },
+ {
+  "tag": "a2_zerno_s8",
+  "args": [
+   "--cell",
+   "app"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 8
+  }
+ },
+ {
+  "tag": "a2_zerno_s9",
+  "args": [
+   "--cell",
+   "app"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 9
+  }
+ },
+ {
+  "tag": "a2_kawin_rcrit1e-3_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--constraint",
+   "maxRcritChange=0.001"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_kawin_diss1e-4_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--constraint",
+   "maxDissolution=0.0001"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_kawin_vol1e-4_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--constraint",
+   "maxVolumeChange=0.0001"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_kawin_dtfrac0.1_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--max-dt-frac",
+   "0.1"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_kawin_mincomp1e-8_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--constraint",
+   "minComposition=1e-8"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_kawin_mincomp1e-11_s0",
+  "args": [
+   "--cell",
+   "app",
+   "--constraint",
+   "minComposition=1e-11"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 0
+  }
+ },
+ {
+  "tag": "a2_kawin_rcrit1e-3_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--constraint",
+   "maxRcritChange=0.001"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_kawin_diss1e-4_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--constraint",
+   "maxDissolution=0.0001"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_kawin_vol1e-4_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--constraint",
+   "maxVolumeChange=0.0001"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_kawin_dtfrac0.1_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--max-dt-frac",
+   "0.1"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_kawin_mincomp1e-8_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--constraint",
+   "minComposition=1e-8"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_kawin_mincomp1e-11_s1",
+  "args": [
+   "--cell",
+   "app",
+   "--constraint",
+   "minComposition=1e-11"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 1
+  }
+ },
+ {
+  "tag": "a2_kawin_rcrit1e-3_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--constraint",
+   "maxRcritChange=0.001"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_kawin_diss1e-4_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--constraint",
+   "maxDissolution=0.0001"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_kawin_vol1e-4_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--constraint",
+   "maxVolumeChange=0.0001"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_kawin_dtfrac0.1_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--max-dt-frac",
+   "0.1"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_kawin_mincomp1e-8_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--constraint",
+   "minComposition=1e-8"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_kawin_mincomp1e-11_s2",
+  "args": [
+   "--cell",
+   "app",
+   "--constraint",
+   "minComposition=1e-11"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 2
+  }
+ },
+ {
+  "tag": "a2_s1_trace_s4",
+  "args": [
+   "--cell",
+   "app",
+   "--trace"
+  ],
+  "env": {
+   "PYTHONHASHSEED": 4
+  }
+ }
+]

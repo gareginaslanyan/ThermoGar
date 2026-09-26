@@ -1,0 +1,35 @@
+# 2026-09-25T10:14:15 $ python -B -X utf8 -m pytest tools/test_backend_calculations.py -k ni -q -p no:cacheprovider
+.....................                                                    [100%]
+=============================== warnings summary ===============================
+tools/test_backend_calculations.py::test_diffusion_module[ni]
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:10: DeprecationWarning: invalid escape sequence '\G'
+    '''
+
+tools/test_backend_calculations.py::test_diffusion_module[ni]
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:25: DeprecationWarning: invalid escape sequence '\G'
+    '''
+
+tools/test_backend_calculations.py::test_diffusion_module[ni]
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/diffusion/Homogenization.py:62: DeprecationWarning: invalid escape sequence '\G'
+    '''
+
+tools/test_backend_calculations.py::test_kwn_module[ni]
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:325: DeprecationWarning: invalid escape sequence '\g'
+    '''
+
+tools/test_backend_calculations.py::test_kwn_module[ni]
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/parameters/Nucleation.py:340: DeprecationWarning: invalid escape sequence '\g'
+    '''
+
+tools/test_backend_calculations.py::test_kwn_module[ni]
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/PopulationBalance.py:724: DeprecationWarning: invalid escape sequence '\i'
+    '''
+
+tools/test_backend_calculations.py::test_kwn_module[ni]
+tools/test_backend_calculations.py::test_kwn_direct_kawin[ni]
+  /tmp/claude-0/-home-user-ThermoGar/91a7a4bf-1d62-5d41-9dde-fdc45d17fc16/scratchpad/venv22a/lib/python3.11/site-packages/kawin/precipitation/NucleationRate.py:190: RuntimeWarning: divide by zero encountered in divide
+    incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+21 passed, 36 deselected, 8 warnings in 129.62s (0:02:09)
+ZAMER: код=0; стена=130.9 с; пик RSS=1.234 ГиБ (1293784 КиБ)
