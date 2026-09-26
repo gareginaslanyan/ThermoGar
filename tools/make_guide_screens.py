@@ -436,6 +436,31 @@ def open_tab(page, name: str) -> None:
     wait_idle(page)
 
 
+# Виды результата после 21-И — не вкладки, а st.segmented_control со скрытой
+# подписью: группа — role=radiogroup с именем подписи, вариант — role=radio.
+# Имена групп: «Затвердевание», «Кинетика выделений», «Диффузия и
+# гомогенизация». open_tab — только для настоящих вкладок st.tabs.
+def view_option(page, group: str, option: str):
+    return (
+        page.get_by_role("radiogroup", name=group, exact=True)
+        .get_by_role("radio", name=option, exact=True)
+        .first
+    )
+
+
+def pick_view(page, group: str, option: str) -> None:
+    choice = view_option(page, group, option)
+    choice.scroll_into_view_if_needed(timeout=UI_TIMEOUT_MS)
+    choice.click()
+    wait_idle(page)
+
+
+def view_ready(page, group: str, option: str, timeout: int = CALC_TIMEOUT_MS) -> None:
+    """Дождаться варианта переключателя вида — признака готового результата."""
+
+    view_option(page, group, option).wait_for(timeout=timeout)
+
+
 def expander(root, title: str):
     return root.locator('[data-testid="stExpander"]:visible').filter(has_text=title).first
 
@@ -460,6 +485,19 @@ def set_database(page, label: str) -> None:
 DB_NI = "Никелевые сплавы"
 DB_FE = "Стали и Fe-сплавы"
 DB_AL = "Алюминиевые сплавы"
+
+# Свёрнутые блоки редких параметров (21-М) — копия строк
+# app/thermogar_release_ui.py:51–54. Не импорт: скрипт не тянет модули
+# приложения.
+BLOCK_PRECISION = "Точность и критерии"
+BLOCK_PHASES = "Управление фазами / метастабильный расчёт"
+BLOCK_MODEL = "Параметры модели"
+NOT_DEFAULT_PREFIX = "Не по умолчанию: "
+
+# Сплав 718 и EK199 с 5 % Si — составы сценария «soobshcheniya» (17-Д).
+ALLOY_718 = "NI=54.2, CR=17.9, NB=5.3, MO=2.99, TI=0.97, AL=0.5"
+# Узел BL-24 (15-З, п. 4): CONTROL_WT 12-2 с Si 5 масс. %, 750 °C.
+EK199_SI5 = "C=0.005, SI=5, MN=0.5, S=0.02, CR=23.5, MO=13, NB=0.06, AL=0.25, TI=0.1, FE=0.5"
 
 
 def scenario_start(page, log):
@@ -525,7 +563,7 @@ def scenario_raschety(page, log):
         tall=True,
     )
 
-    block = open_expander(page, root, "Управление фазами / метастабильный расчёт")
+    block = open_expander(page, root, BLOCK_PHASES)
     shooter.shot(
         [
             widget(block, "stRadio", "Набор фаз"),
@@ -585,23 +623,32 @@ def scenario_diagrammy(page, log):
         ],
         "Система Ni–Al: первый и второй элементы",
     )
-    set_number(root, "AL: до, %", "35")
+    # Подпись поля с 21-Ж — «Al: до, ат.% (0.001–100)»; ищется по подстроке.
+    set_number(root, "Al: до, ат.%", "35")
     wait_idle(page)
-    set_number(root, "Шаг по составу", "5")
+    # Шаги сетки с 21-М — в свёрнутом блоке «Точность и критерии».
+    block = open_expander(page, root, BLOCK_PRECISION)
+    set_number(block, "Шаг по составу", "5")
     wait_idle(page)
+    root = main_area(page)
     set_number(root, "Температура от, °C", "600")
     wait_idle(page)
     set_number(root, "Температура до, °C", "1600")
     wait_idle(page)
-    set_number(root, "Шаг по температуре, °C", "50")
+    block = expander(main_area(page), BLOCK_PRECISION)
+    set_number(block, "Шаг по температуре, °C", "50")
     wait_idle(page)
+    root = main_area(page)
+    block = expander(root, BLOCK_PRECISION)
     shooter.shot(
         [
             widget(root, "stNumberInput", "Al: до, ат.%"),
-            widget(root, "stNumberInput", "Шаг по составу"),
-            widget(root, "stNumberInput", "Шаг по температуре, °C"),
+            widget(block, "stNumberInput", "Шаг по составу"),
+            widget(block, "stNumberInput", "Шаг по температуре, °C"),
+            root.get_by_text(NOT_DEFAULT_PREFIX.strip()).first,
         ],
-        "Диапазон по составу и по температуре, шаг сетки",
+        "Диапазон по составу и по температуре, шаг сетки; над кнопкой — "
+        "«Не по умолчанию: …»",
         tall=True,
     )
     button = root.get_by_role(
@@ -646,22 +693,25 @@ def scenario_zatverdevanie(page, log):
         widget(root, "stRadio", "Метод расчёта"),
         "Метод расчёта — «Только Scheil–Gulliver»",
     )
-    set_number(root, "Начальная температура, °C", "700")
+    # Начальная температура и шаг с 21-М — в свёрнутом «Точность и критерии».
+    block = open_expander(page, root, BLOCK_PRECISION)
+    set_number(block, "Начальная температура, °C", "700")
     wait_idle(page)
-    set_number(root, "Шаг охлаждения, °C", "10")
+    block = expander(main_area(page), BLOCK_PRECISION)
+    set_number(block, "Шаг охлаждения, °C", "10")
     wait_idle(page)
+    root = main_area(page)
+    block = expander(root, BLOCK_PRECISION)
     shooter.shot(
         [
-            widget(root, "stNumberInput", "Начальная температура, °C"),
-            widget(root, "stNumberInput", "Шаг охлаждения, °C"),
+            widget(block, "stNumberInput", "Начальная температура, °C"),
+            widget(block, "stNumberInput", "Шаг охлаждения, °C"),
         ],
         "Старт 700 °C, шаг охлаждения 10 °C",
     )
     button = root.get_by_role("button", name="Рассчитать затвердевание", exact=True).first
     button.click()
-    page.get_by_role("tab", name="Сводка", exact=True).first.wait_for(
-        timeout=CALC_TIMEOUT_MS
-    )
+    view_ready(page, "Затвердевание", "Сводка")
     wait_idle(page)
     root = main_area(page)
     shooter.shot(
@@ -674,11 +724,11 @@ def scenario_zatverdevanie(page, log):
         "Кривая доли твёрдой фазы",
         tall=True,
     )
-    open_tab(page, "Выгрузка")
+    pick_view(page, "Затвердевание", "Выгрузка")
     root = main_area(page)
     shooter.shot(
         root.get_by_role("button", name="Скачать Excel", exact=True).first,
-        "Подвкладка «Выгрузка»: результат в Excel",
+        "Вариант «Выгрузка» переключателя: результат в Excel",
         tall=True,
     )
 
@@ -696,23 +746,30 @@ def scenario_energii(page, log):
         widget(root, "stSelectbox", "Фаза, движущую силу которой рассчитываем"),
         "Фаза-продукт: GAMMA_PRIME",
     )
-    set_multiselect(page, root, "Фазы исходного равновесия", ["FCC_A1"])
+    # С 21-М фазы исходного равновесия — в свёрнутом «Управление фазами /
+    # метастабильный расчёт», шаг температуры — в «Точность и критерии».
+    block = open_expander(page, root, BLOCK_PHASES)
+    set_multiselect(page, block, "Фазы исходного равновесия", ["FCC_A1"])
     root = main_area(page)
+    block = expander(root, BLOCK_PHASES)
     shooter.shot(
-        widget(root, "stMultiSelect", "Фазы исходного равновесия"),
+        widget(block, "stMultiSelect", "Фазы исходного равновесия"),
         "Исходное равновесие — только матрица FCC_A1",
     )
     set_number(root, "Температура от, °C", "600")
     wait_idle(page)
-    set_number(root, "Температура до, °C", "800")
+    set_number(main_area(page), "Температура до, °C", "800")
     wait_idle(page)
-    set_number(root, "Шаг температуры, °C", "50")
+    block = open_expander(page, main_area(page), BLOCK_PRECISION)
+    set_number(block, "Шаг температуры, °C", "50")
     wait_idle(page)
+    root = main_area(page)
+    block = expander(root, BLOCK_PRECISION)
     shooter.shot(
         [
             widget(root, "stNumberInput", "Температура от, °C"),
             widget(root, "stNumberInput", "Температура до, °C"),
-            widget(root, "stNumberInput", "Шаг температуры, °C"),
+            widget(block, "stNumberInput", "Шаг температуры, °C"),
         ],
         "Окно температур 600–800 °C с шагом 50 °C",
     )
@@ -838,9 +895,7 @@ def scenario_kinetika(page, log):
         "button", name="Рассчитать кинетику выделений", exact=True
     ).first
     button.click()
-    page.get_by_role("tab", name="Итоги", exact=True).first.wait_for(
-        timeout=CALC_TIMEOUT_MS
-    )
+    view_ready(page, "Кинетика выделений", "Итоги")
     wait_idle(page)
     root = main_area(page)
     shooter.shot(
@@ -850,7 +905,8 @@ def scenario_kinetika(page, log):
     )
 
     open_tab(page, "Диффузия и гомогенизация")
-    open_tab(page, "Однофазная пара")
+    # Вариант выбран по умолчанию; щелчок держит сценарий и после смены вида.
+    pick_view(page, "Диффузия и гомогенизация", "Однофазная пара")
     root = main_area(page)
     shooter.shot(
         [
@@ -862,11 +918,14 @@ def scenario_kinetika(page, log):
     )
     # Сетка и время остаются штатными: на 2000 мкм и 80 ячейках численная
     # проверка сохранения состава проходит, а на 200 мкм тот же шаг по
-    # времени уже даёт слишком большую невязку баланса.
+    # времени уже даёт слишком большую невязку баланса. Длина области и число
+    # ячеек с 21-М — в свёрнутом блоке «Параметры модели».
+    block = open_expander(page, root, BLOCK_MODEL)
+    root = main_area(page)
     shooter.shot(
         [
             widget(root, "stNumberInput", "Температура выдержки, °C"),
-            widget(root, "stNumberInput", "Длина области, мкм"),
+            widget(block, "stNumberInput", "Длина области, мкм"),
             widget(root, "stNumberInput", "Время, ч"),
         ],
         "Режим выдержки: 1200 °C, 100 ч, 80 ячеек на 2000 мкм",
@@ -1002,6 +1061,173 @@ def scenario_proekty(page, log):
     )
 
 
+def alerts(root, text: str):
+    return root.locator('[data-testid="stAlert"]:visible').filter(has_text=text).first
+
+
+def set_composition(page, balance: str, units: str, additions: str) -> None:
+    side = sidebar(page)
+    # Сначала добавки: основа не предлагается, пока стоит среди добавок.
+    set_text_area(side, "Добавки", additions)
+    wait_idle(page)
+    # Список основ длинный и виртуализован: значение вводится в поле.
+    field = widget(side, "stSelectbox", "Элемент-основа").locator(
+        'input[role="combobox"]'
+    ).first
+    field.click()
+    field.fill(balance)
+    page.get_by_role("option", name=balance, exact=True).first.click()
+    wait_idle(page)
+    set_radio(side, "Единицы состава", units)
+    wait_idle(page)
+    set_text_area(side, "Добавки", additions)
+    wait_idle(page)
+
+
+def kwn_inputs(page, values: dict[str, str]) -> None:
+    for label, value in values.items():
+        set_number(main_area(page), label, value)
+        wait_idle(page)
+
+
+def kwn_718_inputs() -> dict[str, str]:
+    """Входы случая 15-В для сплава 718: 700 °C, γ = 95 мДж/м², 100 ч.
+
+    Молярные объёмы и N0 считает ``study_wave15_v_718.case_arguments`` —
+    тот же, что в 17-Д. Импорт здесь, а не в начале файла: он нужен только
+    сценарию «soobshcheniya».
+    """
+
+    import study_wave15_v_718 as study
+
+    arguments = study.case_arguments(700.0, 95.0, study.GRID)
+    return {
+        "Температура, °C": "700",
+        "Время выдержки, ч": "100",
+        "Межфазная энергия, Дж/м²": f"{arguments['gamma']:.6g}",
+        "Молярный объём матрицы, см³/моль": f"{arguments['matrix_vm']:.6g}",
+        "Молярный объём выделения, см³/моль": f"{arguments['precip_vm']:.6g}",
+        "Плотность объёмных центров, 1/м³": f"{arguments['bulk_n0']:.6e}",
+    }
+
+
+def note_reading(log, key: str, value) -> None:
+    """Чтение с экрана — в запись последнего кадра журнала сценария."""
+
+    log[-1].setdefault("readings", {})[key] = value
+    print(f"    {key}: {value}")
+
+
+def scenario_soobshcheniya(page, log):
+    """Сообщения 0.4.2 (17-Д): быстрый набор, пустое решение, остановка KWN,
+    зародыш крупнее сетки."""
+
+    kwn_718 = kwn_718_inputs()
+    shooter = Shooter(page, "soobshcheniya", log)
+
+    # 1. Быстрый набор: предупреждение и раскрытый полный перечень (BL-8).
+    set_database(page, DB_FE)
+    set_composition(page, "FE", "массовые %", "C=0.2, CR=11.5, NI=0.7")
+    open_tab(page, "Расчёты")
+    open_tab(page, "Одна температура")
+    root = main_area(page)
+    set_number(root, "Температура, °C", "700")
+    wait_idle(page)
+    block = open_expander(page, root, BLOCK_PHASES)
+    set_radio(block, "Набор фаз", "Быстрый набор")
+    wait_idle(page)
+    root = main_area(page)
+    block = expander(root, BLOCK_PHASES)
+    # Блок вложен в «Управление фазами»; искать по своему заголовку.
+    full = block.locator('[data-testid="stExpander"]').filter(
+        has=page.locator("summary", has_text="Все фазы вне быстрого набора")
+    ).last
+    full.locator("summary").first.click()
+    wait_idle(page)
+    shooter.shot(
+        [alerts(block, "Быстрый набор не рассматривает"), full],
+        "Предупреждение о фазах вне быстрого набора и раскрытый полный перечень",
+        tall=True,
+    )
+
+    # 2. Пустое решение pycalphad (BL-24).
+    set_database(page, DB_NI)
+    set_composition(page, "NI", "массовые %", EK199_SI5)
+    open_tab(page, "Расчёты")
+    open_tab(page, "Одна температура")
+    root = main_area(page)
+    set_number(root, "Температура, °C", "750")
+    wait_idle(page)
+    button = root.get_by_role("button", name="Рассчитать равновесие", exact=True).first
+    button.click()
+    root.get_by_text("не найдено").first.wait_for(timeout=CALC_TIMEOUT_MS)
+    wait_idle(page)
+    message = alerts(main_area(page), "не найдено")
+    empty_solution = message.inner_text()
+    shooter.shot([message, button], "Равновесие при 750 °C не найдено", tall=True)
+    note_reading(log, "empty_solution", empty_solution)
+
+    # 3–4. Остановка расчёта выделений по составу матрицы (BL-35), 718.
+    set_composition(page, "FE", "массовые %", ALLOY_718)
+    open_tab(page, "Кинетика")
+    open_tab(page, "Выделения")
+    root = main_area(page)
+    set_selectbox(page, root, "Матричная фаза", "FCC_A1")
+    set_selectbox(page, main_area(page), "Фаза-выделение", "GAMMA_DP")
+    kwn_inputs(page, kwn_718)
+    root = main_area(page)
+    root.get_by_role("button", name="Рассчитать кинетику выделений", exact=True).first.click()
+    view_ready(page, "Кинетика выделений", "Итоги")
+    wait_idle(page)
+    root = main_area(page)
+    stop = alerts(root, "Расчёт остановлен")
+    stop_note = stop.inner_text()
+    shooter.shot(
+        [stop, alerts(root, "Одна или несколько внутренних проверок")],
+        "Текст остановки расчёта выделений над переключателем видов",
+        tall=True,
+    )
+    note_reading(log, "kwn_718_inputs", dict(kwn_718))
+    note_reading(log, "stop_note", stop_note)
+    shooter.shot(
+        root.locator('[data-testid="stDataFrame"]:visible').last,
+        "Таблица проверок: «Состав матрицы допустим» — ошибка",
+        tall=True,
+    )
+
+    # 5. Зародыш крупнее начальной сетки (BL-26), постановка 13-Ф.
+    set_composition(page, "NI", "атомные %", "AL=9.8, CR=8.3")
+    open_tab(page, "Кинетика")
+    open_tab(page, "Выделения")
+    root = main_area(page)
+    set_selectbox(page, root, "Матричная фаза", "FCC_A1")
+    set_selectbox(page, main_area(page), "Фаза-выделение", "GAMMA_PRIME")
+    kwn_inputs(
+        page,
+        {
+            "Температура, °C": "800",
+            "Время выдержки, ч": "0.000001",
+            "Межфазная энергия, Дж/м²": "0.023",
+            "Молярный объём матрицы, см³/моль": "6.5662724928",
+            "Молярный объём выделения, см³/моль": "6.5662724928",
+            "Плотность объёмных центров, 1/м³": "1e30",
+        },
+    )
+    open_expander(page, main_area(page), "Численная сетка размеров")
+    kwn_inputs(
+        page,
+        {"Минимальный радиус, нм": "0.05", "Начальный максимальный радиус, нм": "0.5"},
+    )
+    root = main_area(page)
+    root.get_by_role("button", name="Рассчитать кинетику выделений", exact=True).first.click()
+    view_ready(page, "Кинетика выделений", "Итоги")
+    wait_idle(page)
+    warning = alerts(main_area(page), "больше начального максимального радиуса")
+    nucleus_warning = warning.inner_text()
+    shooter.shot(warning, "Зародыш крупнее начальной сетки размеров", tall=True)
+    note_reading(log, "nucleus_warning", nucleus_warning)
+
+
 SCENARIOS = {
     "start": scenario_start,
     "raschety": scenario_raschety,
@@ -1011,6 +1237,7 @@ SCENARIOS = {
     "svoystva": scenario_svoystva,
     "kinetika": scenario_kinetika,
     "proekty": scenario_proekty,
+    "soobshcheniya": scenario_soobshcheniya,
 }
 
 # Порядок съёмки отличается от порядка вкладок: базы переключаются один раз,
@@ -1024,6 +1251,9 @@ SCENARIO_ORDER = [
     "energii",
     "kinetika",
     "proekty",
+    # Последним: сценарий сам переключает базы и меняет состав в боковой
+    # панели, а «proekty» сохраняет текущий состав как есть.
+    "soobshcheniya",
 ]
 
 
