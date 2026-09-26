@@ -1,0 +1,199 @@
+== test_backend_calculations start 11:09:31 free 8.12 GiB
+== test_backend_calculations exit 0 11:29:34
+57 passed, 6 warnings in 1201.43s (0:20:01)
+== test_chart_celsius_ticks start 11:29:34 free 8.38 GiB
+== test_chart_celsius_ticks exit 0 11:29:41
+17 passed in 5.10s
+== test_chart_legend_theme start 11:29:41 free 8.33 GiB
+== test_chart_legend_theme exit 0 11:29:46
+12 passed in 4.45s
+== test_chart_theme_21e start 11:29:47 free 8.3 GiB
+== test_chart_theme_21e exit 0 11:30:22
+73 passed in 33.78s
+== test_database_repair start 11:30:22 free 8.32 GiB
+== test_database_repair exit 0 11:35:04
+44 passed in 280.23s (0:04:40)
+== test_density start 11:35:04 free 8.4 GiB
+== test_density exit 0 11:38:31
+77 passed in 204.75s (0:03:24)
+== test_density_below_pdb start 11:38:31 free 8.41 GiB
+== test_density_below_pdb exit 0 11:39:17
+5 passed in 44.69s
+== test_density_thermal_expansion start 11:39:17 free 8.42 GiB
+== test_density_thermal_expansion exit 0 11:39:57
+11 passed, 1 xfailed in 38.57s
+== test_dropped_phases_text start 11:39:57 free 8.41 GiB
+== test_dropped_phases_text exit 0 11:39:58
+2 passed in 0.05s
+== test_equilibrium_solidus_fallback start 11:39:59 free 8.38 GiB
+== test_equilibrium_solidus_fallback exit 0 11:49:01
+19 passed in 540.39s (0:09:00)
+== test_error_log_worker_21z start 11:49:01 free 8.38 GiB
+== test_error_log_worker_21z exit 0 11:49:11
+4 passed in 8.77s
+== test_kwn_step_cap_22b start 11:49:11 free 8.35 GiB
+== test_kwn_step_cap_22b exit 0 11:49:27
+9 passed, 1 warning in 14.28s
+== test_liquidus_bisection start 11:49:27 free 8.34 GiB
+== test_liquidus_bisection exit 0 11:54:00
+2 passed in 271.71s (0:04:31)
+== test_parallel_engine start 11:54:00 free 8.36 GiB
+== test_parallel_engine exit 0 11:55:07
+15 passed in 66.13s (0:01:06)
+== test_parallel_integration start 11:55:08 free 8.39 GiB
+== test_parallel_integration exit 0 11:56:20
+6 passed in 71.09s (0:01:11)
+== test_phase_description_order_words start 11:56:20 free 8.41 GiB
+== test_phase_description_order_words exit 0 11:56:25
+11 passed in 3.21s
+== test_phase_description_stub_keys start 11:56:25 free 8.4 GiB
+== test_phase_description_stub_keys exit 0 11:56:30
+9 passed in 3.27s
+== test_phase_presets start 11:56:30 free 8.4 GiB
+== test_phase_presets exit 0 12:01:03
+21 passed in 271.44s (0:04:31)
+== test_phase_presets_control start 12:01:03 free 8.4 GiB
+== test_phase_presets_control exit 0 12:14:00
+1 passed in 775.72s (0:12:55)
+== test_physical_overrides_toggle start 12:14:00 free 7.99 GiB
+== test_physical_overrides_toggle exit 0 12:17:21
+11 passed in 198.81s (0:03:18)
+== test_precipitation_bl35 start 12:17:21 free 7.83 GiB
+== test_precipitation_bl35 exit 0 12:17:50
+11 passed, 1 warning in 27.06s
+== test_precipitation_grid start 12:17:50 free 7.96 GiB
+== test_precipitation_grid exit 0 12:20:25
+32 passed, 12 warnings in 153.20s (0:02:33)
+== test_sidebar_composition_error start 12:20:25 free 7.5 GiB
+== test_sidebar_composition_error exit 0 12:20:49
+9 passed in 22.30s
+== test_style_21z start 12:20:49 free 7.41 GiB
+== test_style_21z exit 0 12:20:54
+11 passed in 3.61s
+== test_switch_21i start 12:20:54 free 7.42 GiB
+== test_switch_21i exit 0 12:21:07
+13 passed in 11.85s
+== test_tab_snapshot_compare start 12:21:08 free 7.45 GiB
+== test_tab_snapshot_compare exit 0 12:21:10
+8 passed in 1.15s
+== test_ui_f: one process, free 7.53 GiB
+== test_ui_f start 12:21:10 free 7.52 GiB
+== test_ui_f exit 0 12:54:21
+59 passed in 1989.05s (0:33:09)
+== test_ui_g start 12:54:21 free 8.16 GiB
+== test_ui_g exit 0 13:01:09
+32 passed, 5 warnings in 405.19s (0:06:45)
+== test_ui_h start 13:01:09 free 8.18 GiB
+== test_ui_h exit 0 13:07:35
+26 passed in 384.52s (0:06:24)
+== test_user_errors_21zh start 13:07:35 free 8.09 GiB
+== test_user_errors_21zh exit 0 13:07:42
+47 passed in 5.50s
+== test_version_consistency start 13:07:42 free 8.09 GiB
+== test_version_consistency exit 0 13:07:44
+92 passed in 0.83s
+== test_wave15_z start 13:07:44 free 7.97 GiB
+== test_wave15_z exit 0 13:08:06
+15 passed, 2 warnings in 20.35s
+== test_wave21_m start 13:08:06 free 8 GiB
+== test_wave21_m exit 0 13:08:49
+22 passed in 41.33s
+== test_wave21_o start 13:08:49 free 7.95 GiB
+== test_wave21_o exit 0 13:12:07
+11 passed, 1 warning in 196.62s (0:03:16)
+== thermogar_active_state_io_test start 13:12:08 free 8.05 GiB
+== thermogar_active_state_io_test exit 0 13:12:13
+Ran 5 tests in 1.052s
+
+OK
+== thermogar_converter_patch_test start 13:12:13 free 7.93 GiB
+== thermogar_converter_patch_test exit 0 13:12:13
+PASS: merged JSON inherits disabled parameter
+PASS: merged TDB has no active -9e6
+RESULT: PASSED
+== thermogar_db_cache_test start 13:12:14 free 7.94 GiB
+== thermogar_db_cache_test exit 0 13:12:15
+Ran 10 tests in 0.227s
+
+OK
+== thermogar_diffusion_test start 13:12:15 free 7.94 GiB
+== thermogar_diffusion_test exit 0 13:12:31
+Max balance error: 5.999999985739635e-08
+
+RESULT: PASSED
+== thermogar_fe_database_test start 13:12:31 free 7.92 GiB
+== thermogar_fe_database_test exit 0 13:15:38
+
+RESULT: PASSED
+Reports: D:\Pets\ThermoGar-w21b\results\validation\stage13_2
+== thermogar_fe_internal_smoke_test start 13:15:38 free 8.24 GiB
+== thermogar_fe_internal_smoke_test exit 0 13:15:39
+Ran 15 tests in 0.047s
+
+OK
+== thermogar_paths_test start 13:15:40 free 8.23 GiB
+== thermogar_paths_test exit 0 13:15:40
+INTERPRETER_EXECUTABLE: D:\Pets\ThermoGar\.venv-windows\Scripts\python.exe
+INTERPRETER_VERSION: 3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]
+INTERPRETER_ARCHITECTURE: 64bit
+== thermogar_physical_test start 13:15:40 free 8.24 GiB
+== thermogar_physical_test exit 0 13:15:42
+            Fe3C CEMENTITE       7684.582667        100.0                 7685.00 пройдена           
+
+RESULT: PASSED
+== thermogar_precipitation_test start 13:15:42 free 8.24 GiB
+== thermogar_precipitation_test exit 0 13:16:06
+Final time, s: 1.0
+Final volume fraction, %: 6.599577401641879
+RESULT: PASSED
+== thermogar_properties_test start 13:16:06 free 8.13 GiB
+== thermogar_properties_test exit 0 13:16:10
+PASS: elastic library round-trip
+
+RESULT: PASSED
+== thermogar_restricted_fe_core_test start 13:16:10 free 8.09 GiB
+== thermogar_restricted_fe_core_test exit 0 13:16:14
+Ran 15 tests in 0.130s
+
+OK
+== thermogar_secure_io_test start 13:16:14 free 8.12 GiB
+== thermogar_secure_io_test exit 0 13:16:15
+Ran 19 tests in 0.419s
+
+OK
+== thermogar_self_test start 13:16:15 free 8.12 GiB
+== thermogar_self_test exit 0 13:16:49
+==============================================================================
+RESULT: SOFTWARE REGRESSION PASSED — NOT MATERIAL QUALIFICATION
+==============================================================================
+== thermogar_state_migration_test start 13:16:49 free 8.09 GiB
+== thermogar_state_migration_test exit 0 13:16:52
+Ran 9 tests in 2.145s
+
+OK
+== thermogar_verified_equilibrium_test start 13:16:52 free 8.07 GiB
+== thermogar_verified_equilibrium_test exit 0 13:16:56
+Ran 18 tests in 0.166s
+
+OK
+== thermogar_verified_loaders_test start 13:16:56 free 7.98 GiB
+== thermogar_verified_loaders_test exit 0 13:16:57
+Ran 18 tests in 0.180s
+
+OK
+== thermogar_verified_physical_test start 13:16:57 free 7.98 GiB
+== thermogar_verified_physical_test exit 0 13:16:59
+Ran 24 tests in 0.326s
+
+OK
+== thermogar_verified_properties_test start 13:16:59 free 8.05 GiB
+== thermogar_verified_properties_test exit 0 13:17:04
+Ran 39 tests in 0.814s
+
+OK
+== thermogar_verified_state_test start 13:17:04 free 8.06 GiB
+== thermogar_verified_state_test exit 0 13:17:05
+Ran 25 tests in 0.796s
+
+OK
+== ALL DONE 13:17:05
