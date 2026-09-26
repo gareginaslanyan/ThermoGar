@@ -4,6 +4,7 @@
 ``THERMOGAR_MEMLOG=<путь к .jsonl>``: после каждого теста в файл пишется
 строка с рабочим набором процесса до и после теста, пиком по ходу теста
 (опрос дерева процессов раз в 0,2 с) и числом открытых фигур matplotlib.
+Поле ``peak_wset_process_gib`` на Linux и macOS — пик RSS процесса.
 Без переменной хуки ничего не делают.
 """
 
@@ -47,6 +48,17 @@ def _open_figures() -> int | None:
     return None if pyplot is None else len(pyplot.get_fignums())
 
 
+def _process_peak(process) -> int:
+    """Пик памяти процесса в байтах: Windows — peak_wset, иначе — ru_maxrss."""
+    if sys.platform == "win32":
+        return process.memory_info().peak_wset
+    import resource
+
+    peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    # Linux отдаёт ru_maxrss в КиБ, macOS — в байтах.
+    return peak if sys.platform == "darwin" else peak * 1024
+
+
 class _Sampler(threading.Thread):
     def __init__(self, process) -> None:
         super().__init__(name="thermogar-memlog", daemon=True)
@@ -83,7 +95,7 @@ def pytest_runtest_protocol(item, nextitem):
         "rss_after_gib": round(after / GIB, 3),
         "growth_gib": round((after - before) / GIB, 3),
         "peak_tree_gib": round(max(sampler.peak, after) / GIB, 3),
-        "peak_wset_process_gib": round(process.memory_info().peak_wset / GIB, 3),
+        "peak_wset_process_gib": round(_process_peak(process) / GIB, 3),
         "open_figures": _open_figures(),
         "pool_workers": getattr(sys.modules.get("thermogar_parallel_ui"), "_WORKER_COUNT", None),
     }
