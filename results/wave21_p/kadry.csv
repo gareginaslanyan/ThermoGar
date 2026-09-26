@@ -1,0 +1,59 @@
+﻿кадр;глава:строка;сценарий;шаг ШАГА 1 (№ · файл:строка);изменится;почему
+start-01.png;docs/guide/README.md:34;start;1 · tools/make_guide_screens.py:471;нет;«Одна температура» без свёртки 21-М, кнопка на своём месте.
+start-02.png;docs/guide/README.md:41;start;2 · tools/make_guide_screens.py:475;нет;Боковая панель не менялась.
+start-03.png;docs/guide/README.md:49;start;3 · tools/make_guide_screens.py:479;нет;То же.
+start-04.png;docs/guide/README.md:56;start;4 · tools/make_guide_screens.py:483;нет;То же.
+start-05.png;docs/guide/README.md:63;start;6 · tools/make_guide_screens.py:489;нет;То же.
+start-06.png;docs/guide/README.md:70;start;7 · tools/make_guide_screens.py:493;нет;То же.
+start-07.png;docs/guide/README.md:78;start;9 · tools/make_guide_screens.py:499;нет;Как start-01.
+raschety-01.png;docs/guide/01-raschety.md:9;raschety;12 · tools/make_guide_screens.py:513;нет;Как start-01.
+raschety-02.png;docs/guide/01-raschety.md:16;raschety;13 · tools/make_guide_screens.py:517–518;нет;Строка кнопки на своём месте, подписи нет.
+raschety-03.png;docs/guide/01-raschety.md:23;raschety;15 · tools/make_guide_screens.py:522;нет;Результат одной точки не менялся.
+raschety-04.png;docs/guide/01-raschety.md:32;raschety;17 · tools/make_guide_screens.py:529;нет;Блок «Управление фазами» был и раньше.
+raschety-05.png;docs/guide/01-raschety.md:72;raschety;22 · tools/make_guide_screens.py:546;да;Поле порога показа фаз свёрнуто в «Точность и критерии» (21-М, 2 и 3).
+raschety-06.png;docs/guide/01-raschety.md:79;raschety;24 · tools/make_guide_screens.py:560;да;Над графиком форма со свёрнутым блоком (21-М).
+raschety-07.png;docs/guide/01-raschety.md:87;raschety;25 · tools/make_guide_screens.py:565;да;Та же страница, что raschety-06.
+soobshcheniya-01.png;docs/guide/01-raschety.md:50;soobshcheniya — results/wave17_d/guide_screens_042.py, не в SCENARIOS;вне ШАГА 1 · results/wave17_d/guide_screens_042.py:106;нет;«Одна температура», блок «Управление фазами» и предупреждение о быстром наборе — без изменений 21-И, 21-М, 21-О.
+soobshcheniya-02.png;docs/guide/01-raschety.md:68;soobshcheniya — results/wave17_d/guide_screens_042.py;вне ШАГА 1 · results/wave17_d/guide_screens_042.py:126;нет;Сообщение под кнопкой «Рассчитать равновесие», кнопка на своём месте.
+diagrammy-01.png;docs/guide/02-diagrammy.md:12;diagrammy;29 · tools/make_guide_screens.py:581;да;Форма короче (4 поля в «Точность и критерии»), строка кнопки у нижнего края, если её место ниже кадра (21-М, 1В, 2, 3).
+diagrammy-02.png;docs/guide/02-diagrammy.md:19;diagrammy;35 · tools/make_guide_screens.py:598;да;"Раскрытый «Точность и критерии», подпись «Не по умолчанию: Шаг по составу, ат.%; Шаг по температуре, °C.» (21-М, 2–4)."
+diagrammy-03.png;docs/guide/02-diagrammy.md:27;diagrammy;36 · tools/make_guide_screens.py:607–610;да;Кнопка в строке с подписью «Не по умолчанию» (21-М, 1В, 4).
+diagrammy-04.png;docs/guide/02-diagrammy.md:34;diagrammy;38 · tools/make_guide_screens.py:614;да;Форма над графиком изменилась (21-М). Диаграмма та же.
+diagrammy-05.png;docs/guide/02-diagrammy.md:42;diagrammy;39 · tools/make_guide_screens.py:619;да;Та же страница, что diagrammy-04.
+zatverdevanie-01.png;docs/guide/03-zatverdevanie.md:9;zatverdevanie;43 · tools/make_guide_screens.py:636;нет;Боковая панель.
+zatverdevanie-02.png;docs/guide/03-zatverdevanie.md:16;zatverdevanie;46 · tools/make_guide_screens.py:645;да;Под «Методом расчёта» больше нет полей старта и шага — они в «Точность и критерии» (21-М, 2).
+zatverdevanie-03.png;docs/guide/03-zatverdevanie.md:23;zatverdevanie;49 · tools/make_guide_screens.py:653;да;Раскрытый блок из 11 полей с подписями 13Б «(0.0001–5)», подпись «Не по умолчанию» над кнопкой (21-М, 2, 4, 13Б).
+zatverdevanie-04.png;docs/guide/03-zatverdevanie.md:31;zatverdevanie;52 · tools/make_guide_screens.py:667;да;Переключатель вместо вкладок (21-И), выше — раскрытый блок и подпись (21-М).
+zatverdevanie-05.png;docs/guide/03-zatverdevanie.md:40;zatverdevanie;53 · tools/make_guide_screens.py:672;да;Та же страница, что zatverdevanie-04.
+zatverdevanie-06.png;docs/guide/03-zatverdevanie.md:49;zatverdevanie;55 · tools/make_guide_screens.py:679;да;Выбран вариант «Выгрузка» переключателя (21-И).
+energii-01.png;docs/guide/04-energii.md:11;energii;59 · tools/make_guide_screens.py:695;да;Галочка «Исключить…», «Фазы исходного равновесия» и «Шаг температуры» свёрнуты (21-М, 2, 3), строка кнопки.
+energii-02.png;docs/guide/04-energii.md:19;energii;61 · tools/make_guide_screens.py:701;да;Раскрытый «Управление фазами / метастабильный расчёт», подпись «Не по умолчанию» (21-М, 2–4).
+energii-03.png;docs/guide/04-energii.md:26;energii;65 · tools/make_guide_screens.py:711;да;Раскрытый «Точность и критерии», подпись с двумя полями (21-М, 2–4).
+energii-04.png;docs/guide/04-energii.md:33;energii;67 · tools/make_guide_screens.py:723;да;Форма над графиком изменилась (21-М). График тот же.
+energii-05.png;docs/guide/04-energii.md:41;energii;68 · tools/make_guide_screens.py:728;да;"То же; на нынешнем кадре форма видна над графиком."
+svoystva-01.png;docs/guide/05-svoystva.md:11;svoystva;72 · tools/make_guide_screens.py:744–747;да;Список «Автоматические фазы» свёрнут в «Управление фазами / метастабильный расчёт» (21-М, 2, 3).
+svoystva-02.png;docs/guide/05-svoystva.md:18;svoystva;74 · tools/make_guide_screens.py:754;да;Форма над результатом короче (21-М).
+svoystva-03.png;docs/guide/05-svoystva.md:29;svoystva;78 · tools/make_guide_screens.py:767–768;да;Список фаз свёрнут (21-М, 2, 3).
+svoystva-04.png;docs/guide/05-svoystva.md:36;svoystva;80 · tools/make_guide_screens.py:775;да;Форма над таблицей короче (21-М).
+svoystva-05.png;docs/guide/05-svoystva.md:48;svoystva;82 · tools/make_guide_screens.py:788;да;Верх кадра — свёрнутый блок вместо открытого списка фаз (21-М).
+kinetika-01.png;docs/guide/06-kinetika.md:14;kinetika;86 · tools/make_guide_screens.py:807;да;Строка кнопки «Рассчитать кинетику выделений» у нижнего края кадра (21-М, 1В).
+kinetika-02.png;docs/guide/06-kinetika.md:22;kinetika;87 · tools/make_guide_screens.py:811;да;То же.
+kinetika-03.png;docs/guide/06-kinetika.md:29;kinetika;89 · tools/make_guide_screens.py:821;да;То же.
+kinetika-04.png;docs/guide/06-kinetika.md:36;kinetika;90 · tools/make_guide_screens.py:828;да, проверить;Кадр высокий: строка кнопки внизу, если её место ниже кадра (21-М, 1В). Положение — на съёмке.
+kinetika-05.png;docs/guide/06-kinetika.md:45;kinetika;93 · tools/make_guide_screens.py:846;да;Переключатель вместо вкладок (21-И). Числа могут сдвинуться после 22-Б (K = 2).
+kinetika-06.png;docs/guide/06-kinetika.md:109;kinetika;96 · tools/make_guide_screens.py:855;да;Переключатель «Однофазная пара / Многофазная гомогенизация / Покрытие базы подвижностей» вместо вкладок (21-И).
+kinetika-07.png;docs/guide/06-kinetika.md:117;kinetika;97 · tools/make_guide_screens.py:866;да;«Длина области, мкм» и «Ячеек» в свёрнутом «Параметры модели», «Время, ч» отдельной строкой (21-М, 2, 3).
+kinetika-08.png;docs/guide/06-kinetika.md:125;kinetika;99 · tools/make_guide_screens.py:882;нет;Кадр от графика вниз. Плиток теперь две (16Б), но они выше края кадра.
+soobshcheniya-03.png;docs/guide/06-kinetika.md:99;soobshcheniya — results/wave17_d/guide_screens_042.py;вне ШАГА 1 · results/wave17_d/guide_screens_042.py:143;да;Текст остановки — 3В («ушла ниже нуля»), время остановки 718 сдвигается после 22-Б, над текстом и под ним — переключатель, не вкладки (21-И). Сценарий ждёт вкладку «Итоги» (:138) — ломается.
+soobshcheniya-04.png;docs/guide/06-kinetika.md:101;soobshcheniya — results/wave17_d/guide_screens_042.py;вне ШАГА 1 · results/wave17_d/guide_screens_042.py:148;да;Вид «Итоги» на переключателе (21-И), строки таблицы проверок — после 22-Б.
+soobshcheniya-05.png;docs/guide/06-kinetika.md:103;soobshcheniya — results/wave17_d/guide_screens_042.py;вне ШАГА 1 · results/wave17_d/guide_screens_042.py:183;да;"Предупреждение над переключателем (21-И). Если в кадр попадёт строка кнопки — подпись «Не по умолчанию: Минимальный радиус, нм; Начальный максимальный радиус, нм.» (21-М, 4). Сценарий ждёт вкладку «Итоги» (:179) — ломается."
+proekty-01.png;docs/guide/07-proekty.md:12;proekty;105 · tools/make_guide_screens.py:906;нет;Формы «Проектов и данных» 21-М не трогала.
+proekty-02.png;docs/guide/07-proekty.md:20;proekty;107 · tools/make_guide_screens.py:916;нет;То же.
+proekty-03.png;docs/guide/07-proekty.md:27;proekty;109 · tools/make_guide_screens.py:926;нет;То же.
+proekty-04.png;docs/guide/07-proekty.md:36;proekty;112 · tools/make_guide_screens.py:937–938;нет;То же.
+proekty-05.png;docs/guide/07-proekty.md:44;proekty;116 · tools/make_guide_screens.py:962;нет;То же.
+proekty-06.png;docs/guide/07-proekty.md:52;proekty;118 · tools/make_guide_screens.py:971;нет;"Сводка на экране; 12Б — только в файле выгрузки."
+proekty-07.png;docs/guide/07-proekty.md:63;proekty;122 · tools/make_guide_screens.py:986;нет;То же, что proekty-01.
+proekty-08.png;docs/guide/07-proekty.md:71;proekty;124 · tools/make_guide_screens.py:998;нет;То же.
+—;кадров без ссылок;—;—;—;0: все 56 файлов docs/guide/img/*.png упомянуты в главах ровно по одному разу.
+—;ссылок без кадров;—;—;—;0: все 56 ссылок img/*.png из docs/guide/*.md ведут на существующие файлы. docs/FEATURES.md и docs/LIMITS_OF_APPLICABILITY.md кадров не упоминают.
