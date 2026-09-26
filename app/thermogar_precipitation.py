@@ -1481,8 +1481,13 @@ def _excel(result: PrecipitationResult) -> bytes:
         result.settings.to_excel(writer, sheet_name="Параметры", index=False)
         result.summary.to_excel(writer, sheet_name="Итоги", index=False)
         result.kinetics.to_excel(writer, sheet_name="Кинетика", index=False)
-        result.matrix_composition.to_excel(writer, sheet_name="Состав матрицы", index=False)
-        result.interface_composition.to_excel(writer, sheet_name="Межфазные составы", index=False)
+        # 12Б (25.09.2026): символы элементов в заголовках — как на экране.
+        element_columns_for_display(result.matrix_composition).to_excel(
+            writer, sheet_name="Состав матрицы", index=False
+        )
+        element_columns_for_display(result.interface_composition).to_excel(
+            writer, sheet_name="Межфазные составы", index=False
+        )
         result.psd.to_excel(writer, sheet_name="Итоговое PSD", index=False)
         result.quality.to_excel(writer, sheet_name="Проверки", index=False)
     return buffer.getvalue()

@@ -244,7 +244,7 @@ def test_element_symbols_and_columns() -> None:
     table = pd.DataFrame({"Фаза": ["FCC_A1"], "NI, ат.%": [80.0], "AL, ат.%": [20.0]})
     shown = element_columns_for_display(table)
     assert list(shown.columns) == ["Фаза", "Ni, ат.%", "Al, ат.%"]
-    # Сама таблица (данные и выгрузки) не меняется.
+    # Сама таблица не меняется; выгрузки переименовывают столбцы при записи файла (12Б).
     assert list(table.columns) == ["Фаза", "NI, ат.%", "AL, ат.%"]
 
 

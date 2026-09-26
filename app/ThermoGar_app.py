@@ -5470,7 +5470,7 @@ def solidification_zip_bytes(
             )
             archive.writestr(
                 f"{method_key}_liquid_composition.csv",
-                state["liquid_tables"][method_key]
+                element_columns_for_display(state["liquid_tables"][method_key])
                 .to_csv(index=False)
                 .encode("utf-8-sig"),
             )
@@ -5769,7 +5769,8 @@ def dataframe_to_excel(
     buffer = BytesIO()
     with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
         for name, dataframe in export_sheets.items():
-            dataframe.to_excel(
+            # 12Б (25.09.2026): символы элементов в заголовках — как на экране.
+            element_columns_for_display(dataframe).to_excel(
                 writer,
                 sheet_name=name[:31],
                 index=False,
@@ -8479,7 +8480,7 @@ with concentration_tab:
                 "Проверка результата": result["quality"]["checks"],
             }
         )
-        csv_bytes = result["data"].to_csv(
+        csv_bytes = element_columns_for_display(result["data"]).to_csv(
             index=False,
         ).encode("utf-8-sig")
         png_bytes = figure_to_png(result["figure"])
@@ -10371,7 +10372,7 @@ with phase_diagram_tab:
                     "Расчётная сетка": result["data"],
                 }
             )
-            csv_bytes = result["data"].to_csv(
+            csv_bytes = element_columns_for_display(result["data"]).to_csv(
                 index=False,
             ).encode("utf-8-sig")
             png_bytes = figure_to_png(result["figure"])
