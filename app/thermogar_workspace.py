@@ -678,9 +678,8 @@ def validate_project_payload(payload: Any) -> dict[str, Any]:
     }
     if drift:
         raise UserValueError(
-            "Проект сохранён другой версией ThermoGar; автоматическое "
-            "приведение не выполняется: " + repr(drift)
-        )
+            "Проект сохранён другой версией ThermoGar и не открывается."
+        ) from ValueError(f"project identity drift: {drift!r}")
     name = payload.get("name")
     description = payload.get("description")
     if not isinstance(name, str) or not name.strip() or len(name.strip()) > 200:
