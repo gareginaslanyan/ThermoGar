@@ -1,0 +1,64 @@
+app/ThermoGar_app.py:1858	нет
+app/ThermoGar_app.py:1886	да — None (рядом с числами NaN)
+app/ThermoGar_app.py:1888	редко — None при total_mass ≤ 0; иначе только ""
+app/ThermoGar_app.py:2078	да — None / NaN
+app/ThermoGar_app.py:2145	да — None / NaN (всегда в строке «Al, liquid model»)
+app/ThermoGar_app.py:2179	нет — только ""
+app/ThermoGar_app.py:2322	да — None / NaN
+app/ThermoGar_app.py:2407	нет
+app/ThermoGar_app.py:2599	нет
+app/ThermoGar_app.py:3059	нет — только ""
+app/ThermoGar_app.py:7747	нет — только ""
+app/ThermoGar_app.py:7767	нет — только ""
+app/ThermoGar_app.py:8070	нет
+app/ThermoGar_app.py:8459	нет
+app/ThermoGar_app.py:8875	нет — только ""
+app/ThermoGar_app.py:9381	нет — только "" (теоретически)
+app/ThermoGar_app.py:9779	нет
+app/ThermoGar_app.py:10342	нет
+app/ThermoGar_app.py:10352	да — NaN
+app/ThermoGar_app.py:11080	да — NaN и None
+app/ThermoGar_app.py:11100	нет — только ""
+app/ThermoGar_app.py:11138	редко — NaN только от scheil; иначе ""
+app/ThermoGar_app.py:11144	редко — NaN только от scheil; иначе ""
+app/ThermoGar_app.py:11150	редко — NaN только от scheil
+app/ThermoGar_app.py:11201	да — NaN
+app/ThermoGar_app.py:11483	нет
+app/ThermoGar_app.py:11491	да — NaN
+app/ThermoGar_app.py:11497	да — NaN
+app/ThermoGar_app.py:11732	нет
+app/ThermoGar_app.py:11737	да — NaN
+app/ThermoGar_app.py:12026	да — NaN
+app/ThermoGar_app.py:12492	нет
+app/ThermoGar_app.py:12504	нет
+app/ThermoGar_app.py:12524	нет (при null в манифесте — текст «None», не серый)
+app/ThermoGar_app.py:12531	нет
+app/ThermoGar_app.py:12756	нет
+app/ThermoGar_app.py:12847	нет — только ""
+app/thermogar_diffusion.py:1289	редко — NaN только от kawin
+app/thermogar_diffusion.py:1298	редко — NaN только от kawin
+app/thermogar_diffusion.py:1301	редко — NaN/inf в u-долях
+app/thermogar_diffusion.py:1302	нет
+app/thermogar_diffusion.py:1868	нет — только "" (теоретически)
+app/thermogar_precipitation.py:1836	нет
+app/thermogar_precipitation.py:1839	нет
+app/thermogar_precipitation.py:1843	редко — NaN от kawin
+app/thermogar_precipitation.py:1845	редко — NaN от kawin
+app/thermogar_precipitation.py:1846	редко — NaN от kawin
+app/thermogar_precipitation.py:1849	редко — NaN от kawin
+app/thermogar_properties.py:1664	не показывается (функция не вызывается)
+app/thermogar_properties.py:1806	не показывается (функция не вызывается)
+app/thermogar_properties.py:1807	не показывается (функция не вызывается)
+app/thermogar_properties.py:2230	не показывается (функция не вызывается)
+app/thermogar_stage14.py:931	нет
+app/thermogar_stage14.py:1269	да — NaN
+app/thermogar_stage14.py:1273	нет — только ""
+app/thermogar_stage14.py:1296	нет
+app/thermogar_stage14.py:1404	да — NaN
+app/thermogar_workspace.py:1121	нет — только ""
+app/thermogar_workspace.py:1186	редко — None только при null в файле библиотеки; иначе ""
+app/thermogar_workspace.py:1843	нет — только ""
+app/thermogar_workspace.py:2068	редко — None только при null в журнале; иначе ""
+app/thermogar_workspace.py:2774	нет — только ""
+app/thermogar_workspace.py:2849	да — NaN
+app/thermogar_workspace.py:2854	да — NaN

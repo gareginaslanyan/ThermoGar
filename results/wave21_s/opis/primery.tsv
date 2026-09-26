@@ -1,0 +1,23 @@
+app/ThermoGar_app.py:1858	docs/guide/img/svoystva-02.png — пустых нет
+app/ThermoGar_app.py:1886	results/wave21_l/10b/S12_al_umolch.png — «Диагностика» и «Модель плотности» пусты (""), «Объёмная доля среди…» обрезана краем; docs/guide/img/svoystva-02.png — «Диагностика» и «Объёмная доля среди…» пусты (кадр снят на 0.3.1/0.4.2, «None» нет)
+app/ThermoGar_app.py:2078	results/wave21_l/10b/S13_fe_K2.png; results/wave21_m/kadry/umolch_plotnost_t_al_svet.png, umolch_plotnost_t_fe_svet.png — пустых нет
+app/ThermoGar_app.py:2322	results/wave21_m/kadry/uprugie_shag2_svet.png и _tyomn.png, results/wave21_l/10b/S14_ni_umolch_shag2.png — серое «None» в E, ν, Происхождение, Источник, Температура источника (FCC_A1, GAMMA_PRIME); docs/guide/img/svoystva-04.png, svoystva-05.png — всё заполнено; тест tools/test_physical_overrides_toggle.py:296–323 (подмена редактора)
+app/ThermoGar_app.py:2407	docs/guide/img/svoystva-05.png — пустых нет
+app/ThermoGar_app.py:7747	docs/guide/img/raschety-03.png, raschety-04.png — пустых нет; тест tools/test_ui_f.py:302–326 (данные)
+app/ThermoGar_app.py:7767	docs/guide/img/raschety-03.png, raschety-04.png — пустых нет
+app/ThermoGar_app.py:8070	docs/guide/img/raschety-06.png, raschety-07.png; results/wave21_m/kadry/umolch_temperaturnyi_fe_svet.png — пустых нет; тесты tools/test_ui_f.py:330–356, tools/test_parallel_integration.py:241–258 (данные)
+app/ThermoGar_app.py:8459	results/wave21_m/kadry/umolch_sostav_al_svet.png, umolch_sostav_fe_svet.png — пустых нет; тест tools/test_ui_f.py:360–389 (данные)
+app/ThermoGar_app.py:11080	results/wave21_l/10b/S08_al_umolch.png, S08_fe_umolch.png, S08_ni_umolch.png — видимые столбцы без пустых; docs/guide/img/zatverdevanie-04.png, zatverdevanie-05.png — пуста «Интервал кристаллизации» («None» нет, снято на 0.3.1/0.4.2); тест tools/test_equilibrium_solidus_fallback.py:209–230 (math.isnan в данных)
+app/ThermoGar_app.py:11737	results/wave21_l/10b/S10_fe_umolch.png; docs/guide/img/energii-04.png, energii-05.png — пустых нет
+app/ThermoGar_app.py:12026	results/wave21_l/10b/S11_fe_umolch_ch1.png — серое «None» в столбце состава (BL-66); S11_fe_K4_ch1.png — «None» в «T₀, °C» и «T₀, K» (C 0 и 0.1, 0.6–1 мас.%); S11_ni_dop_gp_ch1.png — «None» в «T₀, °C» и «T₀, K» во всех видимых строках; S11_ni_dop_liq_ch1.png, S11_al_umolch_ch1.png — пустых нет
+app/thermogar_diffusion.py:1289	docs/guide/img/kinetika-08.png; results/wave21_m/kadry/umolch_gomogenizaciya_ni_svet_ch1.png — пустых нет; тест tools/test_ui_g.py:280, 300 (данные)
+app/thermogar_diffusion.py:1298	results/wave21_m/kadry/umolch_gomogenizaciya_ni_svet_ch2.png — пустых нет
+app/thermogar_precipitation.py:1836	docs/guide/img/kinetika-05.png, soobshcheniya-03.png, soobshcheniya-05.png — пустых нет («—» в «Единица» — текст)
+app/thermogar_precipitation.py:1839	docs/guide/img/kinetika-05.png, soobshcheniya-04.png — пустых нет
+app/thermogar_workspace.py:1121	docs/guide/img/proekty-01.png; results/wave21_m/kadry/pervyi_21_svet.png — пустых нет
+app/thermogar_workspace.py:1186	docs/guide/img/proekty-02.png, proekty-03.png — пуста «Заметка» ("")
+app/thermogar_workspace.py:1843	docs/guide/img/proekty-08.png — пусто «Описание» ("")
+app/thermogar_workspace.py:2774	docs/guide/img/proekty-05.png — пуст phases (""); тест tools/test_ui_h.py:536–554 (AppTest читает показанную таблицу)
+app/thermogar_workspace.py:2849	docs/guide/img/proekty-06.png — пуста «Ошибка» (""), все строки успешны; тесты tools/test_ui_h.py:595–606 и следующий (данные)
+app/thermogar_stage14.py:1296	results/wave21_m/kadry/pervyi_27_svet.png — пустых нет
+app/ThermoGar_app.py:11732	results/wave21_l/10b/S10_fe_umolch.png — пустых нет
