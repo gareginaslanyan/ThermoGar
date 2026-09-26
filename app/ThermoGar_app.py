@@ -433,6 +433,8 @@ ENERGY_DEFAULTS = {
         "t_min": 300.0,
         "t_max": 1700.0,
         "t_step": 25.0,
+        "tzero_t_min": 300.0,
+        "tzero_t_max": 1700.0,
     },
     "fe": {
         "phases": ["BCC_B2", "FCC_A1", "LIQUID"],
@@ -446,6 +448,9 @@ ENERGY_DEFAULTS = {
         "t_min": 300.0,
         "t_max": 1700.0,
         "t_step": 25.0,
+        # 2В (26.09.2026): окно T₀ на одной ветке α/γ.
+        "tzero_t_min": 200.0,
+        "tzero_t_max": 950.0,
     },
     "al": {
         "phases": ["GP_MAT", "LIQUID"],
@@ -459,6 +464,8 @@ ENERGY_DEFAULTS = {
         "t_min": 100.0,
         "t_max": 1000.0,
         "t_step": 10.0,
+        "tzero_t_min": 100.0,
+        "tzero_t_max": 1000.0,
     },
 }
 
@@ -4501,10 +4508,12 @@ def tzero_path_table(
     tzero_property.minimum_value = float(t_min_c) + 273.15
     tzero_property.maximum_value = float(t_max_c) + 273.15
 
-    composition_axis = 100.0 * workspace_values(
-        path_workspace,
-        axis_variable,
-    )
+    # BL-66 (21-О): состав — из заданной сетки, а не из двухфазного
+    # равновесия пути: при середине окна оно сходится не везде, и строки
+    # с найденным T₀ оставались без состава. Сетка — тот же кортеж, что в
+    # условии пути (первая точка условия у pycalphad — 1e-10 вместо 0).
+    start, stop, step = conditions[axis_variable]
+    composition_axis = np.round(100.0 * np.arange(start, stop, step), 10)
     tzero_k = workspace_values(path_workspace, tzero_property)
 
     return pd.DataFrame(
@@ -5461,7 +5470,7 @@ def solidification_zip_bytes(
             )
             archive.writestr(
                 f"{method_key}_liquid_composition.csv",
-                state["liquid_tables"][method_key]
+                element_columns_for_display(state["liquid_tables"][method_key])
                 .to_csv(index=False)
                 .encode("utf-8-sig"),
             )
@@ -5760,7 +5769,8 @@ def dataframe_to_excel(
     buffer = BytesIO()
     with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
         for name, dataframe in export_sheets.items():
-            dataframe.to_excel(
+            # 12Б (25.09.2026): символы элементов в заголовках — как на экране.
+            element_columns_for_display(dataframe).to_excel(
                 writer,
                 sheet_name=name[:31],
                 index=False,
@@ -8470,7 +8480,7 @@ with concentration_tab:
                 "Проверка результата": result["quality"]["checks"],
             }
         )
-        csv_bytes = result["data"].to_csv(
+        csv_bytes = element_columns_for_display(result["data"]).to_csv(
             index=False,
         ).encode("utf-8-sig")
         png_bytes = figure_to_png(result["figure"])
@@ -10362,7 +10372,7 @@ with phase_diagram_tab:
                     "Расчётная сетка": result["data"],
                 }
             )
-            csv_bytes = result["data"].to_csv(
+            csv_bytes = element_columns_for_display(result["data"]).to_csv(
                 index=False,
             ).encode("utf-8-sig")
             png_bytes = figure_to_png(result["figure"])
@@ -11898,13 +11908,13 @@ with energy_tab:
         )
         tzero_t_min = st.number_input(
             "Нижняя граница поиска T₀, °C",
-            value=float(energy_defaults["t_min"]),
+            value=float(energy_defaults["tzero_t_min"]),
             step=25.0,
             key=f"tzero_t_min_{database_key}",
         )
         tzero_t_max = st.number_input(
             "Верхняя граница поиска T₀, °C",
-            value=float(energy_defaults["t_max"]),
+            value=float(energy_defaults["tzero_t_max"]),
             step=25.0,
             key=f"tzero_t_max_{database_key}",
         )

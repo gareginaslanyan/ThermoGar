@@ -2865,7 +2865,13 @@ def render_batch_calculation(
         ) and type(batch_export_decision) is FeatureRequest:
             result_value = batch_result_value(
                 {
-                    name: dataframe_state_value(result[name])
+                    # 12Б (25.09.2026): символы элементов — только в
+                    # составах фаз; «Исходные данные» — канонический вход.
+                    name: dataframe_state_value(
+                        element_columns_for_display(result[name])
+                        if name in ("Составы фаз ат", "Составы фаз мас")
+                        else result[name]
+                    )
                     for name in (
                         "Сводка",
                         "Фазовые доли",

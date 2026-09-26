@@ -1,0 +1,16 @@
+﻿вид;файл;лист / член;до (таблица);после (файл);совпадает
+Excel;ThermoGar_equilibrium.xlsx;Составы фаз ат;Фаза | Что это | AL, ат.% | NI, ат.%;Фаза | Что это | Al, ат.% | Ni, ат.%;нет
+Excel;ThermoGar_equilibrium.xlsx;Составы фаз мас;Фаза | Что это | AL, мас.% | NI, мас.%;Фаза | Что это | Al, мас.% | Ni, мас.%;нет
+CSV;ThermoGar_concentration_scan.csv;заголовок;CU, атомные % | GP_MAT | THETA_AL2CU;Cu, атомные % | GP_MAT | THETA_AL2CU;нет
+ZIP;ThermoGar_solidification_results.zip;equilibrium_liquid_composition.csv;Температура, °C | Доля расплава, % | AL, ат.% | AL, мас.% | NI, ат.% | NI, мас.%;Температура, °C | Доля расплава, % | Al, ат.% | Al, мас.% | Ni, ат.% | Ni, мас.%;нет
+ZIP;ThermoGar_solidification_results.zip;xlsx, «Равновес расплав»;Температура, °C | Доля расплава, % | AL, ат.% | AL, мас.% | NI, ат.% | NI, мас.%;Температура, °C | Доля расплава, % | Al, ат.% | Al, мас.% | Ni, ат.% | Ni, мас.%;нет
+ZIP;ThermoGar_solidification_results.zip;xlsx, «Равновес raw»;Temperature (°C) | Temperature (K) | NP(LIQUID) | NP(FCC_A1) | X(FCC_A1,AL) | X(FCC_A1,NI) | X(LIQUID,AL) | X(LIQUID,NI);Temperature (°C) | Temperature (K) | NP(LIQUID) | NP(FCC_A1) | X(FCC_A1,AL) | X(FCC_A1,NI) | X(LIQUID,AL) | X(LIQUID,NI);да
+ZIP;ThermoGar_solidification_results.zip;scheil_liquid_composition.csv;Температура, °C | Доля расплава, % | AL, ат.% | AL, мас.% | NI, ат.% | NI, мас.%;Температура, °C | Доля расплава, % | Al, ат.% | Al, мас.% | Ni, ат.% | Ni, мас.%;нет
+ZIP;ThermoGar_solidification_results.zip;xlsx, «Scheil расплав»;Температура, °C | Доля расплава, % | AL, ат.% | AL, мас.% | NI, ат.% | NI, мас.%;Температура, °C | Доля расплава, % | Al, ат.% | Al, мас.% | Ni, ат.% | Ni, мас.%;нет
+ZIP;ThermoGar_solidification_results.zip;xlsx, «Scheil raw»;Temperature (°C) | Temperature (K) | NP(LIQUID) | NP(FCC_A1) | NP(GAMMA_PRIME) | X(FCC_A1,AL) | X(FCC_A1,NI) | X(GAMMA_PRIME,AL) | X(GAMMA_PRIME,NI) | X(LIQUID,AL) | X(LIQUID,NI);Temperature (°C) | Temperature (K) | NP(LIQUID) | NP(FCC_A1) | NP(GAMMA_PRIME) | X(FCC_A1,AL) | X(FCC_A1,NI) | X(GAMMA_PRIME,AL) | X(GAMMA_PRIME,NI) | X(LIQUID,AL) | X(LIQUID,NI);да
+T₀;ThermoGar_T0.xlsx;T0;AL, ат.% | T₀, °C | T₀, K | Решение найдено;Al, ат.% | T₀, °C | T₀, K | Решение найдено;нет
+Выделения;ThermoGar_precipitation_GAMMA_PRIME.xlsx;Состав матрицы;Время, ч | AL, матрица, ат.% | NI, матрица, ат.%;Время, ч | Al, матрица, ат.% | Ni, матрица, ат.%;нет
+Выделения;ThermoGar_precipitation_GAMMA_PRIME.xlsx;Межфазные составы;Время, ч | AL, матрица на границе, ат.% | AL, выделение на границе, ат.%;Время, ч | Al, матрица на границе, ат.% | Al, выделение на границе, ат.%;нет
+Пакет;ThermoGar_batch_result.xlsx;Составы фаз ат;Фаза | AL, ат.% | NI, ат.% | Название | База;Фаза | Al, ат.% | Ni, ат.% | Название | База;нет
+Пакет;ThermoGar_batch_result.xlsx;Составы фаз мас;Фаза | AL, мас.% | NI, мас.% | Название | База;Фаза | Al, мас.% | Ni, мас.% | Название | База;нет
+Пакет;ThermoGar_batch_result.xlsx;Исходные данные;name | database | balance | units | temperature_C | pressure_Pa | steel_mode | phases | composition;name | database | balance | units | temperature_C | pressure_Pa | steel_mode | phases | composition;да

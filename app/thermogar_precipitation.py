@@ -89,7 +89,7 @@ PRESET_NI = {
 DEFAULTS = {
     "ni": ("FCC_A1", "GAMMA_PRIME", 800.0, 100.0, 0.023, 6.57, 6.57),
     "al": ("FCC_A1", "THETA_AL2CU", 200.0, 24.0, 0.15, 10.0, 10.0),
-    "fe": ("BCC_A2", "M23C6", 700.0, 0.05, 0.3, 7.09, 7.09),
+    "fe": ("BCC_A2", "M23C6", 700.0, 0.01, 0.3, 7.09, 7.09),
 }
 
 # Fe-профиль исключает C15_LAVES из фаз, предлагаемых пользователю.
@@ -368,6 +368,14 @@ def _time_text(time_s: float) -> str:
 
 
 def _composition_stop_note(time_s: float, element: str, value: float) -> str:
+    # 3В (26.09.2026): после 22-Б отрицательная доля приходит сырым числом
+    # (-0.009864 ат.%), на экран вместо него — слова.
+    if np.isfinite(value) and value < 0.0:
+        return (
+            f"Расчёт остановлен на {_time_text(time_s)}: доля {element_symbol(element)} в матрице "
+            "ушла ниже нуля, баланс масс нарушен. Показана часть "
+            f"расчёта до остановки. {KWN_COMPOSITION_STOP_CAUSE}"
+        )
     return (
         f"Расчёт остановлен на {_time_text(time_s)}: доля {element_symbol(element)} в матрице "
         f"стала {100*value:.4g} ат.%, баланс масс нарушен. Показана часть "
@@ -1473,8 +1481,13 @@ def _excel(result: PrecipitationResult) -> bytes:
         result.settings.to_excel(writer, sheet_name="Параметры", index=False)
         result.summary.to_excel(writer, sheet_name="Итоги", index=False)
         result.kinetics.to_excel(writer, sheet_name="Кинетика", index=False)
-        result.matrix_composition.to_excel(writer, sheet_name="Состав матрицы", index=False)
-        result.interface_composition.to_excel(writer, sheet_name="Межфазные составы", index=False)
+        # 12Б (25.09.2026): символы элементов в заголовках — как на экране.
+        element_columns_for_display(result.matrix_composition).to_excel(
+            writer, sheet_name="Состав матрицы", index=False
+        )
+        element_columns_for_display(result.interface_composition).to_excel(
+            writer, sheet_name="Межфазные составы", index=False
+        )
         result.psd.to_excel(writer, sheet_name="Итоговое PSD", index=False)
         result.quality.to_excel(writer, sheet_name="Проверки", index=False)
     return buffer.getvalue()

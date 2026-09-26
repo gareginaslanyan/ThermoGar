@@ -1,0 +1,83 @@
+[
+  {
+    "section": "Кинетика",
+    "cell": "KWN (модуль)",
+    "db": "ni",
+    "status": "PASS",
+    "error": "",
+    "numbers": {
+      "пара": "FCC_A1 / GAMMA_PRIME",
+      "T, °C": 800.0,
+      "строк кинетики": 246,
+      "проверки качества": true
+    },
+    "seconds": 14.55
+  },
+  {
+    "section": "Кинетика",
+    "cell": "KWN (kawin напрямую)",
+    "db": "ni",
+    "status": "PASS",
+    "error": "",
+    "numbers": {
+      "пара": "FCC_A1 / GAMMA_PRIME",
+      "T, °C": 800.0,
+      "решено, с модельного времени": 1.0
+    },
+    "seconds": 8.69
+  },
+  {
+    "section": "Кинетика",
+    "cell": "KWN (модуль)",
+    "db": "al",
+    "status": "PASS",
+    "error": "",
+    "numbers": {
+      "пара": "FCC_A1 / THETA_AL2CU",
+      "T, °C": 200.0,
+      "строк кинетики": 97,
+      "проверки качества": true
+    },
+    "seconds": 7.28
+  },
+  {
+    "section": "Кинетика",
+    "cell": "KWN (kawin напрямую)",
+    "db": "al",
+    "status": "PASS",
+    "error": "",
+    "numbers": {
+      "пара": "FCC_A1 / THETA_AL2CU",
+      "T, °C": 200.0,
+      "решено, с модельного времени": 1.0
+    },
+    "seconds": 6.23
+  },
+  {
+    "section": "Кинетика",
+    "cell": "KWN (модуль)",
+    "db": "fe",
+    "status": "PASS",
+    "error": "",
+    "numbers": {
+      "пара": "BCC_A2 / M23C6",
+      "T, °C": 700.0,
+      "строк кинетики": 1123,
+      "проверки качества": true
+    },
+    "seconds": 37.8
+  },
+  {
+    "section": "Кинетика",
+    "cell": "KWN (kawin напрямую)",
+    "db": "fe",
+    "status": "PASS",
+    "error": "",
+    "numbers": {
+      "пара": "BCC_A2 / M23C6",
+      "T, °C": 700.0,
+      "решено, с модельного времени": 1.0
+    },
+    "seconds": 8.2
+  }
+]

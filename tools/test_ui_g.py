@@ -366,13 +366,12 @@ def test_homogenization_unavailable_on_al_is_explained() -> None:
 
 
 # The Fe cell (BCC_A2 / M23C6 at 700 C) is marked slow, not skipped. Measured
-# in wave 11L: Ni 39 s, Al 27 s, Fe more than 30 min for the same 3.6 s of
-# model time, at 100 % of one core and a 262 MiB working set. The cost is in
-# kawin's default driving-force method: `getDrivingForce` -> tangent ->
-# `getLocalEq` runs a pycalphad equilibrium for every nucleation-rate
-# evaluation, and Fe-C-Cr with M23C6 is the expensive corner. It is neither a
-# hang nor a memory problem, so the cell stays in the suite and is run on
-# demand with `-m slow`.
+# on the laptop after 22-Б (21-О): Ni 30 s, Al 20 s, Fe 76 s for the same
+# 3.6 s of model time (Linux: Fe 44-48 s). The cost is in kawin's default
+# driving-force method: `getDrivingForce` -> tangent -> `getLocalEq` runs a
+# pycalphad equilibrium for every nucleation-rate evaluation, and Fe-C-Cr
+# with M23C6 is the expensive corner. The cell stays in the suite and is run
+# on demand with `-m slow`.
 @pytest.mark.parametrize(
     "database_key",
     (
@@ -412,27 +411,12 @@ def test_kwn_precipitation(database_key: str) -> None:
     assert result.phase == precipitate
     assert len(result.kinetics) >= 10
     assert len(result.psd) >= 10
-    if database_key == "fe":
-        # BL-35 (wave 15): on this grid (40 classes) carbon in the ferrite
-        # matrix is pushed to 0 at 1.418 s of model time and the run stops
-        # with the part computed so far, as tools/test_precipitation_bl35.py
-        # describes. Whether this is a mass-balance break or a numerical
-        # overshoot through the ~1e-5 equilibrium solubility of C that kawin
-        # clamps to zero is open as BL-43 (tasks/REGISTER.md); the 30-class
-        # grid of test_backend_calculations does not stop.
-        quality = result.quality.set_index("Проверка")
-        assert quality.loc[COMPOSITION_CHECK, "Статус"] == "ошибка"
-        assert quality.loc[COMPOSITION_CHECK, "Примечание"] == result.stop_note
-        assert result.stop_note.startswith("Расчёт остановлен"), result.stop_note
-        others = quality.drop(index=COMPOSITION_CHECK)["Статус"]
-        assert (others == "пройдена").all(), others
-        # 21-Г, часть 3, строка 29 (21-Ж): stop_note — st.error.
-        assert result.stop_note in [element.value for element in app.error]
-        assert new_errors(app) == [result.stop_note, QUALITY_FAILED_ERROR], new_errors(app)
-    else:
-        assert new_errors(app) == [], new_errors(app)
-        assert result.stop_note == ""
-        assert (result.quality["Статус"] == "пройдена").all()
+    # BL-43 is fixed by 22-Б: the KWN step grows at most 2x the previous
+    # step, so the Fe cell (40 classes) no longer stops (Linux, hash seeds
+    # 0-9 — tasks/WAVE22_B_REPORT.md). All three bases expect the same.
+    assert new_errors(app) == [], new_errors(app)
+    assert result.stop_note == ""
+    assert (result.quality["Статус"] == "пройдена").all()
 
     fraction = result.kinetics["Объёмная доля, %"]
     radius = result.kinetics["Средний радиус, нм"]
