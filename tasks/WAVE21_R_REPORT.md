@@ -210,4 +210,40 @@ HTML не пересобирался.
 
 ## ШАГ 4. Git
 
-Коммиты — на `wave21-r`, в `main` не вливалось. Вывод git — в следующем коммите, после `git push`.
+Коммиты — на `wave21-r`, в `main` не вливалось. Вывод git ниже снят после `git push -u origin wave21-r`. Сам раздел добавлен следующим коммитом «docs(21-Р): отчёт — вывод git после пуша».
+
+`git push -u origin wave21-r`:
+
+```
+remote: 
+remote: Create a pull request for 'wave21-r' on GitHub by visiting:        
+remote:      https://github.com/gareginaslanyan/ThermoGar/pull/new/wave21-r        
+remote: 
+To https://github.com/gareginaslanyan/ThermoGar.git
+ * [new branch]      wave21-r -> wave21-r
+branch 'wave21-r' set up to track 'origin/wave21-r'.
+```
+
+`git ls-remote origin wave21-r`:
+
+```
+2dfea6409f770bcd701794813f2f902adee8eb09	refs/heads/wave21-r
+```
+
+`git log --oneline origin/main..wave21-r`:
+
+```
+2dfea64 docs(21-Р): отчёт
+c09f2c3 tools(21-Р): блоки перед вводом и кадром — open_expander
+e4547c6 tools(21-Р): diagrammy — подпись «Не по умолчанию» только видимая
+3e90c1d docs(21-Р): главы руководства — свёрнутые блоки, переключатели, подписи
+df6202e tools(21-Р): tab_snapshot — вид переключателя отдельным шагом
+44aa443 tools(21-Р): сценарии руководства — переключатели видов, свёрнутые блоки, soobshcheniya
+b0a3eae docs(21-Р): задание
+```
+
+`git status --short`:
+
+```
+?? _to_delete/
+```
