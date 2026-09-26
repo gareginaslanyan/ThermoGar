@@ -249,3 +249,35 @@
 ## ШАГ 5. Git
 
 Коммиты — на `wave21-p`, в `main` не вливалось. Вывод git ниже снят после `git push -u origin wave21-p`. Сам раздел добавлен следующим коммитом «docs(21-П): отчёт — вывод git после пуша».
+
+`git push -u origin wave21-p`:
+
+```
+remote: 
+remote: Create a pull request for 'wave21-p' on GitHub by visiting:        
+remote:      https://github.com/gareginaslanyan/ThermoGar/pull/new/wave21-p        
+remote: 
+To https://github.com/gareginaslanyan/ThermoGar.git
+ * [new branch]      wave21-p -> wave21-p
+branch 'wave21-p' set up to track 'origin/wave21-p'.
+```
+
+`git ls-remote origin wave21-p`:
+
+```
+b9aac59ec6c99ac69c73e503d3900f082b8392d4	refs/heads/wave21-p
+```
+
+`git log --oneline origin/wave21-m..wave21-p`:
+
+```
+b9aac59 docs(21-П): отчёт — итоги описи, предложение по пересборке руководства
+1f3d29d results(21-П): опись сценариев, текста руководства, кадров и снимков
+64abb08 docs(21-П): задание
+```
+
+`git status --short`:
+
+```
+?? _to_delete/
+```
