@@ -635,11 +635,11 @@ def scenario_diagrammy(page, log):
     wait_idle(page)
     set_number(root, "Температура до, °C", "1600")
     wait_idle(page)
-    block = expander(main_area(page), BLOCK_PRECISION)
+    block = open_expander(page, main_area(page), BLOCK_PRECISION)
     set_number(block, "Шаг по температуре, °C", "50")
     wait_idle(page)
     root = main_area(page)
-    block = expander(root, BLOCK_PRECISION)
+    block = open_expander(page, root, BLOCK_PRECISION)
     shooter.shot(
         [
             widget(root, "stNumberInput", "Al: до, ат.%"),
@@ -697,11 +697,11 @@ def scenario_zatverdevanie(page, log):
     block = open_expander(page, root, BLOCK_PRECISION)
     set_number(block, "Начальная температура, °C", "700")
     wait_idle(page)
-    block = expander(main_area(page), BLOCK_PRECISION)
+    block = open_expander(page, main_area(page), BLOCK_PRECISION)
     set_number(block, "Шаг охлаждения, °C", "10")
     wait_idle(page)
     root = main_area(page)
-    block = expander(root, BLOCK_PRECISION)
+    block = open_expander(page, root, BLOCK_PRECISION)
     shooter.shot(
         [
             widget(block, "stNumberInput", "Начальная температура, °C"),
@@ -751,7 +751,7 @@ def scenario_energii(page, log):
     block = open_expander(page, root, BLOCK_PHASES)
     set_multiselect(page, block, "Фазы исходного равновесия", ["FCC_A1"])
     root = main_area(page)
-    block = expander(root, BLOCK_PHASES)
+    block = open_expander(page, root, BLOCK_PHASES)
     shooter.shot(
         widget(block, "stMultiSelect", "Фазы исходного равновесия"),
         "Исходное равновесие — только матрица FCC_A1",
@@ -764,7 +764,7 @@ def scenario_energii(page, log):
     set_number(block, "Шаг температуры, °C", "50")
     wait_idle(page)
     root = main_area(page)
-    block = expander(root, BLOCK_PRECISION)
+    block = open_expander(page, root, BLOCK_PRECISION)
     shooter.shot(
         [
             widget(root, "stNumberInput", "Температура от, °C"),
