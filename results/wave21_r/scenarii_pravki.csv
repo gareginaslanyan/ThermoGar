@@ -1,0 +1,23 @@
+﻿№ строки описи 21-П;файл:строка до;файл:строка после;оценка 21-П;что сделано
+30;tools/make_guide_screens.py:588;tools/make_guide_screens.py:627;"в; ломается";Ввод по подписи «Al: до, ат.%» (подстрока подписи «Al: до, ат.% (0.001–100)», app/ThermoGar_app.py:8588) вместо «AL: до, %».
+31;tools/make_guide_screens.py:590;tools/make_guide_screens.py:630–631;"б; ломается";"Перед вводом open_expander(page, root, BLOCK_PRECISION); «Шаг по составу» ищется внутри блока."
+34;tools/make_guide_screens.py:596;tools/make_guide_screens.py:638–639;"б; ломается";Ввод «Шаг по температуре, °C» внутри блока BLOCK_PRECISION (блок уже раскрыт шагом 31, локатор блока берётся заново после пересчёта).
+35;tools/make_guide_screens.py:598;tools/make_guide_screens.py:641–652;б, д;Кадр с раскрытым блоком: цели «Al: до, ат.%», «Шаг по составу» и «Шаг по температуре, °C» (в блоке) и подпись «Не по умолчанию: …» над кнопкой (get_by_text по NOT_DEFAULT_PREFIX).
+47;tools/make_guide_screens.py:649;tools/make_guide_screens.py:697–698;"б; ломается";"Перед вводом open_expander(page, root, BLOCK_PRECISION); «Начальная температура, °C» — внутри блока."
+48;tools/make_guide_screens.py:651;tools/make_guide_screens.py:700–701;"б; ломается";«Шаг охлаждения, °C» — внутри блока BLOCK_PRECISION.
+49;tools/make_guide_screens.py:653;tools/make_guide_screens.py:703–711;б, д;"Кадр с раскрытым блоком; цели ищутся внутри блока."
+51;tools/make_guide_screens.py:662–664;tools/make_guide_screens.py:714;"а; ломается";view_ready(page, «Затвердевание», «Сводка») — ожидание варианта переключателя вместо вкладки.
+52;tools/make_guide_screens.py:667;tools/make_guide_screens.py:717;а, д;Без правки кода: кадр снимается после ожидания шага 51, на виде «Сводка».
+54;tools/make_guide_screens.py:677;tools/make_guide_screens.py:727;"а; ломается";pick_view(page, «Затвердевание», «Выгрузка») вместо open_tab.
+55;tools/make_guide_screens.py:679–683;tools/make_guide_screens.py:729–733;а, д;"Кадр на виде «Выгрузка»; заголовок кадра в журнале: «Вариант «Выгрузка» переключателя: результат в Excel» вместо «Подвкладка «Выгрузка»…»."
+60;tools/make_guide_screens.py:699;tools/make_guide_screens.py:751–752;"б; ломается";"Перед вводом open_expander(page, root, BLOCK_PHASES); мультивыбор «Фазы исходного равновесия» — внутри блока."
+61;tools/make_guide_screens.py:701;tools/make_guide_screens.py:753–758;б, д;"Кадр с раскрытым блоком BLOCK_PHASES; цель ищется внутри блока."
+64;tools/make_guide_screens.py:709;tools/make_guide_screens.py:763–764;"б; ломается";"Перед вводом open_expander(…, BLOCK_PRECISION); «Шаг температуры, °C» — внутри блока."
+65;tools/make_guide_screens.py:711;tools/make_guide_screens.py:766–775;б, д;"Кадр с раскрытыми блоками; «Шаг температуры, °C» ищется внутри BLOCK_PRECISION, «Температура от / до» — в основной области."
+92;tools/make_guide_screens.py:841–843;tools/make_guide_screens.py:898;"а; ломается";view_ready(page, «Кинетика выделений», «Итоги») вместо ожидания вкладки.
+93;tools/make_guide_screens.py:846;tools/make_guide_screens.py:901;а, д;Без правки кода: кадр снимается после ожидания шага 92, на виде «Итоги».
+95;tools/make_guide_screens.py:853;tools/make_guide_screens.py:909;"а; ломается";pick_view(page, «Диффузия и гомогенизация», «Однофазная пара») вместо open_tab.
+96;tools/make_guide_screens.py:855;tools/make_guide_screens.py:911;а, д;Без правки кода: кадр снимается на виде «Однофазная пара» после шага 95.
+97;tools/make_guide_screens.py:866;tools/make_guide_screens.py:923–933;"б, д; ломается";"Перед кадром open_expander(page, root, BLOCK_MODEL); «Длина области, мкм» ищется внутри блока и попадает на кадр."
+попутно;tools/make_guide_screens.py:528;tools/make_guide_screens.py:566;е;"Строка названия блока заменена константой BLOCK_PHASES; поведение то же."
+п. 9 предложения;results/wave17_d/guide_screens_042.py:57–185, 192–206;tools/make_guide_screens.py:1064–1228, 1240, 1256;а (:138, :179);"Сценарий soobshcheniya перенесён девятым: alerts, set_composition, kwn_inputs, kwn_718_inputs (study_wave15_v_718.case_arguments(700.0, 95.0, GRID), импорт внутри функции), ALLOY_718 и EK199_SI5 (:498, :500); ожидание вкладки «Итоги» — view_ready (:1180, :1223); блок фаз — BLOCK_PHASES (:1136); чтения — в запись кадра журнала (note_reading, :1114); в SCENARIO_ORDER последним."
