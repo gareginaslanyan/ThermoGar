@@ -433,6 +433,8 @@ ENERGY_DEFAULTS = {
         "t_min": 300.0,
         "t_max": 1700.0,
         "t_step": 25.0,
+        "tzero_t_min": 300.0,
+        "tzero_t_max": 1700.0,
     },
     "fe": {
         "phases": ["BCC_B2", "FCC_A1", "LIQUID"],
@@ -446,6 +448,9 @@ ENERGY_DEFAULTS = {
         "t_min": 300.0,
         "t_max": 1700.0,
         "t_step": 25.0,
+        # 2В (26.09.2026): окно T₀ на одной ветке α/γ.
+        "tzero_t_min": 200.0,
+        "tzero_t_max": 950.0,
     },
     "al": {
         "phases": ["GP_MAT", "LIQUID"],
@@ -459,6 +464,8 @@ ENERGY_DEFAULTS = {
         "t_min": 100.0,
         "t_max": 1000.0,
         "t_step": 10.0,
+        "tzero_t_min": 100.0,
+        "tzero_t_max": 1000.0,
     },
 }
 
@@ -4501,10 +4508,12 @@ def tzero_path_table(
     tzero_property.minimum_value = float(t_min_c) + 273.15
     tzero_property.maximum_value = float(t_max_c) + 273.15
 
-    composition_axis = 100.0 * workspace_values(
-        path_workspace,
-        axis_variable,
-    )
+    # BL-66 (21-О): состав — из заданной сетки, а не из двухфазного
+    # равновесия пути: при середине окна оно сходится не везде, и строки
+    # с найденным T₀ оставались без состава. Сетка — тот же кортеж, что в
+    # условии пути (первая точка условия у pycalphad — 1e-10 вместо 0).
+    start, stop, step = conditions[axis_variable]
+    composition_axis = np.round(100.0 * np.arange(start, stop, step), 10)
     tzero_k = workspace_values(path_workspace, tzero_property)
 
     return pd.DataFrame(
@@ -11898,13 +11907,13 @@ with energy_tab:
         )
         tzero_t_min = st.number_input(
             "Нижняя граница поиска T₀, °C",
-            value=float(energy_defaults["t_min"]),
+            value=float(energy_defaults["tzero_t_min"]),
             step=25.0,
             key=f"tzero_t_min_{database_key}",
         )
         tzero_t_max = st.number_input(
             "Верхняя граница поиска T₀, °C",
-            value=float(energy_defaults["t_max"]),
+            value=float(energy_defaults["tzero_t_max"]),
             step=25.0,
             key=f"tzero_t_max_{database_key}",
         )
