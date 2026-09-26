@@ -116,3 +116,31 @@ PYTHONHASHSEED=0, MPLBACKEND=Agg, PYTHONDONTWRITEBYTECODE=1, THERMOGAR_STATE_ROO
   коммит, который дописывает этот вывод, в него не входит по построению.
 
 ## Git
+
+`git push -u origin wave21-sh`:
+
+```
+To https://github.com/gareginaslanyan/ThermoGar.git
+ * [new branch]      wave21-sh -> wave21-sh
+branch 'wave21-sh' set up to track 'origin/wave21-sh'.
+```
+
+`git ls-remote origin wave21-sh`:
+
+```
+79ec79b06a527b380352e056c63af52d0c3044c3	refs/heads/wave21-sh
+```
+
+`git log --oneline 96ea05b..wave21-sh`:
+
+```
+79ec79b docs(21-Ш): отчёт
+93b7f4b docs(21-Ш): руководство, быстрый старт, README — 15 правок мастера
+e77bf86 docs(21-Ш): задание
+```
+
+`git status --short`:
+
+```
+?? _to_delete/
+```
