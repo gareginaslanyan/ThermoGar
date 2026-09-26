@@ -2398,7 +2398,9 @@ def composition_from_row(
         ):
             continue
         value = row.get(column)
-        if pd.notna(value):
+        # BL-71: пустая ячейка элемента (после загрузки — строка "") — добавки
+        # нет, как NaN.
+        if pd.notna(value) and not (isinstance(value, str) and not value.strip()):
             entered[element] = float(value)
 
     if not entered:

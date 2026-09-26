@@ -2351,12 +2351,19 @@ def render_b4b2_elastic_properties(
     )
     phase_rows: list[dict[str, Any]] = []
     for record in edited.to_dict(orient="records"):
-        phase_rows.append(
-            {
-                field: _b4b2_editor_value(record.get(field))
-                for field in verified_properties.VRH_ROW_FIELDS
-            }
-        )
+        row = {
+            field: _b4b2_editor_value(record.get(field))
+            for field in verified_properties.VRH_ROW_FIELDS
+        }
+        # BL-70: проверенный путь принимает текст без пробелов по краям, а
+        # стёртое «Примечание» приходит из редактора как None. Пустоту
+        # обязательных полей по-прежнему ловит elastic_rows_missing_text.
+        for field in ("origin", "source", "note"):
+            if isinstance(row[field], str):
+                row[field] = row[field].strip()
+        if row["note"] is None:
+            row["note"] = ""
+        phase_rows.append(row)
     try:
         vrh_inputs = verified_properties.make_vrh_inputs(
             prepared_witness_digest=prepared_digest,
