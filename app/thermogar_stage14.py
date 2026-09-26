@@ -43,6 +43,7 @@ from thermogar_release_ui import (
 from thermogar_paths import ThermoGarPaths
 from thermogar_secure_io import atomic_update_bytes, ensure_plain_directory
 from thermogar_user_errors import (
+    EMPTY_CELL_TEXT,
     UserRuntimeError,
     UserValueError,
     element_symbol,
@@ -928,7 +929,7 @@ def render_validation_report(
     with st.expander("Что именно проверено", expanded=expanded):
         dataframe = validation_dataframe(report)
         if not dataframe.empty:
-            st.dataframe(dataframe, width="stretch", hide_index=True)
+            st.dataframe(dataframe, width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
         st.info(str(report.get("limitations", "")))
         st.caption(
             "Погрешность термодинамической базы и расхождение с реальным "
@@ -1266,11 +1267,11 @@ DIAGNOSTIC_TECHNICAL_COLUMNS = ("Ключ", "Файл", "SHA-256")
 
 def _render_table_with_technical_columns(table: pd.DataFrame) -> None:
     technical = [name for name in DIAGNOSTIC_TECHNICAL_COLUMNS if name in table.columns]
-    st.dataframe(table.drop(columns=technical), width="stretch", hide_index=True)
+    st.dataframe(table.drop(columns=technical), width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
     if technical:
         with st.expander("Технические сведения", expanded=False):
             shown = (["База"] if "База" in table.columns else []) + technical
-            st.dataframe(table[shown], width="stretch", hide_index=True)
+            st.dataframe(table[shown], width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
 
 
 def render_diagnostics(
@@ -1293,7 +1294,7 @@ def render_diagnostics(
 
     st.markdown("### Программы и версии")
     env = environment_table(project_root)
-    st.dataframe(env, width="stretch", hide_index=True)
+    st.dataframe(env, width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
 
     if scheil_available:
         st.success("Модуль Scheil–Gulliver доступен.")
@@ -1401,7 +1402,7 @@ def render_diagnostics(
                 "Хотя бы один контрольный расчёт не пройден. Не переходите "
                 "к рабочим расчётам, пока причина не устранена."
             )
-        st.dataframe(smoke, width="stretch", hide_index=True)
+        st.dataframe(smoke, width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
 
     diagnostic_payload = {
         "schema_version": 1,

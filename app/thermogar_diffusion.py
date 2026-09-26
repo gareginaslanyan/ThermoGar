@@ -50,6 +50,7 @@ from thermogar_release_ui import (
     release_download_button,
 )
 from thermogar_user_errors import (
+    EMPTY_CELL_TEXT,
     UserRuntimeError,
     UserValueError,
     element_columns_for_display,
@@ -1290,19 +1291,21 @@ def _result_display(
         element_columns_for_display(result.profile_table[table_columns]),
         width="stretch",
         hide_index=True,
+        placeholder=EMPTY_CELL_TEXT,
     )
 
     if result.phase_figure is not None:
         st.markdown("### Локальные равновесные доли фаз")
         st.pyplot(result.phase_figure, width="content")
-        st.dataframe(element_columns_for_display(result.phase_fractions), width="stretch", hide_index=True)
+        st.dataframe(element_columns_for_display(result.phase_fractions), width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
 
     with st.expander("Проверка баланса и параметры расчёта"):
-        st.dataframe(result.balance_table, width="stretch", hide_index=True)
+        st.dataframe(result.balance_table, width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
         st.dataframe(
             _settings_display(result.settings),
             width="stretch",
             hide_index=True,
+            placeholder=EMPTY_CELL_TEXT,
         )
 
     excel_bytes = dataframe_to_excel(
@@ -1865,7 +1868,7 @@ def render_kinetics_section(
         if kinetics_table.empty:
             st.info("В базе нет параметров подвижности для этих элементов.")
         else:
-            st.dataframe(kinetics_table, width="stretch", hide_index=True)
+            st.dataframe(kinetics_table, width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
 
         st.markdown("#### Ограничения расчёта диффузии")
         st.markdown(

@@ -148,6 +148,14 @@ def composition_text_display(text: object) -> object:
     )
 
 
+# Текст пустой ячейки таблицы на экране: прочерк «—» (U+2014) вместо серого
+# «None». Решение владельца 26.09.2026 (BL-68, вариант Б); ГОСТ 2.105-95,
+# п. 4.4.18: при отсутствии данных в таблице ставится прочерк. Только показ —
+# параметр ``placeholder`` у st.dataframe / st.data_editor; данные таблиц и
+# выгрузки Excel/CSV не меняются.
+EMPTY_CELL_TEXT = "—"
+
+
 COMPOSITION_TEXT_COLUMNS = ("Добавки", "Состав")
 ELEMENT_VALUE_COLUMNS = ("Основа",)
 

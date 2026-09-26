@@ -45,7 +45,7 @@ from thermogar_secure_io import (
     ensure_plain_directory,
     read_verified_snapshot,
 )
-from thermogar_user_errors import UserMessage, UserValueError
+from thermogar_user_errors import EMPTY_CELL_TEXT, UserMessage, UserValueError
 
 
 ELASTIC_LIBRARY_SCHEMA_VERSION = 1
@@ -1693,6 +1693,7 @@ def render_elastic_section(
             ),
         },
         key=f"elastic_editor_{database_key}",
+        placeholder=EMPTY_CELL_TEXT,
     )
 
     save_to_library = st.checkbox(
@@ -1803,8 +1804,8 @@ def render_elastic_section(
     )
 
     st.pyplot(resolve_figure(state["figure"], theme_type))
-    st.dataframe(result.bounds_table, width="stretch", hide_index=True)
-    st.dataframe(result.phase_table, width="stretch", hide_index=True)
+    st.dataframe(result.bounds_table, width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
+    st.dataframe(result.phase_table, width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
 
     excel = dataframe_to_excel(
         {
@@ -2231,6 +2232,7 @@ def render_strengthening_section(
         result.contribution_table,
         width="stretch",
         hide_index=True,
+        placeholder=EMPTY_CELL_TEXT,
     )
 
     excel = dataframe_to_excel(
