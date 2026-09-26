@@ -129,14 +129,6 @@ def test_bl74_broken_json_keeps_cause(tmp_path: Path) -> None:
     assert str(error).startswith("Файл alloys.json не читается.")
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "BL-74 не выполнен: ошибка read_json в «Марки и составы» не "
-        "перехвачена, «Кода ошибки» и технического отчёта там нет "
-        "(отчёт 21-Ц, ШАГ 2)"
-    ),
-)
 def test_bl74_broken_json_message_has_no_technical_reason(tmp_path: Path) -> None:
     error = _broken_json_error(tmp_path)
     assert "Техническая причина" not in str(error)
