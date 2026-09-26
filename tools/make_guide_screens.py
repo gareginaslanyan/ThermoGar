@@ -645,10 +645,10 @@ def scenario_diagrammy(page, log):
             widget(root, "stNumberInput", "Al: до, ат.%"),
             widget(block, "stNumberInput", "Шаг по составу"),
             widget(block, "stNumberInput", "Шаг по температуре, °C"),
-            root.get_by_text(NOT_DEFAULT_PREFIX.strip()).first,
+            # Такая же подпись есть и в скрытых панелях других вкладок.
+            root.get_by_text(NOT_DEFAULT_PREFIX.strip()).locator("visible=true").first,
         ],
-        "Диапазон по составу и по температуре, шаг сетки; над кнопкой — "
-        "«Не по умолчанию: …»",
+        "Диапазон и шаг сетки; над кнопкой — «Не по умолчанию: …»",
         tall=True,
     )
     button = root.get_by_role(
