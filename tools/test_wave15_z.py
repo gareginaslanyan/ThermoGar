@@ -321,7 +321,7 @@ def _app_with_note(monkeypatch: pytest.MonkeyPatch, note: str):
 
 
 def test_stop_note_is_shown_above_the_tabs(monkeypatch: pytest.MonkeyPatch) -> None:
-    note = precipitation._composition_stop_note(2.011, "NB", 0.0)
+    note = precipitation._composition_stop_note(2.011, "NB", 0.0, "разрыв")
     app = _app_with_note(monkeypatch, note)
     # 21-Ж (часть 3, строка 29): остановка расчёта — уровень error.
     main_errors = [element.value for element in app.main.error]
