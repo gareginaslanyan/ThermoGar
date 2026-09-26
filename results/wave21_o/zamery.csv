@@ -1,0 +1,68 @@
+﻿№;замер;база;тема;величина;ноутбук;мастер / было;кадры
+1;Выделения, ячейка test_ui_g[fe] (40 классов, 0.001 ч);fe;светлая;время счёта, с;59.6;Linux 44–48 (ячейка test_ui_g);vyd_fe_yacheyka_svet_ch1.png, vyd_fe_yacheyka_svet_ch2.png
+2;Выделения, ячейка test_ui_g[fe] (40 классов, 0.001 ч);fe;светлая;строк кинетики;1601;1470 (зерно 0, Linux);vyd_fe_yacheyka_svet_ch1.png, vyd_fe_yacheyka_svet_ch2.png
+3;Выделения, ячейка test_ui_g[fe] (40 классов, 0.001 ч);fe;светлая;объёмная доля к 3.6 с, %;4.4095;4.4095;vyd_fe_yacheyka_svet_ch1.png, vyd_fe_yacheyka_svet_ch2.png
+4;Выделения, ячейка test_ui_g[fe] (40 классов, 0.001 ч);fe;светлая;средний радиус, нм;9.517;9.519;vyd_fe_yacheyka_svet_ch1.png, vyd_fe_yacheyka_svet_ch2.png
+5;Выделения, ячейка test_ui_g[fe] (40 классов, 0.001 ч);fe;светлая;остановка;нет;нет;vyd_fe_yacheyka_svet_ch1.png, vyd_fe_yacheyka_svet_ch2.png
+6;Выделения по умолчанию (0.01 ч, 80 классов);fe;светлая;«Время выдержки, ч» на экране;0.01;0.01 (1Б);vyd_fe_umolch_svet_ch1.png, vyd_fe_umolch_svet_ch2.png
+7;Выделения по умолчанию (0.01 ч, 80 классов);fe;светлая;время счёта, с;299.2;254 (Linux);vyd_fe_umolch_svet_ch1.png, vyd_fe_umolch_svet_ch2.png
+8;Выделения по умолчанию (0.01 ч, 80 классов);fe;светлая;строк кинетики;9881;;vyd_fe_umolch_svet_ch1.png, vyd_fe_umolch_svet_ch2.png
+9;Выделения по умолчанию (0.01 ч, 80 классов);fe;светлая;объёмная доля к 36 с, %;4.4104;4.4104;vyd_fe_umolch_svet_ch1.png, vyd_fe_umolch_svet_ch2.png
+10;Выделения по умолчанию (0.01 ч, 80 классов);fe;светлая;средний радиус, нм;12.14;12.14;vyd_fe_umolch_svet_ch1.png, vyd_fe_umolch_svet_ch2.png
+11;Выделения по умолчанию (0.01 ч, 80 классов);fe;светлая;остановка;нет;нет;vyd_fe_umolch_svet_ch1.png, vyd_fe_umolch_svet_ch2.png
+12;Выделения по умолчанию (100 ч);ni;светлая;время счёта, с;176.5;"21-Л: 315; 22-Б Linux: 154";vyd_ni_umolch_svet_ch1.png, vyd_ni_umolch_svet_ch2.png
+13;Выделения по умолчанию (100 ч);ni;светлая;строк кинетики;10314;22-Б Linux: 10 605;vyd_ni_umolch_svet_ch1.png, vyd_ni_umolch_svet_ch2.png
+14;Выделения по умолчанию (100 ч);ni;светлая;объёмная доля к 100 ч, %;26.0338;"21-Л: 26.00; 22-Б Linux: 26.0335";vyd_ni_umolch_svet_ch1.png, vyd_ni_umolch_svet_ch2.png
+15;Выделения по умолчанию (100 ч);ni;светлая;средний радиус, нм;92.256;"21-Л: 92.3; 22-Б Linux: 92.187";vyd_ni_umolch_svet_ch1.png, vyd_ni_umolch_svet_ch2.png
+16;Выделения по умолчанию (100 ч);ni;светлая;остановка;нет;нет;vyd_ni_umolch_svet_ch1.png, vyd_ni_umolch_svet_ch2.png
+17;Выделения по умолчанию (24 ч);al;светлая;время счёта, с;16.8;;vyd_al_umolch_svet_ch1.png, vyd_al_umolch_svet_ch2.png
+18;Выделения по умолчанию (24 ч);al;светлая;строк кинетики;407;;vyd_al_umolch_svet_ch1.png, vyd_al_umolch_svet_ch2.png
+19;Выделения по умолчанию (24 ч);al;светлая;объёмная доля к 24 ч, %;0.0000;21-Л: выделений нет;vyd_al_umolch_svet_ch1.png, vyd_al_umolch_svet_ch2.png
+20;Выделения по умолчанию (24 ч);al;светлая;остановка;нет;нет;vyd_al_umolch_svet_ch1.png, vyd_al_umolch_svet_ch2.png
+21;Выделения, 718 (ni, основа Fe, 700 °C, 100 ч, 200 классов);ni;светлая;время счёта, с;25.5;;vyd_718_svet_ch1.png, vyd_718_svet_ch2.png
+22;Выделения, 718 (ni, основа Fe, 700 °C, 100 ч, 200 классов);ni;светлая;строк кинетики;237;;vyd_718_svet_ch1.png, vyd_718_svet_ch2.png
+23;Выделения, 718 (ni, основа Fe, 700 °C, 100 ч, 200 классов);ni;светлая;момент остановки, с;4.130;4.153 по Ti (22-Б Linux);vyd_718_svet_ch1.png, vyd_718_svet_ch2.png
+24;Выделения, 718 (ni, основа Fe, 700 °C, 100 ч, 200 классов);ni;светлая;текст остановки;Расчёт остановлен на 4.13 с модельного времени (0.001147 ч): доля Ti в матрице ушла ниже нуля, баланс масс нарушен. Показана часть расчёта до остановки. Причина: при движущей силе по базе зарождение практически безбарьерное, и выделение вычерпывает добавки из матрицы быстрее, чем модель это выдерживает.;со словами «ушла ниже нуля» (3В);vyd_718_svet_ch1.png, vyd_718_svet_ch2.png
+25;Выделения, 718 (ni, основа Fe, 700 °C, 100 ч, 200 классов);ni;тёмная;время счёта, с;25.3;;vyd_718_tyomn_ch1.png, vyd_718_tyomn_ch2.png
+26;Выделения, 718 (ni, основа Fe, 700 °C, 100 ч, 200 классов);ni;тёмная;строк кинетики;237;;vyd_718_tyomn_ch1.png, vyd_718_tyomn_ch2.png
+27;Выделения, 718 (ni, основа Fe, 700 °C, 100 ч, 200 классов);ni;тёмная;момент остановки, с;4.130;4.153 по Ti (22-Б Linux);vyd_718_tyomn_ch1.png, vyd_718_tyomn_ch2.png
+28;Выделения, 718 (ni, основа Fe, 700 °C, 100 ч, 200 классов);ni;тёмная;текст остановки;Расчёт остановлен на 4.13 с модельного времени (0.001147 ч): доля Ti в матрице ушла ниже нуля, баланс масс нарушен. Показана часть расчёта до остановки. Причина: при движущей силе по базе зарождение практически безбарьерное, и выделение вычерпывает добавки из матрицы быстрее, чем модель это выдерживает.;со словами «ушла ниже нуля» (3В);vyd_718_tyomn_ch1.png, vyd_718_tyomn_ch2.png
+29;T₀ по умолчанию (200–950 °C);fe;светлая;окно на экране, °C;200.00 / 950.00;;tzero_fe_umolch_svet_ch1.png, tzero_fe_umolch_svet_ch2.png
+30;T₀ по умолчанию (200–950 °C);fe;светлая;время счёта, с;13.4;;tzero_fe_umolch_svet_ch1.png, tzero_fe_umolch_svet_ch2.png
+31;T₀ по умолчанию (200–950 °C);fe;светлая;строк;21;21;tzero_fe_umolch_svet_ch1.png, tzero_fe_umolch_svet_ch2.png
+32;T₀ по умолчанию (200–950 °C);fe;светлая;T₀ найдено;18;"18 из 21; C 0 — 911.62 °C, C 1.7 — 207.23 °C";tzero_fe_umolch_svet_ch1.png, tzero_fe_umolch_svet_ch2.png
+33;T₀ по умолчанию (200–950 °C);fe;светлая;счётчик;T₀ найдено в 18 точках из 21. В остальных точках перехода в заданном окне нет: сдвиньте окно к ожидаемой температуре перехода.;;tzero_fe_umolch_svet_ch1.png, tzero_fe_umolch_svet_ch2.png
+34;T₀ по умолчанию (200–950 °C);fe;светлая;T₀ найденных, °C;911.62 / 801.34 / 735.89 / 689.32 / 649.14 / 612.13 / 576.96 / 542.95 / 509.62 / 476.70 / 443.96 / 411.23 / 378.36 / 345.20 / 311.63 / 277.54 / 242.78 / 207.23;;tzero_fe_umolch_svet_ch1.png, tzero_fe_umolch_svet_ch2.png
+35;T₀ по умолчанию (200–950 °C);fe;светлая;пустой состав, строк;0;0;tzero_fe_umolch_svet_ch1.png, tzero_fe_umolch_svet_ch2.png
+36;T₀ по умолчанию (200–950 °C);fe;светлая;заголовок Excel;C, мас.%, T₀, °C, T₀, K, Решение найдено;;tzero_fe_umolch_svet_ch1.png, tzero_fe_umolch_svet_ch2.png
+37;T₀ по умолчанию (200–950 °C);fe;тёмная;окно на экране, °C;200.00 / 950.00;;tzero_fe_umolch_tyomn_ch1.png, tzero_fe_umolch_tyomn_ch2.png
+38;T₀ по умолчанию (200–950 °C);fe;тёмная;время счёта, с;13.6;;tzero_fe_umolch_tyomn_ch1.png, tzero_fe_umolch_tyomn_ch2.png
+39;T₀ по умолчанию (200–950 °C);fe;тёмная;строк;21;21;tzero_fe_umolch_tyomn_ch1.png, tzero_fe_umolch_tyomn_ch2.png
+40;T₀ по умолчанию (200–950 °C);fe;тёмная;T₀ найдено;18;18 из 21;tzero_fe_umolch_tyomn_ch1.png, tzero_fe_umolch_tyomn_ch2.png
+41;T₀ по умолчанию (200–950 °C);fe;тёмная;счётчик;T₀ найдено в 18 точках из 21. В остальных точках перехода в заданном окне нет: сдвиньте окно к ожидаемой температуре перехода.;;tzero_fe_umolch_tyomn_ch1.png, tzero_fe_umolch_tyomn_ch2.png
+42;T₀ по умолчанию (200–950 °C);fe;тёмная;T₀ найденных, °C;911.62 / 801.34 / 735.89 / 689.32 / 649.14 / 612.13 / 576.96 / 542.95 / 509.62 / 476.70 / 443.96 / 411.23 / 378.36 / 345.20 / 311.63 / 277.54 / 242.78 / 207.23;;tzero_fe_umolch_tyomn_ch1.png, tzero_fe_umolch_tyomn_ch2.png
+43;T₀ по умолчанию (200–950 °C);fe;тёмная;пустой состав, строк;0;0;tzero_fe_umolch_tyomn_ch1.png, tzero_fe_umolch_tyomn_ch2.png
+44;T₀ по умолчанию (200–950 °C);fe;тёмная;заголовок Excel;C, мас.%, T₀, °C, T₀, K, Решение найдено;;tzero_fe_umolch_tyomn_ch1.png, tzero_fe_umolch_tyomn_ch2.png
+45;T₀, окно 300–1700 °C;fe;светлая;окно на экране, °C;300.00 / 1700.00;;tzero_fe_300_1700_svet_ch1.png, tzero_fe_300_1700_svet_ch2.png
+46;T₀, окно 300–1700 °C;fe;светлая;время счёта, с;41.6;;tzero_fe_300_1700_svet_ch1.png, tzero_fe_300_1700_svet_ch2.png
+47;T₀, окно 300–1700 °C;fe;светлая;строк;21;21;tzero_fe_300_1700_svet_ch1.png, tzero_fe_300_1700_svet_ch2.png
+48;T₀, окно 300–1700 °C;fe;светлая;T₀ найдено;15;"15 из 21; 911.70 / 801.34 / 735.89; 1563.10…1698.56 °C";tzero_fe_300_1700_svet_ch1.png, tzero_fe_300_1700_svet_ch2.png
+49;T₀, окно 300–1700 °C;fe;светлая;счётчик;T₀ найдено в 15 точках из 21. В остальных точках перехода в заданном окне нет: сдвиньте окно к ожидаемой температуре перехода.;;tzero_fe_300_1700_svet_ch1.png, tzero_fe_300_1700_svet_ch2.png
+50;T₀, окно 300–1700 °C;fe;светлая;T₀ найденных, °C;911.70 / 801.34 / 735.89 / 1563.10 / 1589.32 / 1609.99 / 1626.79 / 1640.81 / 1652.64 / 1662.87 / 1671.78 / 1679.65 / 1686.63 / 1692.90 / 1698.56;;tzero_fe_300_1700_svet_ch1.png, tzero_fe_300_1700_svet_ch2.png
+51;T₀, окно 300–1700 °C;fe;светлая;пустой состав, строк;0;0;tzero_fe_300_1700_svet_ch1.png, tzero_fe_300_1700_svet_ch2.png
+52;T₀, окно 300–1700 °C;fe;светлая;заголовок Excel;C, мас.%, T₀, °C, T₀, K, Решение найдено;;tzero_fe_300_1700_svet_ch1.png, tzero_fe_300_1700_svet_ch2.png
+53;12Б, Excel: ThermoGar_equilibrium.xlsx;;;заголовок, Составы фаз ат;Фаза | Что это | Al, ат.% | Ni, ат.%;до: Фаза | Что это | AL, ат.% | NI, ат.%;
+54;12Б, Excel: ThermoGar_equilibrium.xlsx;;;заголовок, Составы фаз мас;Фаза | Что это | Al, мас.% | Ni, мас.%;до: Фаза | Что это | AL, мас.% | NI, мас.%;
+55;12Б, CSV: ThermoGar_concentration_scan.csv;;;заголовок, заголовок;Cu, атомные % | GP_MAT | THETA_AL2CU;до: CU, атомные % | GP_MAT | THETA_AL2CU;
+56;12Б, ZIP: ThermoGar_solidification_results.zip;;;заголовок, equilibrium_liquid_composition.csv;Температура, °C | Доля расплава, % | Al, ат.% | Al, мас.% | Ni, ат.% | Ni, мас.%;до: Температура, °C | Доля расплава, % | AL, ат.% | AL, мас.% | NI, ат.% | NI, мас.%;
+57;12Б, ZIP: ThermoGar_solidification_results.zip;;;заголовок, xlsx, «Равновес расплав»;Температура, °C | Доля расплава, % | Al, ат.% | Al, мас.% | Ni, ат.% | Ni, мас.%;до: Температура, °C | Доля расплава, % | AL, ат.% | AL, мас.% | NI, ат.% | NI, мас.%;
+58;12Б, ZIP: ThermoGar_solidification_results.zip;;;заголовок, xlsx, «Равновес raw»;Temperature (°C) | Temperature (K) | NP(LIQUID) | NP(FCC_A1) | X(FCC_A1,AL) | X(FCC_A1,NI) | X(LIQUID,AL) | X(LIQUID,NI);до: Temperature (°C) | Temperature (K) | NP(LIQUID) | NP(FCC_A1) | X(FCC_A1,AL) | X(FCC_A1,NI) | X(LIQUID,AL) | X(LIQUID,NI);
+59;12Б, ZIP: ThermoGar_solidification_results.zip;;;заголовок, scheil_liquid_composition.csv;Температура, °C | Доля расплава, % | Al, ат.% | Al, мас.% | Ni, ат.% | Ni, мас.%;до: Температура, °C | Доля расплава, % | AL, ат.% | AL, мас.% | NI, ат.% | NI, мас.%;
+60;12Б, ZIP: ThermoGar_solidification_results.zip;;;заголовок, xlsx, «Scheil расплав»;Температура, °C | Доля расплава, % | Al, ат.% | Al, мас.% | Ni, ат.% | Ni, мас.%;до: Температура, °C | Доля расплава, % | AL, ат.% | AL, мас.% | NI, ат.% | NI, мас.%;
+61;12Б, ZIP: ThermoGar_solidification_results.zip;;;заголовок, xlsx, «Scheil raw»;Temperature (°C) | Temperature (K) | NP(LIQUID) | NP(FCC_A1) | NP(GAMMA_PRIME) | X(FCC_A1,AL) | X(FCC_A1,NI) | X(GAMMA_PRIME,AL) | X(GAMMA_PRIME,NI) | X(LIQUID,AL) | X(LIQUID,NI);до: Temperature (°C) | Temperature (K) | NP(LIQUID) | NP(FCC_A1) | NP(GAMMA_PRIME) | X(FCC_A1,AL) | X(FCC_A1,NI) | X(GAMMA_PRIME,AL) | X(GAMMA_PRIME,NI) | X(LIQUID,AL) | X(LIQUID,NI);
+62;12Б, T₀: ThermoGar_T0.xlsx;;;заголовок, T0;Al, ат.% | T₀, °C | T₀, K | Решение найдено;до: AL, ат.% | T₀, °C | T₀, K | Решение найдено;
+63;12Б, Выделения: ThermoGar_precipitation_GAMMA_PRIME.xlsx;;;заголовок, Состав матрицы;Время, ч | Al, матрица, ат.% | Ni, матрица, ат.%;до: Время, ч | AL, матрица, ат.% | NI, матрица, ат.%;
+64;12Б, Выделения: ThermoGar_precipitation_GAMMA_PRIME.xlsx;;;заголовок, Межфазные составы;Время, ч | Al, матрица на границе, ат.% | Al, выделение на границе, ат.%;до: Время, ч | AL, матрица на границе, ат.% | AL, выделение на границе, ат.%;
+65;12Б, Пакет: ThermoGar_batch_result.xlsx;;;заголовок, Составы фаз ат;Фаза | Al, ат.% | Ni, ат.% | Название | База;до: Фаза | AL, ат.% | NI, ат.% | Название | База;
+66;12Б, Пакет: ThermoGar_batch_result.xlsx;;;заголовок, Составы фаз мас;Фаза | Al, мас.% | Ni, мас.% | Название | База;до: Фаза | AL, мас.% | NI, мас.% | Название | База;
+67;12Б, Пакет: ThermoGar_batch_result.xlsx;;;заголовок, Исходные данные;name | database | balance | units | temperature_C | pressure_Pa | steel_mode | phases | composition;до: name | database | balance | units | temperature_C | pressure_Pa | steel_mode | phases | composition;
