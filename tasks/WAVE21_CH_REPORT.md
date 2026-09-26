@@ -155,3 +155,36 @@ E       AssertionError: assert 'load_user_alloys' not in ['render_flash', 'load_
    до правки ШАГА 1, а закоммичен в ШАГЕ 4.
 
 ## git
+
+Вывод после первого пуша (коммит отчёта `3b8a113`). Коммит с этим выводом идёт следом, в выводе его нет.
+
+`git push -u origin wave21-ch`:
+
+```text
+To https://github.com/gareginaslanyan/ThermoGar.git
+ * [new branch]      wave21-ch -> wave21-ch
+branch 'wave21-ch' set up to track 'origin/wave21-ch'.
+```
+
+`git ls-remote origin wave21-ch`:
+
+```text
+3b8a113925a4b53b1bbd7e0d0a950c4c1f3ce6ba	refs/heads/wave21-ch
+```
+
+`git log --oneline 06386fc..wave21-ch`:
+
+```text
+3b8a113 docs(21-Ч): отчёт
+6c576ca test(21-Ч): BL-74 — помощник загрузки марок; xfail снят
+149fc28 docs(21-Ч): руководство и быстрый старт — экран волн 20–22
+d85868f docs(21-Ч): краткое руководство — экран волн 20–22 по описи 21-Ц
+899d7d2 fix(21-Ч): BL-74 — ошибка чтения марок в «Марки и составы» перехвачена
+836c498 docs(21-Ч): текст задания WAVE21_CH_OPUS
+```
+
+`git status --short`:
+
+```text
+?? _to_delete/
+```
