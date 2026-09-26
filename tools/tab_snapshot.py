@@ -533,6 +533,17 @@ def sidebar_state(key: str, composition: str, units: str, balance: str) -> dict[
     }
 
 
+def select_view(app: App, key: str, view: str) -> App:
+    """Вариант переключателя вида (st.segmented_control, 21-И) — отдельным шагом.
+
+    Невыбранный вид не исполняется: его поля, кнопки и выгрузки в снимок не
+    попадают.
+    """
+
+    app.state[key] = view
+    return app.run(f"вид «{view}»")
+
+
 def f_start(d: Driver, key: str, session: dict[str, Any] | None = None,
             prepare: Callable[[App], None] | None = None) -> App:
     """Как ``start`` в tools/test_ui_f.py: профиль BASES, затем подготовка."""
@@ -604,11 +615,12 @@ def case_f_solid(d: Driver, key: str, method: str) -> None:
     profile = f.BASES[key]
     start_key = (f"solidification_start_13_1_{key}_thermogar_patch" if key == "fe"
                  else f"solidification_start_13_1_{key}")
-    f_start(d, key, {
+    app = f_start(d, key, {
         f"solidification_method_{key}": method,
         start_key: profile["solidification_start"],
         f"solidification_step_{key}": profile["solidification_step"],
     }).click("solidification_calculate")
+    select_view(app, "solidification_result_view", "Выгрузка")
 
 
 def case_f_energy(d: Driver, key: str) -> None:
@@ -731,6 +743,7 @@ def case_g_single(d: Driver, key: str) -> None:
 def case_g_hom(d: Driver, key: str) -> None:
     g = _import_tools("test_ui_g")
     app = g_start(d, key)
+    select_view(app, "kinetics_diffusion_view", "Многофазная гомогенизация")
     g_diffusion_inputs(app, key, "kin_hom")
     app.state[f"kin_hom_phases_{key}"] = list(g.DIFFUSION_COUPLE[key][5][:2])
     app.run("выбрать фазы")
@@ -739,6 +752,7 @@ def case_g_hom(d: Driver, key: str) -> None:
 
 def case_g_hom_al(d: Driver) -> None:
     app = g_start(d, "al")
+    select_view(app, "kinetics_diffusion_view", "Многофазная гомогенизация")
     g_diffusion_inputs(app, "al", "kin_hom")
 
 
@@ -761,6 +775,7 @@ def case_g_kwn(d: Driver, key: str) -> None:
     g_kwn_state(app, key, matrix, precipitate, temperature, g.SHORT_TIME_H, g.KWN_BINS)
     app.run("входы KWN")
     app.click(f"precipitation_{key}_user_calculate")
+    select_view(app, "precipitation_result_view", "Экспорт и ограничения")
 
 
 def case_g_fe_provenance(d: Driver) -> None:
@@ -770,6 +785,7 @@ def case_g_fe_provenance(d: Driver) -> None:
     g_kwn_state(app, "fe", matrix, precipitate, temperature, g.SHORT_TIME_H, 30)
     app.run("входы KWN, 30 классов")
     app.click("precipitation_fe_user_calculate")
+    select_view(app, "precipitation_result_view", "Экспорт и ограничения")
 
 
 def case_g_ni_kwn_hour(d: Driver) -> None:
@@ -779,6 +795,7 @@ def case_g_ni_kwn_hour(d: Driver) -> None:
     g_kwn_state(app, "ni", matrix, precipitate, temperature, 1.0, None)
     app.run("входы KWN, 1 ч")
     app.click("precipitation_ni_user_calculate")
+    select_view(app, "precipitation_result_view", "Экспорт и ограничения")
 
 
 def case_g_too_long(d: Driver) -> None:
@@ -1075,7 +1092,8 @@ def case_sh_elastic(d: Driver, case: str, overrides: str) -> None:
 def case_sh_solid(d: Driver, case: str) -> None:
     # results/wave18_v/run_case.py: умолчания вкладки, pdens 50.
     key = SH_CASES[case][0]
-    sh_start(d, case, "on", {f"solidification_pdens_{key}": 50}).click("solidification_calculate")
+    app = sh_start(d, case, "on", {f"solidification_pdens_{key}": 50}).click("solidification_calculate")
+    select_view(app, "solidification_result_view", "Выгрузка")
 
 
 # ---------------------------------------------------------------------------
