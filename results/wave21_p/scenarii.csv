@@ -1,0 +1,125 @@
+﻿№;сценарий;файл:строка;действие;подпись, значение;кадр;оценка;ломается;пояснение по коду wave21-m и списку 21-О
+1;start;tools/make_guide_screens.py:471;снять кадр;вкладка «Расчёты» (role=tab);start-01.png;е;;Вкладки верхнего уровня — st.tabs (app/ThermoGar_app.py:7472). «Одна температура» 21-М не сворачивала, кнопка на своём месте (21-М ШАГ 8: низ 593 px), подписи «Не по умолчанию» нет.
+2;start;tools/make_guide_screens.py:475;снять кадр;«База материалов» (боковая панель);start-02.png;е;;Боковую панель 21-И, 21-М, 21-О не меняли (app/ThermoGar_app.py:7120).
+3;start;tools/make_guide_screens.py:479;снять кадр;«Элемент-основа»;start-03.png;е;;app/ThermoGar_app.py:7310.
+4;start;tools/make_guide_screens.py:483;снять кадр;«Единицы состава»;start-04.png;е;;app/ThermoGar_app.py:7323.
+5;start;tools/make_guide_screens.py:487;set_text_area;«Добавки» = C=0.2, CR=11.5, NI=0.7;;е;;app/ThermoGar_app.py:7335.
+6;start;tools/make_guide_screens.py:489;снять кадр;«Добавки»;start-05.png;е;;
+7;start;tools/make_guide_screens.py:493;снять кадр;«Параллельный расчёт»;start-06.png;е;;app/thermogar_parallel_ui.py:169.
+8;start;tools/make_guide_screens.py:497;set_number;«Температура, °C» = 700 (основная область);;е;;Поле на виду (app/ThermoGar_app.py:7504), умолчание стали 700 — как и раньше.
+9;start;tools/make_guide_screens.py:499;снять кадр;«Температура, °C» на «Одной температуре»;start-07.png;е;;Экран без свёртки 21-М, строка кнопки tg_action_single на своём месте.
+10;raschety;tools/make_guide_screens.py:509;open_tab;«Расчёты»;;е;;Вкладка.
+11;raschety;tools/make_guide_screens.py:510;open_tab;«Одна температура»;;е;;Вкладка (st.tabs, app/ThermoGar_app.py:7485).
+12;raschety;tools/make_guide_screens.py:513;снять кадр;вкладка «Расчёты»;raschety-01.png;е;;Как шаг 9.
+13;raschety;tools/make_guide_screens.py:517–518;снять кадр;кнопка «Рассчитать равновесие»;raschety-02.png;е;;Кнопка в строке tg_action_single (app/ThermoGar_app.py:7581), на своём месте, подписи нет (умолчания). Кольцо фокуса 14Б — только :focus-visible, щелчок мышью Playwright его не даёт.
+14;raschety;tools/make_guide_screens.py:519–521;click и ждать текст;«Рассчитать равновесие», «Фазовые доли»;;е;;Заголовок «#### Фазовые доли» на месте (app/ThermoGar_app.py:7746).
+15;raschety;tools/make_guide_screens.py:522;снять кадр;таблица фаз (первый stDataFrame);raschety-03.png;е;;Результат вне строки кнопки, раскладка экрана не менялась.
+16;raschety;tools/make_guide_screens.py:528;open_expander;«Управление фазами / метастабильный расчёт»;;е;;Название = BLOCK_PHASES (app/thermogar_release_ui.py:52), блок был и до 21-М.
+17;raschety;tools/make_guide_screens.py:529;снять кадр;«Набор фаз» и строка «Набор фаз:»;raschety-04.png;е;;Подпись «Не по умолчанию» не появится: «Быстрый набор / Все фазы базы» не трогается.
+18;raschety;tools/make_guide_screens.py:538;open_tab;«Температурный диапазон»;;е;;Вкладка.
+19;raschety;tools/make_guide_screens.py:540;set_number;«От, °C» = 500;;г;;Решение 5: умолчание стали 500 (DATABASE_DEFINITIONS fe default_t_min, app/ThermoGar_app.py:363). Ввод ничего не меняет.
+20;raschety;tools/make_guide_screens.py:542;set_number;«До, °C» = 900;;г;;Решение 5: умолчание 900 (app/ThermoGar_app.py:364).
+21;raschety;tools/make_guide_screens.py:544;set_number;«Шаг, °C» = 100;;г;;Решение 5: умолчание 100 (app/ThermoGar_app.py:365).
+22;raschety;tools/make_guide_screens.py:546;снять кадр;«От, °C», «До, °C», «Шаг, °C»;raschety-05.png;д;;Поле «Показывать на графике фазы с максимумом не менее, %» ушло в свёрнутый блок «Точность и критерии» (app/ThermoGar_app.py:7830–7840): на кадре заголовок блока вместо поля. Строка кнопки tg_action_temperature на своём месте (21-М: 654 px).
+23;raschety;tools/make_guide_screens.py:554–559;click и ждать img;«Построить график по температуре»;;е;;Кнопка в строке tg_action_temperature (app/ThermoGar_app.py:7939), подпись та же.
+24;raschety;tools/make_guide_screens.py:560;снять кадр;график долей фаз;raschety-06.png;д;;Кадр высокий, над графиком форма: блок «Точность и критерии» вместо открытого поля. График тот же (500–900 °C шагом 100).
+25;raschety;tools/make_guide_screens.py:565;снять кадр;«Скачать Excel»;raschety-07.png;д;;Та же страница, что шаг 24. 12Б на кадр не влияет: в выгрузке скана по температуре столбцы — фазы, символов элементов нет.
+26;diagrammy;tools/make_guide_screens.py:576;set_database;«Никелевые сплавы»;;е;;
+27;diagrammy;tools/make_guide_screens.py:577;open_tab;«Диаграммы»;;е;;
+28;diagrammy;tools/make_guide_screens.py:578;open_tab;«Бинарная T–X»;;е;;Вкладка (st.tabs, app/ThermoGar_app.py:8523).
+29;diagrammy;tools/make_guide_screens.py:581;снять кадр;«Первый элемент системы», «Второй элемент»;diagrammy-01.png;д;;Форма короче: 4 поля в свёрнутом «Точность и критерии» (app/ThermoGar_app.py:8607–8651). Строка кнопки tg_action_binary прилипает к низу окна, пока её место ниже (21-М ШАГ 8: 830–900 px в окне 900). В окне кадра до 1100 px положение по коду не определить — видно на съёмке.
+30;diagrammy;tools/make_guide_screens.py:588;set_number;«AL: до, %» = 35;;в;ломается: подпись поля — «Al: до, ат.% (0.001–100)» (app/ThermoGar_app.py:8588), has_text «AL: до, %» её не находит — таймаут UI_TIMEOUT_MS;Подпись сменилась в 21-Ж, до 21-И. Кадр :600 уже ищет «Al: до, ат.%» (правка 21-Ж), ввод :588 — нет. Умолчание ni — 35 (BINARY_DIAGRAM_DEFAULTS, app/ThermoGar_app.py:521), ввод не нужен.
+31;diagrammy;tools/make_guide_screens.py:590;set_number;«Шаг по составу» = 5;;б;ломается: поле в свёрнутом блоке «Точность и критерии», widget(...:visible) пуст — таймаут;app/ThermoGar_app.py:8608–8619. Перед вводом нужен open_expander(«Точность и критерии»).
+32;diagrammy;tools/make_guide_screens.py:592;set_number;«Температура от, °C» = 600;;е;;Поле на виду (app/ThermoGar_app.py:8596), умолчание ni 400.
+33;diagrammy;tools/make_guide_screens.py:594;set_number;«Температура до, °C» = 1600;;е;;Поле на виду, равно умолчанию 1600, как и раньше.
+34;diagrammy;tools/make_guide_screens.py:596;set_number;«Шаг по температуре, °C» = 50;;б;ломается: поле в свёрнутом блоке «Точность и критерии» — таймаут;app/ThermoGar_app.py:8620–8631.
+35;diagrammy;tools/make_guide_screens.py:598;снять кадр;«Al: до, ат.%», «Шаг по составу», «Шаг по температуре, °C»;diagrammy-02.png;б, д;;"Две цели из трёх в блоке «Точность и критерии» — кадр снимается с раскрытым блоком (раскроет правка шага 31). На кадре: раскрытый блок и над кнопкой «Не по умолчанию: Шаг по составу, ат.%; Шаг по температуре, °C.» (5 и 50 при умолчаниях 1 и 10)."
+36;diagrammy;tools/make_guide_screens.py:607–610;снять кадр;кнопка «Построить диаграмму состояния»;diagrammy-03.png;д;;Кнопка в строке tg_action_binary (app/ThermoGar_app.py:8687), над ней подпись «Не по умолчанию: …».
+37;diagrammy;tools/make_guide_screens.py:611–613;click и ждать img;«Построить диаграмму состояния»;;е;;
+38;diagrammy;tools/make_guide_screens.py:614;снять кадр;диаграмма Ni–Al;diagrammy-04.png;д;;Над графиком раскрытый блок и подпись над кнопкой. Сетка та же (35 / 5 / 600–1600 / 50), линии те же.
+39;diagrammy;tools/make_guide_screens.py:619;снять кадр;«Скачать PNG»;diagrammy-05.png;д;;Та же страница, что шаг 38.
+40;zatverdevanie;tools/make_guide_screens.py:630;set_database;«Алюминиевые сплавы»;;е;;
+41;zatverdevanie;tools/make_guide_screens.py:632;set_radio;«Единицы состава» = массовые %;;е;;
+42;zatverdevanie;tools/make_guide_screens.py:634;set_text_area;«Добавки» = CU=4, MG=1;;е;;
+43;zatverdevanie;tools/make_guide_screens.py:636;снять кадр;«Добавки»;zatverdevanie-01.png;е;;Боковая панель.
+44;zatverdevanie;tools/make_guide_screens.py:641;open_tab;«Затвердевание»;;е;;
+45;zatverdevanie;tools/make_guide_screens.py:643;set_radio;«Метод расчёта» = Только Scheil–Gulliver;;е;;Поле на виду (app/ThermoGar_app.py:10438), 21-М его не сворачивала (отступление 2 отчёта 21-М).
+46;zatverdevanie;tools/make_guide_screens.py:645;снять кадр;«Метод расчёта»;zatverdevanie-02.png;д;;Под радио больше нет полей «Начальная температура, °C» и «Шаг охлаждения, °C» — они в «Точность и критерии» (app/ThermoGar_app.py:10469–10483). Строка кнопки tg_action_solidification.
+47;zatverdevanie;tools/make_guide_screens.py:649;set_number;«Начальная температура, °C» = 700;;б;ломается: поле в свёрнутом блоке «Точность и критерии» — таймаут;app/ThermoGar_app.py:10472–10476. Умолчание al 850 (SOLIDIFICATION_DEFAULTS, :411–414).
+48;zatverdevanie;tools/make_guide_screens.py:651;set_number;«Шаг охлаждения, °C» = 10;;б;ломается: то же;app/ThermoGar_app.py:10477–10488. Умолчание al 5.
+49;zatverdevanie;tools/make_guide_screens.py:653;снять кадр;«Начальная температура, °C», «Шаг охлаждения, °C»;zatverdevanie-03.png;б, д;;"Кадр с раскрытым блоком (11 полей, в т.ч. подписи 13Б «Scheil: остановить при остатке расплава, % (0.0001–5)», «Порог появления фазы, % (0.0001–5)»). Над кнопкой «Не по умолчанию: Начальная температура, °C; Шаг охлаждения, °C.»."
+50;zatverdevanie;tools/make_guide_screens.py:660–661;click;«Рассчитать затвердевание»;;е;;Кнопка в строке tg_action_solidification (app/ThermoGar_app.py:10654).
+51;zatverdevanie;tools/make_guide_screens.py:662–664;ждать вкладку;get_by_role(tab, «Сводка»);;а;ломается: вид результата — st.segmented_control (app/ThermoGar_app.py:11063), вариант «Сводка» — role=radio в role=radiogroup «Затвердевание». Вкладки нет — ожидание до CALC_TIMEOUT_MS;Ждать get_by_role(radiogroup, «Затвердевание»).get_by_role(radio, «Сводка»).
+52;zatverdevanie;tools/make_guide_screens.py:667;снять кадр;таблица «Сводки»;zatverdevanie-04.png;а, д;;"Над таблицей переключатель из четырёх вариантов вместо вкладок; выше — раскрытый блок и подпись «Не по умолчанию»."
+53;zatverdevanie;tools/make_guide_screens.py:672;снять кадр;кривая доли расплава;zatverdevanie-05.png;д;;Та же страница, что шаг 52.
+54;zatverdevanie;tools/make_guide_screens.py:677;open_tab;«Выгрузка»;;а;ломается: «Выгрузка» — вариант переключателя, open_tab ищет только role=tab (:432–436) — таймаут;Выбирать вариант щелчком по role=radio.
+55;zatverdevanie;tools/make_guide_screens.py:679;снять кадр;«Скачать Excel» на виде «Выгрузка»;zatverdevanie-06.png;а, д;;На кадре выбран вариант «Выгрузка» переключателя. 12Б меняет заголовки в файле, не кадр.
+56;energii;tools/make_guide_screens.py:690;set_database;«Никелевые сплавы»;;е;;
+57;energii;tools/make_guide_screens.py:691;open_tab;«Энергии»;;е;;
+58;energii;tools/make_guide_screens.py:692;open_tab;«Движущая сила»;;е;;Вкладка (st.tabs, app/ThermoGar_app.py:11269).
+59;energii;tools/make_guide_screens.py:695;снять кадр;«Фаза, движущую силу которой рассчитываем»;energii-01.png;д;;Галочка «Исключить выбранную фазу…» и «Фазы исходного равновесия» — в свёрнутом «Управление фазами / метастабильный расчёт», «Шаг температуры, °C» — в «Точность и критерии» (app/ThermoGar_app.py:11590–11631). Строка кнопки tg_action_driving_force.
+60;energii;tools/make_guide_screens.py:699;set_multiselect;«Фазы исходного равновесия» = FCC_A1;;б;ломается: поле в свёрнутом блоке «Управление фазами / метастабильный расчёт» — таймаут;app/ThermoGar_app.py:11624–11632.
+61;energii;tools/make_guide_screens.py:701;снять кадр;«Фазы исходного равновесия»;energii-02.png;б, д;;Цель в блоке — кадр с раскрытым блоком (раскроет правка шага 60). Над кнопкой «Не по умолчанию: Фазы исходного равновесия.».
+62;energii;tools/make_guide_screens.py:705;set_number;«Температура от, °C» = 600;;е;;На виду (app/ThermoGar_app.py:11578).
+63;energii;tools/make_guide_screens.py:707;set_number;«Температура до, °C» = 800;;е;;На виду (app/ThermoGar_app.py:11584).
+64;energii;tools/make_guide_screens.py:709;set_number;«Шаг температуры, °C» = 50;;б;ломается: поле в свёрнутом блоке «Точность и критерии» — таймаут;app/ThermoGar_app.py:11590–11601. Умолчание 25.
+65;energii;tools/make_guide_screens.py:711;снять кадр;«Температура от», «Температура до», «Шаг температуры»;energii-03.png;б, д;;"Третья цель в «Точность и критерии». Над кнопкой «Не по умолчанию: Шаг температуры, °C; Фазы исходного равновесия.»."
+66;energii;tools/make_guide_screens.py:719–722;click и ждать img;«Рассчитать движущую силу»;;е;;Кнопка в строке tg_action_driving_force (app/ThermoGar_app.py:11635).
+67;energii;tools/make_guide_screens.py:723;снять кадр;график движущей силы;energii-04.png;д;;Кадр высокий, над графиком форма с блоками и подписью. Числа те же.
+68;energii;tools/make_guide_screens.py:728;снять кадр;таблица движущей силы;energii-05.png;д;;То же (на нынешнем energii-05 форма видна над графиком).
+69;svoystva;tools/make_guide_screens.py:739;set_database;«Стали и Fe-сплавы»;;е;;
+70;svoystva;tools/make_guide_screens.py:740;open_tab;«Свойства»;;е;;
+71;svoystva;tools/make_guide_screens.py:741;open_tab;«Плотность»;;е;;Вкладка (st.tabs, app/ThermoGar_app.py:12094).
+72;svoystva;tools/make_guide_screens.py:744–747;снять кадр;«Рассчитать плотность и объёмные доли»;svoystva-01.png;д;;«Выбрать фазы вручную» и «Автоматические фазы: …» свёрнуты в «Управление фазами / метастабильный расчёт» (app/ThermoGar_app.py:1576–1600). На нынешнем кадре список фаз занимает пол-экрана. Кнопка в строке tg_action_physical_single, на своём месте (21-М: 759 px).
+73;svoystva;tools/make_guide_screens.py:748–752;click и ждать таблицу;«Рассчитать плотность и объёмные доли»;;е;;
+74;svoystva;tools/make_guide_screens.py:754;снять кадр;плотность и покрытие;svoystva-02.png;д;;Форма над результатом короче (список фаз свёрнут).
+75;svoystva;tools/make_guide_screens.py:763;set_database;«Никелевые сплавы»;;е;;
+76;svoystva;tools/make_guide_screens.py:764;open_tab;«Свойства»;;е;;
+77;svoystva;tools/make_guide_screens.py:765;open_tab;«Упругие свойства»;;е;;
+78;svoystva;tools/make_guide_screens.py:767–768;снять кадр;«Получить фазовые доли»;svoystva-03.png;д;;Список фаз свёрнут, как в шаге 72 (app/ThermoGar_app.py:2240–2243). Строка tg_action_elastic_prepare на своём месте (825 px).
+79;svoystva;tools/make_guide_screens.py:769–773;click и ждать таблицу;«Получить фазовые доли»;;е;;
+80;svoystva;tools/make_guide_screens.py:775;снять кадр;таблица модулей по фазам;svoystva-04.png;д;;Над таблицей форма короче. Под таблицей кнопка VRH без причины: таблица из библиотеки полная.
+81;svoystva;tools/make_guide_screens.py:780–785;click и ждать метрику;«Рассчитать Voigt–Reuss–Hill»;;е;;Кнопка активна (11Б): E, ν, происхождение «справочно», источник и T источника для FCC_A1 и GAMMA_PRIME заданы в elastic_library_payload (:69–100), elastic_rows_missing_text пуст. Если в равновесии будет фаза без модулей, кнопка станет неактивной и click упрётся в таймаут. По 21-М (ШАГ 8, uprugie_shag2) на Ni–15Al при 700 °C фаз две.
+82;svoystva;tools/make_guide_screens.py:788;снять кадр;E, G и ν по Хиллу;svoystva-05.png;д;;"Верх нынешнего кадра — открытый список «Автоматические фазы»; теперь там свёрнутый блок."
+83;kinetika;tools/make_guide_screens.py:799;set_database;«Никелевые сплавы»;;е;;
+84;kinetika;tools/make_guide_screens.py:800;open_tab;«Кинетика»;;е;;
+85;kinetika;tools/make_guide_screens.py:801;open_tab;«Выделения»;;е;;Вкладка (st.tabs, app/ThermoGar_app.py:12186).
+86;kinetika;tools/make_guide_screens.py:807;снять кадр;«Набор исходных параметров»;kinetika-01.png;д;;Строка кнопки tg_action_precipitation прилипает к нижнему краю окна (21-М ШАГ 8: «Выделения» — строка у нижнего края). Внизу кадра — «Рассчитать кинетику выделений».
+87;kinetika;tools/make_guide_screens.py:811;снять кадр;«Матричная фаза», «Фаза-выделение»;kinetika-02.png;д;;То же.
+88;kinetika;tools/make_guide_screens.py:818;set_number;«Время выдержки, ч» = 1;;е;;База ni, умолчание 100 ч. 21-О меняет умолчание только у стали (0.01 ч).
+89;kinetika;tools/make_guide_screens.py:821;снять кадр;«Температура, °C», «Время выдержки, ч»;kinetika-03.png;д;;Строка кнопки внизу кадра.
+90;kinetika;tools/make_guide_screens.py:828;снять кадр;параметры KWN;kinetika-04.png;д;;Кадр высокий. Строка кнопки внизу, если её место ниже кадра — видно на съёмке. Поля KWN 21-М не сворачивала.
+91;kinetika;tools/make_guide_screens.py:837–840;click;«Рассчитать кинетику выделений»;;е;;Кнопка в строке tg_action_precipitation (app/thermogar_precipitation.py:1620).
+92;kinetika;tools/make_guide_screens.py:841–843;ждать вкладку;get_by_role(tab, «Итоги»);;а;ломается: вид результата — st.segmented_control (app/thermogar_precipitation.py:1683), «Итоги» — role=radio. Ожидание до CALC_TIMEOUT_MS;Ждать radiogroup «Кинетика выделений» / radio «Итоги».
+93;kinetika;tools/make_guide_screens.py:846;снять кадр;доля и радиус γ′;kinetika-05.png;а, д;;Над графиками переключатель вместо вкладок. Числа кадра и главы (24,7 %, ~4 нм) могут сдвинуться после 22-Б: ограничение шага K = 2 действует на всех базах (ni 100 ч — R 92,19 нм вместо 92,23). Сверить на съёмке.
+94;kinetika;tools/make_guide_screens.py:852;open_tab;«Диффузия и гомогенизация»;;е;;Вкладка (st.tabs, app/ThermoGar_app.py:12186).
+95;kinetika;tools/make_guide_screens.py:853;open_tab;«Однофазная пара»;;а;ломается: вариант переключателя diffusion_view (app/thermogar_diffusion.py:1537), не вкладка — таймаут;Вариант выбран по умолчанию, но open_tab падает раньше щелчка.
+96;kinetika;tools/make_guide_screens.py:855;снять кадр;«Левая сторона», «Правая сторона»;kinetika-06.png;а, д;;Над формой переключатель из трёх вариантов вместо вкладок.
+97;kinetika;tools/make_guide_screens.py:866;снять кадр;«Температура выдержки, °C», «Длина области, мкм», «Время, ч»;kinetika-07.png;б, д;ломается: «Длина области, мкм» в свёрнутом «Параметры модели» (app/thermogar_diffusion.py:1442), bounding_box скрытого локатора ждёт до таймаута;На кадре «Время, ч» — отдельной строкой (:1401). Длина 2000 мкм и 80 ячеек видны только в раскрытом блоке.
+98;kinetika;tools/make_guide_screens.py:875–880;click и ждать stMetric;«Рассчитать однофазную диффузию»;;е;;Плиток две («Время выдержки, ч», «Макс. ошибка баланса, u-доля», app/thermogar_diffusion.py:1239–1244), first находится.
+99;kinetika;tools/make_guide_screens.py:882;снять кадр;профиль состава;kinetika-08.png;е;;Кадр идёт от графика вниз. Плитки (без «Метода», 16Б) — над верхним краем нынешнего кадра.
+100;proekty;tools/make_guide_screens.py:893;set_database;«Никелевые сплавы»;;е;;
+101;proekty;tools/make_guide_screens.py:894;open_tab;«Проекты и данные»;;е;;
+102;proekty;tools/make_guide_screens.py:895;open_tab;«Марки и составы»;;е;;
+103;proekty;tools/make_guide_screens.py:898;set_text_input;«Название марки или состава» = Опытный Ni–15Al;;е;;app/thermogar_workspace.py:1126.
+104;proekty;tools/make_guide_screens.py:903;set_checkbox;«Разрешить обновить одноимённую пользовательскую запись» = да;;е;;app/thermogar_workspace.py:1134.
+105;proekty;tools/make_guide_screens.py:906;снять кадр;название и «Сохранить текущий состав»;proekty-01.png;е;;Кнопка формы — 21-М её не трогала.
+106;proekty;tools/make_guide_screens.py:914;click;«Сохранить текущий состав»;;е;;
+107;proekty;tools/make_guide_screens.py:916;снять кадр;«Доступные записи»;proekty-02.png;е;;
+108;proekty;tools/make_guide_screens.py:921;set_selectbox;«Выберите запись» = Опытный Ni–15Al;;е;;app/thermogar_workspace.py:1194.
+109;proekty;tools/make_guide_screens.py:926;снять кадр;запись и «Загрузить состав в программу»;proekty-03.png;е;;
+110;proekty;tools/make_guide_screens.py:931;click;«Загрузить состав в программу»;;е;;
+111;proekty;tools/make_guide_screens.py:934–935;open_tab;«Проекты и данные», «Пакетный расчёт»;;е;;
+112;proekty;tools/make_guide_screens.py:937–938;снять кадр;«Скачать шаблон CSV»;proekty-04.png;е;;
+113;proekty;tools/make_guide_screens.py:939;click;«Скачать шаблон CSV»;;е;;
+114;proekty;tools/make_guide_screens.py:943–956;файл и загрузка;guide_batch.csv в «Файл составов»;;е;;app/thermogar_workspace.py:2742.
+115;proekty;tools/make_guide_screens.py:957–960;ждать текст;«Предварительный просмотр»;;е;;
+116;proekty;tools/make_guide_screens.py:962;снять кадр;загрузчик файла;proekty-05.png;е;;
+117;proekty;tools/make_guide_screens.py:967–969;click;«Рассчитать все составы»;;е;;
+118;proekty;tools/make_guide_screens.py:971;снять кадр;сводка пакета;proekty-06.png;е;;12Б меняет заголовки только в файле «Скачать пакетный результат Excel», сводка на экране уже с символами.
+119;proekty;tools/make_guide_screens.py:977–978;open_tab;«Проекты и данные», «Проекты и история»;;е;;
+120;proekty;tools/make_guide_screens.py:980;set_text_input;«Название проекта» = Ni–Al, подбор старения;;е;;app/thermogar_workspace.py:1728.
+121;proekty;tools/make_guide_screens.py:983;set_checkbox;«Разрешить заменить одноимённый локальный проект» = да;;е;;app/thermogar_workspace.py:1736.
+122;proekty;tools/make_guide_screens.py:986;снять кадр;название и «Сохранить проект в папке ThermoGar»;proekty-07.png;е;;Кнопка формы.
+123;proekty;tools/make_guide_screens.py:996;click;«Сохранить проект в папке ThermoGar»;;е;;
+124;proekty;tools/make_guide_screens.py:998;снять кадр;зелёная полоса;proekty-08.png;е;;
