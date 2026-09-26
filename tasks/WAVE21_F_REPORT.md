@@ -200,3 +200,32 @@ BL-61 не мешает: это сам шаг выпуска (поднять п�
 Коммиты ветки: `167117c` — задание, `6cd1a9b` — `results/wave21_f/`, затем коммит этого отчёта и коммит с выводом git после пуша.
 
 `git push -u origin wave21-f`, `git ls-remote origin wave21-f`, `git log --oneline 976e707..wave21-f` и `git status --short` — ниже, дословно.
+
+`git push -u origin wave21-f`:
+
+```
+ * [new branch]      wave21-f -> wave21-f
+branch 'wave21-f' set up to track 'origin/wave21-f'.
+```
+
+`git ls-remote origin wave21-f`:
+
+```
+155d4b7b398b191fcab46f4122e01461ad96bd0d	refs/heads/wave21-f
+```
+
+`git log --oneline 976e707..wave21-f`:
+
+```
+155d4b7 docs(21-Ф): отчёт — опись выпуска 0.5.0
+6cd1a9b docs(21-Ф): опись выпуска 0.5.0 — версия, изменения с 0.4.4, черновик CHANGELOG, открытые BL, шаги выпуска
+167117c docs(21-Ф): задание — опись выпуска 0.5.0
+```
+
+`git status --short`:
+
+```
+?? _to_delete/
+```
+
+Этот вывод дописан следующим коммитом `docs(21-Ф): отчёт — вывод git после пуша`; в `main` не вливалось.
