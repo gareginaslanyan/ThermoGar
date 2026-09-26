@@ -952,7 +952,19 @@ def _validate_vrh_rows(
             _fail(verified_loaders.ReasonCode.DATA_UNAVAILABLE, "VRH phase identity differs from the prepared witness.")
         missing = ("young_gpa", "poisson", "origin", "source", "reference_temperature_c")
         if any(row[field] is None for field in missing):
-            _fail(verified_loaders.ReasonCode.USER_INPUT_REQUIRED, "Complete phase modulus provenance is required.")
+            # BL-67: русская причина — фраза раздела по первому незаполненному
+            # полю строки, с фазой; английский текст — для технического отчёта.
+            if row["young_gpa"] is None or row["poisson"] is None:
+                user_text = properties.elastic_missing_moduli_text([row["phase"]])
+            elif row["origin"] is None or row["source"] is None:
+                user_text = properties.elastic_missing_source_text([row["phase"]])
+            else:
+                user_text = properties.elastic_missing_reference_text([row["phase"]])
+            raise verified_loaders.VerifiedLoaderError(
+                verified_loaders.ReasonCode.USER_INPUT_REQUIRED,
+                "Complete phase modulus provenance is required.",
+                user_text=user_text,
+            )
         young = _plain_float(row["young_gpa"], "young_gpa", minimum=0.0, minimum_inclusive=False)
         poisson = _plain_float(row["poisson"], "poisson")
         if not (-1.0 < poisson < 0.5):
@@ -1077,13 +1089,18 @@ def _strengthening_inputs(
         raise verified_loaders.VerifiedLoaderError(
             verified_loaders.ReasonCode.USER_INPUT_REQUIRED,
             "Strengthening input provenance is required.",
-            user_text="Укажите источник и область применимости всех коэффициентов.",
+            user_text=properties.STRENGTHENING_PROVENANCE_TEXT,
         )
     provenance = _trimmed(raw["input_provenance"], "input_provenance", maximum=2048)
     if type(raw["input_confirmation"]) is not bool:
         _fail(verified_loaders.ReasonCode.INPUT_INVALID, "input_confirmation must be bool.")
     if raw["input_confirmation"] is False:
-        _fail(verified_loaders.ReasonCode.USER_INPUT_REQUIRED, "Strengthening input scope must be confirmed.")
+        # BL-65: русская причина — фраза раздела (thermogar_properties).
+        raise verified_loaders.VerifiedLoaderError(
+            verified_loaders.ReasonCode.USER_INPUT_REQUIRED,
+            "Strengthening input scope must be confirmed.",
+            user_text=properties.STRENGTHENING_CONFIRMATION_TEXT,
+        )
     sigma = _plain_float(raw["sigma_internal_mpa"], "sigma_internal_mpa", minimum=0.0)
     hall = raw["hall_petch"]
     if hall is not None:

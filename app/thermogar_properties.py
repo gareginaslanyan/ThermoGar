@@ -954,12 +954,12 @@ def calculate_strengthening(
     if not isinstance(input_provenance, str) or not input_provenance.strip():
         raise PropertyCalculationError(
             "STRENGTHENING_PROVENANCE_REQUIRED",
-            "Укажите источник и область применимости всех коэффициентов."
+            STRENGTHENING_PROVENANCE_TEXT,
         )
     if input_confirmation is not True:
         raise PropertyCalculationError(
             "STRENGTHENING_CONFIRMATION_REQUIRED",
-            "Подтвердите область применимости введённых коэффициентов."
+            STRENGTHENING_CONFIRMATION_TEXT,
         )
     if summation_rule not in STRENGTHENING_SUMMATION_RULES:
         _property_fail(
@@ -1254,6 +1254,79 @@ def _save_editor_to_library(
     return path, len(updates)
 
 
+# Фразы обязательных полей «Упругих свойств» и «Вкладов упрочнения». Ими же
+# объясняется неактивная кнопка на экране и отказ проверенного пути
+# (решение владельца 11Б, 25.09.2026; BL-65, BL-67).
+STRENGTHENING_PROVENANCE_TEXT = (
+    "Укажите источник и область применимости всех коэффициентов."
+)
+STRENGTHENING_CONFIRMATION_TEXT = (
+    "Подтвердите область применимости введённых коэффициентов."
+)
+
+
+def elastic_missing_moduli_text(phases: list[str]) -> str:
+    return "Не заданы E и ν для фаз: " + ", ".join(phases) + "."
+
+
+def elastic_missing_source_text(phases: list[str]) -> str:
+    return (
+        "Для каждой фазы обязательны происхождение и источник: "
+        + ", ".join(phases)
+        + "."
+    )
+
+
+def elastic_missing_reference_text(phases: list[str]) -> str:
+    return (
+        "Для каждой фазы обязательна температура источника: "
+        + ", ".join(phases)
+        + "."
+    )
+
+
+def _blank(value: Any) -> bool:
+    if value is None:
+        return True
+    try:
+        if pd.isna(value):
+            return True
+    except (TypeError, ValueError):
+        pass
+    return isinstance(value, str) and not value.strip()
+
+
+def elastic_rows_missing_text(rows: list[Mapping[str, Any]]) -> str | None:
+    """Первая по порядку причина неполной таблицы фаз или ``None``.
+
+    Условия — как в ``_calculate_elastic_from_editor``: сначала фазы без E
+    или ν, затем фазы без происхождения или источника, затем без
+    температуры источника. Строки — поля ``VRH_ROW_FIELDS`` проверенного
+    пути (``young_gpa``, ``poisson``, ``origin``, ``source``,
+    ``reference_temperature_c``).
+    """
+
+    missing_phases: list[str] = []
+    source_missing: list[str] = []
+    reference_temperature_missing: list[str] = []
+    for row in rows:
+        phase = str(row.get("phase"))
+        if _blank(row.get("young_gpa")) or _blank(row.get("poisson")):
+            missing_phases.append(phase)
+            continue
+        if _blank(row.get("origin")) or _blank(row.get("source")):
+            source_missing.append(phase)
+        if _blank(row.get("reference_temperature_c")):
+            reference_temperature_missing.append(phase)
+    if missing_phases:
+        return elastic_missing_moduli_text(missing_phases)
+    if source_missing:
+        return elastic_missing_source_text(source_missing)
+    if reference_temperature_missing:
+        return elastic_missing_reference_text(reference_temperature_missing)
+    return None
+
+
 def _calculate_elastic_from_editor(
     edited: pd.DataFrame,
     calculation_temperature_c: float,
@@ -1340,20 +1413,12 @@ def _calculate_elastic_from_editor(
     )
 
     if missing_phases:
-        raise UserValueError(
-            "Не заданы E и ν для фаз: " + ", ".join(missing_phases) + "."
-        )
+        raise UserValueError(elastic_missing_moduli_text(missing_phases))
     if source_missing:
-        raise UserValueError(
-            "Для каждой фазы обязательны происхождение и источник: "
-            + ", ".join(source_missing)
-            + "."
-        )
+        raise UserValueError(elastic_missing_source_text(source_missing))
     if reference_temperature_missing:
         raise UserValueError(
-            "Для каждой фазы обязательна температура источника: "
-            + ", ".join(reference_temperature_missing)
-            + "."
+            elastic_missing_reference_text(reference_temperature_missing)
         )
     if abs(total_volume - 100.0) > 1e-4:
         raise UserValueError(

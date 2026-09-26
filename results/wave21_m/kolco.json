@@ -1,0 +1,126 @@
+[
+  {
+    "theme": "Light",
+    "control": "knopka",
+    "frames": [
+      "kolco_knopka_pokoi_svet.png",
+      "kolco_knopka_fokus_svet.png"
+    ],
+    "focus_visible": true,
+    "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+    "outline": "none 3px rgb(255, 255, 255)",
+    "ring_px": "#1F60C1",
+    "ring_to_window": 5.65,
+    "ring_strongest_px": "#1F60C1",
+    "ring_strongest_to_window": 5.65,
+    "ring_pixels": 2494,
+    "ring_top3": [
+      [
+        "#1F60C1",
+        1844
+      ],
+      [
+        "#8BACDD",
+        520
+      ],
+      [
+        "#759CD8",
+        28
+      ]
+    ],
+    "window_px": "#F8F8F9"
+  },
+  {
+    "theme": "Light",
+    "control": "pereklyuchatel",
+    "frames": [
+      "kolco_pereklyuchatel_pokoi_svet.png",
+      "kolco_pereklyuchatel_fokus_svet.png"
+    ],
+    "focus_visible": true,
+    "box_shadow": "rgb(31, 96, 193) 0px 0px 0px 3.6px",
+    "outline": "none 3px rgb(31, 96, 193)",
+    "ring_px": "#1F60C1",
+    "ring_to_window": 5.65,
+    "ring_strongest_px": "#1F60C1",
+    "ring_strongest_to_window": 5.65,
+    "ring_pixels": 1611,
+    "ring_top3": [
+      [
+        "#1F60C1",
+        1183
+      ],
+      [
+        "#8BACDD",
+        320
+      ],
+      [
+        "#769DD8",
+        46
+      ]
+    ],
+    "window_px": "#F8F8F9"
+  },
+  {
+    "theme": "Dark",
+    "control": "knopka",
+    "frames": [
+      "kolco_knopka_pokoi_tyomn.png",
+      "kolco_knopka_fokus_tyomn.png"
+    ],
+    "focus_visible": true,
+    "box_shadow": "rgb(92, 151, 232) 0px 0px 0px 3.6px",
+    "outline": "none 3px rgb(23, 24, 27)",
+    "ring_px": "#5C97E8",
+    "ring_to_window": 5.96,
+    "ring_strongest_px": "#5C97E8",
+    "ring_strongest_to_window": 5.96,
+    "ring_pixels": 2494,
+    "ring_top3": [
+      [
+        "#5C97E8",
+        1841
+      ],
+      [
+        "#395881",
+        520
+      ],
+      [
+        "#406395",
+        28
+      ]
+    ],
+    "window_px": "#17181B"
+  },
+  {
+    "theme": "Dark",
+    "control": "pereklyuchatel",
+    "frames": [
+      "kolco_pereklyuchatel_pokoi_tyomn.png",
+      "kolco_pereklyuchatel_fokus_tyomn.png"
+    ],
+    "focus_visible": true,
+    "box_shadow": "rgb(92, 151, 232) 0px 0px 0px 3.6px",
+    "outline": "none 3px rgb(92, 151, 232)",
+    "ring_px": "#5C97E8",
+    "ring_to_window": 5.96,
+    "ring_strongest_px": "#5C97E8",
+    "ring_strongest_to_window": 5.96,
+    "ring_pixels": 1611,
+    "ring_top3": [
+      [
+        "#5C97E8",
+        1182
+      ],
+      [
+        "#395881",
+        320
+      ],
+      [
+        "#3F6394",
+        46
+      ]
+    ],
+    "window_px": "#17181B"
+  }
+]

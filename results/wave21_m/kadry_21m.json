@@ -1,0 +1,999 @@
+{
+  "pervyi": {
+    "Light": [
+      {
+        "screen": "Расчёты / Одна температура",
+        "button": {
+          "text": "Рассчитать равновесие",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 548,
+          "bottom": 593
+        },
+        "first_screen": true,
+        "frame": "pervyi_01_svet.png"
+      },
+      {
+        "screen": "Расчёты / Температурный диапазон",
+        "button": {
+          "text": "Построить график по температуре",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 609,
+          "bottom": 654
+        },
+        "first_screen": true,
+        "frame": "pervyi_02_svet.png"
+      },
+      {
+        "screen": "Расчёты / Изменение состава",
+        "button": {
+          "text": "Построить график по составу",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_03_svet.png"
+      },
+      {
+        "screen": "Диаграммы / Бинарная T–X",
+        "button": {
+          "text": "Построить диаграмму состояния",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_04_svet.png"
+      },
+      {
+        "screen": "Диаграммы / Многокомпонентное T–X",
+        "button": {
+          "text": "Построить многокомпонентное сечение",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_05_svet.png"
+      },
+      {
+        "screen": "Диаграммы / Тройная при T = const",
+        "button": {
+          "text": "Построить тройную диаграмму",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_06_svet.png"
+      },
+      {
+        "screen": "Диаграммы / Карта доли фазы",
+        "button": {
+          "text": "Построить карту доли фазы",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_07_svet.png"
+      },
+      {
+        "screen": "Затвердевание",
+        "button": {
+          "text": "Рассчитать затвердевание",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_08_svet.png"
+      },
+      {
+        "screen": "Энергии / Энергии фаз",
+        "button": {
+          "text": "Рассчитать энергии фаз",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_09_svet.png"
+      },
+      {
+        "screen": "Энергии / Движущая сила",
+        "button": {
+          "text": "Рассчитать движущую силу",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_10_svet.png"
+      },
+      {
+        "screen": "Энергии / T₀",
+        "button": {
+          "text": "Рассчитать T₀",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_11_svet.png"
+      },
+      {
+        "screen": "Свойства / Плотность",
+        "button": {
+          "text": "Рассчитать плотность и объёмные доли",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 714,
+          "bottom": 759
+        },
+        "first_screen": true,
+        "frame": "pervyi_12_svet.png"
+      },
+      {
+        "screen": "Свойства / Плотность по T",
+        "button": {
+          "text": "Построить плотность по температуре",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 714,
+          "bottom": 759
+        },
+        "first_screen": true,
+        "frame": "pervyi_13_svet.png"
+      },
+      {
+        "screen": "Свойства / Упругие свойства",
+        "button": {
+          "text": "Получить фазовые доли",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 780,
+          "bottom": 825
+        },
+        "first_screen": true,
+        "frame": "pervyi_14_svet.png"
+      },
+      {
+        "screen": "Свойства / Вклады упрочнения",
+        "button": {
+          "text": "Рассчитать вклады",
+          "testid": "stBaseButton-primary",
+          "disabled": true,
+          "top": 802,
+          "bottom": 847
+        },
+        "first_screen": true,
+        "frame": "pervyi_15_svet.png"
+      },
+      {
+        "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+        "button": {
+          "text": "Рассчитать однофазную диффузию",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_17_svet.png"
+      },
+      {
+        "screen": "Кинетика / Диффузия и гомогенизация / Многофазная гомогенизация",
+        "button": {
+          "text": "Рассчитать гомогенизацию",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_18_svet.png"
+      },
+      {
+        "screen": "Кинетика / Выделения",
+        "button": {
+          "text": "Рассчитать кинетику выделений",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_20_svet.png"
+      },
+      {
+        "screen": "Проекты и данные / Марки и составы",
+        "button": {
+          "text": "Сохранить текущий состав",
+          "testid": "stBaseButton-primaryFormSubmit",
+          "disabled": false,
+          "top": 929,
+          "bottom": 974
+        },
+        "first_screen": false,
+        "frame": "pervyi_21_svet.png"
+      },
+      {
+        "screen": "Проекты и данные / Проекты и история",
+        "button": {
+          "text": "Сохранить проект в папке ThermoGar",
+          "testid": "stBaseButton-primaryFormSubmit",
+          "disabled": false,
+          "top": 861,
+          "bottom": 906
+        },
+        "first_screen": false,
+        "frame": "pervyi_23_svet.png"
+      },
+      {
+        "screen": "Проекты и данные / Проверка установки",
+        "button": {
+          "text": "Проверить базы и запустить три контрольных расчёта",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_27_svet.png"
+      }
+    ],
+    "Dark": [
+      {
+        "screen": "Расчёты / Одна температура",
+        "button": {
+          "text": "Рассчитать равновесие",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 548,
+          "bottom": 593
+        },
+        "first_screen": true,
+        "frame": "pervyi_01_tyomn.png"
+      },
+      {
+        "screen": "Расчёты / Температурный диапазон",
+        "button": {
+          "text": "Построить график по температуре",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 609,
+          "bottom": 654
+        },
+        "first_screen": true,
+        "frame": "pervyi_02_tyomn.png"
+      },
+      {
+        "screen": "Расчёты / Изменение состава",
+        "button": {
+          "text": "Построить график по составу",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_03_tyomn.png"
+      },
+      {
+        "screen": "Диаграммы / Бинарная T–X",
+        "button": {
+          "text": "Построить диаграмму состояния",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_04_tyomn.png"
+      },
+      {
+        "screen": "Диаграммы / Многокомпонентное T–X",
+        "button": {
+          "text": "Построить многокомпонентное сечение",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_05_tyomn.png"
+      },
+      {
+        "screen": "Диаграммы / Тройная при T = const",
+        "button": {
+          "text": "Построить тройную диаграмму",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_06_tyomn.png"
+      },
+      {
+        "screen": "Диаграммы / Карта доли фазы",
+        "button": {
+          "text": "Построить карту доли фазы",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_07_tyomn.png"
+      },
+      {
+        "screen": "Затвердевание",
+        "button": {
+          "text": "Рассчитать затвердевание",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_08_tyomn.png"
+      },
+      {
+        "screen": "Энергии / Энергии фаз",
+        "button": {
+          "text": "Рассчитать энергии фаз",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_09_tyomn.png"
+      },
+      {
+        "screen": "Энергии / Движущая сила",
+        "button": {
+          "text": "Рассчитать движущую силу",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_10_tyomn.png"
+      },
+      {
+        "screen": "Энергии / T₀",
+        "button": {
+          "text": "Рассчитать T₀",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_11_tyomn.png"
+      },
+      {
+        "screen": "Свойства / Плотность",
+        "button": {
+          "text": "Рассчитать плотность и объёмные доли",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 714,
+          "bottom": 759
+        },
+        "first_screen": true,
+        "frame": "pervyi_12_tyomn.png"
+      },
+      {
+        "screen": "Свойства / Плотность по T",
+        "button": {
+          "text": "Построить плотность по температуре",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 714,
+          "bottom": 759
+        },
+        "first_screen": true,
+        "frame": "pervyi_13_tyomn.png"
+      },
+      {
+        "screen": "Свойства / Упругие свойства",
+        "button": {
+          "text": "Получить фазовые доли",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 780,
+          "bottom": 825
+        },
+        "first_screen": true,
+        "frame": "pervyi_14_tyomn.png"
+      },
+      {
+        "screen": "Свойства / Вклады упрочнения",
+        "button": {
+          "text": "Рассчитать вклады",
+          "testid": "stBaseButton-primary",
+          "disabled": true,
+          "top": 802,
+          "bottom": 847
+        },
+        "first_screen": true,
+        "frame": "pervyi_15_tyomn.png"
+      },
+      {
+        "screen": "Кинетика / Диффузия и гомогенизация / Однофазная пара",
+        "button": {
+          "text": "Рассчитать однофазную диффузию",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_17_tyomn.png"
+      },
+      {
+        "screen": "Кинетика / Диффузия и гомогенизация / Многофазная гомогенизация",
+        "button": {
+          "text": "Рассчитать гомогенизацию",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_18_tyomn.png"
+      },
+      {
+        "screen": "Кинетика / Выделения",
+        "button": {
+          "text": "Рассчитать кинетику выделений",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_20_tyomn.png"
+      },
+      {
+        "screen": "Проекты и данные / Марки и составы",
+        "button": {
+          "text": "Сохранить текущий состав",
+          "testid": "stBaseButton-primaryFormSubmit",
+          "disabled": false,
+          "top": 929,
+          "bottom": 974
+        },
+        "first_screen": false,
+        "frame": "pervyi_21_tyomn.png"
+      },
+      {
+        "screen": "Проекты и данные / Проекты и история",
+        "button": {
+          "text": "Сохранить проект в папке ThermoGar",
+          "testid": "stBaseButton-primaryFormSubmit",
+          "disabled": false,
+          "top": 861,
+          "bottom": 906
+        },
+        "first_screen": false,
+        "frame": "pervyi_23_tyomn.png"
+      },
+      {
+        "screen": "Проекты и данные / Проверка установки",
+        "button": {
+          "text": "Проверить базы и запустить три контрольных расчёта",
+          "testid": "stBaseButton-primary",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        },
+        "first_screen": true,
+        "frame": "pervyi_27_tyomn.png"
+      }
+    ]
+  },
+  "_hod": {
+    "pervyi": 197.2,
+    "binarnaya": 50.4,
+    "knopki": 62.8,
+    "zatverdevanie": 38.0,
+    "umolch": 768.6
+  },
+  "binarnaya": {
+    "Light": {
+      "row_before": {
+        "position": "sticky",
+        "top": 830,
+        "bottom": 900,
+        "captions": [],
+        "button": {
+          "text": "Построить диаграмму состояния",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        }
+      },
+      "first_screen": "binarnaya_ni_nachalo_svet.png",
+      "page": [
+        "binarnaya_ni_stranica_svet.png"
+      ],
+      "row_after": {
+        "position": "sticky",
+        "top": 789,
+        "bottom": 900,
+        "captions": [
+          "Не по умолчанию: Шаг по температуре, °C."
+        ],
+        "button": {
+          "text": "Построить диаграмму состояния",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        }
+      },
+      "first_screen_changed": "binarnaya_ni_shag20_nachalo_svet.png",
+      "page_changed": [
+        "binarnaya_ni_shag20_stranica_svet.png"
+      ]
+    },
+    "Dark": {
+      "row_before": {
+        "position": "sticky",
+        "top": 830,
+        "bottom": 900,
+        "captions": [],
+        "button": {
+          "text": "Построить диаграмму состояния",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        }
+      },
+      "first_screen": "binarnaya_ni_nachalo_tyomn.png",
+      "page": [
+        "binarnaya_ni_stranica_tyomn.png"
+      ],
+      "row_after": {
+        "position": "sticky",
+        "top": 789,
+        "bottom": 900,
+        "captions": [
+          "Не по умолчанию: Шаг по температуре, °C."
+        ],
+        "button": {
+          "text": "Построить диаграмму состояния",
+          "disabled": false,
+          "top": 843,
+          "bottom": 888
+        }
+      },
+      "first_screen_changed": "binarnaya_ni_shag20_nachalo_tyomn.png",
+      "page_changed": [
+        "binarnaya_ni_shag20_stranica_tyomn.png"
+      ]
+    }
+  },
+  "knopki": {
+    "Light": {
+      "vklady_pusto": {
+        "row": {
+          "position": "sticky",
+          "top": 789,
+          "bottom": 900,
+          "captions": [
+            "Укажите источник и область применимости всех коэффициентов."
+          ],
+          "button": {
+            "text": "Рассчитать вклады",
+            "disabled": true,
+            "top": 802,
+            "bottom": 847
+          }
+        },
+        "frame": "vklady_pusto_svet.png"
+      },
+      "vklady_istochnik": {
+        "row": {
+          "position": "sticky",
+          "top": 789,
+          "bottom": 900,
+          "captions": [
+            "Подтвердите область применимости введённых коэффициентов."
+          ],
+          "button": {
+            "text": "Рассчитать вклады",
+            "disabled": true,
+            "top": 802,
+            "bottom": 847
+          }
+        },
+        "frame": "vklady_istochnik_bez_galochki_svet.png"
+      },
+      "uprugie_shag2": {
+        "seconds_step1": 9.6,
+        "idle": true,
+        "row": {
+          "position": "static",
+          "top": 634,
+          "bottom": 720,
+          "captions": [
+            "Не заданы E и ν для фаз: FCC_A1, GAMMA_PRIME."
+          ],
+          "button": {
+            "text": "Рассчитать Voigt–Reuss–Hill",
+            "disabled": true,
+            "top": 634,
+            "bottom": 679
+          }
+        },
+        "frame": "uprugie_shag2_svet.png"
+      }
+    },
+    "Dark": {
+      "vklady_pusto": {
+        "row": {
+          "position": "sticky",
+          "top": 789,
+          "bottom": 900,
+          "captions": [
+            "Укажите источник и область применимости всех коэффициентов."
+          ],
+          "button": {
+            "text": "Рассчитать вклады",
+            "disabled": true,
+            "top": 802,
+            "bottom": 847
+          }
+        },
+        "frame": "vklady_pusto_tyomn.png"
+      },
+      "vklady_istochnik": {
+        "row": {
+          "position": "sticky",
+          "top": 789,
+          "bottom": 900,
+          "captions": [
+            "Подтвердите область применимости введённых коэффициентов."
+          ],
+          "button": {
+            "text": "Рассчитать вклады",
+            "disabled": true,
+            "top": 802,
+            "bottom": 847
+          }
+        },
+        "frame": "vklady_istochnik_bez_galochki_tyomn.png"
+      },
+      "uprugie_shag2": {
+        "seconds_step1": 8.0,
+        "idle": true,
+        "row": {
+          "position": "static",
+          "top": 634,
+          "bottom": 720,
+          "captions": [
+            "Не заданы E и ν для фаз: FCC_A1, GAMMA_PRIME."
+          ],
+          "button": {
+            "text": "Рассчитать Voigt–Reuss–Hill",
+            "disabled": true,
+            "top": 634,
+            "bottom": 679
+          }
+        },
+        "frame": "uprugie_shag2_tyomn.png"
+      }
+    }
+  },
+  "zatverdevanie": {
+    "Light": {
+      "labels": [
+        "Начальная температура, °C",
+        "Шаг охлаждения, °C",
+        "Автоматически повысить температуру до однофазного расплава",
+        "Шаг автоматического повышения, °C",
+        "Максимальная проверяемая температура, °C",
+        "Scheil: остановить при остатке расплава, % (0.0001–5)",
+        "Порог появления фазы, % (0.0001–5)",
+        "Показывать на графиках фазы от, %",
+        "Плотность начального поиска состояний",
+        "Точность поиска равновесного солидуса, °C",
+        "Адаптивно уточнять состояния рядом с равновесием"
+      ],
+      "frames": [
+        "zatverdevanie_tochnost_svet.png"
+      ]
+    },
+    "Dark": {
+      "labels": [
+        "Начальная температура, °C",
+        "Шаг охлаждения, °C",
+        "Автоматически повысить температуру до однофазного расплава",
+        "Шаг автоматического повышения, °C",
+        "Максимальная проверяемая температура, °C",
+        "Scheil: остановить при остатке расплава, % (0.0001–5)",
+        "Порог появления фазы, % (0.0001–5)",
+        "Показывать на графиках фазы от, %",
+        "Плотность начального поиска состояний",
+        "Точность поиска равновесного солидуса, °C",
+        "Адаптивно уточнять состояния рядом с равновесием"
+      ],
+      "frames": [
+        "zatverdevanie_tochnost_tyomn.png"
+      ]
+    }
+  },
+  "umolch": {
+    "temperaturnyi_fe_svet": {
+      "base": "fe",
+      "screen": "Расчёты / Температурный диапазон",
+      "button": "Построить график по температуре",
+      "decision": "5",
+      "free_gib_before": 8.69,
+      "seconds": 15.5,
+      "idle": true,
+      "metrics": [],
+      "alerts": [
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "warning",
+          "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки). Автор базы вводил фазы Л"
+        }
+      ],
+      "frames": [
+        "umolch_temperaturnyi_fe_svet.png"
+      ]
+    },
+    "plotnost_t_fe_svet": {
+      "base": "fe",
+      "screen": "Свойства / Плотность по T",
+      "button": "Построить плотность по температуре",
+      "decision": "5",
+      "free_gib_before": 8.71,
+      "seconds": 18.5,
+      "idle": true,
+      "metrics": [],
+      "alerts": [
+        {
+          "kind": "warning",
+          "text": "Плотность хрома посчитана по поправке проекта ThermoGar. Коэффициенты теплового расширения"
+        }
+      ],
+      "frames": [
+        "umolch_plotnost_t_fe_svet.png"
+      ]
+    },
+    "plotnost_t_al_svet": {
+      "base": "al",
+      "screen": "Свойства / Плотность по T",
+      "button": "Построить плотность по температуре",
+      "decision": "15Б",
+      "free_gib_before": 8.7,
+      "seconds": 30.3,
+      "idle": true,
+      "metrics": [],
+      "alerts": [
+        {
+          "kind": "warning",
+          "text": "Плотность хрома посчитана по поправке проекта ThermoGar. Коэффициенты теплового расширения"
+        }
+      ],
+      "frames": [
+        "umolch_plotnost_t_al_svet.png"
+      ]
+    },
+    "sostav_fe_svet": {
+      "base": "fe",
+      "screen": "Расчёты / Изменение состава",
+      "button": "Построить график по составу",
+      "decision": "6",
+      "free_gib_before": 8.72,
+      "seconds": 13.3,
+      "idle": true,
+      "metrics": [],
+      "alerts": [],
+      "frames": [
+        "umolch_sostav_fe_svet.png"
+      ]
+    },
+    "sostav_al_svet": {
+      "base": "al",
+      "screen": "Расчёты / Изменение состава",
+      "button": "Построить график по составу",
+      "decision": "7",
+      "free_gib_before": 8.7,
+      "seconds": 12.1,
+      "idle": true,
+      "metrics": [],
+      "alerts": [],
+      "frames": [
+        "umolch_sostav_al_svet.png"
+      ]
+    },
+    "mnogokomp_ni_svet": {
+      "base": "ni",
+      "screen": "Диаграммы / Многокомпонентное T–X",
+      "button": "Построить многокомпонентное сечение",
+      "decision": "8Б",
+      "free_gib_before": 8.7,
+      "seconds": 50.3,
+      "idle": true,
+      "metrics": [],
+      "alerts": [],
+      "frames": [
+        "umolch_mnogokomp_ni_svet.png"
+      ]
+    },
+    "gomogenizaciya_ni_svet": {
+      "base": "ni",
+      "screen": "Кинетика / Диффузия и гомогенизация / Многофазная гомогенизация",
+      "button": "Рассчитать гомогенизацию",
+      "decision": "9, 16Б",
+      "free_gib_before": 8.67,
+      "seconds": 77.5,
+      "idle": true,
+      "metrics": [
+        {
+          "label": "Время выдержки, ч",
+          "value": "100"
+        },
+        {
+          "label": "Макс. ошибка баланса, u-доля",
+          "value": "6.000e-08"
+        }
+      ],
+      "alerts": [],
+      "frames": [
+        "umolch_gomogenizaciya_ni_svet_ch1.png",
+        "umolch_gomogenizaciya_ni_svet_ch2.png"
+      ]
+    },
+    "temperaturnyi_fe_tyomn": {
+      "base": "fe",
+      "screen": "Расчёты / Температурный диапазон",
+      "button": "Построить график по температуре",
+      "decision": "5",
+      "free_gib_before": 8.73,
+      "seconds": 15.6,
+      "idle": true,
+      "metrics": [],
+      "alerts": [
+        {
+          "kind": "warning",
+          "text": ""
+        },
+        {
+          "kind": "warning",
+          "text": "Из расчёта исключена фаза C15_LAVES (решение о составе поставки). Автор базы вводил фазы Л"
+        }
+      ],
+      "frames": [
+        "umolch_temperaturnyi_fe_tyomn.png"
+      ]
+    },
+    "plotnost_t_fe_tyomn": {
+      "base": "fe",
+      "screen": "Свойства / Плотность по T",
+      "button": "Построить плотность по температуре",
+      "decision": "5",
+      "free_gib_before": 8.71,
+      "seconds": 18.2,
+      "idle": true,
+      "metrics": [],
+      "alerts": [
+        {
+          "kind": "warning",
+          "text": "Плотность хрома посчитана по поправке проекта ThermoGar. Коэффициенты теплового расширения"
+        }
+      ],
+      "frames": [
+        "umolch_plotnost_t_fe_tyomn.png"
+      ]
+    },
+    "plotnost_t_al_tyomn": {
+      "base": "al",
+      "screen": "Свойства / Плотность по T",
+      "button": "Построить плотность по температуре",
+      "decision": "15Б",
+      "free_gib_before": 8.73,
+      "seconds": 28.2,
+      "idle": true,
+      "metrics": [],
+      "alerts": [
+        {
+          "kind": "warning",
+          "text": "Плотность хрома посчитана по поправке проекта ThermoGar. Коэффициенты теплового расширения"
+        }
+      ],
+      "frames": [
+        "umolch_plotnost_t_al_tyomn.png"
+      ]
+    },
+    "sostav_fe_tyomn": {
+      "base": "fe",
+      "screen": "Расчёты / Изменение состава",
+      "button": "Построить график по составу",
+      "decision": "6",
+      "free_gib_before": 8.74,
+      "seconds": 12.1,
+      "idle": true,
+      "metrics": [],
+      "alerts": [],
+      "frames": [
+        "umolch_sostav_fe_tyomn.png"
+      ]
+    },
+    "sostav_al_tyomn": {
+      "base": "al",
+      "screen": "Расчёты / Изменение состава",
+      "button": "Построить график по составу",
+      "decision": "7",
+      "free_gib_before": 8.72,
+      "seconds": 11.2,
+      "idle": true,
+      "metrics": [],
+      "alerts": [],
+      "frames": [
+        "umolch_sostav_al_tyomn.png"
+      ]
+    },
+    "mnogokomp_ni_tyomn": {
+      "base": "ni",
+      "screen": "Диаграммы / Многокомпонентное T–X",
+      "button": "Построить многокомпонентное сечение",
+      "decision": "8Б",
+      "free_gib_before": 8.74,
+      "seconds": 50.5,
+      "idle": true,
+      "metrics": [],
+      "alerts": [],
+      "frames": [
+        "umolch_mnogokomp_ni_tyomn.png"
+      ]
+    },
+    "gomogenizaciya_ni_tyomn": {
+      "base": "ni",
+      "screen": "Кинетика / Диффузия и гомогенизация / Многофазная гомогенизация",
+      "button": "Рассчитать гомогенизацию",
+      "decision": "9, 16Б",
+      "free_gib_before": 8.71,
+      "seconds": 77.8,
+      "idle": true,
+      "metrics": [
+        {
+          "label": "Время выдержки, ч",
+          "value": "100"
+        },
+        {
+          "label": "Макс. ошибка баланса, u-доля",
+          "value": "6.000e-08"
+        }
+      ],
+      "alerts": [],
+      "frames": [
+        "umolch_gomogenizaciya_ni_tyomn_ch1.png",
+        "umolch_gomogenizaciya_ni_tyomn_ch2.png"
+      ]
+    }
+  }
+}
