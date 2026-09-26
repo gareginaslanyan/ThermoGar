@@ -73,6 +73,7 @@ from thermogar_secure_io import (
 )
 from thermogar_stage14 import (
     log_user_error,
+    render_error_details,
     render_error_record,
     render_user_error,
 )
@@ -379,7 +380,7 @@ def read_json(paths: ThermoGarPaths, path: str | Path, default: Any) -> Any:
         raise UserRuntimeError(
             f"Файл {source.name} не читается. "
             "Не заменяйте его пустым файлом: восстановите резервную копию "
-            f"или исправьте JSON. Техническая причина: {error}"
+            "или исправьте JSON."
         ) from error
 
 def make_envelope(kind: str, payload: Any) -> dict[str, Any]:
@@ -888,6 +889,27 @@ def load_user_alloys(paths: ThermoGarPaths) -> list[dict[str, Any]]:
     return [item for item in alloys if isinstance(item, dict)]
 
 
+def load_user_alloys_for_screen(
+    paths: ThermoGarPaths,
+    *,
+    show_error: bool = True,
+) -> tuple[list[dict[str, Any]], bool]:
+    """Свои марки для вкладки «Марки и составы»; ошибка чтения — на экран.
+
+    Возвращает список и признак ошибки чтения. При ``UserRuntimeError`` список
+    пустой, а при ``show_error`` — своё сообщение, «Код ошибки» и технический
+    отчёт (причина — в цепочке исключения). Повторная загрузка за тот же
+    прогон передаёт ``show_error=False``, чтобы ошибка не показывалась дважды.
+    """
+    try:
+        return load_user_alloys(paths), False
+    except UserRuntimeError as error:
+        if show_error:
+            st.error(user_message_text(error))
+            render_error_details(error, context="Марки и составы", paths=paths)
+        return [], True
+
+
 def _decode_user_alloys_bytes(data: bytes) -> list[dict[str, Any]]:
     if not data:
         return []
@@ -1120,7 +1142,7 @@ def render_alloy_library(
     st.markdown("### Текущий состав")
     st.dataframe(composition_columns_for_display(current), width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
 
-    user_alloys = load_user_alloys(paths)
+    user_alloys, alloys_read_failed = load_user_alloys_for_screen(paths)
     with st.form("alloy_save_form", clear_on_submit=False):
         alloy_name = st.text_input(
             "Название марки или состава",
@@ -1175,7 +1197,9 @@ def render_alloy_library(
                 title="Состав не сохранён.",
             )
 
-    user_alloys = load_user_alloys(paths)
+    user_alloys, _ = load_user_alloys_for_screen(
+        paths, show_error=not alloys_read_failed
+    )
     all_alloys = DEMO_ALLOYS + user_alloys
 
     st.markdown("### Доступные записи")
