@@ -277,6 +277,8 @@ pickle свой. Тем же кэшем базу берёт и воркер пу
 `tools\test_ui_f.py`, `test_ui_g.py`, `test_ui_h.py` — разделы приложения через Streamlit AppTest.
 Ожидаемые числа и времена — в `tools\backend_reference.md` и `tools\ui_matrix_F|G|H.md`.
 
+`tools\test_wave21_ya.py` — сторож BL-79: надписи Streamlit 1.62 у загрузчиков файлов, числовых полей и списков выбора заменены оформлением (`app\style.css`, решение владельца 27.09.2026). При другой версии Streamlit тест падает — замены проверить на приложении заново (сценарий замера `results\wave21_ya\scripts\zamer.py`).
+
 ## Структура репозитория
 
 | Каталог | Что внутри |
