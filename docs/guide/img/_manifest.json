@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-26",
+  "generated_utc": "2026-09-27",
   "frames": [
     {
       "image": "start-01.png",
@@ -19,7 +19,7 @@
     },
     {
       "image": "start-05.png",
-      "title": "Поле «Добавки»: C=0.2, CR=11.5, NI=0.7"
+      "title": "Поле «Добавки»: C=0.2, Cr=11.5, Ni=0.7"
     },
     {
       "image": "start-06.png",

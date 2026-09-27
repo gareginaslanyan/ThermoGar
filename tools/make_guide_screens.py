@@ -503,9 +503,9 @@ BLOCK_MODEL = "Параметры модели"
 NOT_DEFAULT_PREFIX = "Не по умолчанию: "
 
 # Сплав 718 и EK199 с 5 % Si — составы сценария «soobshcheniya» (17-Д).
-ALLOY_718 = "NI=54.2, CR=17.9, NB=5.3, MO=2.99, TI=0.97, AL=0.5"
+ALLOY_718 = "Ni=54.2, Cr=17.9, Nb=5.3, Mo=2.99, Ti=0.97, Al=0.5"
 # Узел BL-24 (15-З, п. 4): CONTROL_WT 12-2 с Si 5 масс. %, 750 °C.
-EK199_SI5 = "C=0.005, SI=5, MN=0.5, S=0.02, CR=23.5, MO=13, NB=0.06, AL=0.25, TI=0.1, FE=0.5"
+EK199_SI5 = "C=0.005, Si=5, Mn=0.5, S=0.02, Cr=23.5, Mo=13, Nb=0.06, Al=0.25, Ti=0.1, Fe=0.5"
 
 
 def scenario_start(page, log):
@@ -530,11 +530,11 @@ def scenario_start(page, log):
         widget(side, "stRadio", "Единицы состава"),
         "Единицы состава — массовые %",
     )
-    set_text_area(side, "Добавки", "C=0.2, CR=11.5, NI=0.7")
+    set_text_area(side, "Добавки", "C=0.2, Cr=11.5, Ni=0.7")
     wait_idle(page)
     shooter.shot(
         widget(side, "stTextArea", "Добавки"),
-        "Поле «Добавки»: C=0.2, CR=11.5, NI=0.7",
+        "Поле «Добавки»: C=0.2, Cr=11.5, Ni=0.7",
     )
     shooter.shot(
         widget(side, "stRadio", "Параллельный расчёт"),
@@ -686,7 +686,7 @@ def scenario_zatverdevanie(page, log):
     side = sidebar(page)
     set_radio(side, "Единицы состава", "массовые %")
     wait_idle(page)
-    set_text_area(side, "Добавки", "CU=4, MG=1")
+    set_text_area(side, "Добавки", "Cu=4, Mg=1")
     wait_idle(page)
     shooter.shot(
         widget(side, "stTextArea", "Добавки"),
@@ -1011,9 +1011,9 @@ def scenario_proekty(page, log):
     batch_csv.write_text(
         "Название,База,Основа,Единицы,\"Температура, °C\",Добавки,"
         "Режим стали,\"Давление, Па\",Фазы\n"
-        "Ni–12Al,ni,NI,ат.%,700,AL=12,,101325,\n"
-        "Ni–15Al,ni,NI,ат.%,700,AL=15,,101325,\n"
-        "Ni–18Al,ni,NI,ат.%,700,AL=18,,101325,\n",
+        "Ni–12Al,ni,Ni,ат.%,700,Al=12,,101325,\n"
+        "Ni–15Al,ni,Ni,ат.%,700,Al=15,,101325,\n"
+        "Ni–18Al,ni,Ni,ат.%,700,Al=18,,101325,\n",
         encoding="utf-8-sig",
     )
     # На вкладке три загрузчика (библиотека, пакет, проект), и все три —
@@ -1136,7 +1136,7 @@ def scenario_soobshcheniya(page, log):
 
     # 1. Быстрый набор: предупреждение и раскрытый полный перечень (BL-8).
     set_database(page, DB_FE)
-    set_composition(page, "FE", "массовые %", "C=0.2, CR=11.5, NI=0.7")
+    set_composition(page, "FE", "массовые %", "C=0.2, Cr=11.5, Ni=0.7")
     open_tab(page, "Расчёты")
     open_tab(page, "Одна температура")
     root = main_area(page)
@@ -1205,7 +1205,7 @@ def scenario_soobshcheniya(page, log):
     )
 
     # 5. Зародыш крупнее начальной сетки (BL-26), постановка 13-Ф.
-    set_composition(page, "NI", "атомные %", "AL=9.8, CR=8.3")
+    set_composition(page, "NI", "атомные %", "Al=9.8, Cr=8.3")
     open_tab(page, "Кинетика")
     open_tab(page, "Выделения")
     root = main_area(page)
