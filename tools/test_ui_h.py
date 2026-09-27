@@ -38,6 +38,7 @@ from thermogar_workspace import (  # noqa: E402
     rejection_text,
     validate_widget_state,
 )
+from thermogar_release_policy import RELEASE_DATABASE_LABELS  # noqa: E402
 
 
 # Compositions and temperatures of the release test matrix.
@@ -542,6 +543,7 @@ def test_batch_accepts_both_separators_and_both_encodings(app, separator, bom):
     assert not section_errors(at)
     # The preview frame is canonical: aliases resolved, units normalised.
     # 21-Ж (предпросмотр пакета): подписи столбцов словами.
+    # BL-78 (21-Ю): база и единицы — подписями сводки.
     preview = next(
         frame.value
         for frame in at.dataframe
@@ -549,8 +551,8 @@ def test_batch_accepts_both_separators_and_both_encodings(app, separator, bom):
         # На странице есть другая таблица с теми же подписями (одна строка).
         and len(frame.value) == 3
     )
-    assert list(preview["База"]) == ["ni", "al", "fe"]
-    assert list(preview["Единицы"]) == ["at", "wt", "wt"]
+    assert list(preview["База"]) == [RELEASE_DATABASE_LABELS[key] for key in ("ni", "al", "fe")]
+    assert list(preview["Единицы"]) == ["ат.%", "мас.%", "мас.%"]
     assert widget(at.button, "batch_calculate_button").label
 
 
