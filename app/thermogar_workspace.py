@@ -2293,17 +2293,46 @@ BATCH_PREVIEW_LABELS = {
 }
 
 
-def batch_preview_dataframe(source: pd.DataFrame) -> pd.DataFrame:
-    """Предпросмотр: подписи столбцов словами, символы элементов — Ni, Al, Cr."""
+def batch_preview_steel_mode(database: object, mode: object) -> object:
+    """Режим стали в предпросмотре (BL-78): у стали — подпись боковой панели,
+    у Ni и Al режима нет (пусто, на экране прочерк), иное — как в файле."""
 
-    return source.rename(
-        columns=lambda column: BATCH_PREVIEW_LABELS.get(
-            str(column),
-            element_symbol(column)
-            if re.fullmatch(r"[A-Z][A-Z0-9]{0,2}", str(column))
-            else column,
+    if mode not in ("metastable", "stable"):
+        return mode
+    return steel_mode_label(mode) if database == "fe" else None
+
+
+def batch_preview_dataframe(source: pd.DataFrame) -> pd.DataFrame:
+    """Предпросмотр: подписи столбцов словами, символы элементов — Ni, Al, Cr.
+
+    Значения — как в сводке (``batch_summary_display``) и боковой панели
+    (BL-78). Только показ: входная таблица не меняется.
+    """
+
+    display = composition_columns_for_display(
+        source.rename(
+            columns=lambda column: BATCH_PREVIEW_LABELS.get(
+                str(column),
+                element_symbol(column)
+                if re.fullmatch(r"[A-Z][A-Z0-9]{0,2}", str(column))
+                else column,
+            )
         )
     )
+    if "Режим стали" in display.columns and "База" in display.columns:
+        display["Режим стали"] = [
+            batch_preview_steel_mode(database, mode)
+            for database, mode in zip(display["База"], display["Режим стали"])
+        ]
+    if "База" in display.columns:
+        display["База"] = display["База"].map(
+            lambda key: RELEASE_DATABASE_LABELS.get(key, key)
+        )
+    if "Единицы" in display.columns:
+        display["Единицы"] = display["Единицы"].map(
+            lambda value: {"at": "ат.%", "wt": "мас.%"}.get(value, value)
+        )
+    return display
 
 
 def batch_summary_display(summary: pd.DataFrame) -> pd.DataFrame:
