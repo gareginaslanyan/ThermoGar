@@ -119,3 +119,60 @@ div[data-testid="stVerticalBlock"] > div[data-testid="stLayoutWrapper"]:has(> [c
     border-top: 1px solid light-dark(#CFD1D5, #33373E);
     padding: 12px 0;
 }
+
+/* BL-79, решения владельца 27.09.2026 (холст «ThermoGar: английские надписи Streamlit — на «да»»: 0Б, 1–8 А, 10, 11): отступление от S-4 — надписи самого Streamlit 1.62 заменяются оформлением; сторож — tools/test_wave21_ya.py. */
+[data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"] [data-testid="stMarkdownContainer"] p,
+[data-testid="stFileUploaderDropzoneInstructions"] span,
+[data-testid="stFileUploaderDropzone"] > div:not([data-testid]) > span,
+[data-testid="stTooltipErrorContent"]:not(:has([data-testid="stMarkdownContainer"])),
+[data-testid="stTooltipErrorContent"]:has([data-testid="stMarkdownContainer"]) p,
+[role="option"][style*="display: contents"] > span,
+[role="option"][data-key="__select_all__"] > div,
+[role="option"][data-key="__select_matches__"] > div {
+    font-size: 0;
+}
+[data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"] [data-testid="stMarkdownContainer"] p::after,
+[data-testid="stFileUploaderDropzoneInstructions"] span::after,
+[data-testid="stFileUploaderDropzone"] > div:not([data-testid]) > span::after,
+[data-testid="stTooltipErrorContent"]:not(:has([data-testid="stMarkdownContainer"]))::after,
+[data-testid="stTooltipErrorContent"]:has([data-testid="stMarkdownContainer"]) p::after,
+[role="option"][style*="display: contents"] > span::after,
+[role="option"][data-key="__select_all__"] > div::after,
+[role="option"][data-key="__select_matches__"] > div::after {
+    font-size: 0.875rem;
+}
+[data-testid="stFileUploaderDropzone"] button[data-testid="stBaseButton-secondary"] [data-testid="stMarkdownContainer"] p::after {
+    content: "Выбрать файл";
+}
+.st-key-batch_file_uploader [data-testid="stFileUploaderDropzoneInstructions"] span::after {
+    content: "CSV или XLSX, до 64 МБ";
+}
+.st-key-project_uploader [data-testid="stFileUploaderDropzoneInstructions"] span::after,
+.st-key-alloy_library_uploader [data-testid="stFileUploaderDropzoneInstructions"] span::after {
+    content: "JSON, до 64 МБ";
+}
+[data-testid="stFileUploaderDropzone"] > div:not([data-testid]) > span::after {
+    content: "Отпустите файл здесь";
+}
+[data-testid="stFileChipName"] + * {
+    display: none;
+}
+[data-testid="stTooltipErrorContent"]:not(:has([data-testid="stMarkdownContainer"]))::after {
+    content: "Файл не принят: не тот тип или больше 64 МБ.";
+}
+[data-testid="stTooltipErrorContent"]:has([data-testid="stMarkdownContainer"]) p > * {
+    display: none;
+}
+[data-testid="stTooltipErrorContent"]:has([data-testid="stMarkdownContainer"]) p::after {
+    content: "Число вне допустимых границ поля.";
+}
+[role="option"][style*="display: contents"] > span::after {
+    content: "Ничего не найдено";
+}
+[role="option"][data-key="__select_all__"] > div::after,
+[role="option"][data-key="__select_matches__"] > div::after {
+    content: "Выбрать все";
+}
+[role="listbox"][aria-label="Фазы для сравнения — не более восьми"] [role="option"][style*="display: contents"] > span::after {
+    content: "Ничего не найдено или уже выбрано восемь фаз.";
+}

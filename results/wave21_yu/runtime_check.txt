@@ -1,0 +1,11 @@
+archive D:\Pets\_archive\ThermoGar.zip, ThermoGar/ThermoGar-Installer-Assets/runtime-clean-3119/ (zipfile, Python)
+extracted to C:\Users\gareg\AppData\Local\Temp\claude\C--Users-gareg\2f65e74c-7099-447e-8c97-8924e072cfd0\scratchpad\rt\runtime-clean-3119
+manifest C:\Program Files\ThermoGar\manifests\payload-manifest.json generated_utc 2026-09-23T11:10:09Z file_count 15079 (installed 0.4.4)
+runtime/ entries in manifest 15003
+files in extracted runtime-clean-3119 17048
+manifest runtime/ files found on disk 15003
+sha256 equal 15003
+mismatches 0
+missing on disk 0
+extra on disk not in manifest 2045 (__pycache__/*.pyc 2045, other 0)
+VERDICT: PASS

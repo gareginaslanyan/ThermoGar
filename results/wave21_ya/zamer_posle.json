@@ -1,0 +1,3191 @@
+{
+ "phase": "posle",
+ "streamlit": "1.62.0",
+ "port": 8631,
+ "themes": {
+  "light": {
+   "background": "rgb(248, 248, 249)",
+   "frames": [
+    "posle_light_alloy_pustoy.png",
+    "posle_light_alloy_peretaskivanie.png",
+    "posle_light_alloy_txt.png",
+    "posle_light_alloy_65mb.png",
+    "posle_light_batch_pustoy.png",
+    "posle_light_batch_peretaskivanie.png",
+    "posle_light_batch_csv.png",
+    "posle_light_batch_txt.png",
+    "posle_light_batch_65mb.png",
+    "posle_light_project_pustoy.png",
+    "posle_light_project_peretaskivanie.png",
+    "posle_light_project_txt.png",
+    "posle_light_project_65mb.png",
+    "posle_light_chislo_vne_granits.png",
+    "posle_light_podskazka_polya.png",
+    "posle_light_spisok_raskryt.png",
+    "posle_light_spisok_poisk.png",
+    "posle_light_spisok_pustoy.png",
+    "posle_light_spisok_vosem.png",
+    "posle_light_spisok_zzz.png",
+    "posle_light_osnova_raskryt.png",
+    "posle_light_osnova_zzz.png",
+    "posle_light_tablitsa_knopka.png"
+   ],
+   "records": [
+    {
+     "theme": "light",
+     "place": "alloy: кнопка",
+     "where": "Проекты и данные → Марки и составы → «Импортировать библиотеку JSON»",
+     "english": "Upload",
+     "selector": ".st-key-alloy_library_uploader [data-testid=\"stFileUploaderDropzone\"] button[data-testid=\"stBaseButton-secondary\"] [data-testid=\"stMarkdownContainer\"] p",
+     "frame": "posle_light_alloy_pustoy.png",
+     "found": [
+      {
+       "text": "Upload",
+       "visible": true,
+       "box": [
+        445,
+        624,
+        99,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Выбрать файл\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "alloy: строка",
+     "where": "Проекты и данные → Марки и составы → «Импортировать библиотеку JSON»",
+     "english": "200MB per file • …",
+     "selector": ".st-key-alloy_library_uploader [data-testid=\"stFileUploaderDropzoneInstructions\"] span",
+     "frame": "posle_light_alloy_pustoy.png",
+     "found": [
+      {
+       "text": "64MB per file • JSON",
+       "visible": true,
+       "box": [
+        577,
+        626,
+        103,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgba(35, 37, 41, 0.6)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"JSON, до 64 МБ\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgba(35, 37, 41, 0.6)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "alloy: перетаскивание",
+     "where": "Проекты и данные → Марки и составы → «Импортировать библиотеку JSON»",
+     "english": "Drag and drop a file here",
+     "selector": ".st-key-alloy_library_uploader [data-testid=\"stFileUploaderDropzone\"] > div:not([data-testid]) > span",
+     "frame": "posle_light_alloy_peretaskivanie.png",
+     "found": [
+      {
+       "text": "Drag and drop a file here",
+       "visible": true,
+       "box": [
+        790,
+        626,
+        161,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "700",
+        "color": "rgb(31, 96, 193)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Отпустите файл здесь\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "700",
+        "color": "rgb(31, 96, 193)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "alloy: .txt подсказка",
+     "where": "Проекты и данные → Марки и составы → «Импортировать библиотеку JSON»",
+     "english": "text/plain files are not allowed.",
+     "selector": "[data-testid=\"stTooltipErrorContent\"]:not(:has([data-testid=\"stMarkdownContainer\"]))",
+     "frame": "posle_light_alloy_txt.png",
+     "found": [
+      {
+       "text": "text/plain files are not allowed.",
+       "visible": true,
+       "box": [
+        314,
+        565,
+        346,
+        39
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Файл не принят: не тот тип или больше 64 МБ.\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "alloy: 65 МБ подсказка",
+     "where": "Проекты и данные → Марки и составы → «Импортировать библиотеку JSON»",
+     "english": "File must be 200.0MB or smaller.",
+     "selector": "[data-testid=\"stTooltipErrorContent\"]:not(:has([data-testid=\"stMarkdownContainer\"]))",
+     "frame": "posle_light_alloy_65mb.png",
+     "found": [
+      {
+       "text": "File must be 64.0MB or smaller.",
+       "visible": true,
+       "box": [
+        335,
+        565,
+        346,
+        39
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Файл не принят: не тот тип или больше 64 МБ.\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "alloy: 65 МБ итог",
+     "where": "Проекты и данные → Марки и составы → «Импортировать библиотеку JSON»",
+     "english": "",
+     "selector": "",
+     "frame": "posle_light_alloy_65mb.png",
+     "found": [],
+     "note": "{\"chip\": \"bolshoy_65mb.json, 65.0MB\", \"streamlit_rejected\": true, \"tooltip\": \"File must be 64.0MB or smaller.\", \"alerts\": [\"Элементов: 25 · Фаз: 132\"]}"
+    },
+    {
+     "theme": "light",
+     "place": "batch: кнопка",
+     "where": "Проекты и данные → Пакетный расчёт → «Файл составов»",
+     "english": "Upload",
+     "selector": ".st-key-batch_file_uploader [data-testid=\"stFileUploaderDropzone\"] button[data-testid=\"stBaseButton-secondary\"] [data-testid=\"stMarkdownContainer\"] p",
+     "frame": "posle_light_batch_pustoy.png",
+     "found": [
+      {
+       "text": "Upload",
+       "visible": true,
+       "box": [
+        445,
+        625,
+        99,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Выбрать файл\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "batch: строка",
+     "where": "Проекты и данные → Пакетный расчёт → «Файл составов»",
+     "english": "200MB per file • …",
+     "selector": ".st-key-batch_file_uploader [data-testid=\"stFileUploaderDropzoneInstructions\"] span",
+     "frame": "posle_light_batch_pustoy.png",
+     "found": [
+      {
+       "text": "64MB per file • CSV, XLSX",
+       "visible": true,
+       "box": [
+        577,
+        627,
+        156,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgba(35, 37, 41, 0.6)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"CSV или XLSX, до 64 МБ\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgba(35, 37, 41, 0.6)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "batch: перетаскивание",
+     "where": "Проекты и данные → Пакетный расчёт → «Файл составов»",
+     "english": "Drag and drop a file here",
+     "selector": ".st-key-batch_file_uploader [data-testid=\"stFileUploaderDropzone\"] > div:not([data-testid]) > span",
+     "frame": "posle_light_batch_peretaskivanie.png",
+     "found": [
+      {
+       "text": "Drag and drop a file here",
+       "visible": true,
+       "box": [
+        790,
+        627,
+        161,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "700",
+        "color": "rgb(31, 96, 193)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Отпустите файл здесь\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "700",
+        "color": "rgb(31, 96, 193)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "batch: размер файла",
+     "where": "Проекты и данные → Пакетный расчёт → «Файл составов»",
+     "english": "132.0B",
+     "selector": ".st-key-batch_file_uploader [data-testid=\"stFileChipName\"] + *",
+     "frame": "posle_light_batch_csv.png",
+     "found": [
+      {
+       "text": "168.0B",
+       "visible": false,
+       "box": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "element": {
+        "content": "normal",
+        "display": "none",
+        "fontSize": "13.5px",
+        "fontWeight": "400",
+        "color": "rgba(35, 37, 41, 0.6)",
+        "lineHeight": "16.875px"
+       },
+       "after": {
+        "content": "none",
+        "display": "inline",
+        "fontSize": "13.5px",
+        "fontWeight": "400",
+        "color": "rgba(35, 37, 41, 0.6)",
+        "lineHeight": "16.875px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "batch: .txt подсказка",
+     "where": "Проекты и данные → Пакетный расчёт → «Файл составов»",
+     "english": "text/plain files are not allowed.",
+     "selector": "[data-testid=\"stTooltipErrorContent\"]:not(:has([data-testid=\"stMarkdownContainer\"]))",
+     "frame": "posle_light_batch_txt.png",
+     "found": [
+      {
+       "text": "text/plain files are not allowed.",
+       "visible": true,
+       "box": [
+        314,
+        566,
+        346,
+        39
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Файл не принят: не тот тип или больше 64 МБ.\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "batch: 65 МБ подсказка",
+     "where": "Проекты и данные → Пакетный расчёт → «Файл составов»",
+     "english": "File must be 200.0MB or smaller.",
+     "selector": "[data-testid=\"stTooltipErrorContent\"]:not(:has([data-testid=\"stMarkdownContainer\"]))",
+     "frame": "posle_light_batch_65mb.png",
+     "found": [
+      {
+       "text": "File must be 64.0MB or smaller.",
+       "visible": true,
+       "box": [
+        331,
+        566,
+        346,
+        39
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Файл не принят: не тот тип или больше 64 МБ.\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "batch: 65 МБ итог",
+     "where": "Проекты и данные → Пакетный расчёт → «Файл составов»",
+     "english": "",
+     "selector": "",
+     "frame": "posle_light_batch_65mb.png",
+     "found": [],
+     "note": "{\"chip\": \"bolshoy_65mb.csv, 65.0MB\", \"streamlit_rejected\": true, \"tooltip\": \"File must be 64.0MB or smaller.\", \"alerts\": [\"Элементов: 25 · Фаз: 132\"]}"
+    },
+    {
+     "theme": "light",
+     "place": "project: кнопка",
+     "where": "Проекты и данные → Проекты и история → «Импортировать проект»",
+     "english": "Upload",
+     "selector": ".st-key-project_uploader [data-testid=\"stFileUploaderDropzone\"] button[data-testid=\"stBaseButton-secondary\"] [data-testid=\"stMarkdownContainer\"] p",
+     "frame": "posle_light_project_pustoy.png",
+     "found": [
+      {
+       "text": "Upload",
+       "visible": true,
+       "box": [
+        445,
+        623,
+        99,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Выбрать файл\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "project: строка",
+     "where": "Проекты и данные → Проекты и история → «Импортировать проект»",
+     "english": "200MB per file • …",
+     "selector": ".st-key-project_uploader [data-testid=\"stFileUploaderDropzoneInstructions\"] span",
+     "frame": "posle_light_project_pustoy.png",
+     "found": [
+      {
+       "text": "64MB per file • JSON",
+       "visible": true,
+       "box": [
+        577,
+        625,
+        103,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgba(35, 37, 41, 0.6)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"JSON, до 64 МБ\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgba(35, 37, 41, 0.6)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "project: перетаскивание",
+     "where": "Проекты и данные → Проекты и история → «Импортировать проект»",
+     "english": "Drag and drop a file here",
+     "selector": ".st-key-project_uploader [data-testid=\"stFileUploaderDropzone\"] > div:not([data-testid]) > span",
+     "frame": "posle_light_project_peretaskivanie.png",
+     "found": [
+      {
+       "text": "Drag and drop a file here",
+       "visible": true,
+       "box": [
+        790,
+        625,
+        161,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "700",
+        "color": "rgb(31, 96, 193)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Отпустите файл здесь\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "700",
+        "color": "rgb(31, 96, 193)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "project: .txt подсказка",
+     "where": "Проекты и данные → Проекты и история → «Импортировать проект»",
+     "english": "text/plain files are not allowed.",
+     "selector": "[data-testid=\"stTooltipErrorContent\"]:not(:has([data-testid=\"stMarkdownContainer\"]))",
+     "frame": "posle_light_project_txt.png",
+     "found": [
+      {
+       "text": "text/plain files are not allowed.",
+       "visible": true,
+       "box": [
+        314,
+        565,
+        346,
+        39
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Файл не принят: не тот тип или больше 64 МБ.\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "project: 65 МБ подсказка",
+     "where": "Проекты и данные → Проекты и история → «Импортировать проект»",
+     "english": "File must be 200.0MB or smaller.",
+     "selector": "[data-testid=\"stTooltipErrorContent\"]:not(:has([data-testid=\"stMarkdownContainer\"]))",
+     "frame": "posle_light_project_65mb.png",
+     "found": [
+      {
+       "text": "File must be 64.0MB or smaller.",
+       "visible": true,
+       "box": [
+        335,
+        565,
+        346,
+        39
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Файл не принят: не тот тип или больше 64 МБ.\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "project: 65 МБ итог",
+     "where": "Проекты и данные → Проекты и история → «Импортировать проект»",
+     "english": "",
+     "selector": "",
+     "frame": "posle_light_project_65mb.png",
+     "found": [],
+     "note": "{\"chip\": \"bolshoy_65mb.json, 65.0MB\", \"streamlit_rejected\": true, \"tooltip\": \"File must be 64.0MB or smaller.\", \"alerts\": [\"Элементов: 25 · Фаз: 132\", \"Сохранённых проектов пока нет.\"]}"
+    },
+    {
+     "theme": "light",
+     "place": "число вне границ",
+     "where": "Диаграммы → Тройная при T = const → «Шаг поиска границ, ат.% (0.5–10)» = 20",
+     "english": "Error: Number is outside the allowed range. …",
+     "selector": "[data-testid=\"stTooltipErrorContent\"]:has([data-testid=\"stMarkdownContainer\"]) p",
+     "frame": "posle_light_chislo_vne_granits.png",
+     "found": [
+      {
+       "text": ": Number is outside the allowed range. Please enter a value between 0.50 and 10.00.",
+       "visible": true,
+       "box": [
+        990,
+        494,
+        251,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Число вне допустимых границ поля.\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "сравнение: подсказка «?»",
+     "where": "«Шаг поиска границ, ат.% (0.5–10)», кнопка «?»",
+     "english": "",
+     "selector": "[data-testid=\"stTooltipContent\"] p",
+     "frame": "posle_light_podskazka_polya.png",
+     "found": [
+      {
+       "text": "Меньший шаг точнее, но расчёт длится дольше. Для первого запуска используйте 2.5–5 ат.%.",
+       "visible": true,
+       "box": [
+        681,
+        429,
+        637,
+        50
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "мультивыбор: первая строка",
+     "where": "Энергии → Энергии фаз → «Фазы для сравнения — не более восьми»",
+     "english": "Select all",
+     "selector": "[role=\"option\"][data-key=\"__select_all__\"] > div",
+     "frame": "posle_light_spisok_raskryt.png",
+     "found": [
+      {
+       "text": "Select all",
+       "visible": true,
+       "box": [
+        397,
+        316,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Выбрать все\"",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "сравнение: вариант списка",
+     "where": "Энергии → Энергии фаз → «Фазы для сравнения — не более восьми»",
+     "english": "",
+     "selector": "[role=\"option\"]:not([data-key^=\"__\"]):not([style*=\"display: contents\"]) > div",
+     "frame": "posle_light_spisok_raskryt.png",
+     "found": [
+      {
+       "text": "ALPHA_MN",
+       "visible": true,
+       "box": [
+        397,
+        361,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "BCC_DISL",
+       "visible": true,
+       "box": [
+        397,
+        406,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "BETA_MN",
+       "visible": true,
+       "box": [
+        397,
+        451,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "CEMENTITE",
+       "visible": true,
+       "box": [
+        397,
+        496,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "CHI_A12",
+       "visible": true,
+       "box": [
+        397,
+        541,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "EPS_CARB",
+       "visible": true,
+       "box": [
+        397,
+        586,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "ETA",
+       "visible": true,
+       "box": [
+        397,
+        631,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "ETA_CARB",
+       "visible": true,
+       "box": [
+        397,
+        676,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "FE24C10",
+       "visible": true,
+       "box": [
+        397,
+        721,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "GAMMA_PRIME",
+       "visible": true,
+       "box": [
+        397,
+        766,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "HCP_A3",
+       "visible": true,
+       "box": [
+        397,
+        811,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "мультивыбор: найдено",
+     "where": "Энергии → Энергии фаз → «Фазы для сравнения — не более восьми»",
+     "english": "Select N matches",
+     "selector": "[role=\"option\"][data-key=\"__select_matches__\"] > div",
+     "frame": "posle_light_spisok_poisk.png",
+     "found": [
+      {
+       "text": "Select 16 matches",
+       "visible": true,
+       "box": [
+        397,
+        316,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Выбрать все\"",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": "поиск «_»"
+    },
+    {
+     "theme": "light",
+     "place": "мультивыбор: пустой",
+     "where": "Энергии → Энергии фаз → «Фазы для сравнения — не более восьми»",
+     "english": "Choose options",
+     "selector": "input::placeholder",
+     "frame": "posle_light_spisok_pustoy.png",
+     "found": [
+      {
+       "text": "Выберите из списка",
+       "visible": true,
+       "element": {
+        "content": "",
+        "display": "",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgba(35, 37, 41, 0.6)",
+        "lineHeight": "normal"
+       },
+       "after": null
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "мультивыбор: восемь выбрано",
+     "where": "Энергии → Энергии фаз → «Фазы для сравнения — не более восьми»",
+     "english": "You can only select up to 8 options. Remove an option first.",
+     "selector": "[role=\"option\"][style*=\"display: contents\"] > span",
+     "frame": "posle_light_spisok_vosem.png",
+     "found": [
+      {
+       "text": "You can only select up to 8 options. Remove an option first.",
+       "visible": true,
+       "box": [
+        391,
+        703,
+        958,
+        101
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgba(35, 37, 41, 0.6)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Ничего не найдено или уже выбрано восемь фаз.\"",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgba(35, 37, 41, 0.6)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "мультивыбор: zzz",
+     "where": "Энергии → Энергии фаз → «Фазы для сравнения — не более восьми»",
+     "english": "No results",
+     "selector": "[role=\"option\"][style*=\"display: contents\"] > span",
+     "frame": "posle_light_spisok_zzz.png",
+     "found": [
+      {
+       "text": "No results",
+       "visible": true,
+       "box": [
+        391,
+        703,
+        958,
+        101
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgba(35, 37, 41, 0.6)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Ничего не найдено или уже выбрано восемь фаз.\"",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgba(35, 37, 41, 0.6)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "сравнение: вариант одиночного",
+     "where": "Боковая панель → «Элемент-основа»",
+     "english": "",
+     "selector": "[role=\"option\"]:not([data-key^=\"__\"]):not([style*=\"display: contents\"]) > div",
+     "frame": "posle_light_osnova_raskryt.png",
+     "found": [
+      {
+       "text": "Al",
+       "visible": true,
+       "box": [
+        40,
+        485,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "B",
+       "visible": true,
+       "box": [
+        40,
+        530,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "C",
+       "visible": true,
+       "box": [
+        40,
+        575,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "Co",
+       "visible": true,
+       "box": [
+        40,
+        620,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "Cr",
+       "visible": true,
+       "box": [
+        40,
+        665,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "Cu",
+       "visible": true,
+       "box": [
+        40,
+        710,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "Fe",
+       "visible": true,
+       "box": [
+        40,
+        755,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "H",
+       "visible": true,
+       "box": [
+        40,
+        800,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "Hf",
+       "visible": true,
+       "box": [
+        40,
+        845,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "La",
+       "visible": true,
+       "box": [
+        40,
+        890,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "Mn",
+       "visible": true,
+       "box": [
+        40,
+        935,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "Mo",
+       "visible": true,
+       "box": [
+        40,
+        980,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "одиночный выбор: zzz",
+     "where": "Боковая панель → «Элемент-основа»",
+     "english": "No results",
+     "selector": "[role=\"option\"][style*=\"display: contents\"] > span",
+     "frame": "posle_light_osnova_zzz.png",
+     "found": [
+      {
+       "text": "No results",
+       "visible": true,
+       "box": [
+        34,
+        478,
+        233,
+        101
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgba(35, 37, 41, 0.6)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Ничего не найдено\"",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgba(35, 37, 41, 0.6)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "light",
+     "place": "сравнение: кнопка над таблицей",
+     "where": "Марки и составы → таблица, кнопка",
+     "english": "Search",
+     "selector": "[data-testid=\"stTooltipContent\"] p",
+     "frame": "posle_light_tablitsa_knopka.png",
+     "found": [
+      {
+       "text": "Search",
+       "visible": true,
+       "box": [
+        1286,
+        42,
+        45,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(35, 37, 41)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    }
+   ]
+  },
+  "dark": {
+   "background": "rgb(23, 24, 27)",
+   "frames": [
+    "posle_dark_alloy_pustoy.png",
+    "posle_dark_alloy_peretaskivanie.png",
+    "posle_dark_alloy_txt.png",
+    "posle_dark_alloy_65mb.png",
+    "posle_dark_batch_pustoy.png",
+    "posle_dark_batch_peretaskivanie.png",
+    "posle_dark_batch_csv.png",
+    "posle_dark_batch_txt.png",
+    "posle_dark_batch_65mb.png",
+    "posle_dark_project_pustoy.png",
+    "posle_dark_project_peretaskivanie.png",
+    "posle_dark_project_txt.png",
+    "posle_dark_project_65mb.png",
+    "posle_dark_chislo_vne_granits.png",
+    "posle_dark_podskazka_polya.png",
+    "posle_dark_spisok_raskryt.png",
+    "posle_dark_spisok_poisk.png",
+    "posle_dark_spisok_pustoy.png",
+    "posle_dark_spisok_vosem.png",
+    "posle_dark_spisok_zzz.png",
+    "posle_dark_osnova_raskryt.png",
+    "posle_dark_osnova_zzz.png",
+    "posle_dark_tablitsa_knopka.png"
+   ],
+   "records": [
+    {
+     "theme": "dark",
+     "place": "alloy: кнопка",
+     "where": "Проекты и данные → Марки и составы → «Импортировать библиотеку JSON»",
+     "english": "Upload",
+     "selector": ".st-key-alloy_library_uploader [data-testid=\"stFileUploaderDropzone\"] button[data-testid=\"stBaseButton-secondary\"] [data-testid=\"stMarkdownContainer\"] p",
+     "frame": "posle_dark_alloy_pustoy.png",
+     "found": [
+      {
+       "text": "Upload",
+       "visible": true,
+       "box": [
+        445,
+        624,
+        99,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Выбрать файл\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "alloy: строка",
+     "where": "Проекты и данные → Марки и составы → «Импортировать библиотеку JSON»",
+     "english": "200MB per file • …",
+     "selector": ".st-key-alloy_library_uploader [data-testid=\"stFileUploaderDropzoneInstructions\"] span",
+     "frame": "posle_dark_alloy_pustoy.png",
+     "found": [
+      {
+       "text": "64MB per file • JSON",
+       "visible": true,
+       "box": [
+        577,
+        626,
+        103,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgba(236, 237, 239, 0.6)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"JSON, до 64 МБ\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgba(236, 237, 239, 0.6)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "alloy: перетаскивание",
+     "where": "Проекты и данные → Марки и составы → «Импортировать библиотеку JSON»",
+     "english": "Drag and drop a file here",
+     "selector": ".st-key-alloy_library_uploader [data-testid=\"stFileUploaderDropzone\"] > div:not([data-testid]) > span",
+     "frame": "posle_dark_alloy_peretaskivanie.png",
+     "found": [
+      {
+       "text": "Drag and drop a file here",
+       "visible": true,
+       "box": [
+        790,
+        626,
+        161,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "700",
+        "color": "rgb(92, 151, 232)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Отпустите файл здесь\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "700",
+        "color": "rgb(92, 151, 232)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "alloy: .txt подсказка",
+     "where": "Проекты и данные → Марки и составы → «Импортировать библиотеку JSON»",
+     "english": "text/plain files are not allowed.",
+     "selector": "[data-testid=\"stTooltipErrorContent\"]:not(:has([data-testid=\"stMarkdownContainer\"]))",
+     "frame": "posle_dark_alloy_txt.png",
+     "found": [
+      {
+       "text": "text/plain files are not allowed.",
+       "visible": true,
+       "box": [
+        314,
+        565,
+        346,
+        39
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Файл не принят: не тот тип или больше 64 МБ.\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "alloy: 65 МБ подсказка",
+     "where": "Проекты и данные → Марки и составы → «Импортировать библиотеку JSON»",
+     "english": "File must be 200.0MB or smaller.",
+     "selector": "[data-testid=\"stTooltipErrorContent\"]:not(:has([data-testid=\"stMarkdownContainer\"]))",
+     "frame": "posle_dark_alloy_65mb.png",
+     "found": [
+      {
+       "text": "File must be 64.0MB or smaller.",
+       "visible": true,
+       "box": [
+        335,
+        565,
+        346,
+        39
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Файл не принят: не тот тип или больше 64 МБ.\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "alloy: 65 МБ итог",
+     "where": "Проекты и данные → Марки и составы → «Импортировать библиотеку JSON»",
+     "english": "",
+     "selector": "",
+     "frame": "posle_dark_alloy_65mb.png",
+     "found": [],
+     "note": "{\"chip\": \"bolshoy_65mb.json, 65.0MB\", \"streamlit_rejected\": true, \"tooltip\": \"File must be 64.0MB or smaller.\", \"alerts\": [\"Элементов: 25 · Фаз: 132\"]}"
+    },
+    {
+     "theme": "dark",
+     "place": "batch: кнопка",
+     "where": "Проекты и данные → Пакетный расчёт → «Файл составов»",
+     "english": "Upload",
+     "selector": ".st-key-batch_file_uploader [data-testid=\"stFileUploaderDropzone\"] button[data-testid=\"stBaseButton-secondary\"] [data-testid=\"stMarkdownContainer\"] p",
+     "frame": "posle_dark_batch_pustoy.png",
+     "found": [
+      {
+       "text": "Upload",
+       "visible": true,
+       "box": [
+        445,
+        625,
+        99,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Выбрать файл\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "batch: строка",
+     "where": "Проекты и данные → Пакетный расчёт → «Файл составов»",
+     "english": "200MB per file • …",
+     "selector": ".st-key-batch_file_uploader [data-testid=\"stFileUploaderDropzoneInstructions\"] span",
+     "frame": "posle_dark_batch_pustoy.png",
+     "found": [
+      {
+       "text": "64MB per file • CSV, XLSX",
+       "visible": true,
+       "box": [
+        577,
+        627,
+        156,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgba(236, 237, 239, 0.6)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"CSV или XLSX, до 64 МБ\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgba(236, 237, 239, 0.6)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "batch: перетаскивание",
+     "where": "Проекты и данные → Пакетный расчёт → «Файл составов»",
+     "english": "Drag and drop a file here",
+     "selector": ".st-key-batch_file_uploader [data-testid=\"stFileUploaderDropzone\"] > div:not([data-testid]) > span",
+     "frame": "posle_dark_batch_peretaskivanie.png",
+     "found": [
+      {
+       "text": "Drag and drop a file here",
+       "visible": true,
+       "box": [
+        790,
+        627,
+        161,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "700",
+        "color": "rgb(92, 151, 232)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Отпустите файл здесь\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "700",
+        "color": "rgb(92, 151, 232)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "batch: размер файла",
+     "where": "Проекты и данные → Пакетный расчёт → «Файл составов»",
+     "english": "132.0B",
+     "selector": ".st-key-batch_file_uploader [data-testid=\"stFileChipName\"] + *",
+     "frame": "posle_dark_batch_csv.png",
+     "found": [
+      {
+       "text": "168.0B",
+       "visible": false,
+       "box": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "element": {
+        "content": "normal",
+        "display": "none",
+        "fontSize": "13.5px",
+        "fontWeight": "400",
+        "color": "rgba(236, 237, 239, 0.6)",
+        "lineHeight": "16.875px"
+       },
+       "after": {
+        "content": "none",
+        "display": "inline",
+        "fontSize": "13.5px",
+        "fontWeight": "400",
+        "color": "rgba(236, 237, 239, 0.6)",
+        "lineHeight": "16.875px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "batch: .txt подсказка",
+     "where": "Проекты и данные → Пакетный расчёт → «Файл составов»",
+     "english": "text/plain files are not allowed.",
+     "selector": "[data-testid=\"stTooltipErrorContent\"]:not(:has([data-testid=\"stMarkdownContainer\"]))",
+     "frame": "posle_dark_batch_txt.png",
+     "found": [
+      {
+       "text": "text/plain files are not allowed.",
+       "visible": true,
+       "box": [
+        314,
+        566,
+        346,
+        39
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Файл не принят: не тот тип или больше 64 МБ.\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "batch: 65 МБ подсказка",
+     "where": "Проекты и данные → Пакетный расчёт → «Файл составов»",
+     "english": "File must be 200.0MB or smaller.",
+     "selector": "[data-testid=\"stTooltipErrorContent\"]:not(:has([data-testid=\"stMarkdownContainer\"]))",
+     "frame": "posle_dark_batch_65mb.png",
+     "found": [
+      {
+       "text": "File must be 64.0MB or smaller.",
+       "visible": true,
+       "box": [
+        331,
+        566,
+        346,
+        39
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Файл не принят: не тот тип или больше 64 МБ.\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "batch: 65 МБ итог",
+     "where": "Проекты и данные → Пакетный расчёт → «Файл составов»",
+     "english": "",
+     "selector": "",
+     "frame": "posle_dark_batch_65mb.png",
+     "found": [],
+     "note": "{\"chip\": \"bolshoy_65mb.csv, 65.0MB\", \"streamlit_rejected\": true, \"tooltip\": \"File must be 64.0MB or smaller.\", \"alerts\": [\"Элементов: 25 · Фаз: 132\"]}"
+    },
+    {
+     "theme": "dark",
+     "place": "project: кнопка",
+     "where": "Проекты и данные → Проекты и история → «Импортировать проект»",
+     "english": "Upload",
+     "selector": ".st-key-project_uploader [data-testid=\"stFileUploaderDropzone\"] button[data-testid=\"stBaseButton-secondary\"] [data-testid=\"stMarkdownContainer\"] p",
+     "frame": "posle_dark_project_pustoy.png",
+     "found": [
+      {
+       "text": "Upload",
+       "visible": true,
+       "box": [
+        445,
+        623,
+        99,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Выбрать файл\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "project: строка",
+     "where": "Проекты и данные → Проекты и история → «Импортировать проект»",
+     "english": "200MB per file • …",
+     "selector": ".st-key-project_uploader [data-testid=\"stFileUploaderDropzoneInstructions\"] span",
+     "frame": "posle_dark_project_pustoy.png",
+     "found": [
+      {
+       "text": "64MB per file • JSON",
+       "visible": true,
+       "box": [
+        577,
+        625,
+        103,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgba(236, 237, 239, 0.6)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"JSON, до 64 МБ\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgba(236, 237, 239, 0.6)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "project: перетаскивание",
+     "where": "Проекты и данные → Проекты и история → «Импортировать проект»",
+     "english": "Drag and drop a file here",
+     "selector": ".st-key-project_uploader [data-testid=\"stFileUploaderDropzone\"] > div:not([data-testid]) > span",
+     "frame": "posle_dark_project_peretaskivanie.png",
+     "found": [
+      {
+       "text": "Drag and drop a file here",
+       "visible": true,
+       "box": [
+        790,
+        625,
+        161,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "700",
+        "color": "rgb(92, 151, 232)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Отпустите файл здесь\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "700",
+        "color": "rgb(92, 151, 232)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "project: .txt подсказка",
+     "where": "Проекты и данные → Проекты и история → «Импортировать проект»",
+     "english": "text/plain files are not allowed.",
+     "selector": "[data-testid=\"stTooltipErrorContent\"]:not(:has([data-testid=\"stMarkdownContainer\"]))",
+     "frame": "posle_dark_project_txt.png",
+     "found": [
+      {
+       "text": "text/plain files are not allowed.",
+       "visible": true,
+       "box": [
+        314,
+        565,
+        346,
+        39
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Файл не принят: не тот тип или больше 64 МБ.\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "project: 65 МБ подсказка",
+     "where": "Проекты и данные → Проекты и история → «Импортировать проект»",
+     "english": "File must be 200.0MB or smaller.",
+     "selector": "[data-testid=\"stTooltipErrorContent\"]:not(:has([data-testid=\"stMarkdownContainer\"]))",
+     "frame": "posle_dark_project_65mb.png",
+     "found": [
+      {
+       "text": "File must be 64.0MB or smaller.",
+       "visible": true,
+       "box": [
+        335,
+        565,
+        346,
+        39
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Файл не принят: не тот тип или больше 64 МБ.\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "project: 65 МБ итог",
+     "where": "Проекты и данные → Проекты и история → «Импортировать проект»",
+     "english": "",
+     "selector": "",
+     "frame": "posle_dark_project_65mb.png",
+     "found": [],
+     "note": "{\"chip\": \"bolshoy_65mb.json, 65.0MB\", \"streamlit_rejected\": true, \"tooltip\": \"File must be 64.0MB or smaller.\", \"alerts\": [\"Элементов: 25 · Фаз: 132\", \"Сохранённых проектов пока нет.\"]}"
+    },
+    {
+     "theme": "dark",
+     "place": "число вне границ",
+     "where": "Диаграммы → Тройная при T = const → «Шаг поиска границ, ат.% (0.5–10)» = 20",
+     "english": "Error: Number is outside the allowed range. …",
+     "selector": "[data-testid=\"stTooltipErrorContent\"]:has([data-testid=\"stMarkdownContainer\"]) p",
+     "frame": "posle_dark_chislo_vne_granits.png",
+     "found": [
+      {
+       "text": ": Number is outside the allowed range. Please enter a value between 0.50 and 10.00.",
+       "visible": true,
+       "box": [
+        990,
+        494,
+        251,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Число вне допустимых границ поля.\"",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "сравнение: подсказка «?»",
+     "where": "«Шаг поиска границ, ат.% (0.5–10)», кнопка «?»",
+     "english": "",
+     "selector": "[data-testid=\"stTooltipContent\"] p",
+     "frame": "posle_dark_podskazka_polya.png",
+     "found": [
+      {
+       "text": "Меньший шаг точнее, но расчёт длится дольше. Для первого запуска используйте 2.5–5 ат.%.",
+       "visible": true,
+       "box": [
+        681,
+        429,
+        637,
+        50
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "мультивыбор: первая строка",
+     "where": "Энергии → Энергии фаз → «Фазы для сравнения — не более восьми»",
+     "english": "Select all",
+     "selector": "[role=\"option\"][data-key=\"__select_all__\"] > div",
+     "frame": "posle_dark_spisok_raskryt.png",
+     "found": [
+      {
+       "text": "Select all",
+       "visible": true,
+       "box": [
+        397,
+        316,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Выбрать все\"",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "сравнение: вариант списка",
+     "where": "Энергии → Энергии фаз → «Фазы для сравнения — не более восьми»",
+     "english": "",
+     "selector": "[role=\"option\"]:not([data-key^=\"__\"]):not([style*=\"display: contents\"]) > div",
+     "frame": "posle_dark_spisok_raskryt.png",
+     "found": [
+      {
+       "text": "ALPHA_MN",
+       "visible": true,
+       "box": [
+        397,
+        361,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "BCC_DISL",
+       "visible": true,
+       "box": [
+        397,
+        406,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "BETA_MN",
+       "visible": true,
+       "box": [
+        397,
+        451,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "CEMENTITE",
+       "visible": true,
+       "box": [
+        397,
+        496,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "CHI_A12",
+       "visible": true,
+       "box": [
+        397,
+        541,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "EPS_CARB",
+       "visible": true,
+       "box": [
+        397,
+        586,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "ETA",
+       "visible": true,
+       "box": [
+        397,
+        631,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "ETA_CARB",
+       "visible": true,
+       "box": [
+        397,
+        676,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "FE24C10",
+       "visible": true,
+       "box": [
+        397,
+        721,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "GAMMA_PRIME",
+       "visible": true,
+       "box": [
+        397,
+        766,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "HCP_A3",
+       "visible": true,
+       "box": [
+        397,
+        811,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "мультивыбор: найдено",
+     "where": "Энергии → Энергии фаз → «Фазы для сравнения — не более восьми»",
+     "english": "Select N matches",
+     "selector": "[role=\"option\"][data-key=\"__select_matches__\"] > div",
+     "frame": "posle_dark_spisok_poisk.png",
+     "found": [
+      {
+       "text": "Select 16 matches",
+       "visible": true,
+       "box": [
+        397,
+        316,
+        947,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Выбрать все\"",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": "поиск «_»"
+    },
+    {
+     "theme": "dark",
+     "place": "мультивыбор: пустой",
+     "where": "Энергии → Энергии фаз → «Фазы для сравнения — не более восьми»",
+     "english": "Choose options",
+     "selector": "input::placeholder",
+     "frame": "posle_dark_spisok_pustoy.png",
+     "found": [
+      {
+       "text": "Выберите из списка",
+       "visible": true,
+       "element": {
+        "content": "",
+        "display": "",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgba(236, 237, 239, 0.6)",
+        "lineHeight": "normal"
+       },
+       "after": null
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "мультивыбор: восемь выбрано",
+     "where": "Энергии → Энергии фаз → «Фазы для сравнения — не более восьми»",
+     "english": "You can only select up to 8 options. Remove an option first.",
+     "selector": "[role=\"option\"][style*=\"display: contents\"] > span",
+     "frame": "posle_dark_spisok_vosem.png",
+     "found": [
+      {
+       "text": "You can only select up to 8 options. Remove an option first.",
+       "visible": true,
+       "box": [
+        391,
+        703,
+        958,
+        101
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgba(236, 237, 239, 0.6)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Ничего не найдено или уже выбрано восемь фаз.\"",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgba(236, 237, 239, 0.6)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "мультивыбор: zzz",
+     "where": "Энергии → Энергии фаз → «Фазы для сравнения — не более восьми»",
+     "english": "No results",
+     "selector": "[role=\"option\"][style*=\"display: contents\"] > span",
+     "frame": "posle_dark_spisok_zzz.png",
+     "found": [
+      {
+       "text": "No results",
+       "visible": true,
+       "box": [
+        391,
+        703,
+        958,
+        101
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgba(236, 237, 239, 0.6)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Ничего не найдено или уже выбрано восемь фаз.\"",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgba(236, 237, 239, 0.6)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "сравнение: вариант одиночного",
+     "where": "Боковая панель → «Элемент-основа»",
+     "english": "",
+     "selector": "[role=\"option\"]:not([data-key^=\"__\"]):not([style*=\"display: contents\"]) > div",
+     "frame": "posle_dark_osnova_raskryt.png",
+     "found": [
+      {
+       "text": "Al",
+       "visible": true,
+       "box": [
+        40,
+        485,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "B",
+       "visible": true,
+       "box": [
+        40,
+        530,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "C",
+       "visible": true,
+       "box": [
+        40,
+        575,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "Co",
+       "visible": true,
+       "box": [
+        40,
+        620,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "Cr",
+       "visible": true,
+       "box": [
+        40,
+        665,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "Cu",
+       "visible": true,
+       "box": [
+        40,
+        710,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "Fe",
+       "visible": true,
+       "box": [
+        40,
+        755,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "H",
+       "visible": true,
+       "box": [
+        40,
+        800,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "Hf",
+       "visible": true,
+       "box": [
+        40,
+        845,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "La",
+       "visible": true,
+       "box": [
+        40,
+        890,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "Mn",
+       "visible": true,
+       "box": [
+        40,
+        935,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      },
+      {
+       "text": "Mo",
+       "visible": true,
+       "box": [
+        40,
+        980,
+        222,
+        32
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "одиночный выбор: zzz",
+     "where": "Боковая панель → «Элемент-основа»",
+     "english": "No results",
+     "selector": "[role=\"option\"][style*=\"display: contents\"] > span",
+     "frame": "posle_dark_osnova_zzz.png",
+     "found": [
+      {
+       "text": "No results",
+       "visible": true,
+       "box": [
+        34,
+        478,
+        233,
+        101
+       ],
+       "element": {
+        "content": "normal",
+        "display": "flex",
+        "fontSize": "0px",
+        "fontWeight": "400",
+        "color": "rgba(236, 237, 239, 0.6)",
+        "lineHeight": "0px"
+       },
+       "after": {
+        "content": "\"Ничего не найдено\"",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgba(236, 237, 239, 0.6)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    },
+    {
+     "theme": "dark",
+     "place": "сравнение: кнопка над таблицей",
+     "where": "Марки и составы → таблица, кнопка",
+     "english": "Search",
+     "selector": "[data-testid=\"stTooltipContent\"] p",
+     "frame": "posle_dark_tablitsa_knopka.png",
+     "found": [
+      {
+       "text": "Search",
+       "visible": true,
+       "box": [
+        1286,
+        42,
+        45,
+        25
+       ],
+       "element": {
+        "content": "normal",
+        "display": "block",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       },
+       "after": {
+        "content": "none",
+        "display": "inline",
+        "fontSize": "15.75px",
+        "fontWeight": "400",
+        "color": "rgb(236, 237, 239)",
+        "lineHeight": "25.2px"
+       }
+      }
+     ],
+     "note": ""
+    }
+   ]
+  }
+ }
+}

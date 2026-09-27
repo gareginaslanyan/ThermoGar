@@ -1,0 +1,19 @@
+runtime C:\Users\gareg\AppData\Local\Temp\claude\C--Users-gareg\2f65e74c-7099-447e-8c97-8924e072cfd0\scratchpad\rt\runtime-clean-3119 (step 2 of 21-Ю, reused)
+manifest C:\Program Files\ThermoGar\manifests\payload-manifest.json generated_utc 2026-09-23T11:10:09Z file_count 15079 (installed 0.4.4)
+runtime/ entries in manifest 15003
+files in runtime-clean-3119 17048
+manifest runtime/ files found on disk 15003
+sha256 equal 15003
+mismatches 0
+missing on disk 0
+extra on disk not in manifest 2045 (__pycache__/*.pyc 2045, other 0)
+streamlit in runtime: 1.62.0 (exit 0)
+runtime js dir C:\Users\gareg\AppData\Local\Temp\claude\C--Users-gareg\2f65e74c-7099-447e-8c97-8924e072cfd0\scratchpad\rt\runtime-clean-3119\Lib\site-packages\streamlit\static\static\js
+venv js dir D:\Pets\ThermoGar\.venv-windows\Lib\site-packages\streamlit\static\static\js
+FileUploader.2io2eK1d.js: runtime 817d426034f9c3a6bb7873c3ee8c795026ccccbcec87a24808304f06099ef5f8 venv 817d426034f9c3a6bb7873c3ee8c795026ccccbcec87a24808304f06099ef5f8 expected prefix 817d426034f9 -> OK
+utils.CZ73KiS-.js: runtime 8232642e6b5d79c9f84e0c878f46de3f0839bf0bb24a908f6d8a25606490f2ad venv 8232642e6b5d79c9f84e0c878f46de3f0839bf0bb24a908f6d8a25606490f2ad expected prefix 8232642e6b5d -> OK
+Tooltip.CcubhKj6.js: runtime 9e90fde41b3f2a9b3ff3a8632d071ca75a87bf8f186eba5776275cae29cb89b2 venv 9e90fde41b3f2a9b3ff3a8632d071ca75a87bf8f186eba5776275cae29cb89b2 expected prefix 9e90fde41b3f -> OK
+NumberInput.MwtTRR2O.js: runtime 9869802d22b06f4624eee7938453aca17263b1395b8849b8dd046cfb8fff160b venv 9869802d22b06f4624eee7938453aca17263b1395b8849b8dd046cfb8fff160b expected prefix 9869802d22b0 -> OK
+Multiselect.DafPXziM.js: runtime 623c04561afb684717273f4258a692b8b50bd0b5a9d323d836b91f2a92f03a66 venv 623c04561afb684717273f4258a692b8b50bd0b5a9d323d836b91f2a92f03a66 expected prefix 623c04561afb -> OK
+Selectbox.DTwsqAB2.js: runtime e52ba88119809e642fc546d3e12c83a07e412967df8ddf5d3e349c8763d03218 venv e52ba88119809e642fc546d3e12c83a07e412967df8ddf5d3e349c8763d03218 expected prefix e52ba8811980 -> OK
+VERDICT: PASS

@@ -2,8 +2,8 @@
 ;
 ; Everything version-specific is passed in with /D by build_installer.ps1,
 ; which reads product-version.json. No receipts, no expected hashes: the
-; installer copies the staged tree, drops one Start Menu shortcut and
-; registers an uninstaller.
+; installer copies the staged tree, drops a Start Menu shortcut and a
+; desktop shortcut (BL-62) and registers an uninstaller.
 ;
 ; Silent install/uninstall (/S) is supported and is what smoke_installed.ps1
 ; drives.
