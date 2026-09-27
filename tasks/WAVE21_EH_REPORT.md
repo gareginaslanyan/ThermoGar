@@ -265,4 +265,31 @@
 
 ## Git
 
-<<GIT>>
+`git push -u origin wave21-eh` — ветка создана на origin (`* [new branch] wave21-eh -> wave21-eh`), потом дополнена. Ниже — вывод команд после последнего push перед этим коммитом отчёта. Этот коммит («отчёт — вывод git после пуша») запушен следом, и в выводе его нет.
+
+`git ls-remote origin wave21-eh`:
+```
+6a4c1638e8ac72307f8a005b89324e2c26b7ecbd	refs/heads/wave21-eh
+```
+
+`git log --oneline e27c36c..wave21-eh`:
+```
+6a4c163 docs(21-Э): отчёт — раздел CHANGELOG 0.5.0 целиком, номера строк
+670c7a4 docs(21-Э): отчёт
+67c648d test(21-Э): холостые прогоны — сверка эталона, приёмка version и phase_reference, тесты
+3a3b0f4 test(21-Э): сценарии регрессии, сверки эталона и приёмки выпуска 0.5.0
+d7d3a42 docs(21-Э): раздел CHANGELOG 0.5.0
+2cc09b0 fix(21-Э): пример -Version 0.5.0 в build_installer.ps1 (BL-61), HANDOFF
+be13501 feat(21-Э): ярлык ThermoGar на рабочем столе (BL-62)
+6863939 docs(21-Э): задание
+```
+
+`git status --short`:
+```
+?? _to_delete/
+```
+
+`git ls-remote origin main` в конце работы:
+```
+062b97503bb1142c38020c33c17b0de30fd15a88	refs/heads/main
+```
