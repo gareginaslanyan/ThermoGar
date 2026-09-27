@@ -52,6 +52,7 @@ CRCCheck force
 !define PRODUCT_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\ThermoGar"
 !define SHORTCUT_DIR "$SMPROGRAMS\ThermoGar"
 !define SHORTCUT_LNK "$SMPROGRAMS\ThermoGar\ThermoGar.lnk"
+!define DESKTOP_LNK "$DESKTOP\ThermoGar.lnk"
 ; Present in every install; the uninstaller refuses to run without it, so a
 ; corrupted InstallLocation can never turn into a recursive delete of a
 ; directory we do not own.
@@ -130,6 +131,9 @@ Section "ThermoGar" SEC_MAIN
   CreateShortcut "${SHORTCUT_LNK}" \
     "$INSTDIR\runtime\pythonw.exe" '"$INSTDIR\launcher.pyw"' \
     "$INSTDIR\ThermoGar.ico" 0 SW_SHOWNORMAL "" "${PRODUCT_DESCRIPTION}"
+  CreateShortcut "${DESKTOP_LNK}" \
+    "$INSTDIR\runtime\pythonw.exe" '"$INSTDIR\launcher.pyw"' \
+    "$INSTDIR\ThermoGar.ico" 0 SW_SHOWNORMAL "" "${PRODUCT_DESCRIPTION}"
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -160,6 +164,7 @@ Section "Uninstall"
   ${EndIf}
 
   Delete "${SHORTCUT_LNK}"
+  Delete "${DESKTOP_LNK}"
   RMDir "${SHORTCUT_DIR}"
 
   RMDir /r "$INSTDIR\runtime"
