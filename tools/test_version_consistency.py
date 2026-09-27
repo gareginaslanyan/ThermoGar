@@ -123,3 +123,14 @@ def test_guide_builder_names_current_version() -> None:
     source = (ROOT / "tools/make_guide_screens.py").read_text("utf-8")
     assert f'HTML_NAME = "ThermoGar_Guide_{APP_VERSION}.html"' in source
     assert f'HTML_TITLE = "ThermoGar {APP_VERSION} — ' in source
+
+
+INSTALLER_EXAMPLE = re.compile(r"-Version (\d+\.\d+\.\d+)")
+
+
+def test_build_installer_example_version() -> None:
+    """Пример запуска в справке build_installer.ps1 — с текущей версией (BL-61, 21-Э)."""
+    source = (ROOT / "packaging/build_installer.ps1").read_bytes().decode("utf-8")
+    match = INSTALLER_EXAMPLE.search(source)
+    assert match is not None, "в build_installer.ps1 нет примера «-Version X.Y.Z»"
+    assert match.group(1) == APP_VERSION, f"build_installer.ps1: -Version {match.group(1)}, APP_VERSION {APP_VERSION}"
