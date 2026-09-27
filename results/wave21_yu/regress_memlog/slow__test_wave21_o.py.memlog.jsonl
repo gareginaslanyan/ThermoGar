@@ -1,0 +1,2 @@
+{"test": "tools/test_wave21_o.py::test_solidification_zip_and_raw_sheets_ni", "seconds": 26.1, "rss_before_gib": 0.186, "rss_after_gib": 0.455, "growth_gib": 0.269, "peak_tree_gib": 0.467, "peak_wset_process_gib": 0.467, "open_figures": 0, "pool_workers": null}
+{"test": "tools/test_wave21_o.py::test_batch_export_ni", "seconds": 21.4, "rss_before_gib": 0.455, "rss_after_gib": 0.47, "growth_gib": 0.014, "peak_tree_gib": 0.484, "peak_wset_process_gib": 0.486, "open_figures": 0, "pool_workers": null}
