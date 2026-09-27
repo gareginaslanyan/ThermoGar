@@ -1,0 +1,156 @@
+...............FFFF.....                                                 [100%]
+================================== FAILURES ===================================
+________ test_batch_accepts_both_separators_and_both_encodings[comma] _________
+
+app = <function app.<locals>.start at 0x000001CC4A68B060>, separator = ','
+bom = False
+
+    @pytest.mark.parametrize(
+        "separator,bom",
+        [(",", False), (";", False), (",", True), (";", True)],
+        ids=["comma", "semicolon", "comma-bom", "semicolon-bom"],
+    )
+    def test_batch_accepts_both_separators_and_both_encodings(app, separator, bom):
+        at, _ = app()
+        labelled(at.file_uploader, "Файл составов").set_value(
+            ("batch.csv", batch_csv(separator=separator, bom=bom), "text/csv")
+        )
+        at.run()
+        assert not section_errors(at)
+        # The preview frame is canonical: aliases resolved, units normalised.
+        # 21-Ж (предпросмотр пакета): подписи столбцов словами.
+        preview = next(
+            frame.value
+            for frame in at.dataframe
+            if {"База", "Основа", "Единицы"} <= set(getattr(frame.value, "columns", []))
+            # На странице есть другая таблица с теми же подписями (одна строка).
+            and len(frame.value) == 3
+        )
+>       assert list(preview["База"]) == ["ni", "al", "fe"]
+E       AssertionError: assert ['Никелевые с... mc_fe 2.062'] == ['ni', 'al', 'fe']
+E         
+E         At index 0 diff: 'Никелевые сплавы — mc_ni 2.036' != 'ni'
+E         Use -v to get more diff
+
+tools\test_ui_h.py:552: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-27 17:11:58.148 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+______ test_batch_accepts_both_separators_and_both_encodings[semicolon] _______
+
+app = <function app.<locals>.start at 0x000001CC4B5231A0>, separator = ';'
+bom = False
+
+    @pytest.mark.parametrize(
+        "separator,bom",
+        [(",", False), (";", False), (",", True), (";", True)],
+        ids=["comma", "semicolon", "comma-bom", "semicolon-bom"],
+    )
+    def test_batch_accepts_both_separators_and_both_encodings(app, separator, bom):
+        at, _ = app()
+        labelled(at.file_uploader, "Файл составов").set_value(
+            ("batch.csv", batch_csv(separator=separator, bom=bom), "text/csv")
+        )
+        at.run()
+        assert not section_errors(at)
+        # The preview frame is canonical: aliases resolved, units normalised.
+        # 21-Ж (предпросмотр пакета): подписи столбцов словами.
+        preview = next(
+            frame.value
+            for frame in at.dataframe
+            if {"База", "Основа", "Единицы"} <= set(getattr(frame.value, "columns", []))
+            # На странице есть другая таблица с теми же подписями (одна строка).
+            and len(frame.value) == 3
+        )
+>       assert list(preview["База"]) == ["ni", "al", "fe"]
+E       AssertionError: assert ['Никелевые с... mc_fe 2.062'] == ['ni', 'al', 'fe']
+E         
+E         At index 0 diff: 'Никелевые сплавы — mc_ni 2.036' != 'ni'
+E         Use -v to get more diff
+
+tools\test_ui_h.py:552: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-27 17:12:08.906 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+______ test_batch_accepts_both_separators_and_both_encodings[comma-bom] _______
+
+app = <function app.<locals>.start at 0x000001CC4B0811C0>, separator = ','
+bom = True
+
+    @pytest.mark.parametrize(
+        "separator,bom",
+        [(",", False), (";", False), (",", True), (";", True)],
+        ids=["comma", "semicolon", "comma-bom", "semicolon-bom"],
+    )
+    def test_batch_accepts_both_separators_and_both_encodings(app, separator, bom):
+        at, _ = app()
+        labelled(at.file_uploader, "Файл составов").set_value(
+            ("batch.csv", batch_csv(separator=separator, bom=bom), "text/csv")
+        )
+        at.run()
+        assert not section_errors(at)
+        # The preview frame is canonical: aliases resolved, units normalised.
+        # 21-Ж (предпросмотр пакета): подписи столбцов словами.
+        preview = next(
+            frame.value
+            for frame in at.dataframe
+            if {"База", "Основа", "Единицы"} <= set(getattr(frame.value, "columns", []))
+            # На странице есть другая таблица с теми же подписями (одна строка).
+            and len(frame.value) == 3
+        )
+>       assert list(preview["База"]) == ["ni", "al", "fe"]
+E       AssertionError: assert ['Никелевые с... mc_fe 2.062'] == ['ni', 'al', 'fe']
+E         
+E         At index 0 diff: 'Никелевые сплавы — mc_ni 2.036' != 'ni'
+E         Use -v to get more diff
+
+tools\test_ui_h.py:552: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-27 17:12:19.742 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+____ test_batch_accepts_both_separators_and_both_encodings[semicolon-bom] _____
+
+app = <function app.<locals>.start at 0x000001CC464F87C0>, separator = ';'
+bom = True
+
+    @pytest.mark.parametrize(
+        "separator,bom",
+        [(",", False), (";", False), (",", True), (";", True)],
+        ids=["comma", "semicolon", "comma-bom", "semicolon-bom"],
+    )
+    def test_batch_accepts_both_separators_and_both_encodings(app, separator, bom):
+        at, _ = app()
+        labelled(at.file_uploader, "Файл составов").set_value(
+            ("batch.csv", batch_csv(separator=separator, bom=bom), "text/csv")
+        )
+        at.run()
+        assert not section_errors(at)
+        # The preview frame is canonical: aliases resolved, units normalised.
+        # 21-Ж (предпросмотр пакета): подписи столбцов словами.
+        preview = next(
+            frame.value
+            for frame in at.dataframe
+            if {"База", "Основа", "Единицы"} <= set(getattr(frame.value, "columns", []))
+            # На странице есть другая таблица с теми же подписями (одна строка).
+            and len(frame.value) == 3
+        )
+>       assert list(preview["База"]) == ["ni", "al", "fe"]
+E       AssertionError: assert ['Никелевые с... mc_fe 2.062'] == ['ni', 'al', 'fe']
+E         
+E         At index 0 diff: 'Никелевые сплавы — mc_ni 2.036' != 'ni'
+E         Use -v to get more diff
+
+tools\test_ui_h.py:552: AssertionError
+---------------------------- Captured stderr call -----------------------------
+2026-09-27 17:12:30.895 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call ------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+=========================== short test summary info ===========================
+FAILED tools/test_ui_h.py::test_batch_accepts_both_separators_and_both_encodings[comma]
+FAILED tools/test_ui_h.py::test_batch_accepts_both_separators_and_both_encodings[semicolon]
+FAILED tools/test_ui_h.py::test_batch_accepts_both_separators_and_both_encodings[comma-bom]
+FAILED tools/test_ui_h.py::test_batch_accepts_both_separators_and_both_encodings[semicolon-bom]
+4 failed, 20 passed, 2 deselected in 355.48s (0:05:55)
