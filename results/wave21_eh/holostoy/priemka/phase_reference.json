@@ -1,0 +1,20 @@
+{
+ "python": "D:\\Pets\\ThermoGar\\.venv-windows\\Scripts\\python.exe",
+ "app": "D:\\Pets\\ThermoGar-w21a\\app\\ThermoGar_app.py",
+ "case": "phase_reference",
+ "files": {
+  "ni": {
+   "rows": 99,
+   "sha256": "de583b08d18878467e735324a23bfbde61087060d08f4c75cafc52b46ad99661"
+  },
+  "al": {
+   "rows": 195,
+   "sha256": "84a5be1dd27eadb2220a10969686d1a46fcb20702f3fe8ef15d846378b1115f1"
+  },
+  "fe": {
+   "rows": 132,
+   "sha256": "a7b63398d03a96c10de2f03dac16841a410cdd9c2a4d5c6fbc79108983332eb6"
+  }
+ },
+ "case_seconds": 20.6
+}

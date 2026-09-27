@@ -1,0 +1,11 @@
+{
+ "python": "D:\\Pets\\ThermoGar\\.venv-windows\\Scripts\\python.exe",
+ "app": "D:\\Pets\\ThermoGar-w21a\\app\\ThermoGar_app.py",
+ "case": "version",
+ "app_version": "0.4.4",
+ "sidebar": [
+  "ThermoGar 0.4.4 — исследовательское ПО. Экспериментальная квалификация не проводилась."
+ ],
+ "ok": false,
+ "case_seconds": 12.1
+}
