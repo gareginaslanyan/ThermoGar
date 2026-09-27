@@ -5,4 +5,4 @@ tools/test_precipitation_grid.py: 12 warnings
     incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-32 passed, 12 warnings in 156.16s (0:02:36)
+32 passed, 12 warnings in 153.24s (0:02:33)

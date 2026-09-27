@@ -5,4 +5,4 @@ tools/test_precipitation_bl35.py::test_718_run_ends_with_quality_error_not_excep
     incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-11 passed, 1 warning in 27.62s
+11 passed, 1 warning in 27.34s

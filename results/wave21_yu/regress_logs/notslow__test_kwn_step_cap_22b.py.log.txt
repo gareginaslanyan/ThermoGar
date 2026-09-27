@@ -5,4 +5,4 @@ tools/test_kwn_step_cap_22b.py::test_run_uses_step_limit_and_min_composition
     incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-9 passed, 1 warning in 14.84s
+9 passed, 1 warning in 14.53s

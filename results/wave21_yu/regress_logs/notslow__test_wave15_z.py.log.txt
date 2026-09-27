@@ -6,4 +6,4 @@ tools/test_wave15_z.py::test_run_precipitation_is_silent_when_cmax_covers_nucleu
     incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-15 passed, 2 warnings in 20.69s
+15 passed, 2 warnings in 20.72s

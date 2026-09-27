@@ -6,4 +6,4 @@ tools/test_ui_g.py::test_kwn_precipitation[al]
     incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-29 passed, 3 deselected, 2 warnings in 222.99s (0:03:42)
+29 passed, 3 deselected, 2 warnings in 214.16s (0:03:34)

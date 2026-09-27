@@ -5,4 +5,4 @@ tools/test_wave21_x.py::test_718_stop_is_overshoot_without_broken_balance
     incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-6 passed, 1 warning in 27.41s
+6 passed, 1 warning in 27.20s

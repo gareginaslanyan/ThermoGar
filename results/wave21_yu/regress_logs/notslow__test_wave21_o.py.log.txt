@@ -5,4 +5,4 @@ tools/test_wave21_o.py::test_precipitation_excel_ni
     incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-11 passed, 2 deselected, 1 warning in 159.78s (0:02:39)
+11 passed, 2 deselected, 1 warning in 157.31s (0:02:37)

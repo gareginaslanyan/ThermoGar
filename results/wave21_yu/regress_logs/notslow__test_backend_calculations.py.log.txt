@@ -8,4 +8,4 @@ tools/test_backend_calculations.py::test_kwn_direct_kawin[al]
     incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-43 passed, 14 deselected, 4 warnings in 396.39s (0:06:36)
+43 passed, 14 deselected, 4 warnings in 391.72s (0:06:31)

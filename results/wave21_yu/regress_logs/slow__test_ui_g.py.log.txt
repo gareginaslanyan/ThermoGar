@@ -7,4 +7,4 @@ tools/test_ui_g.py::test_ni_kwn_reaches_a_precipitated_state
     incubationTime = np.amin([np.exp(-tau[indices] / time), np.ones(tau[indices].shape)], axis=0)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-3 passed, 29 deselected, 3 warnings in 202.00s (0:03:21)
+3 passed, 29 deselected, 3 warnings in 196.44s (0:03:16)
