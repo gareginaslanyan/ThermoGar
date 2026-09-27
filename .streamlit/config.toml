@@ -61,3 +61,6 @@ chartCategoricalColors = ["#5C97E8", "#B4D1EE", "#ECEDEF", "#F5A79F", "#8FE0B4",
 [client]
 toolbarMode = "minimal"
 disableDataExport = true
+
+[server]
+maxUploadSize = 64
