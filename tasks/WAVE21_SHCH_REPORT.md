@@ -219,4 +219,41 @@ u-доля», «Численная проверка сохранения сре�
 
 ## Вывод git
 
-<GIT>
+Реестр: строка 21-Щ — «**сдано, мастер не смотрел.**» и итоги числами. Вывод git — после пуша коммита `0570e2a`
+(коммит с этим выводом — следующий за ним, тоже запушен).
+
+`git push -u origin wave21-shch`:
+
+```
+To https://github.com/gareginaslanyan/ThermoGar.git
+ * [new branch]      wave21-shch -> wave21-shch
+branch 'wave21-shch' set up to track 'origin/wave21-shch'.
+```
+
+`git ls-remote origin main wave21-shch`:
+
+```
+062b97503bb1142c38020c33c17b0de30fd15a88	refs/heads/main
+0570e2a6620ff6ff595d1b201fcf46a351fcfc75	refs/heads/wave21-shch
+```
+
+`git log --oneline 062b975..wave21-shch`:
+
+```
+0570e2a docs(21-Щ): отчёт, строка 21-Щ в реестре
+2cdf82b test(21-Щ): полная регрессия — 39 файлов pytest 840 passed, 1 xfailed; unittest 203 OK; 7 сценариев PASSED
+e945909 docs(21-Щ): HTML руководства 0.5.0 — 56 кадров, главы после правок
+e98e476 docs(21-Щ): главы, FEATURES.md и USER_GUIDE под новые кадры — символы элементов, цитаты с экрана, числа
+e3f5121 docs(21-Щ): пересъёмка руководства — 56 кадров, _manifest.json, журнал съёмки
+28e1e68 docs(21-Щ): сценарии съёмки — символы элементов, как на экране
+5a87b7c fix(21-Щ): BL-77 — «Загружено: …» снимается после ручной смены полей боковой панели
+f41aff4 docs(21-Щ): краткое руководство — четыре текста мастера («да» владельца 26.09.2026)
+3825a8d docs(21-Щ): реестр — приёмки 21-Ц, 21-Ч, 21-Ш, 21-Х, краткое руководство, ошибка мастера (21-Ц), BL-73–BL-77
+a0f0a9d docs(21-Щ): задание WAVE21_SHCH_OPUS.md
+```
+
+`git status --short`:
+
+```
+?? _to_delete/
+```
