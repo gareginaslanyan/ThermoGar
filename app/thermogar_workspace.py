@@ -2125,6 +2125,7 @@ def render_projects_and_history(
                 "Показывать события",
                 event_options,
                 default=event_options,
+                placeholder="Выберите из списка",
             )
             filtered = history_df[
                 history_df["Событие"].isin(selected_events)

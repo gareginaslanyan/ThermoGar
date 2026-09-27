@@ -1727,6 +1727,7 @@ def render_kinetics_section(
             default=default_phases,
             key=f"kin_hom_phases_{database_key}",
             persist_state="session",
+            placeholder="Выберите из списка",
             help=(
                 "Исследовательский режим разрешает только фазы, для которых в объединённой "
                 "базе найдены параметры подвижности."
