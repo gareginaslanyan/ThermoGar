@@ -1604,6 +1604,7 @@ def _b4b_requested_phases(
                 options=options,
                 default=list(automatic),
                 key=f"{key}_tokens",
+                placeholder="Выберите из списка",
             )
         )
         folded.note("Фазы", selected, automatic)
@@ -11358,6 +11359,7 @@ with energy_tab:
             default=default_energy_phases,
             max_selections=8,
             key=f"energy_curve_phases_{database_key}",
+            placeholder="Выберите из списка",
         )
 
         energy_t_min = st.number_input(
@@ -11674,6 +11676,7 @@ with energy_tab:
                     options=driving_candidate_phases,
                     default=default_reference_phases,
                     key=f"driving_reference_phases_{database_key}_{driving_target}_{exclude_target}",
+                    placeholder="Выберите из списка",
                 ),
                 default_reference_phases,
             )
