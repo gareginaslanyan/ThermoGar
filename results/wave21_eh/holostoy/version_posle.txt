@@ -1,0 +1,21 @@
+........................................................................ [ 77%]
+....................F                                                    [100%]
+================================== FAILURES ===================================
+____________________ test_build_installer_example_version _____________________
+
+    def test_build_installer_example_version() -> None:
+        """Пример запуска в справке build_installer.ps1 — с текущей версией (BL-61, 21-Э)."""
+        source = (ROOT / "packaging/build_installer.ps1").read_bytes().decode("utf-8")
+        match = INSTALLER_EXAMPLE.search(source)
+        assert match is not None, "в build_installer.ps1 нет примера «-Version X.Y.Z»"
+>       assert match.group(1) == APP_VERSION, f"build_installer.ps1: -Version {match.group(1)}, APP_VERSION {APP_VERSION}"
+E       AssertionError: build_installer.ps1: -Version 0.5.0, APP_VERSION 0.4.4
+E       assert '0.5.0' == '0.4.4'
+E         
+E         - 0.4.4
+E         + 0.5.0
+
+tools\test_version_consistency.py:136: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/test_version_consistency.py::test_build_installer_example_version
+1 failed, 92 passed in 0.39s
