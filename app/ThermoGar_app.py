@@ -153,6 +153,7 @@ from thermogar_workspace import (
     apply_pending_state,
     context_snapshot,
     file_sha256,
+    loaded_context_is_current,
     queue_context_load,
     record_calculation_history,
     render_alloy_library,
@@ -7463,6 +7464,13 @@ if context_or_release_changed:
 
 
 loaded_context = st.session_state.get("_thermogar_loaded_context")
+if isinstance(loaded_context, dict) and not loaded_context_is_current(
+    loaded_context, st.session_state
+):
+    # BL-77: a field changed by hand after the load — the record is not
+    # what the sidebar shows any more.
+    st.session_state.pop("_thermogar_loaded_context", None)
+    loaded_context = None
 if isinstance(loaded_context, dict):
     loaded_label = loaded_context.get("label") or "набор настроек"
     loaded_database_key = loaded_context.get("database_key")

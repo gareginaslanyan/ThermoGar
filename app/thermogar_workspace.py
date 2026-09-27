@@ -789,17 +789,55 @@ def apply_pending_state() -> None:
     st.session_state["thermogar_steel_mode"] = steel_mode_label(
         context["steel_mode"]
     )
+    # BL-77: values written above, so a later manual edit of any of these
+    # fields takes the "Загружено: …" line off the sidebar.
+    loaded_values = {
+        key: st.session_state[key]
+        for key in (
+            f"thermogar_balance_{database_key}",
+            f"thermogar_units_{database_key}",
+            f"thermogar_composition_{database_key}",
+            "thermogar_pressure_pa",
+            "thermogar_steel_mode",
+        )
+    }
     st.session_state["_thermogar_loaded_context"] = {
         "label": label,
         "database_key": database_key,
         "database_sha256": str(context.get("database_sha256", "")),
         "fe_profile_key": context.get("fe_profile_key"),
+        "values": loaded_values,
     }
     if isinstance(pending_widgets, dict):
         for key, value in pending_widgets.items():
             if key == WIDGET_STATE_VERSION_FIELD:
                 continue
             st.session_state[key] = value
+
+
+def loaded_context_is_current(
+    loaded_context: Mapping[str, Any],
+    session_state: Mapping[str, Any],
+) -> bool:
+    """Запись о загрузке текущая: поля боковой панели не меняли вручную.
+
+    Каждое записанное значение сравнивается со значением того же ключа
+    в состоянии сеанса. Режим стали сравнивается только у стальной базы:
+    его виджет рисуется только там, а ключ виджета, которого нет на экране,
+    Streamlit стирает. Запись без словаря значений (сеанс до BL-77) —
+    текущая, как раньше.
+    """
+
+    values = loaded_context.get("values")
+    if not isinstance(values, Mapping):
+        return True
+    compare_steel_mode = loaded_context.get("database_key") == FE_DATABASE_KEY
+    for key, value in values.items():
+        if key == "thermogar_steel_mode" and not compare_steel_mode:
+            continue
+        if key not in session_state or session_state[key] != value:
+            return False
+    return True
 
 
 def is_restorable_widget_key(key: Any) -> bool:
