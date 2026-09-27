@@ -133,4 +133,25 @@
 
 ## Git
 
-Вывод после `git push -u origin wave21-ya` — следующим коммитом.
+После `git push -u origin wave21-ya` (новая ветка `wave21-ya -> wave21-ya`, отслеживает `origin/wave21-ya`):
+
+```
+$ git ls-remote origin main wave21-ya
+47282dcb2dc8f213be361769c4ed8691f989c0a0	refs/heads/main
+0c73fb44e56372956369d35448b05959662d0a2a	refs/heads/wave21-ya
+
+$ git log --oneline 47282dc..wave21-ya
+0c73fb4 docs(21-Я): отчёт
+a29433e test(21-Я): сторож BL-79 — тексты style.css, maxUploadSize, placeholder, строки Streamlit 1.62.0
+311e37d test(21-Я): замер после правки — zamer_posle.json, кадры, сверка sravnenie.md
+ecf7f06 feat(21-Я): русские надписи вместо надписей Streamlit 1.62 — загрузчики, число вне границ, списки выбора (BL-79)
+8d85ed5 feat(21-Я): пустой список выбора — «Выберите из списка» вместо «Choose options» (BL-79, 7А)
+6ba44c3 feat(21-Я): предел загрузки Streamlit 64 МБ — server.maxUploadSize = MAX_WORKSPACE_FILE_BYTES
+c7efd79 test(21-Я): замер английских надписей Streamlit до правки — сценарий, zamer_do.json, кадры
+7372ed8 docs(21-Я): задание BL-79 — русские надписи вместо надписей Streamlit, предел загрузки 64 МБ
+
+$ git status --short
+?? _to_delete/
+```
+
+Этот раздел добавлен следующим коммитом и тоже запушен.
