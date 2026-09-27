@@ -138,7 +138,9 @@ class Run:
         )
         visible = [item for item in found if item["visible"]]
         text = visible[0]["text"] if visible else (found[0]["text"] if found else None)
-        print(f"  {place:28s} {len(found)} найд., {len(visible)} видим.: {text!r}")
+        after = visible[0]["after"]["content"] if visible else None
+        after = after if after not in (None, "none", "normal") else ""
+        print(f"  {place:28s} {len(found)} найд., {len(visible)} видим.: {text!r} {after}")
         return found
 
     def note(self, place: str, where: str, text: str, frame: str) -> None:
@@ -515,7 +517,9 @@ def main() -> int:
                 "records": run.records,
             }
     path = OUT / f"zamer_{args.phase}.json"
-    path.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
+    path.write_text(
+        json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8", newline="\n"
+    )
     print(f"записано {path}")
     return 0
 
