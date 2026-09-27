@@ -43,8 +43,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 GUIDE_ROOT = REPO_ROOT / "docs" / "guide"
 IMG_ROOT = GUIDE_ROOT / "img"
-HTML_NAME = "ThermoGar_Guide_0.4.4.html"
-HTML_TITLE = "ThermoGar 0.4.4 — иллюстрированное руководство"
+HTML_NAME = "ThermoGar_Guide_0.5.0.html"
+HTML_TITLE = "ThermoGar 0.5.0 — иллюстрированное руководство"
 
 # Отдельное состояние только для съёмки: установленная программа и
 # %LOCALAPPDATA%\ThermoGar не затрагиваются. Путь короткий намеренно —
@@ -384,7 +384,15 @@ def set_selectbox(page, root, label: str, option: str) -> None:
     field = control.locator('input[role="combobox"]').first
     field.scroll_into_view_if_needed(timeout=UI_TIMEOUT_MS)
     field.click()
-    page.get_by_role("option").first.wait_for(timeout=UI_TIMEOUT_MS)
+    from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
+
+    # 21-Х: после пересчёта от соседнего списка щелчок иногда только ставит
+    # фокус и список не раскрывается; тогда раскрыть его клавишей.
+    try:
+        page.get_by_role("option").first.wait_for(timeout=5_000)
+    except PlaywrightTimeoutError:
+        field.press("ArrowDown")
+        page.get_by_role("option").first.wait_for(timeout=UI_TIMEOUT_MS)
     page.get_by_role("option", name=option, exact=False).first.click()
     wait_idle(page)
 
@@ -1076,7 +1084,8 @@ def set_composition(page, balance: str, units: str, additions: str) -> None:
     ).first
     field.click()
     field.fill(balance)
-    page.get_by_role("option", name=balance, exact=True).first.click()
+    # С 21-Ж список показывает символ элемента (FE → Fe, element_symbol).
+    page.get_by_role("option", name=balance.capitalize(), exact=True).first.click()
     wait_idle(page)
     set_radio(side, "Единицы состава", units)
     wait_idle(page)

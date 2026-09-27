@@ -368,18 +368,22 @@ def _time_text(time_s: float) -> str:
     return f"{time_s:.4g} с модельного времени ({time_s/3600:.4g} ч)"
 
 
-def _composition_stop_note(time_s: float, element: str, value: float) -> str:
+def _composition_stop_note(time_s: float, element: str, value: float, kind: str) -> str:
     # 3В (26.09.2026): после 22-Б отрицательная доля приходит сырым числом
     # (-0.009864 ат.%), на экран вместо него — слова.
+    # Вариант А (26.09.2026): «баланс масс нарушен» — только при разрыве
+    # (``kind`` — как ``stop_diagnostics["kind"]``); при перелёте баланс до
+    # остановки выполнялся.
+    broken = ", баланс масс нарушен" if kind == "разрыв" else ""
     if np.isfinite(value) and value < 0.0:
         return (
             f"Расчёт остановлен на {_time_text(time_s)}: доля {element_symbol(element)} в матрице "
-            "ушла ниже нуля, баланс масс нарушен. Показана часть "
+            f"ушла ниже нуля{broken}. Показана часть "
             f"расчёта до остановки. {KWN_COMPOSITION_STOP_CAUSE}"
         )
     return (
         f"Расчёт остановлен на {_time_text(time_s)}: доля {element_symbol(element)} в матрице "
-        f"стала {100*value:.4g} ат.%, баланс масс нарушен. Показана часть "
+        f"стала {100*value:.4g} ат.%{broken}. Показана часть "
         f"расчёта до остановки. {KWN_COMPOSITION_STOP_CAUSE}"
     )
 
@@ -1340,13 +1344,14 @@ def run_precipitation(
             dt_growth_limit=float(model.DT_GROWTH_LIMIT),
         )
     if composition_stop.isSatisfied():
-        stop_note = _composition_stop_note(
-            composition_stop.satisfiedTime(), composition_stop.element, composition_stop.value
-        )
         stop_diagnostics = _stop_diagnostics(
             model.data, composition_stop.step, composition_stop.step, solutes,
             "состав матрицы", composition_stop.element, composition_stop.value,
             dt_growth_limit=float(model.DT_GROWTH_LIMIT),
+        )
+        stop_note = _composition_stop_note(
+            composition_stop.satisfiedTime(), composition_stop.element, composition_stop.value,
+            stop_diagnostics["kind"],
         )
 
     data = model.data

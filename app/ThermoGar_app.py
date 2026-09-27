@@ -7118,7 +7118,7 @@ except Exception as pending_context_error:
 st.title(DISPLAY_APP_NAME)
 
 st.sidebar.caption(
-    "ThermoGar 0.4.4 — исследовательское ПО. "
+    "ThermoGar 0.5.0 — исследовательское ПО. "
     "Экспериментальная квалификация не проводилась."
 )
 

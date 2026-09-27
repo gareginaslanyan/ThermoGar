@@ -22,8 +22,8 @@ from thermogar_user_errors import UserMessage
 APP_NAME: Final = "ThermoGar"
 APP_LINEAGE: Final = "SWR"
 APP_GATE: Final = "-"
-APP_STAGE: Final = "0.4.4"
-APP_VERSION: Final = "0.4.4"
+APP_STAGE: Final = "0.5.0"
+APP_VERSION: Final = "0.5.0"
 RELEASE_CLASS: Final = (
     "Исследовательское ПО — сверка с измеренным проведена на трёх случаях, доли фаз — оценка, а не измерение"
 )

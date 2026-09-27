@@ -128,7 +128,19 @@ def _sheet_header(payload: bytes, sheet: str) -> list[Any]:
 def test_composition_stop_note_below_zero() -> None:
     import thermogar_precipitation as precipitation
 
-    note = precipitation._composition_stop_note(3.885, "TI", -9.864e-5)
+    # Вариант А (26.09.2026): при перелёте слов «баланс масс нарушен» нет.
+    note = precipitation._composition_stop_note(3.885, "TI", -9.864e-5, "перелёт")
+    assert note == (
+        "Расчёт остановлен на 3.885 с модельного времени (0.001079 ч): доля Ti "
+        "в матрице ушла ниже нуля. Показана часть расчёта "
+        f"до остановки. {precipitation.KWN_COMPOSITION_STOP_CAUSE}"
+    )
+
+
+def test_composition_stop_note_below_zero_broken_balance() -> None:
+    import thermogar_precipitation as precipitation
+
+    note = precipitation._composition_stop_note(3.885, "TI", -9.864e-5, "разрыв")
     assert note == (
         "Расчёт остановлен на 3.885 с модельного времени (0.001079 ч): доля Ti "
         "в матрице ушла ниже нуля, баланс масс нарушен. Показана часть расчёта "
@@ -139,9 +151,17 @@ def test_composition_stop_note_below_zero() -> None:
 def test_composition_stop_note_zero_keeps_the_number() -> None:
     import thermogar_precipitation as precipitation
 
-    note = precipitation._composition_stop_note(2.011, "NB", 0.0)
-    assert "стала 0 ат.%" in note
+    note = precipitation._composition_stop_note(2.011, "NB", 0.0, "перелёт")
+    assert "стала 0 ат.%. Показана часть" in note
     assert "ниже нуля" not in note
+    assert "баланс масс нарушен" not in note
+
+
+def test_composition_stop_note_zero_broken_balance() -> None:
+    import thermogar_precipitation as precipitation
+
+    note = precipitation._composition_stop_note(2.011, "NB", 0.0, "разрыв")
+    assert "стала 0 ат.%, баланс масс нарушен. Показана часть" in note
 
 
 # --------------------------------------------------------------------------- #
