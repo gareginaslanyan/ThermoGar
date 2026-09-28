@@ -587,3 +587,32 @@ eb9bd45eea552c8cbe7e0e8972a02e145e1062db	refs/tags/v0.5.0
 ### Git
 
 Перед коммитом отчёта `git log --oneline --first-parent 062b975..HEAD`, `git status --short` и `git ls-remote` — в следующем подразделе, после пуша.
+
+### Git после пуша (09:09)
+
+`git push origin HEAD:refs/heads/main` — `077e732..fbd26a9  HEAD -> main`.
+
+`git ls-remote origin refs/heads/main "refs/tags/v0.5.0*"`, дословно:
+
+```
+fbd26a9a7259c50e5c76f57bf216a0838649b206	refs/heads/main
+eb9bd45eea552c8cbe7e0e8972a02e145e1062db	refs/tags/v0.5.0
+077e7323931fbf9a60c52a64c405a24f6c935185	refs/tags/v0.5.0^{}
+```
+
+`git log --oneline --first-parent 062b975..HEAD`, дословно:
+
+```
+fbd26a9 docs(21-Ю3): выпуск 0.5.0 — реестр (строка 21-Ю3, абзац выпуска), отчёт 21-Ю3, лог сборки, сверки установки, приёмка
+077e732 Merge wave21-yu: release 0.5.0
+47282dc Merge wave21-eh: ярлык на рабочем столе (BL-62), BL-61, CHANGELOG 0.5.0, сценарии выпуска (21-Э)
+ac5be77 Merge wave21-shch: BL-77, краткое руководство, пересъёмка руководства 0.5.0 (21-Щ)
+```
+
+`git status --short`, дословно:
+
+```
+?? _to_delete/
+```
+
+Тег `v0.5.0` — на коммите слияния `077e732`. Ветка `wave21-yu` на origin — `22fada9`. Рабочее дерево — отсоединённый HEAD на `main`.
