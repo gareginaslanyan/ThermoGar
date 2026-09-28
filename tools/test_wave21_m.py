@@ -262,7 +262,7 @@ def test_diffusion_result_has_two_metrics() -> None:
 
 
 def test_defaults_5_to_9() -> None:
-    source = (APP / "ThermoGar_app.py").read_text("utf-8")
+    source = (APP / "thermogar_app_texts.py").read_text("utf-8")
     tree = ast.parse(source)
     values = {}
     for node in tree.body:
