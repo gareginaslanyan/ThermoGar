@@ -1,0 +1,12 @@
+mode after
+install dir C:\Program Files\ThermoGar
+DisplayVersion 0.5.0
+sha256 Uninstall.exe 109fd6619197c4e24e30cd3531ecdd26d50ea87fa792804f56707e88d1c10e7b
+sha256 runtime/python.exe 5f7b89a612c9b8af1d6456cdfcd1dbe5ca630849e79aebced9bee9a6694952ec
+sha256 app/ThermoGar_app.py c90d33d875dd7160cabbf1a7ef2ef9dead6c4ce5e48bb2a91bcb4299dc5eca21
+manifest generated_utc 2026-09-27T21:45:03Z file_count 15080 entries 15080
+runtime/ entries 15003; outside runtime/ 77
+manifest files equal by sha256 15080; mismatches 0
+outside runtime/ equal to blobs v0.5.0 77 of 77
+app/ThermoGar_app.py == blob v0.5.0: True
+app/__pycache__ exists: False

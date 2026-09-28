@@ -1,0 +1,73 @@
+﻿start 2026-09-28 00:42:38 +03:00
+ThermoGar installer build
+  version : 0.5.0 (0.5.0.0)
+  repo    : C:\Users\gareg\AppData\Local\Temp\claude\C--Users-gareg\c5472df4-9d3b-4e94-bb61-6d2e1a120d76\scratchpad\snap050
+  makensis: C:\Program Files (x86)\NSIS\makensis.exe
+step 1/5: third-party notices
+step 2/5: staging payload
+  project files staged: 78
+  copying runtime from C:\Users\gareg\AppData\Local\Temp\claude\C--Users-gareg\2f65e74c-7099-447e-8c97-8924e072cfd0\scratchpad\rt\runtime-clean-3119
+  hashing staged files
+  staged 15080 files, 554,4 MB
+step 3/5: makensis
+MakeNSIS v3.12 - Copyright 1999-2026 Contributors
+See the file COPYING for license details.
+Credits can be found in the Users Manual.
+
+Command line defined: "PRODUCT_DISPLAY_NAME=ThermoGar"
+Command line defined: "PRODUCT_DISPLAY_VERSION=0.5.0"
+Command line defined: "PRODUCT_VI_VERSION=0.5.0.0"
+Command line defined: "PRODUCT_PUBLISHER=ThermoGar"
+Command line defined: "PRODUCT_DESCRIPTION=ThermoGar Research Desktop"
+Command line defined: "PRODUCT_ICON=D:\Pets\ThermoGar-w21b\packaging\assets\ThermoGar.ico"
+Command line defined: "PAYLOAD_DIR=D:\Pets\ThermoGar-w21b\dist\release-0.5.0\stage"
+Command line defined: "ESTIMATED_SIZE_KB=567757"
+Command line defined: "OUTPUT_FILE=D:\Pets\ThermoGar-w21b\dist\release-0.5.0\ThermoGar-0.5.0-win64.exe"
+Processing config: C:\Program Files (x86)\NSIS\nsisconf.nsh
+Processing script file: "D:\Pets\ThermoGar-w21b\packaging\ThermoGar.nsi" (ACP)
+
+Processed 1 file, writing output (x86-unicode):
+
+Output: "D:\Pets\ThermoGar-w21b\dist\release-0.5.0\ThermoGar-0.5.0-win64.exe"
+Install: 2 pages (128 bytes), 1 section (1 required) (2072 bytes), 16629 instructions (465612 bytes), 11447 strings (505712 bytes), 1 language table (230 bytes).
+Uninstall: 2 pages (192 bytes), 1 section (2072 bytes), 27 instructions (756 bytes), 73 strings (2348 bytes), 1 language table (218 bytes).
+Datablock optimizer saved 2054 KiB (~0.3%).
+
+Using lzma (compress whole) compression.
+
+EXE header size:               84480 / 38912 bytes
+Install code:                          (974146 bytes)
+Install data:                          (583585545 bytes)
+Uninstall code+data:                   (52066 bytes)
+Compressed data:           118450854 / 584611757 bytes
+CRC (0x7B780EC9):                  4 / 4 bytes
+
+Total size:                118535338 / 584650673 bytes (20.2%)
+step 4/5: hashing installer
+step 5/5: writing build summary
+
+BUILD OK  D:\Pets\ThermoGar-w21b\dist\release-0.5.0\ThermoGar-0.5.0-win64.exe
+  payload  : 15080 files, 554,4 MB
+  installer: 113,0 MB
+  sha256   : 3CD28483CCCFFA4F309F052C1A49EB3AEEF652E899686AD089D0A6C84F6BC3B3
+  elapsed  : 392,4 s
+
+
+schema             : 1
+product            : ThermoGar
+version            : 0.5.0
+vi_product_version : 0.5.0.0
+built_utc          : 2026-09-27T21:42:39Z
+build_seconds      : 392,4
+nsis               : C:\Program Files (x86)\NSIS\makensis.exe
+payload_files      : 15080
+payload_bytes      : 581382412
+installer          : ThermoGar-0.5.0-win64.exe
+installer_bytes    : 118535338
+installer_sha256   : 3CD28483CCCFFA4F309F052C1A49EB3AEEF652E899686AD089D0A6C84F6BC3B3
+estimated_size_kb  : 567757
+
+
+
+exit 0
+end 2026-09-28 00:49:13 +03:00

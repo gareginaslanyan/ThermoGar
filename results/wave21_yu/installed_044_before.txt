@@ -1,0 +1,7 @@
+mode before
+install dir C:\Program Files\ThermoGar
+DisplayVersion 0.4.4
+sha256 Uninstall.exe 60ca53dc18970a09f099c426b2e19921e71686fbad3c8d19ab8fbaca4f6fd94c
+sha256 runtime/python.exe 5f7b89a612c9b8af1d6456cdfcd1dbe5ca630849e79aebced9bee9a6694952ec
+sha256 app/ThermoGar_app.py 1231073340c9392f45413f24572d603d31815e6d8146adc0290ea5a5add2fb53
+app/ThermoGar_app.py == blob v0.4.4: True

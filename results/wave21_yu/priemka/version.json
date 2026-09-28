@@ -1,0 +1,11 @@
+{
+ "python": "C:\\Program Files\\ThermoGar\\runtime\\python.exe",
+ "app": "C:\\Program Files\\ThermoGar\\app\\ThermoGar_app.py",
+ "case": "version",
+ "app_version": "0.5.0",
+ "sidebar": [
+  "ThermoGar 0.5.0 — исследовательское ПО. Экспериментальная квалификация не проводилась."
+ ],
+ "ok": true,
+ "case_seconds": 14.5
+}

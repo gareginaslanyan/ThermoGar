@@ -1,0 +1,12 @@
+﻿C:\Users\Public\Desktop\ThermoGar.lnk exists=True
+  TargetPath=[C:\Program Files\ThermoGar\runtime\pythonw.exe]
+  Arguments=["C:\Program Files\ThermoGar\launcher.pyw"]
+  IconLocation=[C:\Program Files\ThermoGar\ThermoGar.ico,0]
+  Description=[ThermoGar Research Desktop]
+  WorkingDirectory=[C:\Program Files\ThermoGar]
+C:\ProgramData\Microsoft\Windows\Start Menu\Programs\ThermoGar\ThermoGar.lnk exists=True
+  TargetPath=[C:\Program Files\ThermoGar\runtime\pythonw.exe]
+  Arguments=["C:\Program Files\ThermoGar\launcher.pyw"]
+  IconLocation=[C:\Program Files\ThermoGar\ThermoGar.ico,0]
+  Description=[ThermoGar Research Desktop]
+  WorkingDirectory=[C:\Program Files\ThermoGar]
