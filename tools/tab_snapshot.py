@@ -230,7 +230,9 @@ class Recorder:
         if has("placeholder") and proto.placeholder:
             fields.append(f"заполнитель={json.dumps(proto.placeholder, ensure_ascii=False)}")
         if has("options") and kind in ("selectbox", "radio", "multiselect", "select_slider", "button_group"):
-            fields.append(f"варианты={json.dumps(list(proto.options), ensure_ascii=False)}")
+            # 20-В: у button_group (st.segmented_control, 21-И) варианты — сообщения Option, текст в content.
+            options = [option.content if kind == "button_group" else option for option in proto.options]
+            fields.append(f"варианты={json.dumps(options, ensure_ascii=False)}")
         for bound in ("min", "max", "step"):
             if kind == "number_input" and has(bound):
                 flag = {"min": "has_min", "max": "has_max"}.get(bound)
