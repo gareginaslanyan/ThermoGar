@@ -892,37 +892,6 @@ def load_database(
     return database, database_path
 
 
-def restricted_fe_calculation_button(
-    database_key: str,
-    fe_profile_key: str,
-    *args: Any,
-    **kwargs: Any,
-) -> bool:
-    """Enable only the three call sites that explicitly select exact Fe."""
-    if database_key == "fe":
-        if fe_profile_key != FE_PROFILE_CANONICAL:
-            raise RuntimeError("Restricted Fe profile identity mismatch.")
-        return bool(st.button(*args, **kwargs))
-    return release_calculation_button(*args, **kwargs)
-
-
-def restricted_fe_refresh_session_result(
-    state_key: str,
-    fingerprint: str | None,
-) -> None:
-    stored = st.session_state.get(state_key)
-    if not isinstance(stored, dict) or fingerprint is None:
-        st.session_state.pop(state_key, None)
-        return
-    retained = restricted_fe.retain_receipt_for_fingerprint(
-        stored.get("receipt"),
-        stored.get("fingerprint"),
-        fingerprint,
-    )
-    if retained is None:
-        st.session_state.pop(state_key, None)
-
-
 def clear_restricted_fe_session_results() -> None:
     for state_key in tuple(st.session_state):
         if str(state_key).startswith(
@@ -950,91 +919,6 @@ def clear_b4b_physical_session_results() -> None:
         if str(state_key).startswith("_thermogar_vlb_b4b_result_"):
             st.session_state.pop(state_key, None)
     verified_properties.clear_property_witnesses()
-
-
-def restricted_fe_b2_fingerprint(
-    request: restricted_fe.RestrictedFeRequest,
-    feature_request: verified_loaders.FeatureRequest,
-) -> str:
-    return restricted_fe.canonical_digest(
-        {
-            "context_digest": restricted_fe.context_digest(
-                restricted_fe.restricted_fe_context()
-            ),
-            "request_digest": restricted_fe.request_digest(request),
-            "binding_digest": feature_request.binding_digest,
-            "binding_generation": feature_request.binding_generation,
-            "feature_request_digest": feature_request.request_digest,
-        }
-    )
-
-
-def restricted_fe_prepare_b2_decision(
-    context: verified_loaders.BoundDatabaseContext,
-    request: restricted_fe.RestrictedFeRequest,
-    candidate_phases: tuple[str, ...],
-    selected_phases: tuple[str, ...],
-) -> verified_loaders.FeatureRequest | verified_loaders.RejectedFeatureReceipt:
-    if restricted_fe.C15_PHASE in selected_phases:
-        inputs = restricted_fe.restricted_fe_request_inputs(request)
-        inputs["requested_phases"] = list(selected_phases)
-        return verified_loaders.prepare_feature_request(
-            request.feature_id,
-            context,
-            inputs,
-            selected_phases,
-            candidate_phases=candidate_phases,
-        )
-    return restricted_fe.prepare_bound_restricted_fe_request(
-        context,
-        request,
-        candidate_phases,
-    )
-
-
-def restricted_fe_store_result(
-    state_key: str,
-    fingerprint: str,
-    request: restricted_fe.RestrictedFeRequest,
-    feature_request: verified_loaders.FeatureRequest,
-    execution: restricted_fe.BoundRestrictedFeResult,
-) -> None:
-    receipt = execution.core1_receipt
-    if receipt.outcome != "success":
-        raise UserRuntimeError(
-            "Fe-расчёт остановлен: "
-            + (receipt.error_code or "UNKNOWN_FAILURE")
-        )
-    receipt_fingerprint = restricted_fe_b2_fingerprint(
-        request,
-        feature_request,
-    )
-    if receipt_fingerprint != fingerprint:
-        raise RuntimeError("Restricted Fe receipt identity mismatch.")
-    st.session_state[state_key] = {
-        "fingerprint": fingerprint,
-        "receipt": receipt,
-        "feature_request": feature_request,
-        "feature_receipt": execution.feature_receipt,
-        "result_envelope": execution.result_envelope,
-    }
-
-
-def restricted_fe_result_dataframe(
-    receipt: restricted_fe.RestrictedFeReceipt,
-    axis_label: str,
-) -> pd.DataFrame:
-    rows: list[dict[str, float]] = []
-    for point in receipt.points:
-        row = {axis_label: float(point.axis_value)}
-        row.update(
-            {
-                phase: 100.0 * float(fraction)
-                for phase, fraction in point.phase_fractions
-            }
-        )
-        rows.append(row)
-    return pd.DataFrame(rows).fillna(0.0)
 
 
 def verified_b3_candidate_phases(
@@ -3826,22 +3710,6 @@ def batch_engine_runner(
         item if item is not None else failure("Строка не рассчитана.")
         for item in outcomes
     ]
-
-
-# Frozen B2 static regressions count the three former generic solver call
-# shapes.  Keep non-reachable legacy oracles for that evidence only; the B3
-# UI and batch routes below have no references to these helpers.
-def _legacy_b2_single_equilibrium_oracle(*args: Any, **kwargs: Any) -> Any:
-    return equilibrium(*args, **kwargs)
-
-
-def _legacy_b2_temperature_equilibrium_oracle(*args: Any, **kwargs: Any) -> Any:
-    return equilibrium(*args, **kwargs)
-
-
-def _legacy_b2_composition_equilibrium_oracle(*args: Any, **kwargs: Any) -> Any:
-    return equilibrium(*args, **kwargs)
-
 
 
 def current_theme_type() -> str:
