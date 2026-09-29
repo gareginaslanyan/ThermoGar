@@ -46,6 +46,8 @@ from matplotlib.colors import to_rgb  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 APP_PATH = ROOT / "app" / "ThermoGar_app.py"
+# 20-Ж (BL-57): общие помощники головного сценария — в thermogar_app_common.py.
+APP_SOURCES = (APP_PATH, ROOT / "app" / "thermogar_app_common.py")
 STYLE_PATH = ROOT / "app" / "style.css"
 if str(ROOT / "app") not in sys.path:
     sys.path.insert(0, str(ROOT / "app"))
@@ -86,15 +88,17 @@ APP_NAMES = (
 def app() -> dict[str, Any]:
     """Импорты верхнего уровня приложения и нужные определения — его же текстом."""
 
-    tree = ast.parse(APP_PATH.read_text("utf-8"))
     wanted = set(APP_NAMES)
     header: list[ast.stmt] = []
     definitions: list[ast.stmt] = []
-    for node in tree.body:
-        if isinstance(node, (ast.Import, ast.ImportFrom)):
-            header.append(node)
-        elif isinstance(node, (ast.FunctionDef, ast.ClassDef)) and node.name in wanted:
-            definitions.append(node)
+    for path in APP_SOURCES:
+        for node in ast.parse(path.read_text("utf-8")).body:
+            if isinstance(node, (ast.Import, ast.ImportFrom)):
+                if header and isinstance(node, ast.ImportFrom) and node.module == "__future__":
+                    continue
+                header.append(node)
+            elif isinstance(node, (ast.FunctionDef, ast.ClassDef)) and node.name in wanted:
+                definitions.append(node)
     namespace: dict[str, Any] = {
         "__file__": str(APP_PATH),
         "__name__": "thermogar_app_extract",
@@ -520,11 +524,10 @@ def test_grid_on_nine_style_chart_axes_charts(app, themed, name, theme):
 
 
 def test_nine_charts_go_through_style_chart_axes():
-    source = APP_PATH.read_text("utf-8")
-    tree = ast.parse(source)
     callers = sorted(
         node.name
-        for node in tree.body
+        for path in APP_SOURCES
+        for node in ast.parse(path.read_text("utf-8")).body
         if isinstance(node, ast.FunctionDef)
         and node.name.startswith("plot_")
         and any(
@@ -563,7 +566,7 @@ def test_titles_have_no_thermogar_prefix(app, themed, theme):
             assert "ThermoGar:" not in axes.get_title(), name
     source = "\n".join(
         (ROOT / "app" / module).read_text("utf-8")
-        for module in ("ThermoGar_app.py", "thermogar_diffusion.py", "thermogar_precipitation.py", "thermogar_properties.py")
+        for module in ("ThermoGar_app.py", "thermogar_app_common.py", "thermogar_diffusion.py", "thermogar_precipitation.py", "thermogar_properties.py")
     )
     assert '"ThermoGar: ' not in source
     assert 'f"ThermoGar: ' not in source
@@ -764,7 +767,7 @@ def test_kinetics_chrome(themed, theme):
 
 
 def test_content_width_instead_of_use_container_width():
-    for module in ("ThermoGar_app.py", "thermogar_diffusion.py"):
+    for module in ("ThermoGar_app.py", "thermogar_app_common.py", "thermogar_diffusion.py"):
         assert "use_container_width" not in (ROOT / "app" / module).read_text("utf-8"), module
 
 
@@ -889,7 +892,7 @@ def test_build_themed_figure_builds_in_the_theme_of_the_calculation(app, themed)
 def test_screens_store_builders_not_pictures():
     """Экран хранит построитель с данными, а не готовую фигуру (7Б)."""
 
-    source = APP_PATH.read_text("utf-8")
+    source = "\n".join(path.read_text("utf-8") for path in APP_SOURCES)
     for builder in (
         "plot_phase_fraction_scan",
         "plot_binary_thermogar",

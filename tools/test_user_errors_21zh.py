@@ -249,9 +249,9 @@ def test_element_symbols_and_columns() -> None:
 
 
 def _app_function(name: str):
-    """Функция из ThermoGar_app.py без запуска страницы Streamlit."""
+    """Функция из thermogar_app_common.py без запуска страницы Streamlit."""
 
-    source = (APP / "ThermoGar_app.py").read_text("utf-8")
+    source = (APP / "thermogar_app_common.py").read_text("utf-8")
     tree = ast.parse(source)
     node = next(
         item for item in tree.body if isinstance(item, ast.FunctionDef) and item.name == name
@@ -261,7 +261,7 @@ def _app_function(name: str):
         "UserValueError": UserValueError,
         "element_symbol": element_symbol,
     }
-    exec(compile(ast.Module(body=[node], type_ignores=[]), "ThermoGar_app.py", "exec"), namespace)
+    exec(compile(ast.Module(body=[node], type_ignores=[]), "thermogar_app_common.py", "exec"), namespace)
     return namespace[name]
 
 
