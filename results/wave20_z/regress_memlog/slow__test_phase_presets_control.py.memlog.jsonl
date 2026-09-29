@@ -1,0 +1,1 @@
+{"test": "tools/test_phase_presets_control.py::test_fast_preset_matches_full_set_on_control_alloy", "seconds": 672.0, "rss_before_gib": 0.17, "rss_after_gib": 2.811, "growth_gib": 2.64, "peak_tree_gib": 3.035, "peak_wset_process_gib": 3.169, "open_figures": 0, "pool_workers": null}
