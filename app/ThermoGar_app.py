@@ -50,6 +50,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from io import BytesIO
 from pathlib import Path
+import functools
 import hashlib
 import json
 import math
@@ -278,7 +279,7 @@ from thermogar_app_texts import (
     TERNARY_PHASE_MAP_DEFAULTS,
     USER_GUIDE_MD,
 )
-from thermogar_app_context import SidebarContext
+from thermogar_app_context import RunServices, SidebarContext
 from thermogar_app_common import (
     PROJECT_ROOT,
     _verified_tdb_declared_phases,
@@ -1153,6 +1154,7 @@ def _b4b_render_result_downloads(
     sheets: dict[str, pd.DataFrame],
     *,
     sidebar: SidebarContext,
+    services: RunServices,
     file_stem: str,
     figure: Any | None = None,
     history_label: str | None = None,
@@ -1175,7 +1177,7 @@ def _b4b_render_result_downloads(
     with columns[position]:
         release_download_button(
             "Скачать Excel",
-            data=dataframe_to_excel(sheets),
+            data=services.dataframe_to_excel(sheets),
             file_name=f"{file_stem}.xlsx",
             mime=(
                 "application/vnd.openxmlformats-officedocument."
@@ -1200,7 +1202,7 @@ def _b4b_render_result_downloads(
         with columns[position]:
             if st.button("Сохранить в историю", key=f"{key}_history"):
                 record_calculation_history(
-                    THERMOGAR_PATHS,
+                    services.paths,
                     history_label,
                     sidebar.current_context,
                     dict(history_details or {}),
@@ -1219,6 +1221,7 @@ def render_b4b_density_single(
     physical_overrides: bool = True,
     *,
     sidebar: SidebarContext,
+    services: RunServices,
 ) -> None:
     st.markdown("### Плотность при одной температуре")
     temperature_c = st.number_input(
@@ -1282,7 +1285,7 @@ def render_b4b_density_single(
             assert type(decision) is verified_loaders.FeatureRequest
             with acquire_b4b_execution(
                 decision,
-                THERMOGAR_PATHS,
+                services.paths,
             ) as lease:
                 execution = verified_physical.execute_verified_physical(
                     context,
@@ -1297,7 +1300,7 @@ def render_b4b_density_single(
                 physical_overrides,
             )
         except Exception as error:
-            render_friendly_error(error, context="плотность и объёмные доли")
+            services.render_friendly_error(error, context="плотность и объёмные доли")
     state = st.session_state.get(state_key)
     if type(state) is dict and state.get("database_key") == database_key:
         projection = state["projections"][0]
@@ -1373,6 +1376,7 @@ def render_b4b_density_single(
                 "mass_coverage_pct": projection["mass_coverage_pct"],
             },
             sidebar=sidebar,
+            services=services,
         )
 
 
@@ -1389,6 +1393,7 @@ def render_b4b_density_temperature(
     physical_overrides: bool = True,
     *,
     sidebar: SidebarContext,
+    services: RunServices,
 ) -> None:
     st.markdown("### Плотность и объёмные доли по температуре")
     columns = st.columns(3)
@@ -1528,7 +1533,7 @@ def render_b4b_density_temperature(
                 physical_overrides,
             )
         except Exception as error:
-            render_friendly_error(error, context="плотность по температуре")
+            services.render_friendly_error(error, context="плотность по температуре")
     state = st.session_state.get(state_key)
     if type(state) is dict and state.get("database_key") == database_key:
         rows = []
@@ -1586,12 +1591,15 @@ def render_b4b_density_temperature(
                 "points": int(len(table)),
             },
             sidebar=sidebar,
+            services=services,
         )
 
 
 def render_b4b_pdb_self_test(
     context: B4BPhysicalContext,
     database_key: str,
+    *,
+    services: RunServices,
 ) -> None:
     decision = _b4b_prepare_decision(
         "property_pdb_self_test",
@@ -1608,7 +1616,7 @@ def render_b4b_pdb_self_test(
     ):
         try:
             assert type(decision) is verified_loaders.FeatureRequest
-            with acquire_b4b_execution(decision, THERMOGAR_PATHS) as lease:
+            with acquire_b4b_execution(decision, services.paths) as lease:
                 execution = verified_physical.execute_verified_physical(
                     context,
                     decision,
@@ -1616,7 +1624,7 @@ def render_b4b_pdb_self_test(
                 )
             _b4b_store_result(state_key, database_key, execution)
         except Exception as error:
-            render_friendly_error(error, context="проверка физической базы")
+            services.render_friendly_error(error, context="проверка физической базы")
     state = st.session_state.get(state_key)
     if type(state) is dict and state.get("database_key") == database_key:
         st.dataframe(pd.DataFrame(state["projections"][0]["rows"]), width="stretch", hide_index=True, placeholder=EMPTY_CELL_TEXT)
@@ -1627,6 +1635,7 @@ def render_b4b_coverage(
     database_key: str,
     *,
     sidebar: SidebarContext,
+    services: RunServices,
 ) -> None:
     decision = _b4b_prepare_decision(
         "property_coverage_view",
@@ -1643,7 +1652,7 @@ def render_b4b_coverage(
     ):
         try:
             assert type(decision) is verified_loaders.FeatureRequest
-            with acquire_b4b_execution(decision, THERMOGAR_PATHS) as lease:
+            with acquire_b4b_execution(decision, services.paths) as lease:
                 execution = verified_physical.execute_verified_physical(
                     context,
                     decision,
@@ -1651,7 +1660,7 @@ def render_b4b_coverage(
                 )
             _b4b_store_result(state_key, database_key, execution)
         except Exception as error:
-            render_friendly_error(error, context="покрытие физической базы")
+            services.render_friendly_error(error, context="покрытие физической базы")
     state = st.session_state.get(state_key)
     if type(state) is dict and state.get("database_key") == database_key:
         coverage_rows = pd.DataFrame(state["projections"][0]["rows"])
@@ -1661,6 +1670,7 @@ def render_b4b_coverage(
             {"Покрытие физической базы": coverage_rows},
             file_stem="ThermoGar_pdb_coverage",
             sidebar=sidebar,
+            services=services,
         )
 
 
@@ -1707,6 +1717,7 @@ def render_b4b2_elastic_properties(
     physical_overrides: bool = True,
     *,
     sidebar: SidebarContext,
+    services: RunServices,
 ) -> None:
     st.markdown("### Упругие свойства по фазовым долям")
     st.caption(
@@ -1741,7 +1752,7 @@ def render_b4b2_elastic_properties(
     except Exception as error:
         prepare_decision = None
         prepare_error = error
-        render_friendly_error(
+        services.render_friendly_error(
             error,
             context="подготовка упругих свойств",
             title="Исходные данные для упругих свойств не приняты.",
@@ -1764,12 +1775,12 @@ def render_b4b2_elastic_properties(
         if prepare_clicked:
             try:
                 assert type(prepare_decision) is verified_loaders.FeatureRequest
-                with acquire_b4b_execution(prepare_decision, THERMOGAR_PATHS) as lease:
+                with acquire_b4b_execution(prepare_decision, services.paths) as lease:
                     execution = verified_properties.execute_verified_properties(
                         context,
                         prepare_decision,
                         lease,
-                        paths=THERMOGAR_PATHS,
+                        paths=services.paths,
                         physical_overrides=physical_overrides,
                     )
                 _b4b2_store_result(
@@ -1779,7 +1790,7 @@ def render_b4b2_elastic_properties(
                     physical_overrides,
                 )
             except Exception as error:
-                render_friendly_error(error, context="подготовка упругих свойств")
+                services.render_friendly_error(error, context="подготовка упругих свойств")
     elif prepare_error is not None:
         st.caption("Исправьте входные данные, чтобы подготовить фазовые доли.")
 
@@ -1795,10 +1806,10 @@ def render_b4b2_elastic_properties(
         library_view = verified_properties.property_library_prefill(
             context,
             prepared_digest,
-            paths=THERMOGAR_PATHS,
+            paths=services.paths,
         )
     except Exception as error:
-        render_friendly_error(error, context="библиотека упругих свойств")
+        services.render_friendly_error(error, context="библиотека упругих свойств")
         return
     editor = pd.DataFrame(list(library_view.phase_rows))
     edited = st.data_editor(
@@ -1852,7 +1863,7 @@ def render_b4b2_elastic_properties(
             (),
         )
     except Exception as error:
-        render_friendly_error(
+        services.render_friendly_error(
             error,
             context="Voigt–Reuss–Hill",
             title="Таблица упругих свойств не принята. Проверьте E и ν каждой фазы.",
@@ -1875,12 +1886,12 @@ def render_b4b2_elastic_properties(
     if vrh_clicked:
         try:
             assert type(vrh_decision) is verified_loaders.FeatureRequest
-            with acquire_b4b_execution(vrh_decision, THERMOGAR_PATHS) as lease:
+            with acquire_b4b_execution(vrh_decision, services.paths) as lease:
                 execution = verified_properties.execute_verified_properties(
                     context,
                     vrh_decision,
                     lease,
-                    paths=THERMOGAR_PATHS,
+                    paths=services.paths,
                 )
             _b4b2_store_result(
                 vrh_state_key,
@@ -1889,7 +1900,7 @@ def render_b4b2_elastic_properties(
                 physical_overrides,
             )
         except Exception as error:
-            render_friendly_error(error, context="Voigt–Reuss–Hill")
+            services.render_friendly_error(error, context="Voigt–Reuss–Hill")
     state = st.session_state.get(vrh_state_key)
     if type(state) is dict and state.get("database_key") == database_key:
         projection = state["projection"]
@@ -1934,6 +1945,7 @@ def render_b4b2_elastic_properties(
                 "nu_Hill": summary["nu_Hill"],
             },
             sidebar=sidebar,
+            services=services,
         )
 
 
@@ -1942,6 +1954,7 @@ def render_b4b2_strengthening(
     database_key: str,
     *,
     sidebar: SidebarContext,
+    services: RunServices,
 ) -> None:
     st.markdown("### Вклады механизмов упрочнения")
     st.caption(
@@ -2075,16 +2088,16 @@ def render_b4b2_strengthening(
     if strengthening_clicked:
         try:
             assert type(decision) is verified_loaders.FeatureRequest
-            with acquire_b4b_execution(decision, THERMOGAR_PATHS) as lease:
+            with acquire_b4b_execution(decision, services.paths) as lease:
                 execution = verified_properties.execute_verified_properties(
                     context,
                     decision,
                     lease,
-                    paths=THERMOGAR_PATHS,
+                    paths=services.paths,
                 )
             _b4b2_store_result(state_key, database_key, execution)
         except Exception as error:
-            render_friendly_error(error, context="вклады упрочнения")
+            services.render_friendly_error(error, context="вклады упрочнения")
     state = st.session_state.get(state_key)
     if type(state) is dict and state.get("database_key") == database_key:
         projection = state["projection"]
@@ -2116,6 +2129,7 @@ def render_b4b2_strengthening(
                 "total_mpa": projection["total_mpa"],
             },
             sidebar=sidebar,
+            services=services,
         )
 
 
@@ -2229,11 +2243,11 @@ def scan_axis_conditions(
     raise UserValueError(f"Неизвестные единицы состава: {units}")
 
 
-def batch_database_identity(database_key: str) -> tuple[Any, Path, str]:
+def batch_database_identity(database_key: str, *, services: RunServices) -> tuple[Any, Path, str]:
     """Разобранная база, её путь и закреплённый SHA-256 для строки пакета."""
-    database, path = load_database(database_key, FE_PROFILE_CANONICAL)
+    database, path = services.load_database(database_key, FE_PROFILE_CANONICAL)
     sha256 = (
-        FE_PROFILE_SHA256[FE_PROFILE_CANONICAL]
+        services.fe_profile_sha256[FE_PROFILE_CANONICAL]
         if database_key == "fe"
         else RELEASE_DATABASE_SHA256[database_key]
     )
@@ -2243,6 +2257,8 @@ def batch_database_identity(database_key: str) -> tuple[Any, Path, str]:
 def batch_engine_runner(
     rows: list[dict[str, Any]],
     progress: Any | None = None,
+    *,
+    services: RunServices,
 ) -> list[dict[str, Any]]:
     """Строки пакетного расчёта — независимые точки, считаются движком.
 
@@ -2271,7 +2287,7 @@ def batch_engine_runner(
     for index, row in enumerate(rows):
         database_key = str(row["database_key"])
         try:
-            database, path, sha256 = batch_database_identity(database_key)
+            database, path, sha256 = batch_database_identity(database_key, services=services)
             components, conditions, _overall_x, _overall_w, phases = (
                 prepare_calculation(
                     database,
@@ -3851,6 +3867,8 @@ def plot_liquid_composition_comparison(
 
 def solidification_excel_bytes(
     state: dict[str, Any],
+    *,
+    services: RunServices,
 ) -> bytes:
     """Сформировать единый Excel по всем успешным методам."""
     sheets: dict[str, pd.DataFrame] = {
@@ -3869,7 +3887,7 @@ def solidification_excel_bytes(
         sheets[f"{short} итог"] = state["final_phases"][method_key]
         sheets[f"{short} расплав"] = state["liquid_tables"][method_key]
         sheets[f"{short} raw"] = state["raw_tables"][method_key]
-    return dataframe_to_excel(sheets)
+    return services.dataframe_to_excel(sheets)
 
 
 def solidification_zip_bytes(
@@ -3877,13 +3895,15 @@ def solidification_zip_bytes(
     comparison_figure: plt.Figure | ThemedFigure,
     phase_figures: dict[str, plt.Figure | ThemedFigure],
     liquid_figure: plt.Figure | ThemedFigure | None,
+    *,
+    services: RunServices,
 ) -> bytes:
     """Собрать полный переносимый архив результатов."""
     buffer = BytesIO()
     with zipfile.ZipFile(buffer, mode="w", compression=zipfile.ZIP_DEFLATED) as archive:
         archive.writestr(
             "ThermoGar_solidification.xlsx",
-            solidification_excel_bytes(state),
+            solidification_excel_bytes(state, services=services),
         )
         archive.writestr(
             "summary.csv",
@@ -4378,9 +4398,11 @@ def phase_reference_dataframe(
     db: Database,
     database_path: Path,
     database_key: str,
+    *,
+    services: RunServices,
 ) -> pd.DataFrame:
     expected_sha256 = (
-        FE_PROFILE_SHA256[FE_PROFILE_CANONICAL]
+        services.fe_profile_sha256[FE_PROFILE_CANONICAL]
         if database_key == "fe"
         else RELEASE_DATABASE_SHA256[database_key]
     )
@@ -5900,6 +5922,21 @@ SIDEBAR = SidebarContext(
     pressure_pa=pressure_pa,
     steel_mode=steel_mode,
     current_context=CURRENT_CONTEXT,
+)
+
+
+# BL-57 (20-З): службы прогона — тоже одним неизменяемым объектом: пути
+# состояния, ошибки, выгрузка Excel, базы и scheil этого прогона страницы.
+SERVICES = RunServices(
+    paths=THERMOGAR_PATHS,
+    render_friendly_error=render_friendly_error,
+    log_error=log_error,
+    dataframe_to_excel=dataframe_to_excel,
+    load_database=load_database,
+    load_scheil=load_scheil,
+    scheil_available=scheil_available,
+    scheil_state=_SCHEIL_STATE,
+    fe_profile_sha256=FE_PROFILE_SHA256,
 )
 
 
@@ -9689,12 +9726,13 @@ with solidification_tab:
                         "at",
                     ),
                 )
-                excel_bytes = solidification_excel_bytes(state)
+                excel_bytes = solidification_excel_bytes(state, services=SERVICES)
                 zip_bytes = solidification_zip_bytes(
                     state,
                     comparison_figure,
                     phase_figures,
                     export_liquid_figure,
+                    services=SERVICES,
                 )
                 release_download_button(
                     "Скачать Excel",
@@ -10587,6 +10625,7 @@ with physical_tab:
                 float(definition["default_temperature"]),
                 physical_overrides,
                 sidebar=SIDEBAR,
+                services=SERVICES,
             )
 
     with physical_scan_tab:
@@ -10605,6 +10644,7 @@ with physical_tab:
                 float(definition["default_t_step"]),
                 physical_overrides,
                 sidebar=SIDEBAR,
+                services=SERVICES,
             )
 
     with elastic_properties_tab:
@@ -10621,6 +10661,7 @@ with physical_tab:
                 float(definition["default_temperature"]),
                 physical_overrides,
                 sidebar=SIDEBAR,
+                services=SERVICES,
             )
 
     with strengthening_tab:
@@ -10631,6 +10672,7 @@ with physical_tab:
                 b4b_physical_context,
                 database_key,
                 sidebar=SIDEBAR,
+                services=SERVICES,
             )
 
     with physical_coverage_tab:
@@ -10648,10 +10690,12 @@ with physical_tab:
                 b4b_physical_context,
                 database_key,
                 sidebar=SIDEBAR,
+                services=SERVICES,
             )
             render_b4b_pdb_self_test(
                 b4b_physical_context,
                 database_key,
+                services=SERVICES,
             )
 
 
@@ -10731,7 +10775,7 @@ with reference_tab:
             workspace_broker,
             PHASE_EXPLANATIONS,
             workspace_state_store,
-            batch_engine_runner,
+            functools.partial(batch_engine_runner, services=SERVICES),
             paths=THERMOGAR_PATHS,
         )
 
@@ -11072,6 +11116,7 @@ with reference_tab:
             db,
             database_path,
             database_key,
+            services=SERVICES,
         )
 
         reference_query = st.text_input(
