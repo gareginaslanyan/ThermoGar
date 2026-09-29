@@ -1,0 +1,24 @@
+== app/thermogar_app_common.py
+строк: 1219
+имён, связанных модулем: 102
+глобальных чтений (symtable): 96
+имён в аннотациях (AST): 21
+неопределённых глобальных имён: 0
+скрытых обращений (вызовы globals, vars, locals, eval, exec, __import__; слова __main__, sys.modules): 0
+
+== app/ThermoGar_app.py
+строк: 11132
+имён, связанных модулем: 773
+глобальных чтений (symtable): 793
+имён в аннотациях (AST): 31
+неопределённых глобальных имён: 0
+скрытых обращений (вызовы globals, vars, locals, eval, exec, __import__; слова __main__, sys.modules): 2
+  4176 | dataframe_to_excel | globals()
+  4196 | dataframe_to_excel | __import__()
+
+== импорт из корня дерева
+python -B -X utf8 -c "import sys; sys.path.insert(0, 'app'); import thermogar_app_common as c; print(c.PROJECT_ROOT)"
+код выхода: 0
+вывод: D:\Pets\ThermoGar-w21b
+
+ИТОГ: PASS — неопределённых: модуль 0, головной сценарий 0; скрытых обращений: модуль 0, головной сценарий 2; импорт: код 0, путь совпал
