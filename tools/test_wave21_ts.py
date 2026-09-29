@@ -66,7 +66,7 @@ def _app_tree() -> ast.Module:
 
 
 def _user_guide_md() -> str:
-    for node in _app_tree().body:
+    for node in ast.parse((APP / "thermogar_app_texts.py").read_text(encoding="utf-8")).body:
         if (
             isinstance(node, ast.Assign)
             and any(

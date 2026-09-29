@@ -14,3 +14,5 @@ user_data/
 results/validation/
 results/hn62m/
 results/hn62m_tech/
+# 20-Д: папка файлов, которые приложение Claude сохраняет в подключённую папку
+Claude outputs/
