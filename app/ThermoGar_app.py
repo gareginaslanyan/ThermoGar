@@ -293,6 +293,7 @@ from thermogar_app_texts import (
     TERNARY_PHASE_MAP_DEFAULTS,
     USER_GUIDE_MD,
 )
+from thermogar_app_context import SidebarContext
 
 acquire_b3_execution = verified_loaders.acquire_execution
 acquire_b4b_execution = verified_loaders.acquire_execution
@@ -1232,6 +1233,7 @@ def _b4b_render_result_downloads(
     key: str,
     sheets: dict[str, pd.DataFrame],
     *,
+    sidebar: SidebarContext,
     file_stem: str,
     figure: Any | None = None,
     history_label: str | None = None,
@@ -1281,7 +1283,7 @@ def _b4b_render_result_downloads(
                 record_calculation_history(
                     THERMOGAR_PATHS,
                     history_label,
-                    CURRENT_CONTEXT,
+                    sidebar.current_context,
                     dict(history_details or {}),
                 )
                 st.success("Запись добавлена в историю расчётов.")
@@ -1296,6 +1298,8 @@ def render_b4b_density_single(
     pressure_pa: float,
     default_temperature_c: float,
     physical_overrides: bool = True,
+    *,
+    sidebar: SidebarContext,
 ) -> None:
     st.markdown("### Плотность при одной температуре")
     temperature_c = st.number_input(
@@ -1449,6 +1453,7 @@ def render_b4b_density_single(
                 "alloy_density_kg_m3": projection["alloy_density_kg_m3"],
                 "mass_coverage_pct": projection["mass_coverage_pct"],
             },
+            sidebar=sidebar,
         )
 
 
@@ -1463,6 +1468,8 @@ def render_b4b_density_temperature(
     default_max_c: float,
     default_step_c: float,
     physical_overrides: bool = True,
+    *,
+    sidebar: SidebarContext,
 ) -> None:
     st.markdown("### Плотность и объёмные доли по температуре")
     columns = st.columns(3)
@@ -1537,7 +1544,7 @@ def render_b4b_density_temperature(
             # Температурный скан плотности многоточечный, поэтому идёт в
             # движок напрямую; одиночная точка остаётся на verified-маршруте.
             with st.spinner("Расчёт плотности по температуре…"):
-                atomic, _mass = verified_physical.composition_fractions(db, inputs)
+                atomic, _mass = verified_physical.composition_fractions(sidebar.db, inputs)
                 scan_components = [
                     element for element, _value in atomic
                 ] + ["VA"]
@@ -1545,12 +1552,12 @@ def render_b4b_density_temperature(
                 # структурный детектор волны 10 применяется здесь же: иначе
                 # нестроящаяся пара «порядок/беспорядок» уносит весь скан.
                 scan_phases, scan_removed = verified_physical.buildable_phases(
-                    db,
+                    sidebar.db,
                     scan_components,
                     verified_physical.effective_phases(
                         context,
                         decision.requested_phases,
-                        db,
+                        sidebar.db,
                     ),
                 )
                 scan_points = [
@@ -1573,6 +1580,7 @@ def render_b4b_density_temperature(
                     pdens=500,
                     capture=("X", "Y"),
                     progress_text="Точки плотности",
+                    sidebar=sidebar,
                 )
                 physical_db = load_physical_database(physical_overrides)
                 projections: list[dict[str, Any]] = []
@@ -1580,7 +1588,7 @@ def render_b4b_density_temperature(
                     inputs["temperatures_k"], density_run.results
                 ):
                     properties = calculate_physical_properties(
-                        db,
+                        sidebar.db,
                         parallel_ui.snapshot_of(result),
                         list(scan_components),
                         float(temperature_k),
@@ -1658,6 +1666,7 @@ def render_b4b_density_temperature(
                 "temperature_to_c": float(maximum_c),
                 "points": int(len(table)),
             },
+            sidebar=sidebar,
         )
 
 
@@ -1697,6 +1706,8 @@ def render_b4b_pdb_self_test(
 def render_b4b_coverage(
     context: B4BPhysicalContext,
     database_key: str,
+    *,
+    sidebar: SidebarContext,
 ) -> None:
     decision = _b4b_prepare_decision(
         "property_coverage_view",
@@ -1730,6 +1741,7 @@ def render_b4b_coverage(
             "physical_coverage",
             {"Покрытие физической базы": coverage_rows},
             file_stem="ThermoGar_pdb_coverage",
+            sidebar=sidebar,
         )
 
 
@@ -1774,6 +1786,8 @@ def render_b4b2_elastic_properties(
     pressure_pa: float,
     default_temperature_c: float,
     physical_overrides: bool = True,
+    *,
+    sidebar: SidebarContext,
 ) -> None:
     st.markdown("### Упругие свойства по фазовым долям")
     st.caption(
@@ -2000,12 +2014,15 @@ def render_b4b2_elastic_properties(
                 "G_Hill_GPa": summary["G_Hill_GPa"],
                 "nu_Hill": summary["nu_Hill"],
             },
+            sidebar=sidebar,
         )
 
 
 def render_b4b2_strengthening(
     context: B4BPhysicalContext,
     database_key: str,
+    *,
+    sidebar: SidebarContext,
 ) -> None:
     st.markdown("### Вклады механизмов упрочнения")
     st.caption(
@@ -2179,6 +2196,7 @@ def render_b4b2_strengthening(
                 "summation_rule": rule,
                 "total_mpa": projection["total_mpa"],
             },
+            sidebar=sidebar,
         )
 
 
@@ -3103,6 +3121,7 @@ def run_equilibrium_points(
     phases: list[str],
     points: list[dict[str, Any]],
     *,
+    sidebar: SidebarContext,
     pdens: int = 500,
     reuse_models: bool = False,
     capture: tuple[str, ...] = ("X",),
@@ -3134,14 +3153,14 @@ def run_equilibrium_points(
         progress = report
     try:
         return parallel_ui.run_points(
-            database=db if database is None else database,
-            database_path=database_path if database_file is None else database_file,
+            database=sidebar.db if database is None else database,
+            database_path=sidebar.database_path if database_file is None else database_file,
             sha256=(
-                str(CURRENT_CONTEXT["database_sha256"])
+                str(sidebar.current_context["database_sha256"])
                 if sha256 is None
                 else str(sha256)
             ),
-            database_key=database_key if database_id is None else database_id,
+            database_key=sidebar.database_key if database_id is None else database_id,
             points=points,
             components=components,
             phases=phases,
@@ -3169,6 +3188,7 @@ def direct_equilibrium_scan(
     axis_label: str,
     points: list[tuple[float, dict[Any, float], float]],
     *,
+    sidebar: SidebarContext,
     progress_text: str = "Рассчитано",
 ) -> tuple[pd.DataFrame, parallel_ui.PointRun]:
     """Скан равновесия по сетке точек из полей интерфейса.
@@ -3198,6 +3218,7 @@ def direct_equilibrium_scan(
         pdens=500,
         progress_text=progress_text,
         database=db,
+        sidebar=sidebar,
     )
     rows: list[dict[str, float]] = []
     for axis_value, snapshot in zip(axis_values, require_successful_points(run)):
@@ -6237,6 +6258,8 @@ def calculate_ternary_phase_fraction_map(
     interval_count: int,
     progress_callback: Any | None = None,
     node_errors: list[Exception] | None = None,
+    *,
+    sidebar: SidebarContext,
 ) -> tuple[pd.DataFrame, int]:
     """Посчитать мольную долю выбранной фазы в узлах тройной сетки.
 
@@ -6320,6 +6343,7 @@ def calculate_ternary_phase_fraction_map(
         progress=throttled,
         progress_text="Узлы карты",
         database=db,
+        sidebar=sidebar,
     )
 
     failure_count = 0
@@ -6987,6 +7011,25 @@ if isinstance(loaded_context, dict):
             st.sidebar.success(f"Загружено: {loaded_label}")
 
 
+# BL-57 (20-Е): выбор боковой панели — одним неизменяемым объектом; вкладки
+# и помощники получают его параметром, а не читают глобальные имена.
+SIDEBAR = SidebarContext(
+    database_key=database_key,
+    definition=definition,
+    fe_profile_key=fe_profile_key,
+    db=db,
+    database_path=database_path,
+    available_elements=available_elements,
+    balance=balance,
+    units=units,
+    units_label=units_label,
+    composition_text=composition_text,
+    pressure_pa=pressure_pa,
+    steel_mode=steel_mode,
+    current_context=CURRENT_CONTEXT,
+)
+
+
 # ---------------------------------------------------------------------------
 # Вкладки текущей SWR-сборки
 # ---------------------------------------------------------------------------
@@ -7527,6 +7570,7 @@ with temperature_tab:
                         for value in temperature_points_c
                     ],
                     progress_text="Температурные точки",
+                    sidebar=SIDEBAR,
                 )
                 scan_sha256 = str(CURRENT_CONTEXT["database_sha256"])
             phase_columns = [
@@ -7916,6 +7960,7 @@ with concentration_tab:
                         for value in concentration_points
                     ],
                     progress_text="Концентрационные точки",
+                    sidebar=SIDEBAR,
                 )
                 scan_sha256 = str(CURRENT_CONTEXT["database_sha256"])
             phase_columns = [
@@ -9649,6 +9694,7 @@ with phase_diagram_tab:
                                 interval_count,
                                 update_map_progress,
                                 node_errors=map_node_errors,
+                                sidebar=SIDEBAR,
                             )
                         )
 
@@ -11667,6 +11713,7 @@ with physical_tab:
                 float(pressure_pa),
                 float(definition["default_temperature"]),
                 physical_overrides,
+                sidebar=SIDEBAR,
             )
 
     with physical_scan_tab:
@@ -11684,6 +11731,7 @@ with physical_tab:
                 float(definition["default_t_max"]),
                 float(definition["default_t_step"]),
                 physical_overrides,
+                sidebar=SIDEBAR,
             )
 
     with elastic_properties_tab:
@@ -11699,6 +11747,7 @@ with physical_tab:
                 float(pressure_pa),
                 float(definition["default_temperature"]),
                 physical_overrides,
+                sidebar=SIDEBAR,
             )
 
     with strengthening_tab:
@@ -11708,6 +11757,7 @@ with physical_tab:
             render_b4b2_strengthening(
                 b4b_physical_context,
                 database_key,
+                sidebar=SIDEBAR,
             )
 
     with physical_coverage_tab:
@@ -11724,6 +11774,7 @@ with physical_tab:
             render_b4b_coverage(
                 b4b_physical_context,
                 database_key,
+                sidebar=SIDEBAR,
             )
             render_b4b_pdb_self_test(
                 b4b_physical_context,
