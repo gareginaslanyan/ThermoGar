@@ -3,3 +3,7 @@
 старт bl23_T700_obyom_g0.125_base s0 (свободно 14.47 ГиБ)
 {"name": "bl23_T700_obyom_g0.125_base", "seed": 0, "code": 0, "wall_s": 586.1, "killed": false, "finished": "2026-09-30T17:38:24"}
 старт bl23_T700_obyom_g0.1_base s0 (свободно 14.40 ГиБ)
+{"name": "bl23_T700_obyom_g0.1_base", "seed": 0, "code": 0, "wall_s": 374.1, "killed": false, "finished": "2026-09-30T17:44:38"}
+старт bl23_T700_granicy_g0.15_base s0 (свободно 14.44 ГиБ)
+{"name": "bl23_T700_granicy_g0.15_base", "seed": 0, "code": 0, "wall_s": 426.1, "killed": false, "finished": "2026-09-30T17:51:45"}
+старт bl23_T700_granicy_g0.125_base s0 (свободно 14.44 ГиБ)

@@ -32,3 +32,7 @@
 {"name": "bl33a_C4_kawin", "seed": 0, "code": 0, "wall_s": 20.0, "killed": false, "finished": "2026-09-30T17:29:00"}
 {"name": "bl33a_A5_kawin", "seed": 0, "code": 0, "wall_s": 22.0, "killed": false, "finished": "2026-09-30T17:29:02"}
 {"name": "bl23_T700_obyom_g0.125_base", "seed": 0, "code": 0, "wall_s": 586.1, "killed": false, "finished": "2026-09-30T17:38:24"}
+{"name": "bl23_T700_obyom_g0.1_base", "seed": 0, "code": 0, "wall_s": 374.1, "killed": false, "finished": "2026-09-30T17:44:38"}
+{"name": "bl33v_A5_u0.6_k2", "seed": 0, "code": 0, "wall_s": 554.1, "killed": false, "finished": "2026-09-30T17:48:26"}
+{"name": "bl33v_A5_u0.75_k2", "seed": 0, "code": 4, "wall_s": 604.1, "killed": false, "finished": "2026-09-30T17:49:16"}
+{"name": "bl23_T700_granicy_g0.15_base", "seed": 0, "code": 0, "wall_s": 426.1, "killed": false, "finished": "2026-09-30T17:51:45"}

@@ -10,6 +10,8 @@
 * ``base`` — как в 12-1 (запись без вмешательства в шаг);
 * ``k2`` — ограничение роста шага 22-Б: не больше K = 2 предыдущих (как
   app/thermogar_precipitation.py:346–352);
+* ``cfl`` — сверх задания: ``constraints.maxDissolution = 0`` — индекс растворения kawin не исключает мелкие
+  классы из предела шага PSD (0,4·dR/|G| по всем заселённым классам), проверка численной природы скачка N;
 * ``fine`` — сетка PBM вдвое мельче: ``K_PBM`` сценария с bins/minBins/maxBins × 2
   (300 / 200 / 400 вместо 150 / 100 / 200), cMin/cMax прежние.
 
@@ -64,7 +66,7 @@ def main() -> int:
     parser.add_argument("--T", type=float, default=700.0)
     parser.add_argument("--gamma", type=float)
     parser.add_argument("--site", choices=["BULK", "GRAIN BOUNDARIES"])
-    parser.add_argument("--variant", default="base", choices=["base", "k2", "fine"])
+    parser.add_argument("--variant", default="base", choices=["base", "k2", "fine", "cfl"])
     parser.add_argument("--cap", type=float, default=5400.0)
     args = parser.parse_args()
 
@@ -107,6 +109,11 @@ def main() -> int:
     K = 2.0 if args.variant == "k2" else None
 
     class Logged(Original):  # type: ignore[misc, valid-type]
+        def __init__(self, *a, **k):
+            super().__init__(*a, **k)
+            if args.variant == "cfl":
+                self.constraints.maxDissolution = 0.0
+
         def getDt(self, dXdt):  # noqa: N802
             d = self.data
             i = int(d.n)

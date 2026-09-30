@@ -1,0 +1,1 @@
+# 2026-09-30T17:48:26 $ python -B results/wave22_v/scripts/bl33_run.py --case A5 --variant k2 --gamma 0.051401 --tag A5_u0.9_k2 --cap 600 --out results/wave22_v/bl33/v
