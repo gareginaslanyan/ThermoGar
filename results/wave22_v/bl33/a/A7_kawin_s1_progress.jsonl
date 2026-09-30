@@ -1,0 +1,1 @@
+{"wall_s": 10.0, "n": 1, "t": 0.01001, "dt_taken": 0.01002001, "limiter": "рост", "bins": 80, "filled": 0, "volFrac": 0.0, "Rcrit": 3e-10, "Rnuc": 0.0, "nucRate": 2.6432577606527344e-107}

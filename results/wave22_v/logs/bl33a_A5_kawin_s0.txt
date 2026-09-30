@@ -1,3 +1,1 @@
-# 2026-09-30T17:03:23 $ python -B results/wave22_v/scripts/bl33_run.py --case A5 --variant kawin --cap 600 --out results/wave22_v/bl33/a
-ERROR: AttributeError: 'Logged' object has no attribute 'DT_GROWTH_LIMIT'
-ZAMER: код=3; стена=20.0 с; пик RSS=0.424 ГиБ (444488 КиБ)
+# 2026-09-30T17:16:14 $ python -B results/wave22_v/scripts/bl33_run.py --case A5 --variant kawin --cap 600 --out results/wave22_v/bl33/a

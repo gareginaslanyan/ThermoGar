@@ -6,3 +6,13 @@
 {"name": "bl33a_A7_kawin", "seed": 0, "code": 0, "wall_s": 24.0, "killed": false, "finished": "2026-09-30T17:05:31"}
 {"name": "bl33a_NI_k2", "seed": 0, "code": 0, "wall_s": 58.0, "killed": false, "finished": "2026-09-30T17:06:29"}
 {"name": "bl33a_NI_kawin", "seed": 0, "code": 0, "wall_s": 56.0, "killed": false, "finished": "2026-09-30T17:07:25"}
+{"name": "bl33a_A5_k2", "seed": 0, "code": 4, "wall_s": 604.2, "killed": false, "finished": "2026-09-30T17:13:27"}
+{"name": "bl33a_C4_k2", "seed": 0, "code": 4, "wall_s": 604.2, "killed": false, "finished": "2026-09-30T17:13:27"}
+{"name": "bl33a_A5_kawin", "seed": 1, "code": 0, "wall_s": 20.0, "killed": false, "finished": "2026-09-30T17:13:47"}
+{"name": "bl33a_C4_kawin", "seed": 1, "code": 0, "wall_s": 20.0, "killed": false, "finished": "2026-09-30T17:14:07"}
+{"name": "bl33a_A6_k2", "seed": 1, "code": 0, "wall_s": 18.0, "killed": false, "finished": "2026-09-30T17:14:25"}
+{"name": "bl33a_A6_kawin", "seed": 1, "code": 0, "wall_s": 20.0, "killed": false, "finished": "2026-09-30T17:14:45"}
+{"name": "bl33a_A7_k2", "seed": 1, "code": 0, "wall_s": 22.0, "killed": false, "finished": "2026-09-30T17:15:07"}
+{"name": "bl33a_A7_kawin", "seed": 1, "code": 0, "wall_s": 22.0, "killed": false, "finished": "2026-09-30T17:15:29"}
+{"name": "bl33a_A5_k2", "seed": 1, "code": 4, "wall_s": 604.2, "killed": false, "finished": "2026-09-30T17:17:29"}
+{"name": "bl33a_A5_kawin", "seed": 2, "code": 0, "wall_s": 24.0, "killed": false, "finished": "2026-09-30T17:17:53"}
