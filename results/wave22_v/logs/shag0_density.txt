@@ -1,0 +1,193 @@
+# 2026-09-30T16:54:10 $ python -B -m pytest -p no:cacheprovider -v -rA --durations=0 tools/test_density.py
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0 -- /tmp/claude-0/-home-user-ThermoGar/b0ff942b-010b-4e2d-a598-abe4c4d62dbd/scratchpad/venv22v/bin/python
+rootdir: /home/user/ThermoGar
+plugins: timeout-2.4.0, anyio-4.15.1, cov-7.1.0
+collecting ... collected 77 items
+
+tools/test_density.py::test_pure_elements_match_pdb[FCC_A1-NI-8914.0] PASSED [  1%]
+tools/test_density.py::test_pure_elements_match_pdb[FCC_A1-CR-7200.0] PASSED [  2%]
+tools/test_density.py::test_pure_elements_match_pdb[FCC_A1-MO-10223.8] PASSED [  3%]
+tools/test_density.py::test_pure_elements_match_pdb[FCC_A1-AL-2698.15] PASSED [  5%]
+tools/test_density.py::test_pure_elements_match_pdb[BCC_A2-FE-7874.0] PASSED [  6%]
+tools/test_density.py::test_matrix_density_of_control_alloy PASSED       [  7%]
+tools/test_density.py::test_alloy_density_available_at_every_temperature PASSED [  9%]
+tools/test_density.py::test_density_decreases_with_temperature PASSED    [ 10%]
+tools/test_density.py::test_pure_element_through_other_databases[tdb0-components0-FCC_A1-mole0-2698.15-0.02] PASSED [ 11%]
+tools/test_density.py::test_pure_element_through_other_databases[tdb1-components1-BCC_A2-mole1-7874.0-0.02] PASSED [ 12%]
+tools/test_density.py::test_site_fractions_keep_vacancies PASSED         [ 14%]
+tools/test_density.py::test_mixture_rule_is_volume_additive PASSED       [ 15%]
+tools/test_density.py::test_plain_database_expansion_is_out_of_physical_window PASSED [ 16%]
+tools/test_density.py::test_matrix_expansion_within_physical_window PASSED [ 18%]
+tools/test_density.py::test_plain_chromium_expansion_is_far_above_measurement PASSED [ 19%]
+tools/test_density.py::test_pure_chromium_expansion_matches_measurement PASSED [ 20%]
+tools/test_density.py::test_chromium_override_keeps_the_reference_point_of_the_base PASSED [ 22%]
+tools/test_density.py::test_reference_density_survives_the_override PASSED [ 23%]
+tools/test_density.py::test_override_is_announced_in_the_result PASSED   [ 24%]
+tools/test_density.py::test_override_switch_off_returns_the_plain_database PASSED [ 25%]
+tools/test_density.py::test_override_file_is_honest_about_itself PASSED  [ 27%]
+tools/test_density.py::test_automatic_phase_set_builds_after_the_detector[ni] PASSED [ 28%]
+tools/test_density.py::test_automatic_phase_set_builds_after_the_detector[al] PASSED [ 29%]
+tools/test_density.py::test_automatic_phase_set_builds_after_the_detector[fe] PASSED [ 31%]
+tools/test_density.py::test_excluded_phases_are_explained_in_the_result PASSED [ 32%]
+tools/test_density.py::test_backend_failure_message_names_the_error PASSED [ 33%]
+tools/test_density.py::test_missing_elements_are_named_instead_of_a_pycalphad_error PASSED [ 35%]
+tools/test_density.py::test_nickel_and_molybdenum_expansion_match_the_source[FCC_A1-NI] PASSED [ 36%]
+tools/test_density.py::test_nickel_and_molybdenum_expansion_match_the_source[BCC_A2-MO] PASSED [ 37%]
+tools/test_density.py::test_nickel_and_molybdenum_are_not_overridden[NI] PASSED [ 38%]
+tools/test_density.py::test_nickel_and_molybdenum_are_not_overridden[MO] PASSED [ 40%]
+tools/test_density.py::test_nickel_and_molybdenum_are_the_same_in_the_plain_database[FCC_A1-NI] PASSED [ 41%]
+tools/test_density.py::test_nickel_and_molybdenum_are_the_same_in_the_plain_database[BCC_A2-MO] PASSED [ 42%]
+tools/test_density.py::test_each_test_gets_its_own_database PASSED       [ 44%]
+tools/test_density.py::test_physical_database_fixtures_are_per_test PASSED [ 45%]
+tools/test_density.py::test_element_density_is_not_the_iron_matrix[B] PASSED [ 46%]
+tools/test_density.py::test_element_density_is_not_the_iron_matrix[C] PASSED [ 48%]
+tools/test_density.py::test_element_density_is_not_the_iron_matrix[H] PASSED [ 49%]
+tools/test_density.py::test_element_density_is_not_the_iron_matrix[HF] PASSED [ 50%]
+tools/test_density.py::test_element_density_is_not_the_iron_matrix[LA] PASSED [ 51%]
+tools/test_density.py::test_element_density_is_not_the_iron_matrix[N] PASSED [ 53%]
+tools/test_density.py::test_element_density_is_not_the_iron_matrix[O] PASSED [ 54%]
+tools/test_density.py::test_element_density_is_not_the_iron_matrix[P] PASSED [ 55%]
+tools/test_density.py::test_element_density_is_not_the_iron_matrix[PD] PASSED [ 57%]
+tools/test_density.py::test_element_density_is_not_the_iron_matrix[TA] PASSED [ 58%]
+tools/test_density.py::test_element_density_is_not_the_iron_matrix[Y] PASSED [ 59%]
+tools/test_density.py::test_element_density_is_not_the_iron_matrix[ZN] PASSED [ 61%]
+tools/test_density.py::test_element_density_is_not_the_iron_matrix[ZR] PASSED [ 62%]
+tools/test_density.py::test_carbon_density_is_the_diamond_model_of_the_base PASSED [ 63%]
+tools/test_density.py::test_element_density_ignores_foreign_d0_records PASSED [ 64%]
+tools/test_density.py::test_function_only_element_note_warns_about_volume_error[B] PASSED [ 66%]
+tools/test_density.py::test_function_only_element_note_warns_about_volume_error[LA] PASSED [ 67%]
+tools/test_density.py::test_function_only_element_note_warns_about_volume_error[P] PASSED [ 68%]
+tools/test_density.py::test_function_only_element_note_warns_about_volume_error[PD] PASSED [ 70%]
+tools/test_density.py::test_function_only_element_note_warns_about_volume_error[TA] PASSED [ 71%]
+tools/test_density.py::test_matrix_elements_keep_their_fcc_record[NI] PASSED [ 72%]
+tools/test_density.py::test_matrix_elements_keep_their_fcc_record[CR] PASSED [ 74%]
+tools/test_density.py::test_matrix_elements_keep_their_fcc_record[FE] PASSED [ 75%]
+tools/test_density.py::test_matrix_elements_keep_their_fcc_record[AL] PASSED [ 76%]
+tools/test_density.py::test_matrix_elements_keep_their_fcc_record[MO] PASSED [ 77%]
+tools/test_density.py::test_matrix_elements_keep_their_fcc_record[SI] PASSED [ 79%]
+tools/test_density.py::test_matrix_elements_keep_their_fcc_record[S] PASSED [ 80%]
+tools/test_density.py::test_graphite_volume_in_fe_1c_uses_carbon_density PASSED [ 81%]
+tools/test_density.py::test_phase_without_element_density_drops_out_of_coverage PASSED [ 83%]
+tools/test_density.py::test_vrh_volumes_refuse_a_phase_without_element_density PASSED [ 84%]
+tools/test_density.py::test_reference_phases_come_from_element_records PASSED [ 85%]
+tools/test_density.py::test_reference_phase_is_tried_first[FE-BCC_A2-BCC_A2-7876.16] PASSED [ 87%]
+tools/test_density.py::test_reference_phase_is_tried_first[SI-DIA_A4-DIAMOND_A4-2329.38] PASSED [ 88%]
+tools/test_density.py::test_fcc_reference_or_phase_without_model_keeps_old_path[AL-FCC_A1] PASSED [ 89%]
+tools/test_density.py::test_fcc_reference_or_phase_without_model_keeps_old_path[NI-FCC_A1] PASSED [ 90%]
+tools/test_density.py::test_fcc_reference_or_phase_without_model_keeps_old_path[CU-FCC_A1] PASSED [ 92%]
+tools/test_density.py::test_fcc_reference_or_phase_without_model_keeps_old_path[MN-BCC_A12] PASSED [ 93%]
+tools/test_density.py::test_reference_phase_does_not_take_a_foreign_d0 PASSED [ 94%]
+tools/test_density.py::test_mixture_uses_reference_phases PASSED         [ 96%]
+tools/test_density.py::test_zinc_reference_phase_drops_the_old_note PASSED [ 97%]
+tools/test_density.py::test_si_diamond_a4_inherits_the_diamond_model PASSED [ 98%]
+tools/test_density.py::test_vrh_prepare_accepts_element_notes_and_rejects_bad_ones PASSED [100%]
+
+==================================== PASSES ====================================
+============================== slowest durations ===============================
+124.76s call     tools/test_density.py::test_density_decreases_with_temperature
+21.13s call     tools/test_density.py::test_alloy_density_available_at_every_temperature
+8.37s call     tools/test_density.py::test_matrix_density_of_control_alloy
+5.62s call     tools/test_density.py::test_pure_element_through_other_databases[tdb1-components1-BCC_A2-mole1-7874.0-0.02]
+3.07s call     tools/test_density.py::test_pure_element_through_other_databases[tdb0-components0-FCC_A1-mole0-2698.15-0.02]
+3.00s call     tools/test_density.py::test_si_diamond_a4_inherits_the_diamond_model
+2.96s call     tools/test_density.py::test_reference_phases_come_from_element_records
+2.90s call     tools/test_density.py::test_automatic_phase_set_builds_after_the_detector[fe]
+2.66s call     tools/test_density.py::test_reference_density_survives_the_override
+1.89s call     tools/test_density.py::test_matrix_expansion_within_physical_window
+1.88s call     tools/test_density.py::test_plain_database_expansion_is_out_of_physical_window
+1.85s call     tools/test_density.py::test_automatic_phase_set_builds_after_the_detector[ni]
+1.61s call     tools/test_density.py::test_automatic_phase_set_builds_after_the_detector[al]
+1.25s call     tools/test_density.py::test_override_is_announced_in_the_result
+0.90s call     tools/test_density.py::test_vrh_volumes_refuse_a_phase_without_element_density
+0.51s call     tools/test_density.py::test_graphite_volume_in_fe_1c_uses_carbon_density
+0.49s call     tools/test_density.py::test_phase_without_element_density_drops_out_of_coverage
+0.48s call     tools/test_density.py::test_site_fractions_keep_vacancies
+0.28s call     tools/test_density.py::test_each_test_gets_its_own_database
+0.06s call     tools/test_density.py::test_missing_elements_are_named_instead_of_a_pycalphad_error
+0.03s call     tools/test_density.py::test_excluded_phases_are_explained_in_the_result
+0.01s setup    tools/test_density.py::test_element_density_is_not_the_iron_matrix[TA]
+0.01s setup    tools/test_density.py::test_si_diamond_a4_inherits_the_diamond_model
+0.01s setup    tools/test_density.py::test_pure_elements_match_pdb[FCC_A1-NI-8914.0]
+
+(207 durations < 0.005s hidden.  Use -vv to show these durations.)
+=========================== short test summary info ============================
+PASSED tools/test_density.py::test_pure_elements_match_pdb[FCC_A1-NI-8914.0]
+PASSED tools/test_density.py::test_pure_elements_match_pdb[FCC_A1-CR-7200.0]
+PASSED tools/test_density.py::test_pure_elements_match_pdb[FCC_A1-MO-10223.8]
+PASSED tools/test_density.py::test_pure_elements_match_pdb[FCC_A1-AL-2698.15]
+PASSED tools/test_density.py::test_pure_elements_match_pdb[BCC_A2-FE-7874.0]
+PASSED tools/test_density.py::test_matrix_density_of_control_alloy
+PASSED tools/test_density.py::test_alloy_density_available_at_every_temperature
+PASSED tools/test_density.py::test_density_decreases_with_temperature
+PASSED tools/test_density.py::test_pure_element_through_other_databases[tdb0-components0-FCC_A1-mole0-2698.15-0.02]
+PASSED tools/test_density.py::test_pure_element_through_other_databases[tdb1-components1-BCC_A2-mole1-7874.0-0.02]
+PASSED tools/test_density.py::test_site_fractions_keep_vacancies
+PASSED tools/test_density.py::test_mixture_rule_is_volume_additive
+PASSED tools/test_density.py::test_plain_database_expansion_is_out_of_physical_window
+PASSED tools/test_density.py::test_matrix_expansion_within_physical_window
+PASSED tools/test_density.py::test_plain_chromium_expansion_is_far_above_measurement
+PASSED tools/test_density.py::test_pure_chromium_expansion_matches_measurement
+PASSED tools/test_density.py::test_chromium_override_keeps_the_reference_point_of_the_base
+PASSED tools/test_density.py::test_reference_density_survives_the_override
+PASSED tools/test_density.py::test_override_is_announced_in_the_result
+PASSED tools/test_density.py::test_override_switch_off_returns_the_plain_database
+PASSED tools/test_density.py::test_override_file_is_honest_about_itself
+PASSED tools/test_density.py::test_automatic_phase_set_builds_after_the_detector[ni]
+PASSED tools/test_density.py::test_automatic_phase_set_builds_after_the_detector[al]
+PASSED tools/test_density.py::test_automatic_phase_set_builds_after_the_detector[fe]
+PASSED tools/test_density.py::test_excluded_phases_are_explained_in_the_result
+PASSED tools/test_density.py::test_backend_failure_message_names_the_error
+PASSED tools/test_density.py::test_missing_elements_are_named_instead_of_a_pycalphad_error
+PASSED tools/test_density.py::test_nickel_and_molybdenum_expansion_match_the_source[FCC_A1-NI]
+PASSED tools/test_density.py::test_nickel_and_molybdenum_expansion_match_the_source[BCC_A2-MO]
+PASSED tools/test_density.py::test_nickel_and_molybdenum_are_not_overridden[NI]
+PASSED tools/test_density.py::test_nickel_and_molybdenum_are_not_overridden[MO]
+PASSED tools/test_density.py::test_nickel_and_molybdenum_are_the_same_in_the_plain_database[FCC_A1-NI]
+PASSED tools/test_density.py::test_nickel_and_molybdenum_are_the_same_in_the_plain_database[BCC_A2-MO]
+PASSED tools/test_density.py::test_each_test_gets_its_own_database
+PASSED tools/test_density.py::test_physical_database_fixtures_are_per_test
+PASSED tools/test_density.py::test_element_density_is_not_the_iron_matrix[B]
+PASSED tools/test_density.py::test_element_density_is_not_the_iron_matrix[C]
+PASSED tools/test_density.py::test_element_density_is_not_the_iron_matrix[H]
+PASSED tools/test_density.py::test_element_density_is_not_the_iron_matrix[HF]
+PASSED tools/test_density.py::test_element_density_is_not_the_iron_matrix[LA]
+PASSED tools/test_density.py::test_element_density_is_not_the_iron_matrix[N]
+PASSED tools/test_density.py::test_element_density_is_not_the_iron_matrix[O]
+PASSED tools/test_density.py::test_element_density_is_not_the_iron_matrix[P]
+PASSED tools/test_density.py::test_element_density_is_not_the_iron_matrix[PD]
+PASSED tools/test_density.py::test_element_density_is_not_the_iron_matrix[TA]
+PASSED tools/test_density.py::test_element_density_is_not_the_iron_matrix[Y]
+PASSED tools/test_density.py::test_element_density_is_not_the_iron_matrix[ZN]
+PASSED tools/test_density.py::test_element_density_is_not_the_iron_matrix[ZR]
+PASSED tools/test_density.py::test_carbon_density_is_the_diamond_model_of_the_base
+PASSED tools/test_density.py::test_element_density_ignores_foreign_d0_records
+PASSED tools/test_density.py::test_function_only_element_note_warns_about_volume_error[B]
+PASSED tools/test_density.py::test_function_only_element_note_warns_about_volume_error[LA]
+PASSED tools/test_density.py::test_function_only_element_note_warns_about_volume_error[P]
+PASSED tools/test_density.py::test_function_only_element_note_warns_about_volume_error[PD]
+PASSED tools/test_density.py::test_function_only_element_note_warns_about_volume_error[TA]
+PASSED tools/test_density.py::test_matrix_elements_keep_their_fcc_record[NI]
+PASSED tools/test_density.py::test_matrix_elements_keep_their_fcc_record[CR]
+PASSED tools/test_density.py::test_matrix_elements_keep_their_fcc_record[FE]
+PASSED tools/test_density.py::test_matrix_elements_keep_their_fcc_record[AL]
+PASSED tools/test_density.py::test_matrix_elements_keep_their_fcc_record[MO]
+PASSED tools/test_density.py::test_matrix_elements_keep_their_fcc_record[SI]
+PASSED tools/test_density.py::test_matrix_elements_keep_their_fcc_record[S]
+PASSED tools/test_density.py::test_graphite_volume_in_fe_1c_uses_carbon_density
+PASSED tools/test_density.py::test_phase_without_element_density_drops_out_of_coverage
+PASSED tools/test_density.py::test_vrh_volumes_refuse_a_phase_without_element_density
+PASSED tools/test_density.py::test_reference_phases_come_from_element_records
+PASSED tools/test_density.py::test_reference_phase_is_tried_first[FE-BCC_A2-BCC_A2-7876.16]
+PASSED tools/test_density.py::test_reference_phase_is_tried_first[SI-DIA_A4-DIAMOND_A4-2329.38]
+PASSED tools/test_density.py::test_fcc_reference_or_phase_without_model_keeps_old_path[AL-FCC_A1]
+PASSED tools/test_density.py::test_fcc_reference_or_phase_without_model_keeps_old_path[NI-FCC_A1]
+PASSED tools/test_density.py::test_fcc_reference_or_phase_without_model_keeps_old_path[CU-FCC_A1]
+PASSED tools/test_density.py::test_fcc_reference_or_phase_without_model_keeps_old_path[MN-BCC_A12]
+PASSED tools/test_density.py::test_reference_phase_does_not_take_a_foreign_d0
+PASSED tools/test_density.py::test_mixture_uses_reference_phases
+PASSED tools/test_density.py::test_zinc_reference_phase_drops_the_old_note
+PASSED tools/test_density.py::test_si_diamond_a4_inherits_the_diamond_model
+PASSED tools/test_density.py::test_vrh_prepare_accepts_element_notes_and_rejects_bad_ones
+======================== 77 passed in 188.76s (0:03:08) ========================
+ZAMER: код=0; стена=190.9 с; пик RSS=2.391 ГиБ (2507592 КиБ)

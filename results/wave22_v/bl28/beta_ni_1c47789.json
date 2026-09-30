@@ -1,0 +1,982 @@
+{
+ "tag": "1c47789",
+ "tree": "/home/user/ThermoGar/_to_delete/22v_worktrees/w1c47789",
+ "T, K": 1073.15,
+ "x0 (добавки)": [
+  0.098,
+  0.083
+ ],
+ "элементы therm": [
+  "NI",
+  "AL",
+  "CR",
+  "VA"
+ ],
+ "трассерная D при x0, м2/с": {
+  "NI": 1.2885769207751195e-35,
+  "AL": 1.298592691629772e-20,
+  "CR": 2.5467565577452835e-35
+ },
+ "трассерная D (порядок как выше) при других составах": {
+  "разбавленный предел (добавки по 1e-6)": [
+   5.887327839265578e-36,
+   1.1268839791451485e-17,
+   2.157906940531908e-35
+  ],
+  "половина состава": [
+   8.64711972461991e-36,
+   3.2342451893478625e-19,
+   1.9226944511043043e-35
+  ]
+ },
+ "impingementFactor при x0 (без Rcrit²/a⁴)": 7.564862452875554e-34,
+ "theta матрицы": 2.0,
+ "a матрицы, м": 2.2174783248762713e-10,
+ "первые шаги": [
+  {
+   "шаг": 1,
+   "t, с": 0.01001,
+   "Rcrit, нм": 0.7971709107203365,
+   "beta (impingement), 1/с": 2.498482152408118e-12,
+   "Z": 0.0034024712581180263,
+   "tau, с": 1.7286410516072864e+16,
+   "Gcrit/kT": 4.132278957098203,
+   "скорость зарождения, 1/(м3·с)": 0.0
+  },
+  {
+   "шаг": 2,
+   "t, с": 0.02003001,
+   "Rcrit, нм": 0.7971709107203672,
+   "beta (impingement), 1/с": 2.498482152408286e-12,
+   "Z": 0.003402471258117765,
+   "tau, с": 1.728641051607436e+16,
+   "Gcrit/kT": 4.13227895709852,
+   "скорость зарождения, 1/(м3·с)": 0.0
+  },
+  {
+   "шаг": 3,
+   "t, с": 0.03006004001,
+   "Rcrit, нм": 0.7971709107203825,
+   "beta (impingement), 1/с": 2.498482152408313e-12,
+   "Z": 0.0034024712581176343,
+   "tau, с": 1.7286410516075498e+16,
+   "Gcrit/kT": 4.132278957098678,
+   "скорость зарождения, 1/(м3·с)": 0.0
+  }
+ ],
+ "строк MQ/MF FCC_A1 в базе": 152,
+ "строки MQ/MF FCC_A1": [
+  [
+   "MQ",
+   "AL",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "AL",
+   "((Species('AL', 'AL1'), Species('CR', 'CR1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "AL",
+   "((Species('AL', 'AL1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "AL",
+   "((Species('AL', 'AL1'), Species('TI', 'TI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "AL",
+   "((Species('AL', 'AL1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "AL",
+   "((Species('CO', 'CO1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "AL",
+   "((Species('CR', 'CR1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "AL",
+   "((Species('CR', 'CR1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "AL",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "AL",
+   "((Species('NI', 'NI1'), Species('TI', 'TI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "B",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "B",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "B",
+   "((Species('NI', 'NI1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('CR', 'CR1'), Species('FE', 'FE1')), (Species('C', 'C1'),))",
+   0
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('CR', 'CR1'), Species('FE', 'FE1')), (Species('VA', 'VA1'),))",
+   0
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('CR', 'CR1'), Species('NI', 'NI1')), (Species('C', 'C1'),))",
+   0
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('CR', 'CR1'), Species('NI', 'NI1')), (Species('VA', 'VA1'),))",
+   0
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('CR', 'CR1'),), (Species('VA', 'VA1'),))",
+   0
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('C', 'C1'),))",
+   0
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('C', 'C1'),))",
+   1
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('C', 'C1'),))",
+   2
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('VA', 'VA1'),))",
+   0
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('VA', 'VA1'),))",
+   1
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('VA', 'VA1'),))",
+   2
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('FE', 'FE1'),), (Species('C', 'C1'),))",
+   0
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('FE', 'FE1'),), (Species('VA', 'VA1'),))",
+   0
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('NI', 'NI1'),), (Species('C', 'C1'),))",
+   0
+  ],
+  [
+   "MQ",
+   "C",
+   "((Species('NI', 'NI1'),), (Species('VA', 'VA1'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CO",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "CO",
+   "((Species('AL', 'AL1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CO",
+   "((Species('CO', 'CO1'), Species('FE', 'FE1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CO",
+   "((Species('CO', 'CO1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CO",
+   "((Species('CO', 'CO1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   1
+  ],
+  [
+   "MQ",
+   "CO",
+   "((Species('CO', 'CO1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   2
+  ],
+  [
+   "MQ",
+   "CO",
+   "((Species('CO', 'CO1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CO",
+   "((Species('CO', 'CO1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CO",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CO",
+   "((Species('NI', 'NI1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CR",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "CR",
+   "((Species('AL', 'AL1'), Species('CR', 'CR1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CR",
+   "((Species('AL', 'AL1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CR",
+   "((Species('AL', 'AL1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CR",
+   "((Species('CO', 'CO1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CR",
+   "((Species('CR', 'CR1'), Species('FE', 'FE1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CR",
+   "((Species('CR', 'CR1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CR",
+   "((Species('CR', 'CR1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   1
+  ],
+  [
+   "MQ",
+   "CR",
+   "((Species('CR', 'CR1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   2
+  ],
+  [
+   "MQ",
+   "CR",
+   "((Species('CR', 'CR1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CR",
+   "((Species('CR', 'CR1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CR",
+   "((Species('CU', 'CU1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CR",
+   "((Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CR",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CR",
+   "((Species('NI', 'NI1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CU",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "CU",
+   "((Species('AL', 'AL1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CU",
+   "((Species('CU', 'CU1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CU",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "CU",
+   "((Species('NI', 'NI1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('AL', 'AL1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('CO', 'CO1'), Species('FE', 'FE1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('CO', 'CO1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('CO', 'CO1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   1
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('CO', 'CO1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   2
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('CO', 'CO1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('CR', 'CR1'), Species('FE', 'FE1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('CR', 'CR1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('CR', 'CR1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   1
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('CR', 'CR1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   2
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('CR', 'CR1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('CR', 'CR1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   1
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "FE",
+   "((Species('NI', 'NI1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "HF",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "HF",
+   "((Species('HF', 'HF1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "LA",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "MN",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "MN",
+   "((Species('AL', 'AL1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "MN",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "MN",
+   "((Species('NI', 'NI1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "MO",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "MO",
+   "((Species('CO', 'CO1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "MO",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "MO",
+   "((Species('MO', 'MO1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "MO",
+   "((Species('NI', 'NI1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "N",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "N",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NB",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "NB",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NB",
+   "((Species('NB', 'NB1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('AL', 'AL1'), Species('CR', 'CR1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('AL', 'AL1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('AL', 'AL1'), Species('TI', 'TI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('AL', 'AL1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('CO', 'CO1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('CO', 'CO1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   1
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('CO', 'CO1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   2
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('CO', 'CO1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('CO', 'CO1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('CR', 'CR1'), Species('FE', 'FE1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('CR', 'CR1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('CR', 'CR1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   1
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('CR', 'CR1'), Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   2
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('CR', 'CR1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('CR', 'CR1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('FE', 'FE1'), Species('NI', 'NI1')), (Species('*'),))",
+   1
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('HF', 'HF1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('MO', 'MO1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('NI', 'NI1'), Species('TI', 'TI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('NI', 'NI1'), Species('W', 'W1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('NI', 'NI1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('SI', 'SI1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('TI', 'TI1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "NI",
+   "((Species('W', 'W1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "O",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "O",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "S",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "S",
+   "((Species('CU', 'CU1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "S",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "SI",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "SI",
+   "((Species('AL', 'AL1'), Species('SI', 'SI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "SI",
+   "((Species('AL', 'AL1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "SI",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "SI",
+   "((Species('NI', 'NI1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "SI",
+   "((Species('SI', 'SI1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "TI",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "TI",
+   "((Species('AL', 'AL1'), Species('NI', 'NI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "TI",
+   "((Species('AL', 'AL1'), Species('TI', 'TI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "TI",
+   "((Species('AL', 'AL1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "TI",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "TI",
+   "((Species('NI', 'NI1'), Species('TI', 'TI1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "TI",
+   "((Species('TI', 'TI1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "V",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "V",
+   "((Species('AL', 'AL1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "V",
+   "((Species('CR', 'CR1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "V",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "V",
+   "((Species('NI', 'NI1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "V",
+   "((Species('V', 'V1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "W",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "W",
+   "((Species('FE', 'FE1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "W",
+   "((Species('NI', 'NI1'), Species('W', 'W1')), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "W",
+   "((Species('NI', 'NI1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "W",
+   "((Species('W', 'W1'),), (Species('*'),))",
+   0
+  ],
+  [
+   "MQ",
+   "Y",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "ZR",
+   "((Species('*'),),)",
+   0
+  ],
+  [
+   "MQ",
+   "ZR",
+   "((Species('CU', 'CU1'),), (Species('*'),))",
+   0
+  ]
+ ]
+}

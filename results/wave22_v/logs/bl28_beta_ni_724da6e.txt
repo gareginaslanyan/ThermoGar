@@ -1,0 +1,80 @@
+# 2026-09-30T16:59:35 $ python -B results/wave22_v/scripts/bl28_beta.py --tree _to_delete/22v_src/w724da6e --tag 724da6e --out results/wave22_v/bl28
+2026-09-30 16:59:45.045 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:59:45.046 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:59:45.240 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:59:45.240 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:59:45.328 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:59:45.328 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:59:45.396 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:59:45.396 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:59:45.445 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:59:45.445 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+{
+ "tag": "724da6e",
+ "tree": "/home/user/ThermoGar/_to_delete/22v_src/w724da6e",
+ "T, K": 1073.15,
+ "x0 (добавки)": [
+  0.098,
+  0.083
+ ],
+ "элементы therm": [
+  "NI",
+  "AL",
+  "CR",
+  "VA"
+ ],
+ "трассерная D при x0, м2/с": {
+  "NI": 5.310552350913466e-18,
+  "AL": 1.298592691629772e-20,
+  "CR": 5.4822204894228174e-18
+ },
+ "трассерная D (порядок как выше) при других составах": {
+  "разбавленный предел (добавки по 1e-6)": [
+   2.4263171405090754e-18,
+   1.1268839791451485e-17,
+   4.645171760792654e-18
+  ],
+  "половина состава": [
+   3.563697381339735e-18,
+   3.2342451893478625e-19,
+   4.138846676447051e-18
+  ]
+ },
+ "impingementFactor при x0 (без Rcrit²/a⁴)": 1.1567448184058556e-19,
+ "theta матрицы": 2.0,
+ "a матрицы, м": 2.2174783248762713e-10,
+ "первые шаги": [
+  {
+   "шаг": 1,
+   "t, с": 0.01001,
+   "Rcrit, нм": 0.7971709107203365,
+   "beta (impingement), 1/с": 382.0434676348912,
+   "Z": 0.0034024712581180263,
+   "tau, с": 113.04940880414001,
+   "Gcrit/kT": 4.132278957098203,
+   "скорость зарождения, 1/(м3·с)": 0.0
+  },
+  {
+   "шаг": 2,
+   "t, с": 0.02003001,
+   "Rcrit, нм": 0.7971709107203672,
+   "beta (impingement), 1/с": 382.0434676349165,
+   "Z": 0.003402471258117765,
+   "tau, с": 113.0494088041499,
+   "Gcrit/kT": 4.13227895709852,
+   "скорость зарождения, 1/(м3·с)": 0.0
+  },
+  {
+   "шаг": 3,
+   "t, с": 0.03006004001,
+   "Rcrit, нм": 0.7971709107203825,
+   "beta (impingement), 1/с": 382.04346763491236,
+   "Z": 0.0034024712581176343,
+   "tau, с": 113.04940880415982,
+   "Gcrit/kT": 4.132278957098678,
+   "скорость зарождения, 1/(м3·с)": 0.0
+  }
+ ],
+ "строк MQ/MF FCC_A1 в базе": 141
+}
+ZAMER: код=0; стена=10.8 с; пик RSS=0.329 ГиБ (345140 КиБ)

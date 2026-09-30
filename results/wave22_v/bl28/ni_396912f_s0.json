@@ -1,0 +1,27 @@
+{
+ "tag": "396912f",
+ "db": "ni",
+ "seed": "0",
+ "tree": "/home/user/ThermoGar/_to_delete/22v_src/w396912f",
+ "module": "/home/user/ThermoGar/_to_delete/22v_src/w396912f/app/thermogar_precipitation.py",
+ "composition": "AL=9.8, CR=8.3",
+ "pair": "FCC_A1 / GAMMA_PRIME",
+ "T_c": 800.0,
+ "gamma": 0.023,
+ "size_nm": [
+  0.2,
+  5.0
+ ],
+ "rows": 97,
+ "t_end_s": 1.0,
+ "fraction_pct": 0.0,
+ "radius_nm": 0.0,
+ "density_m3": 0.0,
+ "psd_bins_end": 30,
+ "dt_first_s": 0.01001,
+ "dt_min_s": 0.002937359768342862,
+ "dt_max_s": 0.010996066573657926,
+ "quality_ok": true,
+ "wall_s": 8.538252977000013,
+ "peak_rss_gib": 0.3278999328613281
+}

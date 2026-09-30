@@ -1,0 +1,13 @@
+# 2026-09-30T16:54:08 $ python -B results/wave22_v/scripts/bl28_run.py --tree _to_delete/22v_worktrees/w1c47789 --db al --tag 1c47789 --out results/wave22_v/bl28
+2026-09-30 16:54:18.221 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:54:18.222 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:54:18.327 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:54:18.328 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:54:18.404 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:54:18.404 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:54:18.450 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:54:18.450 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:54:18.499 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 16:54:18.500 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+{"tag": "1c47789", "db": "al", "seed": "0", "tree": "/home/user/ThermoGar/_to_delete/22v_worktrees/w1c47789", "module": "/home/user/ThermoGar/_to_delete/22v_worktrees/w1c47789/app/thermogar_precipitation.py", "composition": "CU=4, MG=1", "pair": "FCC_A1 / THETA_AL2CU", "T_c": 200.0, "gamma": 0.15, "size_nm": [0.2, 5.0], "rows": 97, "t_end_s": 1.0, "fraction_pct": 0.0, "radius_nm": 0.0, "density_m3": 0.0, "psd_bins_end": 30, "dt_first_s": 0.01001, "dt_min_s": 0.002937359768342862, "dt_max_s": 0.010996066573657926, "quality_ok": true, "wall_s": 6.189288042999976, "peak_rss_gib": 0.30890655517578125}
+ZAMER: код=0; стена=10.2 с; пик RSS=0.309 ГиБ (324040 КиБ)
