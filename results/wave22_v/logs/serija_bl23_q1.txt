@@ -5,3 +5,4 @@
 старт bl23_T700_granicy_g0.125_fine s0 (свободно 14.44 ГиБ)
 {"name": "bl23_T700_granicy_g0.125_fine", "seed": 0, "code": 0, "wall_s": 490.1, "killed": false, "finished": "2026-09-30T19:19:54"}
 старт bl23_T700_granicy_g0.15_fine s0 (свободно 14.43 ГиБ)
+{"name": "bl23_T700_granicy_g0.15_fine", "seed": 0, "code": 0, "wall_s": 624.2, "killed": false, "finished": "2026-09-30T19:30:18"}
