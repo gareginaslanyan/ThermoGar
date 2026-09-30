@@ -1,1 +1,8 @@
 # 2026-09-30T18:50:06 $ python -B results/wave22_v/scripts/bl23_app.py --gamma 0.15 --site GRAIN BOUNDARIES --hours 500 --bins 160
+2026-09-30 18:59:25.741 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 18:59:25.859 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 18:59:26.243 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 18:59:26.393 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 18:59:26.500 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+{"outcome": "сошёлся", "steps": 11769, "t_h_end": 498.96989657526944, "jumps_N_without_J": 50}
+ZAMER: код=0; стена=560.8 с; пик RSS=0.419 ГиБ (439100 КиБ)

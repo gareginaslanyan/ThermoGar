@@ -1,3 +1,5 @@
 старт bl23app_obyom_g0.125_b160 s0 (свободно 14.40 ГиБ)
 {"name": "bl23app_obyom_g0.125_b160", "seed": 0, "code": 0, "wall_s": 918.2, "killed": false, "finished": "2026-09-30T18:50:06"}
 старт bl23app_granicy_g0.15_b160 s0 (свободно 14.43 ГиБ)
+{"name": "bl23app_granicy_g0.15_b160", "seed": 0, "code": 0, "wall_s": 562.2, "killed": false, "finished": "2026-09-30T18:59:28"}
+старт bl23app_granicy_g0.125_b80 s0 (свободно 14.42 ГиБ)
