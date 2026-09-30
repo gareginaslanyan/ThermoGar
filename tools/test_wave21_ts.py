@@ -44,7 +44,8 @@ from thermogar_user_errors import UserRuntimeError, UserValueError  # noqa: E402
 import thermogar_workspace as workspace  # noqa: E402
 
 APP = ROOT / "app"
-APP_SOURCE = (APP / "ThermoGar_app.py").read_text(encoding="utf-8")
+# 20-Л (BL-57): выгрузка покрытия физической базы — в thermogar_tab_properties.py.
+APP_SOURCE = (APP / "thermogar_tab_properties.py").read_text(encoding="utf-8")
 PATCH_NAME = "TG-FE-2062-C15-001"
 PROJECT_OTHER_VERSION = "Проект сохранён другой версией ThermoGar и не открывается."
 

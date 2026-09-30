@@ -46,8 +46,13 @@ from matplotlib.colors import to_rgb  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 APP_PATH = ROOT / "app" / "ThermoGar_app.py"
-# 20-Ж (BL-57): общие помощники головного сценария — в thermogar_app_common.py.
-APP_SOURCES = (APP_PATH, ROOT / "app" / "thermogar_app_common.py")
+# 20-Ж (BL-57): общие помощники головного сценария — в thermogar_app_common.py;
+# 20-Л: контур вкладки «Свойства» — в thermogar_tab_properties.py.
+APP_SOURCES = (
+    APP_PATH,
+    ROOT / "app" / "thermogar_app_common.py",
+    ROOT / "app" / "thermogar_tab_properties.py",
+)
 STYLE_PATH = ROOT / "app" / "style.css"
 if str(ROOT / "app") not in sys.path:
     sys.path.insert(0, str(ROOT / "app"))
@@ -566,7 +571,7 @@ def test_titles_have_no_thermogar_prefix(app, themed, theme):
             assert "ThermoGar:" not in axes.get_title(), name
     source = "\n".join(
         (ROOT / "app" / module).read_text("utf-8")
-        for module in ("ThermoGar_app.py", "thermogar_app_common.py", "thermogar_diffusion.py", "thermogar_precipitation.py", "thermogar_properties.py")
+        for module in ("ThermoGar_app.py", "thermogar_app_common.py", "thermogar_tab_properties.py", "thermogar_diffusion.py", "thermogar_precipitation.py", "thermogar_properties.py")
     )
     assert '"ThermoGar: ' not in source
     assert 'f"ThermoGar: ' not in source
@@ -767,7 +772,7 @@ def test_kinetics_chrome(themed, theme):
 
 
 def test_content_width_instead_of_use_container_width():
-    for module in ("ThermoGar_app.py", "thermogar_app_common.py", "thermogar_diffusion.py"):
+    for module in ("ThermoGar_app.py", "thermogar_app_common.py", "thermogar_tab_properties.py", "thermogar_diffusion.py"):
         assert "use_container_width" not in (ROOT / "app" / module).read_text("utf-8"), module
 
 

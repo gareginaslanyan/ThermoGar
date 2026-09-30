@@ -186,7 +186,7 @@ def _calls(file_name: str, name: str) -> list[ast.Call]:
 def test_action_rows_in_code() -> None:
     keys = []
     for file_name in (
-        "ThermoGar_app.py", "thermogar_diffusion.py",
+        "ThermoGar_app.py", "thermogar_tab_properties.py", "thermogar_diffusion.py",
         "thermogar_precipitation.py", "thermogar_stage14.py",
     ):
         for call in _calls(file_name, "action_row"):
@@ -209,7 +209,7 @@ def test_no_line_chart_in_app() -> None:
 
 
 def test_density_scan_shows_the_png_figure() -> None:
-    tree = ast.parse((APP / "ThermoGar_app.py").read_text("utf-8"))
+    tree = ast.parse((APP / "thermogar_tab_properties.py").read_text("utf-8"))
     function = next(
         node for node in ast.walk(tree)
         if isinstance(node, ast.FunctionDef) and node.name == "render_b4b_density_temperature"
@@ -220,10 +220,10 @@ def test_density_scan_shows_the_png_figure() -> None:
 
 
 def test_density_axis_formatter_plain() -> None:
-    """Ось плотности без смещения: ThermoGar_app — сценарий, проверка по коду
+    """Ось плотности без смещения: проверка по коду thermogar_tab_properties.py
     и тем же вызовом matplotlib на узком диапазоне."""
 
-    tree = ast.parse((APP / "ThermoGar_app.py").read_text("utf-8"))
+    tree = ast.parse((APP / "thermogar_tab_properties.py").read_text("utf-8"))
     function = next(
         node for node in tree.body
         if isinstance(node, ast.FunctionDef) and node.name == "plot_density_temperature"

@@ -41,8 +41,9 @@ from thermogar_user_errors import EMPTY_CELL_TEXT  # noqa: E402
 KNOWN_FOREIGN_ERRORS = ("BINDING_STALE",)
 # Опись 21-С (results/wave21_s/tablicy.csv): 64 вызова, по файлам.
 TABLE_CALLS = {
-    "ThermoGar_app.py": 36,
+    "ThermoGar_app.py": 27,
     "thermogar_app_common.py": 1,
+    "thermogar_tab_properties.py": 9,
     "thermogar_workspace.py": 7,
     "thermogar_precipitation.py": 6,
     "thermogar_diffusion.py": 5,
