@@ -1,0 +1,46 @@
+{
+ "case": "C4",
+ "composition": "CR=19, NB=5.1, TI=0.9, FE=18",
+ "variant": "kawin",
+ "seed": "0",
+ "nucleation": "BULK",
+ "cap_s": 600.0,
+ "units": "wt",
+ "matrix_phase": "FCC_A1",
+ "precipitate_phase": "GAMMA_PRIME",
+ "temperature_c": 750.0,
+ "duration_s": 10.0,
+ "gamma": 0.023,
+ "matrix_vm": 6.5662724928,
+ "precip_vm": 6.5662724928,
+ "cmin_nm": 0.2,
+ "cmax_nm": 10.0,
+ "bins": 80,
+ "outcome": "ошибка",
+ "u": 2.017873117003947,
+ "rmin_nm": 0.3,
+ "estimates [T K, Rcrit нм, Rnuc нм, r* до зажима нм]": [
+  [
+   1023.15,
+   0.3,
+   0.521072864613051,
+   0.14867138943078215
+  ]
+ ],
+ "steps": 186,
+ "t_model_s": 0.3073535360310371,
+ "dt_last_s": 0.0006240497266621215,
+ "limiter_last": "vol",
+ "bins_last": 80,
+ "volFrac_last": 0.06523225827772684,
+ "wall_solve_s": 8.558818306000035,
+ "wall_total_s": 15.158334060000016,
+ "peak_rss_gib": 0.3852043151855469,
+ "solutes": [
+  "CR",
+  "FE",
+  "NB",
+  "TI"
+ ],
+ "error": "AttributeError: 'Logged' object has no attribute 'DT_GROWTH_LIMIT'"
+}

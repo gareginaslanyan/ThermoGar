@@ -1,0 +1,27 @@
+{
+ "tag": "HEAD",
+ "db": "al",
+ "seed": "1",
+ "tree": "/home/user/ThermoGar",
+ "module": "/home/user/ThermoGar/app/thermogar_precipitation.py",
+ "composition": "CU=4, MG=1",
+ "pair": "FCC_A1 / THETA_AL2CU",
+ "T_c": 200.0,
+ "gamma": 0.15,
+ "size_nm": [
+  0.2,
+  5.0
+ ],
+ "rows": 97,
+ "t_end_s": 1.0,
+ "fraction_pct": 0.0,
+ "radius_nm": 0.0,
+ "density_m3": 5.879082361236423e-188,
+ "psd_bins_end": 30,
+ "dt_first_s": 0.01001,
+ "dt_min_s": 0.002937359768342862,
+ "dt_max_s": 0.010996066573657926,
+ "quality_ok": true,
+ "wall_s": 5.464127650000023,
+ "peak_rss_gib": 0.3091926574707031
+}

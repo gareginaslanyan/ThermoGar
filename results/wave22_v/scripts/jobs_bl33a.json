@@ -1,0 +1,470 @@
+[
+{
+"name": "bl33a_A5_k2",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A5",
+"--variant",
+"k2",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A5_kawin",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A5",
+"--variant",
+"kawin",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_C4_k2",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"C4",
+"--variant",
+"k2",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_C4_kawin",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"C4",
+"--variant",
+"kawin",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A6_k2",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A6",
+"--variant",
+"k2",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A6_kawin",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A6",
+"--variant",
+"kawin",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A7_k2",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A7",
+"--variant",
+"k2",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A7_kawin",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A7",
+"--variant",
+"kawin",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_NI_k2",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"NI",
+"--variant",
+"k2",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_NI_kawin",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"NI",
+"--variant",
+"kawin",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A5_k2",
+"seed": 1,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A5",
+"--variant",
+"k2",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A5_kawin",
+"seed": 1,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A5",
+"--variant",
+"kawin",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_C4_k2",
+"seed": 1,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"C4",
+"--variant",
+"k2",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_C4_kawin",
+"seed": 1,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"C4",
+"--variant",
+"kawin",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A6_k2",
+"seed": 1,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A6",
+"--variant",
+"k2",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A6_kawin",
+"seed": 1,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A6",
+"--variant",
+"kawin",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A7_k2",
+"seed": 1,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A7",
+"--variant",
+"k2",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A7_kawin",
+"seed": 1,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A7",
+"--variant",
+"kawin",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A5_k2",
+"seed": 2,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A5",
+"--variant",
+"k2",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A5_kawin",
+"seed": 2,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A5",
+"--variant",
+"kawin",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_C4_k2",
+"seed": 2,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"C4",
+"--variant",
+"k2",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_C4_kawin",
+"seed": 2,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"C4",
+"--variant",
+"kawin",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A6_k2",
+"seed": 2,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A6",
+"--variant",
+"k2",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A6_kawin",
+"seed": 2,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A6",
+"--variant",
+"kawin",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A7_k2",
+"seed": 2,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A7",
+"--variant",
+"k2",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+},
+{
+"name": "bl33a_A7_kawin",
+"seed": 2,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl33_run.py",
+"--case",
+"A7",
+"--variant",
+"kawin",
+"--cap",
+"600",
+"--out",
+"results/wave22_v/bl33/a"
+],
+"limit_s": 800
+}
+]

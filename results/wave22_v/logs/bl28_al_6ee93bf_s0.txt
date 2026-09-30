@@ -1,3 +1,13 @@
 # 2026-09-30T17:00:22 $ python -B results/wave22_v/scripts/bl28_run.py --tree _to_delete/22v_src/w6ee93bf --db al --tag 6ee93bf --out results/wave22_v/bl28
 2026-09-30 17:00:30.255 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
 2026-09-30 17:00:30.255 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:00:30.386 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:00:30.387 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:00:30.470 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:00:30.471 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:00:30.523 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:00:30.523 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:00:30.565 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:00:30.565 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+{"tag": "6ee93bf", "db": "al", "seed": "0", "tree": "/home/user/ThermoGar/_to_delete/22v_src/w6ee93bf", "module": "/home/user/ThermoGar/_to_delete/22v_src/w6ee93bf/app/thermogar_precipitation.py", "composition": "CU=4, MG=1", "pair": "FCC_A1 / THETA_AL2CU", "T_c": 200.0, "gamma": 0.15, "size_nm": [0.2, 5.0], "rows": 97, "t_end_s": 1.0, "fraction_pct": 0.0, "radius_nm": 0.0, "density_m3": 5.879082361108603e-188, "psd_bins_end": 30, "dt_first_s": 0.01001, "dt_min_s": 0.002937359768342862, "dt_max_s": 0.010996066573657926, "quality_ok": true, "wall_s": 5.506678840000063, "peak_rss_gib": 0.30879974365234375}
+ZAMER: код=0; стена=8.9 с; пик RSS=0.309 ГиБ (323928 КиБ)
