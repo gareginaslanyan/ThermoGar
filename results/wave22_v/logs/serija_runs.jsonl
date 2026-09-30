@@ -103,3 +103,5 @@
 {"name": "bl23app_granicy_g0.15_b160", "seed": 0, "code": 0, "wall_s": 562.2, "killed": false, "finished": "2026-09-30T18:59:28"}
 {"name": "bl23app_granicy_g0.125_b80", "seed": 0, "code": 0, "wall_s": 138.0, "killed": false, "finished": "2026-09-30T19:01:46"}
 {"name": "bl23_T700_obyom_g0.1_fine", "seed": 0, "code": 0, "wall_s": 586.1, "killed": false, "finished": "2026-09-30T19:07:22"}
+{"name": "bl23_T700_obyom_g0.1_base", "seed": 1, "code": 0, "wall_s": 380.1, "killed": false, "finished": "2026-09-30T19:08:11"}
+{"name": "bl23_T700_granicy_g0.125_k2", "seed": 0, "code": 0, "wall_s": 262.1, "killed": false, "finished": "2026-09-30T19:11:44"}
