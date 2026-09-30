@@ -1,3 +1,8 @@
-# 2026-09-30T17:03:45 $ python -B results/wave22_v/scripts/bl33_run.py --case C4 --variant kawin --cap 600 --out results/wave22_v/bl33/a
-ERROR: AttributeError: 'Logged' object has no attribute 'DT_GROWTH_LIMIT'
-ZAMER: код=3; стена=18.2 с; пик RSS=0.385 ГиБ (403916 КиБ)
+# 2026-09-30T17:28:40 $ python -B results/wave22_v/scripts/bl33_run.py --case C4 --variant kawin --cap 600 --out results/wave22_v/bl33/a
+2026-09-30 17:28:57.456 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:28:57.560 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:28:57.875 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:28:58.237 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:28:58.300 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+{"outcome": "остановка BL-35", "rows": 187, "u": 2.017873117003947}
+ZAMER: код=0; стена=18.2 с; пик RSS=0.395 ГиБ (413800 КиБ)

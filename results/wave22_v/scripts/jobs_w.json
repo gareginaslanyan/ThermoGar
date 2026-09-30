@@ -1,0 +1,359 @@
+[
+{
+"name": "bl23_volumes",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_run.py",
+"--volumes",
+"--T",
+"700"
+],
+"limit_s": 3600
+},
+{
+"name": "bl23_T700_obyom_g0.125_base",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_run.py",
+"--T",
+"700",
+"--gamma",
+"0.125",
+"--site",
+"BULK",
+"--variant",
+"base",
+"--cap",
+"5400"
+],
+"limit_s": 5700
+},
+{
+"name": "bl23_T700_obyom_g0.1_base",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_run.py",
+"--T",
+"700",
+"--gamma",
+"0.1",
+"--site",
+"BULK",
+"--variant",
+"base",
+"--cap",
+"5400"
+],
+"limit_s": 5700
+},
+{
+"name": "bl23_T700_granicy_g0.15_base",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_run.py",
+"--T",
+"700",
+"--gamma",
+"0.15",
+"--site",
+"GRAIN BOUNDARIES",
+"--variant",
+"base",
+"--cap",
+"5400"
+],
+"limit_s": 5700
+},
+{
+"name": "bl23_T700_granicy_g0.125_base",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_run.py",
+"--T",
+"700",
+"--gamma",
+"0.125",
+"--site",
+"GRAIN BOUNDARIES",
+"--variant",
+"base",
+"--cap",
+"5400"
+],
+"limit_s": 5700
+},
+{
+"name": "bl41_ni_ZR",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"ni",
+"--x",
+"ZR"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_ni_HF",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"ni",
+"--x",
+"HF"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_ni_Y",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"ni",
+"--x",
+"Y"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_ni_LA",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"ni",
+"--x",
+"LA"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_fe_TA",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"fe",
+"--x",
+"TA"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_fe_P",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"fe",
+"--x",
+"P"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_fe_PD",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"fe",
+"--x",
+"PD"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_fe_HF",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"fe",
+"--x",
+"HF"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_fe_Y",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"fe",
+"--x",
+"Y"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_fe_LA",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"fe",
+"--x",
+"LA"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_al_ZN",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"al",
+"--x",
+"ZN",
+"--T",
+"25",
+"300",
+"500",
+"800"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_al_ZR",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"al",
+"--x",
+"ZR",
+"--T",
+"25",
+"300",
+"500",
+"800"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_al_SC",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"al",
+"--x",
+"SC",
+"--T",
+"25",
+"300",
+"500",
+"800"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_IN738_bez_Ta",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"ni",
+"--name",
+"IN738_bez_Ta",
+"--comp",
+"AL=3.4,B=0.01,C=0.11,CO=8.5,CR=16,MO=1.75,NB=0.9,TI=3.4,W=2.6,ZR=0.05",
+"--solutes",
+"ZR,B",
+"--T",
+"25",
+"800",
+"1000"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_V96c1och",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"al",
+"--name",
+"V96c1och",
+"--comp",
+"CU=2.30646,MG=2.65744,MN=0.350983,SI=0.0501404,ZN=8.42359",
+"--solutes",
+"ZN",
+"--T",
+"25",
+"300",
+"500",
+"800"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_316L_HCP",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"fe",
+"--name",
+"316L_HCP",
+"--comp",
+"C=0.015,CR=18,MO=2.625,N=0.05,NI=14",
+"--solutes",
+"CR,FE,MO,NI",
+"--T",
+"25",
+"800",
+"1000"
+],
+"limit_s": 1800
+}
+]

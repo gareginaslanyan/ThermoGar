@@ -1,0 +1,8 @@
+# 2026-09-30T17:24:57 $ python -B results/wave22_v/scripts/bl33_run.py --case A7 --variant kawin --cap 600 --out results/wave22_v/bl33/a
+2026-09-30 17:25:19.381 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:25:19.581 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:25:19.753 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:25:20.060 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:25:20.135 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+{"outcome": "остановка BL-35", "rows": 124, "u": 2.427627193890789}
+ZAMER: код=0; стена=23.0 с; пик RSS=0.476 ГиБ (499124 КиБ)

@@ -1,0 +1,75 @@
+# 2026-09-30T17:28:20 $ python -B results/wave22_v/scripts/bl28_beta.py --tree . --tag HEAD --db al --out results/wave22_v/bl28
+2026-09-30 17:28:29.189 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:28:29.275 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:28:29.349 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:28:29.419 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 17:28:29.496 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+{
+ "tag": "HEAD",
+ "tree": "/home/user/ThermoGar",
+ "T, K": 473.15,
+ "x0 (добавки)": [
+  0.017364481967215975,
+  0.01134996267320208
+ ],
+ "элементы therm": [
+  "AL",
+  "CU",
+  "MG",
+  "VA"
+ ],
+ "трассерная D при x0, м2/с": {
+  "AL": 9.779499100455473e-20,
+  "CU": 2.457232264293114e-19,
+  "MG": 1.653094772254358e-18
+ },
+ "трассерная D (порядок как выше) при других составах": {
+  "разбавленный предел (добавки по 1e-6)": [
+   1.2610744736936375e-19,
+   1.9338962298796467e-19,
+   7.294486880651898e-19
+  ],
+  "половина состава": [
+   1.1105339819898173e-19,
+   2.1882035003653697e-19,
+   1.1045514287245152e-18
+  ]
+ },
+ "impingementFactor при x0 (без Rcrit²/a⁴)": 1.1717700776078904e-21,
+ "theta матрицы": 2.0,
+ "a матрицы, м": 2.5512503831151153e-10,
+ "первые шаги": [
+  {
+   "шаг": 1,
+   "t, с": 0.01001,
+   "Rcrit, нм": 0.7023830528158561,
+   "beta (impingement), 1/с": 1.7146993551555174,
+   "Z": 0.025671006971718834,
+   "tau, с": 442.4826133904429,
+   "Gcrit/kT": 47.452577108886395,
+   "скорость зарождения, 1/(м3·с)": 0.0
+  },
+  {
+   "шаг": 2,
+   "t, с": 0.02003001,
+   "Rcrit, нм": 0.7023830528158441,
+   "beta (impingement), 1/с": 1.7146993551554415,
+   "Z": 0.02567100697171971,
+   "tau, с": 442.4826133904323,
+   "Gcrit/kT": 47.452577108884775,
+   "скорость зарождения, 1/(м3·с)": 0.0
+  },
+  {
+   "шаг": 3,
+   "t, с": 0.03006004001,
+   "Rcrit, нм": 0.7023830528158524,
+   "beta (impingement), 1/с": 1.714699355155471,
+   "Z": 0.025671006971719108,
+   "tau, с": 442.4826133904455,
+   "Gcrit/kT": 47.4525771088859,
+   "скорость зарождения, 1/(м3·с)": 0.0
+  }
+ ],
+ "строк MQ/MF FCC_A1 в базе": 214
+}
+ZAMER: код=0; стена=9.3 с; пик RSS=0.310 ГиБ (325056 КиБ)

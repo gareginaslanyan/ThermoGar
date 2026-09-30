@@ -1,0 +1,46 @@
+{
+ "case": "A5",
+ "composition": "CR=19, NB=5.1, TI=0.9, AL=0.5, FE=18",
+ "variant": "k2",
+ "seed": "2",
+ "nucleation": "BULK",
+ "cap_s": 600.0,
+ "units": "wt",
+ "matrix_phase": "FCC_A1",
+ "precipitate_phase": "GAMMA_PRIME",
+ "temperature_c": 750.0,
+ "duration_s": 10.0,
+ "gamma": 0.023,
+ "matrix_vm": 6.5662724928,
+ "precip_vm": 6.5662724928,
+ "cmin_nm": 0.2,
+ "cmax_nm": 10.0,
+ "bins": 80,
+ "outcome": "потолок",
+ "u": 2.0113499891319835,
+ "rmin_nm": 0.3,
+ "estimates [T K, Rcrit нм, Rnuc нм, r* до зажима нм]": [
+  [
+   1023.15,
+   0.3,
+   0.521072864613051,
+   0.14915355438934214
+  ]
+ ],
+ "steps": 12540,
+ "t_model_s": 0.7228092119312504,
+ "dt_last_s": 1.0508728061157261e-05,
+ "limiter_last": "vol",
+ "bins_last": 80,
+ "volFrac_last": 0.04392045654798695,
+ "wall_solve_s": 592.4540627120002,
+ "wall_total_s": 600.7354326690001,
+ "peak_rss_gib": 0.442230224609375,
+ "solutes": [
+  "AL",
+  "CR",
+  "FE",
+  "NB",
+  "TI"
+ ]
+}

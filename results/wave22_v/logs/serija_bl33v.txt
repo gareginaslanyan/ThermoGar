@@ -1,0 +1,14 @@
+старт bl33b_stadii_A5_k2 s0 (свободно 15.09 ГиБ)
+старт bl33b_stadii_NI_k2 s0 (свободно 15.09 ГиБ)
+{"name": "bl33b_stadii_NI_k2", "seed": 0, "code": 0, "wall_s": 16.0, "killed": false, "finished": "2026-09-30T17:28:20"}
+старт bl28_beta_al_HEAD s0 (свободно 13.74 ГиБ)
+{"name": "bl28_beta_al_HEAD", "seed": 0, "code": 0, "wall_s": 10.0, "killed": false, "finished": "2026-09-30T17:28:30"}
+старт bl28_beta_al_1c47789 s0 (свободно 13.57 ГиБ)
+{"name": "bl33b_stadii_A5_k2", "seed": 0, "code": 0, "wall_s": 36.0, "killed": false, "finished": "2026-09-30T17:28:40"}
+{"name": "bl28_beta_al_1c47789", "seed": 0, "code": 0, "wall_s": 10.0, "killed": false, "finished": "2026-09-30T17:28:40"}
+старт bl33a_A5_kawin s0 (свободно 14.87 ГиБ)
+старт bl33a_C4_kawin s0 (свободно 14.87 ГиБ)
+{"name": "bl33a_C4_kawin", "seed": 0, "code": 0, "wall_s": 20.0, "killed": false, "finished": "2026-09-30T17:29:00"}
+старт bl33v_A5_u1.12_k2 s0 (свободно 14.37 ГиБ)
+{"name": "bl33a_A5_kawin", "seed": 0, "code": 0, "wall_s": 22.0, "killed": false, "finished": "2026-09-30T17:29:02"}
+старт bl33v_A5_u1.3_k2 s0 (свободно 14.64 ГиБ)

@@ -37,3 +37,16 @@
 старт bl33a_A5_kawin s2 (свободно 14.44 ГиБ)
 {"name": "bl33a_A5_kawin", "seed": 2, "code": 0, "wall_s": 24.0, "killed": false, "finished": "2026-09-30T17:17:53"}
 старт bl33a_C4_k2 s2 (свободно 14.47 ГиБ)
+{"name": "bl33a_C4_k2", "seed": 1, "code": 4, "wall_s": 604.2, "killed": false, "finished": "2026-09-30T17:23:31"}
+старт bl33a_C4_kawin s2 (свободно 14.41 ГиБ)
+{"name": "bl33a_C4_kawin", "seed": 2, "code": 0, "wall_s": 20.0, "killed": false, "finished": "2026-09-30T17:23:51"}
+старт bl33a_A6_k2 s2 (свободно 14.44 ГиБ)
+{"name": "bl33a_A6_k2", "seed": 2, "code": 0, "wall_s": 20.0, "killed": false, "finished": "2026-09-30T17:24:11"}
+старт bl33a_A6_kawin s2 (свободно 14.42 ГиБ)
+{"name": "bl33a_A6_kawin", "seed": 2, "code": 0, "wall_s": 22.0, "killed": false, "finished": "2026-09-30T17:24:33"}
+старт bl33a_A7_k2 s2 (свободно 14.43 ГиБ)
+{"name": "bl33a_A7_k2", "seed": 2, "code": 0, "wall_s": 24.0, "killed": false, "finished": "2026-09-30T17:24:57"}
+старт bl33a_A7_kawin s2 (свободно 14.44 ГиБ)
+{"name": "bl33a_A7_kawin", "seed": 2, "code": 0, "wall_s": 24.0, "killed": false, "finished": "2026-09-30T17:25:21"}
+{"name": "bl33a_A5_k2", "seed": 2, "code": 4, "wall_s": 604.2, "killed": false, "finished": "2026-09-30T17:25:33"}
+{"name": "bl33a_C4_k2", "seed": 2, "code": 4, "wall_s": 604.1, "killed": false, "finished": "2026-09-30T17:27:57"}
