@@ -1,0 +1,8 @@
+# 2026-09-30T18:12:06 $ python -B results/wave22_v/scripts/bl33_run.py --case C4 --variant k2s --tag C4_k2s --cap 600 --out results/wave22_v/bl33/s
+2026-09-30 18:12:21.369 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 18:12:21.455 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 18:12:21.697 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 18:12:21.826 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-09-30 18:12:21.886 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+{"outcome": "остановка по стадии", "rows": 187, "u": 2.017873117003947}
+ZAMER: код=0; стена=15.9 с; пик RSS=0.387 ГиБ (405532 КиБ)

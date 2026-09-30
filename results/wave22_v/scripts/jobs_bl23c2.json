@@ -1,0 +1,50 @@
+[
+{
+"name": "bl23app_obyom_g0.125",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_app.py",
+"--gamma",
+"0.125",
+"--site",
+"BULK",
+"--hours",
+"500"
+],
+"limit_s": 5700
+},
+{
+"name": "bl23app_obyom_g0.1",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_app.py",
+"--gamma",
+"0.1",
+"--site",
+"BULK",
+"--hours",
+"500"
+],
+"limit_s": 5700
+},
+{
+"name": "bl23app_granicy_g0.15",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_app.py",
+"--gamma",
+"0.15",
+"--site",
+"GRAIN BOUNDARIES",
+"--hours",
+"500"
+],
+"limit_s": 5700
+}
+]

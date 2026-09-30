@@ -21,7 +21,7 @@ B = Path(__file__).resolve().parents[1] / "bl33"
 
 def main() -> None:
     rows = []
-    for sub in ("a", "v"):
+    for sub in ("a", "v", "s"):
         for p in sorted((B / sub).glob("*_s[0-9].json")):
             d = json.loads(p.read_text("utf-8"))
             z = np.load(p.with_suffix(".npz"), allow_pickle=True)
@@ -50,14 +50,14 @@ def main() -> None:
 
     fig, ax = plt.subplots(figsize=(9, 4.5))
     marks = {"сошёлся": ("o", "tab:green"), "потолок": ("x", "tab:red"), "остановка BL-35": ("s", "tab:orange"),
-             "ошибка": ("^", "k")}
+             "ошибка": ("^", "k"), "остановка по стадии": ("D", "tab:blue")}
     ys = {"A4": 0, "NI": 1, "A5": 2, "C4": 3, "A6": 4, "A7": 5, "B5": 6}
     seen = set()
     for r in rows:
-        if r["variant"] != "k2" or r["u"] is None:
+        if r["variant"] not in ("k2", "k2s") or r["u"] is None:
             continue
         m, c = marks.get(r["outcome"], ("?", "gray"))
-        y = ys.get(r["case"], 7) + 0.12 * (int(r["seed"]) - 1)
+        y = ys.get(r["case"], 7) + 0.12 * (int(r["seed"]) - 1) + (0.3 if r["variant"] == "k2s" else 0.0)
         ax.scatter(r["u"], y, marker=m, color=c, label=r["outcome"] if r["outcome"] not in seen else None)
         seen.add(r["outcome"])
     ax.axvline(1.5, ls="--", color="gray", lw=1)
@@ -65,7 +65,7 @@ def main() -> None:
     ax.set_yticks(list(ys.values()))
     ax.set_yticklabels(list(ys.keys()))
     ax.set_xlabel("u = Rmin / r* (до зажима), лестница через γ")
-    ax.set_title("BL-33: исход расчёта (K = 2, потолок 10 мин стены), зёрна 0–2", fontsize=10)
+    ax.set_title("BL-33: исход (K = 2, потолок 10 мин; выше строки — проба k2s), зёрна 0–2", fontsize=10)
     ax.grid(alpha=0.3)
     ax.legend(fontsize=8, loc="lower right")
     fig.tight_layout()

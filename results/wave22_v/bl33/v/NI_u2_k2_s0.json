@@ -1,0 +1,54 @@
+{
+ "case": "NI",
+ "composition": "AL=15",
+ "variant": "k2",
+ "seed": "0",
+ "nucleation": "BULK",
+ "cap_s": 600.0,
+ "units": "at",
+ "matrix_phase": "FCC_A1",
+ "precipitate_phase": "GAMMA_PRIME",
+ "temperature_c": 800.0,
+ "duration_s": 3600.0,
+ "gamma": 0.012883,
+ "matrix_vm": 6.57,
+ "precip_vm": 6.57,
+ "cmin_nm": 0.2,
+ "cmax_nm": 10.0,
+ "bins": 80,
+ "outcome": "сошёлся",
+ "u": 1.999986664264781,
+ "rmin_nm": 0.3,
+ "estimates [T K, Rcrit нм, Rnuc нм, r* до зажима нм]": [
+  [
+   1073.15,
+   0.3,
+   0.6025181347915275,
+   0.15000100018681053
+  ]
+ ],
+ "steps": 2996,
+ "t_model_s": 3600.0,
+ "dt_last_s": 0.993516019929757,
+ "limiter_last": "рост dtScale",
+ "bins_last": 100,
+ "volFrac_last": 0.2586950790714585,
+ "wall_solve_s": 43.594156500999816,
+ "wall_total_s": 49.45595963999949,
+ "peak_rss_gib": 0.3590660095214844,
+ "solutes": [
+  "AL"
+ ],
+ "rows": 2997,
+ "fraction_pct": 25.87372016113812,
+ "radius_nm": 16.4704839221529,
+ "density_m3": 1.12454524795921e+22,
+ "t_end_s": 3600.0,
+ "quality_ok": true,
+ "stop_note": "",
+ "stop_diagnostics": {},
+ "warnings": [
+  "Критический радиус зародыша 0.15 нм (оценка при 800.0 °C по начальному составу) меньше предела модели 0.3 нм, и модель считает зарождение от этого предела. Поэтому скорость зарождения на начальной стадии не классическая для этой движущей силы, и начало выделения на графиках может быть искажено."
+ ],
+ "stage_stop": null
+}

@@ -14,3 +14,31 @@
 старт bl33v_NI_u1.5_k2 s0 (свободно 13.40 ГиБ)
 {"name": "bl33v_NI_u1.3_k2", "seed": 0, "code": 0, "wall_s": 54.0, "killed": false, "finished": "2026-09-30T18:09:28"}
 старт bl33v_NI_u1.7_k2 s0 (свободно 12.92 ГиБ)
+{"name": "bl33v_NI_u1.5_k2", "seed": 0, "code": 0, "wall_s": 54.0, "killed": false, "finished": "2026-09-30T18:10:18"}
+старт bl33v_NI_u2_k2 s0 (свободно 14.47 ГиБ)
+{"name": "bl33v_NI_u1.7_k2", "seed": 0, "code": 0, "wall_s": 54.0, "killed": false, "finished": "2026-09-30T18:10:22"}
+старт bl33v_A4_u1.12_k2 s0 (свободно 14.55 ГиБ)
+{"name": "bl33v_A4_u1.12_k2", "seed": 0, "code": 0, "wall_s": 24.0, "killed": false, "finished": "2026-09-30T18:10:46"}
+старт bl33v_A4_u1.3_k2 s0 (свободно 14.53 ГиБ)
+{"name": "bl33v_NI_u2_k2", "seed": 0, "code": 0, "wall_s": 54.0, "killed": false, "finished": "2026-09-30T18:11:12"}
+{"name": "bl33v_A4_u1.3_k2", "seed": 0, "code": 0, "wall_s": 26.0, "killed": false, "finished": "2026-09-30T18:11:12"}
+старт bl33v_A4_u1.5_k2 s0 (свободно 14.74 ГиБ)
+старт bl33v_A4_u1.7_k2 s0 (свободно 14.74 ГиБ)
+{"name": "bl33v_A4_u1.5_k2", "seed": 0, "code": 0, "wall_s": 30.0, "killed": false, "finished": "2026-09-30T18:11:42"}
+старт bl33v_A4_u2_k2 s0 (свободно 14.46 ГиБ)
+{"name": "bl33v_A4_u1.7_k2", "seed": 0, "code": 0, "wall_s": 36.0, "killed": false, "finished": "2026-09-30T18:11:48"}
+старт bl33s_A5_k2s s0 (свободно 14.54 ГиБ)
+{"name": "bl33s_A5_k2s", "seed": 0, "code": 0, "wall_s": 18.0, "killed": false, "finished": "2026-09-30T18:12:06"}
+старт bl33s_C4_k2s s0 (свободно 14.46 ГиБ)
+{"name": "bl33s_C4_k2s", "seed": 0, "code": 0, "wall_s": 16.0, "killed": false, "finished": "2026-09-30T18:12:22"}
+старт bl33s_A6_k2s s0 (свободно 14.45 ГиБ)
+{"name": "bl33v_A4_u2_k2", "seed": 0, "code": 0, "wall_s": 42.0, "killed": false, "finished": "2026-09-30T18:12:24"}
+старт bl33s_A7_k2s s0 (свободно 14.58 ГиБ)
+{"name": "bl33s_A6_k2s", "seed": 0, "code": 0, "wall_s": 18.0, "killed": false, "finished": "2026-09-30T18:12:40"}
+старт bl33s_NI_k2s s0 (свободно 14.32 ГиБ)
+{"name": "bl33s_A7_k2s", "seed": 0, "code": 0, "wall_s": 20.0, "killed": false, "finished": "2026-09-30T18:12:44"}
+старт bl33s_A4_k2s s0 (свободно 14.53 ГиБ)
+{"name": "bl33s_A4_k2s", "seed": 0, "code": 0, "wall_s": 20.0, "killed": false, "finished": "2026-09-30T18:13:04"}
+старт bl33s_B5_k2s s0 (свободно 14.51 ГиБ)
+{"name": "bl33s_B5_k2s", "seed": 0, "code": 0, "wall_s": 24.0, "killed": false, "finished": "2026-09-30T18:13:28"}
+{"name": "bl33s_NI_k2s", "seed": 0, "code": 0, "wall_s": 54.0, "killed": false, "finished": "2026-09-30T18:13:34"}
