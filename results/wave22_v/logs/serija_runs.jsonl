@@ -94,3 +94,7 @@
 {"name": "bl33v_A4_u2_k2", "seed": 1, "code": 0, "wall_s": 44.0, "killed": false, "finished": "2026-09-30T18:26:26"}
 {"name": "bl33v_A5_u0.75_k2", "seed": 1, "code": 4, "wall_s": 604.1, "killed": false, "finished": "2026-09-30T18:28:56"}
 {"name": "bl23app_granicy_g0.15", "seed": 0, "code": 0, "wall_s": 580.2, "killed": false, "finished": "2026-09-30T18:33:42"}
+{"name": "bl33v_A5_u0.6_k2", "seed": 2, "code": 4, "wall_s": 604.2, "killed": false, "finished": "2026-09-30T18:36:30"}
+{"name": "bl33v_NI_u2_k2", "seed": 2, "code": 0, "wall_s": 62.0, "killed": false, "finished": "2026-09-30T18:37:32"}
+{"name": "bl33v_A4_u2_k2", "seed": 2, "code": 0, "wall_s": 44.0, "killed": false, "finished": "2026-09-30T18:38:16"}
+{"name": "bl33v_A5_u0.75_k2", "seed": 2, "code": 4, "wall_s": 604.2, "killed": false, "finished": "2026-09-30T18:39:00"}
