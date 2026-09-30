@@ -197,10 +197,20 @@ def main() -> int:
                 row[f"Δ {mode}, кг/м³ (прог − своя)"] = (a - b) if a is not None and b is not None else None
                 row[f"Δ {mode}, %"] = (100 * (a - b) / b) if a is not None and b else None
             # сколько добавки сидит в прямых моделях, где она шла по умолчанию
+            # модель плотности каждой фазы — как её выбирает программа (resolve_phase): прямая, унаследованная
+            # (например BCC_B2 → BCC_A2, GAMMA_PRIME → FCC_A1) или оценка правилом смеси
+            models = {}
+            for ph in present:
+                res_ph = pdb_on.resolve_phase(db, ph)
+                models[ph] = f"{res_ph.physical_phase or '—'} ({res_ph.quality})"
+            row["модель плотности фаз"] = models
             in_direct = 0.0
             xs_by_el = {el: np.asarray(eq.X.sel(component=el).values, dtype=float).ravel() for el in targets}
             for i, (ph, amount) in enumerate(zip(names, amounts)):
-                if ph and np.isfinite(amount) and amount > 1e-8 and ph in DIRECT:
+                if not ph or not np.isfinite(amount) or amount <= 1e-8:
+                    continue
+                phys_phase = pdb_on.resolve_phase(db, ph).physical_phase
+                if phys_phase in DIRECT:
                     in_direct += float(amount) * sum(float(xs_by_el[el][i]) for el in targets)
             row["добавка в прямых моделях, мольн. доля сплава"] = in_direct
             rows.append(row)

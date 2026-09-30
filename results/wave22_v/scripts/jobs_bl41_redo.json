@@ -1,0 +1,142 @@
+[
+{
+"name": "bl41_ni_ZR",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"ni",
+"--x",
+"ZR"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_ni_HF",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"ni",
+"--x",
+"HF"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_ni_Y",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"ni",
+"--x",
+"Y"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_ni_LA",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"ni",
+"--x",
+"LA"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_fe_TA",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"fe",
+"--x",
+"TA"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_fe_P",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"fe",
+"--x",
+"P"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_fe_PD",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"fe",
+"--x",
+"PD"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_fe_HF",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"fe",
+"--x",
+"HF"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_fe_Y",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"fe",
+"--x",
+"Y"
+],
+"limit_s": 1800
+},
+{
+"name": "bl41_fe_LA",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"fe",
+"--x",
+"LA"
+],
+"limit_s": 1800
+}
+]

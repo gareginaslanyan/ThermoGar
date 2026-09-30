@@ -1,1 +1,3 @@
 # 2026-09-30T17:49:16 $ python -B results/wave22_v/scripts/bl33_run.py --case A5 --variant k2 --gamma 0.030841 --tag A5_u1.5_k2 --cap 600 --out results/wave22_v/bl33/v
+CAP: 600.0 с стены, шагов 14842
+ZAMER: код=4; стена=603.2 с; пик RSS=0.448 ГиБ (469940 КиБ)

@@ -1,0 +1,1 @@
+# 2026-09-30T18:01:13 $ python -B results/wave22_v/scripts/bl41_ocenka.py --db al --x SC --T 25 300 500 800

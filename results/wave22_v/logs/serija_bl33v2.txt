@@ -4,3 +4,7 @@
 старт bl33v_A5_u0.9_k2 s0 (свободно 14.44 ГиБ)
 {"name": "bl33v_A5_u0.75_k2", "seed": 0, "code": 4, "wall_s": 604.1, "killed": false, "finished": "2026-09-30T17:49:16"}
 старт bl33v_A5_u1.5_k2 s0 (свободно 14.46 ГиБ)
+{"name": "bl33v_A5_u0.9_k2", "seed": 0, "code": 4, "wall_s": 604.1, "killed": false, "finished": "2026-09-30T17:58:30"}
+старт bl33v_A5_u1.7_k2 s0 (свободно 13.95 ГиБ)
+{"name": "bl33v_A5_u1.5_k2", "seed": 0, "code": 4, "wall_s": 604.1, "killed": false, "finished": "2026-09-30T17:59:20"}
+старт bl33v_A5_u1.9_k2 s0 (свободно 14.08 ГиБ)
