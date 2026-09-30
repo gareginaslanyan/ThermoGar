@@ -112,3 +112,4 @@
 {"name": "bl23_T700_obyom_g0.125_base", "seed": 2, "code": 0, "wall_s": 594.1, "killed": false, "finished": "2026-09-30T19:22:43"}
 {"name": "bl23_T700_granicy_g0.125_base", "seed": 2, "code": 0, "wall_s": 330.1, "killed": false, "finished": "2026-09-30T19:24:43"}
 {"name": "bl23_T700_granicy_g0.15_fine", "seed": 0, "code": 0, "wall_s": 624.2, "killed": false, "finished": "2026-09-30T19:30:18"}
+{"name": "bl23_T700_granicy_g0.15_k2", "seed": 0, "code": 0, "wall_s": 1090.3, "killed": false, "finished": "2026-09-30T19:40:54"}
