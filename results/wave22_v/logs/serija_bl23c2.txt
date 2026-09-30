@@ -1,1 +1,6 @@
 старт bl23app_obyom_g0.125 s0 (свободно 14.20 ГиБ)
+{"name": "bl23app_obyom_g0.125", "seed": 0, "code": 0, "wall_s": 544.1, "killed": false, "finished": "2026-09-30T18:22:30"}
+старт bl23app_obyom_g0.1 s0 (свободно 14.41 ГиБ)
+{"name": "bl23app_obyom_g0.1", "seed": 0, "code": 0, "wall_s": 92.0, "killed": false, "finished": "2026-09-30T18:24:02"}
+старт bl23app_granicy_g0.15 s0 (свободно 14.39 ГиБ)
+{"name": "bl23app_granicy_g0.15", "seed": 0, "code": 0, "wall_s": 580.2, "killed": false, "finished": "2026-09-30T18:33:42"}

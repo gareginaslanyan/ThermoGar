@@ -86,3 +86,11 @@
 {"name": "bl33s_NI_k2s", "seed": 0, "code": 0, "wall_s": 54.0, "killed": false, "finished": "2026-09-30T18:13:34"}
 {"name": "bl33s_A5_u0.75_k2s", "seed": 0, "code": 0, "wall_s": 86.0, "killed": false, "finished": "2026-09-30T18:15:06"}
 {"name": "bl33s_A5_u1.12_k2s", "seed": 0, "code": 0, "wall_s": 18.0, "killed": false, "finished": "2026-09-30T18:15:24"}
+{"name": "bl33s_A5_u0.6_k2s", "seed": 0, "code": 0, "wall_s": 312.1, "killed": false, "finished": "2026-09-30T18:18:52"}
+{"name": "bl23app_obyom_g0.125", "seed": 0, "code": 0, "wall_s": 544.1, "killed": false, "finished": "2026-09-30T18:22:30"}
+{"name": "bl23app_obyom_g0.1", "seed": 0, "code": 0, "wall_s": 92.0, "killed": false, "finished": "2026-09-30T18:24:02"}
+{"name": "bl33v_A5_u0.6_k2", "seed": 1, "code": 0, "wall_s": 560.1, "killed": false, "finished": "2026-09-30T18:24:44"}
+{"name": "bl33v_NI_u2_k2", "seed": 1, "code": 0, "wall_s": 58.0, "killed": false, "finished": "2026-09-30T18:25:42"}
+{"name": "bl33v_A4_u2_k2", "seed": 1, "code": 0, "wall_s": 44.0, "killed": false, "finished": "2026-09-30T18:26:26"}
+{"name": "bl33v_A5_u0.75_k2", "seed": 1, "code": 4, "wall_s": 604.1, "killed": false, "finished": "2026-09-30T18:28:56"}
+{"name": "bl23app_granicy_g0.15", "seed": 0, "code": 0, "wall_s": 580.2, "killed": false, "finished": "2026-09-30T18:33:42"}

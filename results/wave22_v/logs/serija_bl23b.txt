@@ -4,3 +4,13 @@
 старт bl33s_A5_u1.12_k2s s0 (свободно 14.43 ГиБ)
 {"name": "bl33s_A5_u1.12_k2s", "seed": 0, "code": 0, "wall_s": 18.0, "killed": false, "finished": "2026-09-30T18:15:24"}
 старт bl33v_A5_u0.6_k2 s1 (свободно 14.43 ГиБ)
+{"name": "bl33s_A5_u0.6_k2s", "seed": 0, "code": 0, "wall_s": 312.1, "killed": false, "finished": "2026-09-30T18:18:52"}
+старт bl33v_A5_u0.75_k2 s1 (свободно 14.41 ГиБ)
+{"name": "bl33v_A5_u0.6_k2", "seed": 1, "code": 0, "wall_s": 560.1, "killed": false, "finished": "2026-09-30T18:24:44"}
+старт bl33v_NI_u2_k2 s1 (свободно 14.42 ГиБ)
+{"name": "bl33v_NI_u2_k2", "seed": 1, "code": 0, "wall_s": 58.0, "killed": false, "finished": "2026-09-30T18:25:42"}
+старт bl33v_A4_u2_k2 s1 (свободно 14.43 ГиБ)
+{"name": "bl33v_A4_u2_k2", "seed": 1, "code": 0, "wall_s": 44.0, "killed": false, "finished": "2026-09-30T18:26:26"}
+старт bl33v_A5_u0.6_k2 s2 (свободно 14.42 ГиБ)
+{"name": "bl33v_A5_u0.75_k2", "seed": 1, "code": 4, "wall_s": 604.1, "killed": false, "finished": "2026-09-30T18:28:56"}
+старт bl33v_A5_u0.75_k2 s2 (свободно 14.44 ГиБ)
