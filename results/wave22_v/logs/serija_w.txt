@@ -1,3 +1,5 @@
 старт bl23_volumes s0 (свободно 15.09 ГиБ)
 {"name": "bl23_volumes", "seed": 0, "code": 0, "wall_s": 34.0, "killed": false, "finished": "2026-09-30T17:28:38"}
 старт bl23_T700_obyom_g0.125_base s0 (свободно 14.47 ГиБ)
+{"name": "bl23_T700_obyom_g0.125_base", "seed": 0, "code": 0, "wall_s": 586.1, "killed": false, "finished": "2026-09-30T17:38:24"}
+старт bl23_T700_obyom_g0.1_base s0 (свободно 14.40 ГиБ)

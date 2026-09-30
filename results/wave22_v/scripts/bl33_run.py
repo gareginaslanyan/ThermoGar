@@ -9,6 +9,9 @@
   приложения (ограничение роста шага 22-Б, K = 2, minComposition 1e-8); вариант ``kawin`` —
   наследник ``kawin PrecipitateModel`` без ограничения шага и с minComposition kawin по
   умолчанию (0), как в 14-А;
+* вариант ``k2s`` — ``k2`` плюс проверка баланса масс BL-35 на КАЖДОЙ стадии итератора kawin (обёртка
+  ``_calcMassBalance``): если у добавки, бывшей в сплаве, x0 − Σfconc ≤ 0 на любой стадии, расчёт
+  останавливается после этого шага (исход «остановка по стадии»); проба предложения 22-В, не код приложения;
 * ``--gamma``/``--T`` — лестница по u (u = Rmin/r*, r* = 2γ/ΔGv до зажима).
 
 На каждом шаге записываются: пределы шага ``KWNEuler.getDt`` по отдельности (PSD, скорость
@@ -70,7 +73,7 @@ LIMIT_NAMES = ["psd", "nuc", "temp", "rcrit", "vol"]
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--case", required=True, choices=sorted(CASES))
-    parser.add_argument("--variant", default="k2", choices=["k2", "kawin"])
+    parser.add_argument("--variant", default="k2", choices=["k2", "kawin", "k2s"])
     parser.add_argument("--gamma", type=float, default=None)
     parser.add_argument("--T", type=float, default=None, help="температура, °C")
     parser.add_argument("--duration", type=float, default=None, help="модельное время, с")
@@ -168,6 +171,23 @@ def main() -> int:
             snapshots.append({"n": i, "bounds": bounds.copy(), "psd": psd.copy(), "growth": g.copy()})
             return dt
 
+        def _calcMassBalance(self, t, x, Y):  # noqa: N802
+            Y = super()._calcMassBalance(t, x, Y)
+            if args.variant == "k2s" and state.get("stage_stop") is None:
+                raw = np.asarray(self.data.composition[0], float) - np.sum(np.asarray(Y.fconc[0], float), axis=0)
+                bad = np.nonzero((np.asarray(self.data.composition[0], float) > 0) & (raw <= 0))[0]
+                if len(bad):
+                    names_ = [e for e in self.therm.elements[1:] if e != "VA"]
+                    state["stage_stop"] = {"t": float(t), "n": int(self.data.n), "element": names_[int(bad[0])],
+                                           "raw": float(raw[int(bad[0])])}
+            return Y
+
+        def postProcess(self, t, x):  # noqa: N802
+            X, stop = super().postProcess(t, x)
+            if state.get("stage_stop") is not None:
+                stop = True
+            return X, stop
+
         def solve(self, simTime, *a, **k):  # noqa: N802
             state["model"] = self
             state["dtmin"] = 1e-8 * float(simTime)  # DESolver: minDtFrac (1e-8 по умолчанию) × simTime
@@ -262,6 +282,8 @@ def main() -> int:
     stop.set()
     k = result.kinetics
     outcome = "остановка BL-35" if result.stop_note else "сошёлся"
+    if state.get("stage_stop") is not None and not result.stop_note:
+        outcome = "остановка по стадии"
     dump(outcome, {
         "rows": int(len(k)), "fraction_pct": float(k["Объёмная доля, %"].iloc[-1]),
         "radius_nm": float(k["Средний радиус, нм"].iloc[-1]),
@@ -269,7 +291,7 @@ def main() -> int:
         "t_end_s": float(k["Время, с"].iloc[-1]),
         "quality_ok": bool((result.quality["Статус"] == "пройдена").all()),
         "stop_note": result.stop_note, "stop_diagnostics": {kk: str(v) for kk, v in result.stop_diagnostics.items()},
-        "warnings": list(result.warnings),
+        "warnings": list(result.warnings), "stage_stop": state.get("stage_stop"),
     })
     print(json.dumps({"outcome": outcome, "rows": len(k), "u": state.get("u")}, ensure_ascii=False), flush=True)
     return 0
