@@ -1,1 +1,3 @@
 старт bl23_T700_obyom_g0.1_fine s0 (свободно 14.42 ГиБ)
+{"name": "bl23_T700_obyom_g0.1_fine", "seed": 0, "code": 0, "wall_s": 586.1, "killed": false, "finished": "2026-09-30T19:07:22"}
+старт bl23_T700_granicy_g0.125_k2 s0 (свободно 14.44 ГиБ)
