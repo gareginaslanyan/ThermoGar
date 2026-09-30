@@ -60,11 +60,11 @@ def main() -> None:
         out.append(["1 (BL-28)", f"β/τ/D {db}, код {d['tag']}", "0", "та же ячейка, перехват модели",
                     f"τ {num(s['tau, с'])} с, J(1) {num(s['скорость зарождения, 1/(м3·с)'])}", "1 с", "", wall, peak])
     # ШАГ 2
-    for sub in ("a", "v"):
+    for sub in ("a", "v", "s"):
         for js in sorted((W / "bl33" / sub).glob("*_s[0-9].json")):
             d = json.loads(js.read_text("utf-8"))
             tag = js.stem.rsplit("_s", 1)[0]
-            name = f"bl33{sub}_{tag}" if sub == "a" else f"bl33v_{tag}"
+            name = f"bl33{sub}_{tag}"
             code, wall, peak = zamer(L / f"{name}_s{d['seed']}.txt")
             out.append(["2 (BL-33)", f"{d['case']} ({d['composition']})", d["seed"],
                         f"{d['variant']}, γ {d['gamma']:.5g}, u {num(d.get('u'), '{:.3f}')}, {d['temperature_c']:g} °C, {d['nucleation']}, потолок {d['cap_s']:g} с",
@@ -84,8 +84,31 @@ def main() -> None:
         st = "obyom" if d["site"] == "BULK" else "granicy"
         code, wall, peak = zamer(L / f"bl23_T{d['T']:g}_{st}_g{d['gamma']:g}_{d['variant']}_s{d['seed']}.txt")
         out.append(["3 (BL-23)", f"{d['T']:g} °C, {d['site']}, γ {d['gamma']:g}", d["seed"],
-                    f"{d['variant']}, PBM {d['K_PBM']}", d["outcome"] + (f"; доля {d.get('fraction_mol_pct_end'):.4f} мольн. %" if d.get("fraction_mol_pct_end") is not None else ""),
+                    f"{d['variant']}, сетка {d['K_PBM']['cMin'] * 1e9:g}…{d['K_PBM']['cMax'] * 1e9:g} нм × {d['K_PBM']['bins']} (адаптивная {d['K_PBM']['minBins']}…{d['K_PBM']['maxBins']})", d["outcome"] + (f"; доля {d.get('fraction_mol_pct_end'):.4f} мольн. %" if d.get("fraction_mol_pct_end") is not None else ""),
                     f"{num(d.get('t_model_h'))} ч", d["steps"], wall or num(d.get("wall_s"), "{:.0f}"), peak or num(d.get("peak_rss_gib"), "{:.3f}")])
+    for run in sorted((W / "bl23" / "runs").glob("*_s[0-9]")):
+        if (run / "itog.json").is_file() or not (run / "hod.jsonl").is_file():
+            continue
+        last = json.loads((run / "hod.jsonl").read_text("utf-8").splitlines()[-1])
+        code, wall, peak = zamer(L / f"bl23_{run.name}.txt")
+        t, site, g, variant, seed = run.name.split("_")
+        out.append(["3 (BL-23)", f"{t[1:]} °C, {'BULK' if site == 'obyom' else 'GRAIN BOUNDARIES'}, γ {g[1:]}", seed[1:],
+                    variant, f"снят вручную (неосуществим на выдержку); шаг {last['dt']:.3g} с", f"{last['t_h']:.4g} ч",
+                    last["n"], wall or f"{last['wall_s']:.0f}", peak])
+    for js in sorted((W / "bl23" / "app").glob("app_*_s[0-9].json")):
+        d = json.loads(js.read_text("utf-8"))
+        st = "obyom" if d["site"] == "BULK" else "granicy"
+        log = L / (f"bl23app_{st}_g{d['gamma']:g}" + ("" if d["bins"] == 80 else f"_b{d['bins']}") + f"_s{js.stem[-1]}.txt")
+        code, wall, peak = zamer(log)
+        res = d["outcome"] + (f"; доля {d['fraction_pct_end']:.4g} %" if d.get("fraction_pct_end") is not None else "")
+        nj = d["jumps_N_without_J"]
+        res += f"; шагов со скачком N без зарождения {'≥ 50' if nj >= 50 else nj}"
+        if d.get("first_jumps"):
+            res += f" (первый на {d['first_jumps'][0]['t_h']:.4g} ч)"
+        out.append(["3 (BL-23)", f"путь приложения run_precipitation, 700 °C, {d['site']}, γ {d['gamma']:g}", js.stem[-1],
+                    f"K = 2, сетка {d['cmin']:g}…{d['cmax']:g} нм × {d['bins']}, выдержка {d['hours']:g} ч", res,
+                    f"{num(d.get('t_h_end'))} ч", d["steps"], wall or num(d.get("wall_s"), "{:.0f}"),
+                    peak or num(d.get("peak_rss_gib"), "{:.3f}")])
     code, wall, peak = zamer(L / "bl23_volumes_s0.txt")
     if wall:
         out.append(["3 (BL-23)", "молярные объёмы и равновесие двух фаз (12-1)", "0", "700 °C, 48 фаз", f"код {code}", "", "", wall, peak])
