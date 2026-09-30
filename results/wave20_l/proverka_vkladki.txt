@@ -1,0 +1,125 @@
+Проверка шага вкладки
+до правки: блоб f169d98ce6491c0773e83c479e3e0b8e7bb8c7ac (git cat-file blob), строк 11151
+после правки: app/ThermoGar_app.py, строк 9703
+модуль вкладки: app/thermogar_tab_properties.py, строк 1533
+функция: render_properties_tab; переменная вкладки: physical_tab
+
+== 1. тело
+«with physical_tab:» верхнего уровня: до 1, после 1
+тело до правки: строки 10578–10699 (122 строк), операторов 10
+функция render_properties_tab: строки 1398–1533; строка документации есть; пролог 9; тело: строки 1412–1533 (122 строк), операторов 10
+текст тела байт в байт: равен
+ast.dump тела: равен
+после тела в модуле: ничего
+вложенных областей в теле (def, class, lambda, включения): 0
+параметры функции: только именованные sidebar, services
+
+== 2. пролог
+до правки: SIDEBAR = SidebarContext(…) — строка 5910
+до правки: SERVICES = RunServices(…) — строка 5929
+  database_key = sidebar.database_key: SidebarContext(… database_key=database_key …) — тот же объект; переприсваиваний после SIDEBAR: 0; global: 0; тело читает: да
+  definition = sidebar.definition: SidebarContext(… definition=definition …) — тот же объект; переприсваиваний после SIDEBAR: 0; global: 0; тело читает: да
+  balance = sidebar.balance: SidebarContext(… balance=balance …) — тот же объект; переприсваиваний после SIDEBAR: 0; global: 0; тело читает: да
+  units = sidebar.units: SidebarContext(… units=units …) — тот же объект; переприсваиваний после SIDEBAR: 0; global: 0; тело читает: да
+  composition_text = sidebar.composition_text: SidebarContext(… composition_text=composition_text …) — тот же объект; переприсваиваний после SIDEBAR: 0; global: 0; тело читает: да
+  pressure_pa = sidebar.pressure_pa: SidebarContext(… pressure_pa=pressure_pa …) — тот же объект; переприсваиваний после SIDEBAR: 0; global: 0; тело читает: да
+  render_friendly_error = services.render_friendly_error: RunServices(… render_friendly_error=render_friendly_error …) — тот же объект; переприсваиваний после SERVICES: 0; global: 0; тело читает: да
+  SIDEBAR = sidebar: в головном сценарии render_properties_tab(… sidebar=SIDEBAR …) — тот же объект; переприсваиваний после SIDEBAR: 0; global: 0; тело читает: да
+  SERVICES = services: в головном сценарии render_properties_tab(… services=SERVICES …) — тот же объект; переприсваиваний после SERVICES: 0; global: 0; тело читает: да
+присваиваний пролога: 9; с отклонением: 0
+
+== 3. перенесённые определения
+  92–92 (1) acquire_b4b_execution: до правки 316–316; порядок прежний; связано в головном сценарии после правки: 0
+  93–93 (1) verified_physical_button: до правки 318–318; порядок прежний; связано в головном сценарии после правки: 0
+  94–94 (1) B4BPhysicalContext: до правки 319–319; порядок прежний; связано в головном сценарии после правки: 0
+  97–99 (3) PHYSICAL_DATABASE_PATH: до правки 863–865; порядок прежний; связано в головном сценарии после правки: 0
+  102–124 (23) _load_physical_database_cached: до правки 868–890; порядок прежний; связано в головном сценарии после правки: 0
+  127–149 (23) load_physical_database: до правки 893–915; порядок прежний; связано в головном сценарии после правки: 0
+  152–177 (26) density_below_pdb_text: до правки 918–943; порядок прежний; связано в головном сценарии после правки: 0
+  180–207 (28) render_physical_overrides_toggle: до правки 946–973; порядок прежний; связано в головном сценарии после правки: 0
+  210–217 (8) _b4b_refresh_overrides: до правки 976–983; порядок прежний; связано в головном сценарии после правки: 0
+  220–262 (43) bind_b4b_physical_context: до правки 986–1028; порядок прежний; связано в головном сценарии после правки: 0
+  265–302 (38) _b4b_requested_phases: до правки 1031–1068; порядок прежний; связано в головном сценарии после правки: 0
+  305–322 (18) _b4b_prepare_decision: до правки 1071–1088; порядок прежний; связано в головном сценарии после правки: 0
+  325–336 (12) _b4b_refresh_result: до правки 1091–1102; порядок прежний; связано в головном сценарии после правки: 0
+  339–353 (15) _b4b_store_result: до правки 1105–1119; порядок прежний; связано в головном сценарии после правки: 0
+  356–380 (25) _b4b_store_engine_result: до правки 1122–1146; порядок прежний; связано в головном сценарии после правки: 0
+  383–441 (59) _b4b_render_result_downloads: до правки 1149–1207; порядок прежний; связано в головном сценарии после правки: 0
+  444–611 (168) render_b4b_density_single: до правки 1210–1377; порядок прежний; связано в головном сценарии после правки: 0
+  614–826 (213) render_b4b_density_temperature: до правки 1380–1592; порядок прежний; связано в головном сценарии после правки: 0
+  829–861 (33) render_b4b_pdb_self_test: до правки 1595–1627; порядок прежний; связано в головном сценарии после правки: 0
+  864–905 (42) render_b4b_coverage: до правки 1630–1671; порядок прежний; связано в головном сценарии после правки: 0
+  908–924 (17) _b4b2_store_result: до правки 1674–1690; порядок прежний; связано в головном сценарии после правки: 0
+  927–937 (11) _b4b2_editor_value: до правки 1693–1703; порядок прежний; связано в головном сценарии после правки: 0
+  940–1180 (241) render_b4b2_elastic_properties: до правки 1706–1946; порядок прежний; связано в головном сценарии после правки: 0
+  1183–1364 (182) render_b4b2_strengthening: до правки 1949–2130; порядок прежний; связано в головном сценарии после правки: 0
+  1367–1395 (29) plot_density_temperature: до правки 2425–2453; порядок прежний; связано в головном сценарии после правки: 0
+узлов 25, строк 1260 (строки самих узлов, без пустых между ними); с отклонением 0
+имён, которые они читают как глобальные (в том числе в аннотациях), 88: перенесённые 17, импорты модуля 54 (с другим источником 0), встроенные 17, прочих 0
+  встроенные: Exception, TypeError, ValueError, bool, dict, float, hasattr, int, isinstance, len, list, object, sorted, str, tuple, type, zip
+
+== 4. импорты модуля
+from __future__: 1 — первый оператор импорта, как в файле до правки
+  15: from pathlib — до правки строка 52, имён 1 из 1
+  16: from typing — до правки строка 60, имён 1 из 1
+  17: import matplotlib.pyplot — до правки строка 68, имён 1 из 1
+  18: import numpy — до правки строка 73, имён 1 из 1
+  19: import pandas — до правки строка 74, имён 1 из 1
+  20: import streamlit — до правки строка 75, имён 1 из 1
+  21: from thermogar_palette — до правки строка 137, имён 3 из 8
+  26: import thermogar_parallel_ui — до правки строка 147, имён 1 из 1
+  27: from thermogar_workspace — до правки строка 149, имён 2 из 10
+  31: from thermogar_physical — до правки строка 174, имён 5 из 6
+  38: from thermogar_database_guard — до правки строка 190, имён 1 из 5
+  41: import thermogar_restricted_fe_core — до правки строка 205, имён 1 из 1
+  42: import thermogar_verified_loaders — до правки строка 207, имён 1 из 1
+  43: import thermogar_verified_physical — до правки строка 208, имён 1 из 1
+  44: import thermogar_verified_properties — до правки строка 209, имён 1 из 1
+  45: from thermogar_release_policy — до правки строка 212, имён 2 из 16
+  49: from thermogar_properties — до правки строка 230, имён 3 из 3
+  54: from thermogar_release_ui — до правки строка 235, имён 6 из 10
+  62: from thermogar_user_errors — до правки строка 247, имён 4 из 8
+  68: from thermogar_app_texts — до правки строка 257, имён 8 из 21
+  78: from thermogar_app_context — до правки строка 280, имён 2 из 3
+  79: from thermogar_app_common — до правки строка 281, имён 9 из 31
+операторов 22 и from __future__; не из файла до правки или не по порядку: 0
+импортированных, но не читаемых модулем имён: 0
+имён, которые модуль читает и не связывает, а файл до правки импортирует: 0
+
+== 5. имена, которые тело читает и само не связывает
+  импорт PHYSICAL_BINDING_ERROR_TITLE: thermogar_app_texts — в файле до правки тот же
+  импорт PHYSICAL_DATABASE_VERSION: thermogar_physical — в файле до правки тот же
+  импорт st: streamlit — в файле до правки тот же
+перенесённые: bind_b4b_physical_context, render_b4b2_elastic_properties, render_b4b2_strengthening, render_b4b_coverage, render_b4b_density_single, render_b4b_density_temperature, render_b4b_pdb_self_test, render_physical_overrides_toggle
+встроенные: Exception, float
+связывает тело: 9 — b4b_physical_context, b4b_physical_error, elastic_properties_tab, error, physical_coverage_tab, physical_overrides, physical_scan_tab, physical_single_tab, strengthening_tab; из них «except … as»: error
+всего 22: из пролога 9, перенесённые 8, импортом нового модуля 3 (с другим источником 0), встроенные 2, прочих 0
+
+== 6. имена, которые тело связывает, в головном сценарии после правки
+имена: b4b_physical_context, b4b_physical_error, elastic_properties_tab, error, physical_coverage_tab, physical_overrides, physical_scan_tab, physical_single_tab, strengthening_tab
+читаются на уровне модуля (вне тел def, lambda, включений и своих «except … as»): 0
+читаются как глобальные в функциях, лямбдах и включениях (symtable): 0
+
+== 7. symtable
+app/thermogar_tab_properties.py: глобальных чтений 93, имён в аннотациях 18, неопределённых 0
+app/ThermoGar_app.py: глобальных чтений 741, имён в аннотациях 27, неопределённых 0
+скрытых обращений в app/thermogar_tab_properties.py (вызовы globals, vars, locals, eval, exec, __import__; слова __main__, sys.modules): 0
+для сведения, скрытых обращений в app/ThermoGar_app.py: 2
+  2866 | globals()
+  2886 | __import__()
+
+== 8. головной сценарий по AST
+узлов верхнего уровня: 242 → 215
+операторов импорта: 53 → 51
+убраны из импортов: 22 — ELASTIC_EDITOR_COLUMN_LABELS, ELASTIC_FRACTION_LABELS, OVERRIDES_OFF_BY_USER, PHYSICAL_BINDING_ERROR_TITLE, PHYSICAL_DATABASE_RELATIVE_PATH, PHYSICAL_DATABASE_SHA256, PHYSICAL_DATABASE_VERSION, PHYSICAL_OVERRIDES_ENV_LOCKED_DETAILS, PHYSICAL_OVERRIDES_ENV_LOCKED_NOTE, PHYSICAL_OVERRIDES_TOGGLE_HELP, PHYSICAL_OVERRIDES_TOGGLE_KEY, PHYSICAL_OVERRIDES_TOGGLE_LABEL, PhysicalDensityDatabase, STRENGTHENING_CONFIRMATION_TEXT, STRENGTHENING_PROVENANCE_TEXT, calculate_physical_properties, elastic_rows_missing_text, file_sha256, overrides_enabled_by_environment, verified_feature_button, verified_physical, verified_properties
+из них целиком операторов импорта: 3 — thermogar_verified_physical, thermogar_verified_properties, thermogar_properties
+добавлены импортом: render_properties_tab
+тело «with physical_tab:» после правки: render_properties_tab(sidebar=SIDEBAR, services=SERVICES)
+откат (из файла до правки убраны перенесённые узлы: 25; импорт из thermogar_tab_properties убран, тело вкладки из файла до правки; в обоих файлах без убранных имён и опустевших операторов импорта): узлов 214 и 214, равны по ast.dump 214
+
+== 9. импорт из корня дерева
+python -B -X utf8 -c "import sys; sys.path.insert(0, 'app'); import thermogar_tab_properties as k; print(k.render_properties_tab.__module__)"
+код выхода: 0
+вывод: thermogar_tab_properties
+
+ИТОГ: PASS — тело 10 операторов, 122 строк; пролог 9; перенесённых узлов 25, строк 1260; импортов модуля 22 и from __future__; свободных имён 22 (9 + 8 + 3 + встроенные 2, прочих 0); узлов 242 → 215, импортов 53 → 51; откат 214 из 214
