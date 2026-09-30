@@ -22,3 +22,5 @@
 старт bl23_T700_obyom_g0.125_k2 s0 (свободно 14.43 ГиБ)
 {"name": "bl33v_A5_u0.75_k2", "seed": 2, "code": 4, "wall_s": 604.2, "killed": false, "finished": "2026-09-30T18:39:00"}
 старт bl23_T700_obyom_g0.125_fine s0 (свободно 14.45 ГиБ)
+{"name": "bl23_T700_obyom_g0.125_fine", "seed": 0, "code": 0, "wall_s": 766.2, "killed": false, "finished": "2026-09-30T18:51:46"}
+старт bl23_T700_obyom_g0.1_k2 s0 (свободно 14.42 ГиБ)

@@ -98,3 +98,5 @@
 {"name": "bl33v_NI_u2_k2", "seed": 2, "code": 0, "wall_s": 62.0, "killed": false, "finished": "2026-09-30T18:37:32"}
 {"name": "bl33v_A4_u2_k2", "seed": 2, "code": 0, "wall_s": 44.0, "killed": false, "finished": "2026-09-30T18:38:16"}
 {"name": "bl33v_A5_u0.75_k2", "seed": 2, "code": 4, "wall_s": 604.2, "killed": false, "finished": "2026-09-30T18:39:00"}
+{"name": "bl23app_obyom_g0.125_b160", "seed": 0, "code": 0, "wall_s": 918.2, "killed": false, "finished": "2026-09-30T18:50:06"}
+{"name": "bl23_T700_obyom_g0.125_fine", "seed": 0, "code": 0, "wall_s": 766.2, "killed": false, "finished": "2026-09-30T18:51:46"}

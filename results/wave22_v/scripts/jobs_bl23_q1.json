@@ -1,0 +1,82 @@
+[
+{
+"name": "bl23_T700_obyom_g0.1_fine",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_run.py",
+"--T",
+"700",
+"--gamma",
+"0.1",
+"--site",
+"BULK",
+"--variant",
+"fine",
+"--cap",
+"5400"
+],
+"limit_s": 5700
+},
+{
+"name": "bl23_T700_granicy_g0.125_k2",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_run.py",
+"--T",
+"700",
+"--gamma",
+"0.125",
+"--site",
+"GRAIN BOUNDARIES",
+"--variant",
+"k2",
+"--cap",
+"5400"
+],
+"limit_s": 5700
+},
+{
+"name": "bl23_T700_granicy_g0.125_fine",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_run.py",
+"--T",
+"700",
+"--gamma",
+"0.125",
+"--site",
+"GRAIN BOUNDARIES",
+"--variant",
+"fine",
+"--cap",
+"5400"
+],
+"limit_s": 5700
+},
+{
+"name": "bl23_T700_granicy_g0.15_fine",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_run.py",
+"--T",
+"700",
+"--gamma",
+"0.15",
+"--site",
+"GRAIN BOUNDARIES",
+"--variant",
+"fine",
+"--cap",
+"5400"
+],
+"limit_s": 5700
+}
+]
