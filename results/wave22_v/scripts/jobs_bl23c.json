@@ -1,0 +1,112 @@
+[
+{
+"name": "bl41_IN738_HCP",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl41_ocenka.py",
+"--db",
+"ni",
+"--name",
+"IN738_HCP",
+"--comp",
+"AL=3.4,B=0.01,C=0.11,CO=8.5,CR=16,MO=1.75,NB=0.9,TI=3.4,W=2.6,ZR=0.05",
+"--solutes",
+"CR,MO,W,NB,NI",
+"--T",
+"25",
+"800",
+"1000"
+],
+"limit_s": 1800
+},
+{
+"name": "bl23_T700_obyom_g0.125_cfl",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_run.py",
+"--T",
+"700",
+"--gamma",
+"0.125",
+"--site",
+"BULK",
+"--variant",
+"cfl",
+"--cap",
+"5400"
+],
+"limit_s": 5700
+},
+{
+"name": "bl23_T700_granicy_g0.15_cfl",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_run.py",
+"--T",
+"700",
+"--gamma",
+"0.15",
+"--site",
+"GRAIN BOUNDARIES",
+"--variant",
+"cfl",
+"--cap",
+"5400"
+],
+"limit_s": 5700
+},
+{
+"name": "bl23app_obyom_g0.125",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_app.py",
+"--gamma",
+"0.125",
+"--site",
+"BULK",
+"--hours",
+"500"
+],
+"limit_s": 5700
+},
+{
+"name": "bl23app_obyom_g0.1",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_app.py",
+"--gamma",
+"0.1",
+"--site",
+"BULK",
+"--hours",
+"500"
+],
+"limit_s": 5700
+},
+{
+"name": "bl23app_granicy_g0.15",
+"seed": 0,
+"cmd": [
+"python",
+"-B",
+"results/wave22_v/scripts/bl23_app.py",
+"--gamma",
+"0.15",
+"--site",
+"GRAIN BOUNDARIES",
+"--hours",
+"500"
+],
+"limit_s": 5700
+}
+]

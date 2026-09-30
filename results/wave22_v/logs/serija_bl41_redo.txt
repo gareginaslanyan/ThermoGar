@@ -1,0 +1,20 @@
+старт bl41_ni_ZR s0 (свободно 14.38 ГиБ)
+{"name": "bl41_ni_ZR", "seed": 0, "code": 0, "wall_s": 14.0, "killed": false, "finished": "2026-09-30T18:05:10"}
+старт bl41_ni_HF s0 (свободно 14.38 ГиБ)
+{"name": "bl41_ni_HF", "seed": 0, "code": 0, "wall_s": 14.0, "killed": false, "finished": "2026-09-30T18:05:24"}
+старт bl41_ni_Y s0 (свободно 14.33 ГиБ)
+{"name": "bl41_ni_Y", "seed": 0, "code": 0, "wall_s": 16.0, "killed": false, "finished": "2026-09-30T18:05:40"}
+старт bl41_ni_LA s0 (свободно 14.38 ГиБ)
+{"name": "bl41_ni_LA", "seed": 0, "code": 0, "wall_s": 16.0, "killed": false, "finished": "2026-09-30T18:05:56"}
+старт bl41_fe_TA s0 (свободно 14.34 ГиБ)
+{"name": "bl41_fe_TA", "seed": 0, "code": 0, "wall_s": 28.0, "killed": false, "finished": "2026-09-30T18:06:24"}
+старт bl41_fe_P s0 (свободно 14.37 ГиБ)
+{"name": "bl41_fe_P", "seed": 0, "code": 0, "wall_s": 28.0, "killed": false, "finished": "2026-09-30T18:06:52"}
+старт bl41_fe_PD s0 (свободно 14.40 ГиБ)
+{"name": "bl41_fe_PD", "seed": 0, "code": 0, "wall_s": 32.0, "killed": false, "finished": "2026-09-30T18:07:24"}
+старт bl41_fe_HF s0 (свободно 14.38 ГиБ)
+{"name": "bl41_fe_HF", "seed": 0, "code": 0, "wall_s": 24.0, "killed": false, "finished": "2026-09-30T18:07:48"}
+старт bl41_fe_Y s0 (свободно 14.38 ГиБ)
+{"name": "bl41_fe_Y", "seed": 0, "code": 0, "wall_s": 28.0, "killed": false, "finished": "2026-09-30T18:08:16"}
+старт bl41_fe_LA s0 (свободно 14.39 ГиБ)
+{"name": "bl41_fe_LA", "seed": 0, "code": 0, "wall_s": 28.0, "killed": false, "finished": "2026-09-30T18:08:44"}

@@ -33,3 +33,10 @@
 старт bl41_al_ZR s0 (свободно 14.41 ГиБ)
 {"name": "bl41_al_ZR", "seed": 0, "code": 0, "wall_s": 44.0, "killed": false, "finished": "2026-09-30T18:01:13"}
 старт bl41_al_SC s0 (свободно 14.42 ГиБ)
+{"name": "bl41_al_SC", "seed": 0, "code": 0, "wall_s": 30.0, "killed": false, "finished": "2026-09-30T18:01:43"}
+старт bl41_IN738_bez_Ta s0 (свободно 14.40 ГиБ)
+{"name": "bl41_IN738_bez_Ta", "seed": 0, "code": 0, "wall_s": 72.0, "killed": false, "finished": "2026-09-30T18:02:55"}
+старт bl41_V96c1och s0 (свободно 14.42 ГиБ)
+{"name": "bl41_V96c1och", "seed": 0, "code": 0, "wall_s": 82.0, "killed": false, "finished": "2026-09-30T18:04:17"}
+старт bl41_316L_HCP s0 (свободно 14.40 ГиБ)
+{"name": "bl41_316L_HCP", "seed": 0, "code": 0, "wall_s": 34.0, "killed": false, "finished": "2026-09-30T18:04:51"}
