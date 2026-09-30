@@ -1,0 +1,63 @@
+Проверка шага вкладки
+до правки: блоб 6ce2bb2d53372c734406d21d436f5c7303b889fa (git cat-file blob), строк 11178
+после правки: app/ThermoGar_app.py, строк 11151
+модуль вкладки: app/thermogar_tab_kinetics.py, строк 63
+функция: render_kinetics_tab; переменная вкладки: diffusion_tab
+
+== 1. тело
+«with diffusion_tab:» верхнего уровня: до 1, после 1
+тело до правки: строки 10708–10734 (27 строк), операторов 3
+функция render_kinetics_tab: строки 24–63; строка документации есть; пролог 8; тело: строки 37–63 (27 строк), операторов 3
+текст тела байт в байт: равен
+ast.dump тела: равен
+после тела в модуле: ничего
+параметры функции: только именованные sidebar, services
+
+== 2. пролог
+до правки: SIDEBAR = SidebarContext(…) — строка 5911
+до правки: SERVICES = RunServices(…) — строка 5930
+  database_key = sidebar.database_key: SidebarContext(… database_key=database_key …) — тот же объект; переприсваиваний после SIDEBAR: 0; global: 0; тело читает: да
+  definition = sidebar.definition: SidebarContext(… definition=definition …) — тот же объект; переприсваиваний после SIDEBAR: 0; global: 0; тело читает: да
+  db = sidebar.db: SidebarContext(… db=db …) — тот же объект; переприсваиваний после SIDEBAR: 0; global: 0; тело читает: да
+  database_path = sidebar.database_path: SidebarContext(… database_path=database_path …) — тот же объект; переприсваиваний после SIDEBAR: 0; global: 0; тело читает: да
+  CURRENT_CONTEXT = sidebar.current_context: SidebarContext(… current_context=CURRENT_CONTEXT …) — тот же объект; переприсваиваний после SIDEBAR: 0; global: 0; тело читает: да
+  THERMOGAR_PATHS = services.paths: RunServices(… paths=THERMOGAR_PATHS …) — тот же объект; переприсваиваний после SERVICES: 0; global: 0; тело читает: да
+  render_friendly_error = services.render_friendly_error: RunServices(… render_friendly_error=render_friendly_error …) — тот же объект; переприсваиваний после SERVICES: 0; global: 0; тело читает: да
+  dataframe_to_excel = services.dataframe_to_excel: RunServices(… dataframe_to_excel=dataframe_to_excel …) — тот же объект; переприсваиваний после SERVICES: 0; global: 0; тело читает: да
+присваиваний пролога: 8; с отклонением: 0
+
+== 3. имена, которые тело читает и само не связывает
+  импорт figure_to_png: thermogar_app_common — в файле до правки тот же
+  импорт record_calculation_history: thermogar_workspace — в файле до правки тот же
+  импорт render_kinetics_section: thermogar_diffusion — в файле до правки тот же
+  импорт render_precipitation_section: thermogar_precipitation — в файле до правки тот же
+  импорт st: streamlit — в файле до правки тот же
+вложенных областей в теле (def, class, lambda, включения): 0
+связывает тело: 2 — diffusion_subtab, precipitation_subtab
+всего 13: из пролога 8, импортом нового модуля 5 (с другим источником 0), прочих 0
+
+== 4. имена, которые тело связывает, в головном сценарии после правки
+diffusion_subtab, precipitation_subtab — читается: 0
+
+== 5. symtable
+app/thermogar_tab_kinetics.py: глобальных чтений 5, имён в аннотациях 2, неопределённых 0
+app/ThermoGar_app.py: глобальных чтений 795, имён в аннотациях 32, неопределённых 0
+скрытых обращений в app/thermogar_tab_kinetics.py (вызовы globals, vars, locals, eval, exec, __import__; слова __main__, sys.modules): 0
+для сведения, скрытых обращений в app/ThermoGar_app.py: 2
+  4193 | globals()
+  4213 | __import__()
+
+== 6. головной сценарий по AST
+узлов верхнего уровня: 241 → 242
+операторов импорта: 52 → 53
+убраны из импортов: render_kinetics_section, render_precipitation_section
+добавлены импортом: render_kinetics_tab
+тело «with diffusion_tab:» после правки: render_kinetics_tab(sidebar=SIDEBAR, services=SERVICES)
+откат (без импорта из thermogar_tab_kinetics, тело вкладки из файла до правки, без имён render_kinetics_section, render_precipitation_section в обоих файлах): узлов 241 и 241, равны по ast.dump 241
+
+== 7. импорт из корня дерева
+python -B -X utf8 -c "import sys; sys.path.insert(0, 'app'); import thermogar_tab_kinetics as k; print(k.render_kinetics_tab.__module__)"
+код выхода: 0
+вывод: thermogar_tab_kinetics
+
+ИТОГ: PASS — тело 3 операторов, 27 строк; пролог 8; свободных имён 13 (8 + 5, прочих 0); узлов 241 → 242, импортов 52 → 53; откат 241 из 241

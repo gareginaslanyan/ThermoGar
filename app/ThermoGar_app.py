@@ -182,12 +182,10 @@ from thermogar_physical import (
 from thermogar_diffusion import (
     KAWIN_AVAILABLE,
     KAWIN_IMPORT_ERROR,
-    render_kinetics_section,
 )
 from thermogar_precipitation import (
     PRECIPITATION_AVAILABLE,
     PRECIPITATION_IMPORT_ERROR,
-    render_precipitation_section,
 )
 from thermogar_database_guard import (
     FE_DATABASE_MAX_T_C,
@@ -313,6 +311,7 @@ from thermogar_app_common import (
     verified_b3_refresh_result,
     verified_b3_store_result,
 )
+from thermogar_tab_kinetics import render_kinetics_tab
 
 acquire_b4b_execution = verified_loaders.acquire_execution
 execute_bound_fe_batch = restricted_fe.execute_bound_restricted_fe
@@ -10705,33 +10704,7 @@ with physical_tab:
 # ---------------------------------------------------------------------------
 
 with diffusion_tab:
-    diffusion_subtab, precipitation_subtab = st.tabs(
-        ["Диффузия и гомогенизация", "Выделения"]
-    )
-    with diffusion_subtab:
-        render_kinetics_section(
-            db=db,
-            database_key=database_key,
-            database_path=database_path,
-            database_label=definition["label"],
-            project_root=THERMOGAR_PATHS,
-            current_context=CURRENT_CONTEXT,
-            dataframe_to_excel=dataframe_to_excel,
-            figure_to_png=figure_to_png,
-            render_error=render_friendly_error,
-            record_history=record_calculation_history,
-        )
-    with precipitation_subtab:
-        render_precipitation_section(
-            db=db,
-            database_key=database_key,
-            database_path=database_path,
-            database_label=definition["label"],
-            project_root=THERMOGAR_PATHS,
-            current_context=CURRENT_CONTEXT,
-            render_error=render_friendly_error,
-            record_history=record_calculation_history,
-        )
+    render_kinetics_tab(sidebar=SIDEBAR, services=SERVICES)
 
 
 # ---------------------------------------------------------------------------
