@@ -279,7 +279,7 @@ from thermogar_app_texts import (
     TERNARY_PHASE_MAP_DEFAULTS,
     USER_GUIDE_MD,
 )
-from thermogar_app_context import RunServices, SidebarContext
+from thermogar_app_context import RunServices, SidebarContext, VerifiedBinding
 from thermogar_app_common import (
     PROJECT_ROOT,
     _verified_tdb_declared_phases,
@@ -636,8 +636,9 @@ def verified_b3_point_tables(
 class VerifiedB3BatchBroker:
     """Bind, prepare, lease, and execute each B3 row without raw authority."""
 
-    def __init__(self, sidebar_selector: dict[str, Any]) -> None:
+    def __init__(self, sidebar_selector: dict[str, Any], *, services: RunServices) -> None:
         self._sidebar_selector = dict(sidebar_selector)
+        self._services = services
 
     @staticmethod
     def _catalog() -> verified_loaders.ArtifactCatalog:
@@ -660,28 +661,25 @@ class VerifiedB3BatchBroker:
         return verified_loaders.bind_selected_database(
             selector,
             self._catalog(),
-            THERMOGAR_PATHS,
+            self._services.paths,
         )
 
     def _restore_sidebar(self) -> verified_loaders.BoundDatabaseContext:
-        global vlb_bound_context, vlb_active_context
         previous = st.session_state.get("_thermogar_vlb_bound_context_v1")
-        vlb_bound_context = verified_loaders.bind_selected_database(
+        self._services.binding.bound = verified_loaders.bind_selected_database(
             self._sidebar_selector,
             self._catalog(),
-            THERMOGAR_PATHS,
+            self._services.paths,
         )
-        # Пересвязывание сдвигает поколение привязки в рантайме, поэтому
-        # активной становится именно эта привязка. Без обновления
-        # vlb_active_context проба StateStore осталась бы на прежнем
-        # поколении, и любой экспорт состояния отклонялся бы ложным
-        # BINDING_STALE ещё до каких-либо действий пользователя.
-        vlb_active_context = vlb_bound_context
+        # Пересвязывание сдвигает поколение привязки в рантайме. Проба
+        # StateStore читает привязку из self._services.binding, поэтому новая
+        # привязка кладётся туда же: иначе любой экспорт состояния отклонялся
+        # бы ложным BINDING_STALE ещё до каких-либо действий пользователя.
         st.session_state["_thermogar_vlb_selector_v1"] = dict(
             self._sidebar_selector
         )
         st.session_state["_thermogar_vlb_bound_context_v1"] = (
-            vlb_bound_context.to_dict()
+            self._services.binding.bound.to_dict()
         )
         # Пересвязывание тем же селектором каждый раз даёт новые
         # binding_digest и binding_generation, поэтому по ним нельзя судить
@@ -689,11 +687,11 @@ class VerifiedB3BatchBroker:
         # прогоне. Значение имеет только фактическая смена базы и профиля.
         if (
             type(previous) is not dict
-            or previous.get("database_key") != vlb_bound_context.database_key
-            or previous.get("profile_key") != vlb_bound_context.profile_key
+            or previous.get("database_key") != self._services.binding.bound.database_key
+            or previous.get("profile_key") != self._services.binding.bound.profile_key
         ):
             clear_b3_session_results()
-        return vlb_bound_context
+        return self._services.binding.bound
 
     @staticmethod
     def _decision(
@@ -825,7 +823,7 @@ class VerifiedB3BatchBroker:
         )
         with acquire_b3_execution(
             decision,
-            THERMOGAR_PATHS,
+            self._services.paths,
         ) as lease:
             started_at = lease.identity.acquired_at_utc
             finished_at = datetime.now(timezone.utc).isoformat(
@@ -988,10 +986,11 @@ def _b4b_refresh_overrides(state_key: str, physical_overrides: bool) -> None:
 
 def bind_b4b_physical_context(
     database_key: str,
+    *,
+    services: RunServices,
 ) -> verified_loaders.BoundDatabaseContext:
     """Bind the separate canonical TDB+PDB capability for B4B1."""
 
-    global vlb_active_context
     selector: dict[str, Any] = {
         "database_key": database_key,
         "include_physical_pdb": True,
@@ -1006,7 +1005,7 @@ def bind_b4b_physical_context(
     context = verified_loaders.bind_selected_database(
         selector,
         catalog,
-        THERMOGAR_PATHS,
+        services.paths,
     )
     proof_digest = verified_loaders.canonical_digest(
         {
@@ -1027,7 +1026,6 @@ def bind_b4b_physical_context(
     ):
         clear_b4b_physical_session_results()
     st.session_state["_thermogar_b4b_physical_proof_v1"] = proof_digest
-    vlb_active_context = context
     return context
 
 
@@ -5630,13 +5628,15 @@ except Exception as error:
     )
     st.stop()
 
-vlb_active_context = vlb_bound_context
+# BL-57 (20-И): проверенная привязка базы — в изменяемом объекте: пакетный
+# расчёт и проекты перепривязывают её на месте, проба StateStore и вкладки читают её.
+VLB = VerifiedBinding(bound=vlb_bound_context)
 workspace_state_store = verified_state.StateStore(
     THERMOGAR_PATHS,
     st,
     binding_probe=lambda: (
-        vlb_bound_context.binding_digest,
-        vlb_bound_context.binding_generation,
+        VLB.bound.binding_digest,
+        VLB.bound.binding_generation,
     ),
 )
 
@@ -5937,6 +5937,7 @@ SERVICES = RunServices(
     scheil_available=scheil_available,
     scheil_state=_SCHEIL_STATE,
     fe_profile_sha256=FE_PROFILE_SHA256,
+    binding=VLB,
 )
 
 
@@ -6001,7 +6002,7 @@ with single_tab:
             )
         )
         single_component_candidates = verified_b3_candidate_phases(
-            vlb_bound_context,
+            VLB.bound,
             tuple(single_candidate_phases),
         )
         single_candidate_phases = list(single_component_candidates)
@@ -6048,7 +6049,7 @@ with single_tab:
         )
         single_feature_decision = verified_loaders.prepare_feature_request(
             "equilibrium_single",
-            vlb_bound_context,
+            VLB.bound,
             single_inputs,
             single_requested_phases,
             candidate_phases=single_component_candidates,
@@ -6146,7 +6147,7 @@ with single_tab:
                     else:
                         single_execution = (
                             verified_equilibrium.execute_verified_equilibrium(
-                                vlb_bound_context,
+                                VLB.bound,
                                 single_feature_decision,
                                 single_lease,
                             )
@@ -6336,7 +6337,7 @@ with temperature_tab:
             )
         )
         temperature_component_candidates = verified_b3_candidate_phases(
-            vlb_bound_context,
+            VLB.bound,
             tuple(temperature_candidate_phases),
         )
         temperature_candidate_phases = list(
@@ -6407,7 +6408,7 @@ with temperature_tab:
         temperature_feature_decision = (
             verified_loaders.prepare_feature_request(
                 "equilibrium_temperature_scan",
-                vlb_bound_context,
+                VLB.bound,
                 temperature_inputs,
                 temperature_requested_phases,
                 candidate_phases=temperature_component_candidates,
@@ -6715,7 +6716,7 @@ with concentration_tab:
             steel_mode,
         )
         concentration_component_candidates = verified_b3_candidate_phases(
-            vlb_bound_context,
+            VLB.bound,
             tuple(concentration_candidate_phases),
         )
         concentration_candidate_phases = list(
@@ -6787,7 +6788,7 @@ with concentration_tab:
         concentration_feature_decision = (
             verified_loaders.prepare_feature_request(
                 "equilibrium_composition_scan",
-                vlb_bound_context,
+                VLB.bound,
                 concentration_inputs,
                 concentration_requested_phases,
                 candidate_phases=concentration_component_candidates,
@@ -10582,7 +10583,7 @@ with physical_tab:
     )
 
     try:
-        b4b_physical_context = bind_b4b_physical_context(database_key)
+        b4b_physical_context = bind_b4b_physical_context(database_key, services=SERVICES)
         b4b_physical_error = None
     except Exception as error:
         b4b_physical_context = None
@@ -10737,7 +10738,7 @@ with diffusion_tab:
 # Библиотека, проекты, история и помощь
 # ---------------------------------------------------------------------------
 
-workspace_broker = VerifiedB3BatchBroker(vlb_selector)
+workspace_broker = VerifiedB3BatchBroker(vlb_selector, services=SERVICES)
 
 
 with reference_tab:

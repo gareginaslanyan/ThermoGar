@@ -1,0 +1,7 @@
+файл: app/ThermoGar_app.py до правки (блоб 3b77bab54c6915ee5f0954fa2a1ed9f75c59fbbe)
+раздел боковой панели: :5522–:5944
+имён боковой панели: 46
+имена: CURRENT_CONTEXT, CURRENT_CONTEXT_SIGNATURE, SERVICES, SIDEBAR, available_elements, balance, balance_key, composition_key, composition_text, context_or_release_changed, database_identity, database_key, database_path, db, default_balance, definition, error, expected_hash, fe_profile_key, loaded_context, loaded_database_key, loaded_label, pending_context_error, pressure_pa, previous_context_signature, previous_database_identity, previous_release_generation, rejected_balance, rejected_key, stale_key, stale_result_keys, state_key, steel_mode, steel_mode_label, steel_options, stored_vlb_context, stored_vlb_selector, units, units_key, units_label, units_options, vlb_active_context, vlb_bound_context, vlb_catalog, vlb_selector, workspace_state_store
+функций, читающих их как глобальные или объявляющих global: 2
+666 | VerifiedB3BatchBroker._restore_sidebar | vlb_active_context, vlb_bound_context
+989 | bind_b4b_physical_context | vlb_active_context

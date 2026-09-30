@@ -1,0 +1,14 @@
+файл: app/ThermoGar_app.py после правки (блоб 6ce2bb2d53372c734406d21d436f5c7303b889fa)
+имён служб прогона: 15
+имена: THERMOGAR_PATHS, render_friendly_error, log_error, dataframe_to_excel, load_database, load_scheil, scheil_available, _SCHEIL_STATE, FE_PROFILE_SHA256, FE_PROFILE_RELATIVE_PATHS, _DATABASE_SNAPSHOT_CACHE, _DATABASE_SNAPSHOT_CACHE_LOCK, _parse_database_snapshot, _database_cache_get, _database_cache_commit
+функций, читающих их как глобальные или объявляющих global: 8
+95 | load_scheil | _SCHEIL_STATE
+126 | scheil_available | _SCHEIL_STATE
+323 | render_friendly_error | THERMOGAR_PATHS
+339 | log_error | THERMOGAR_PATHS
+501 | _database_cache_get | _DATABASE_SNAPSHOT_CACHE, _DATABASE_SNAPSHOT_CACHE_LOCK
+506 | _database_cache_commit | _DATABASE_SNAPSHOT_CACHE, _DATABASE_SNAPSHOT_CACHE_LOCK
+514 | load_database | FE_PROFILE_RELATIVE_PATHS, FE_PROFILE_SHA256, _database_cache_commit, _database_cache_get, _parse_database_snapshot
+9224 | solidification_error_record | log_error
+строка SERVICES: :5930–:5941
+переприсваиваний имён служб и SERVICES после неё: 0
