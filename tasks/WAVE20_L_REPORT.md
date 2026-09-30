@@ -202,7 +202,7 @@ python -B -X utf8 results\wave20_l\scripts\proverka_vkladki.py f169d98ce6491c077
 * `_to_delete\` (вне git), у каждой папки опись `opis_sha256.txt`:
   * `20l_proba\` — три отрицательные пробы `proverka_vkladki` (`a`, `b`, `c`) с выводом;
   * `20l_skripty\` — `pravka_shag2.py`, `pravka_shag3.py`, `shag3_testy.sh`, `svodka_sha256.py`, `reestr.py`, `itog.txt`.
-* Вне дерева `D:\Pets\ThermoGar-w21b` ничего не искалось и не читалось, кроме интерпретатора окружения и выходных файлов фоновых задач сессии.
+* Вне дерева `D:\Pets\ThermoGar-w21b` ничего не искалось и не читалось, кроме интерпретатора окружения, выходных файлов фоновых задач сессии и временного файла с выводом git для раздела «git» (`%TEMP%\git_out.txt`).
 
 ## Отступления от задания
 
@@ -217,4 +217,29 @@ python -B -X utf8 results\wave20_l\scripts\proverka_vkladki.py f169d98ce6491c077
 
 ## git
 
-(заполняется после пуша)
+Снято после пуша коммита `99af611` (30.09.2026 21:12:25). Коммит, который дописал этот раздел, в выводе не виден — его хэш даёт `git log` ветки.
+
+`git ls-remote origin main wave20-l`:
+
+```
+c5dc9da1bd92a1086d8139002d49f2caa382a286	refs/heads/main
+99af611fbdd55540417f66a17edc8a40122a8c4e	refs/heads/wave20-l
+```
+
+`git log --oneline origin/main..wave20-l`:
+
+```
+99af611 docs(20-Л): отчёт — шаг 8 разреза BL-57
+9029755 docs(20-Л): реестр — приёмка 20-К, ошибка мастера (строка 20-Е), строка 20-Л, BL-57
+a2c8359 results(20-Л): полная регрессия после переноса вкладки «Свойства» — 78 заданий, 69 выход 0, 9 выход 5; эталон расчётов PASS
+21d5a60 results(20-Л): сверка вкладок с эталоном 0.5.0 после переноса вкладки «Свойства» — полное равенство (правил 14)
+db63e2e test(tools): 20-Л — перенесённый код вкладки «Свойства» тесты берут из thermogar_tab_properties.py; нагрузка установщика 81 → 82
+da3b660 refactor(app): 20-Л — вкладка «Свойства» в своём модуле thermogar_tab_properties.py (render_properties_tab; 25 определений контура B4B/B4B2 и тело без правок, пролог из SidebarContext и RunServices)
+2a71837 docs(tasks): 20-Л задание (BL-57, шаг 8 разреза — вкладка «Свойства» в своём модуле)
+```
+
+`git status --short`:
+
+```
+?? _to_delete/
+```
