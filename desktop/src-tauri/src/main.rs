@@ -159,6 +159,28 @@ fn main() {
                 open_window(&handle, port);
             });
 
+            // Watch the launcher we started. If it goes away on its own -- the
+            // user ran stop.pyw, an uninstall stopped it, or it failed after the
+            // window opened -- the window must not outlive it. A shell still
+            // showing a page served by a dead process is a lie, and on Windows
+            // it also keeps ThermoGar.exe locked, which blocks the uninstaller.
+            let watcher_slot = Arc::clone(&slot_for_setup);
+            let watcher_handle = app.handle().clone();
+            std::thread::spawn(move || loop {
+                std::thread::sleep(Duration::from_millis(1000));
+                let exited = match watcher_slot.lock() {
+                    Ok(mut guard) => match guard.as_mut() {
+                        Some(child) => matches!(child.try_wait(), Ok(Some(_))),
+                        None => false,
+                    },
+                    Err(_) => false,
+                };
+                if exited {
+                    let _ = watcher_handle.exit(0);
+                    break;
+                }
+            });
+
             Ok(())
         })
         .build(tauri::generate_context!())
