@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>ThermoGar</title>
+<style>
+  html,body{margin:0;height:100%;background:#F8F8F9;color:#232529;
+    font-family:"Segoe UI",system-ui,sans-serif;font-size:18px}
+  .wrap{height:100%;display:flex;align-items:center;justify-content:center}
+  .box{max-width:560px;padding:0 24px}
+  h1{font-size:22px;font-weight:600;margin:0 0 12px;color:#A62A1E}
+  p{margin:0 0 12px;color:#4B4F56;line-height:1.55}
+  code{background:#ECEDEF;padding:2px 6px;border-radius:4px;font-size:16px}
+</style>
+</head>
+<body>
+  <div class="wrap"><div class="box">
+    <h1>ThermoGar не запустился</h1>
+    <p>Расчётное ядро не ответило за отведённое время. Окно не показывает
+       пустую страницу специально: пустой экран выглядит как зависание.</p>
+    <p>Что проверить: свободную память (нужно от 3 ГБ), не занят ли
+       <code>%LOCALAPPDATA%\ThermoGar\run.lock</code> другим запуском,
+       и журнал <code>%LOCALAPPDATA%\ThermoGar\logs</code>.</p>
+  </div></div>
+</body>
+</html>

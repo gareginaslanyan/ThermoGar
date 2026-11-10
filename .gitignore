@@ -16,3 +16,5 @@ results/hn62m/
 results/hn62m_tech/
 # 20-Д: папка файлов, которые приложение Claude сохраняет в подключённую папку
 Claude outputs/
+# 22-А: сборка настольной оболочки — крейты и артефакты Rust
+desktop/src-tauri/target/

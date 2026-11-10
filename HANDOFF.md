@@ -1,4 +1,4 @@
-# HANDOFF — ThermoGar 0.5.0
+# HANDOFF — ThermoGar 0.6.0
 
 Всё, что нужно, чтобы запустить программу, собрать установщик и прогнать тесты.
 Рабочий корень: `C:\Users\gareg\Desktop\ThermoGar`.
@@ -7,7 +7,27 @@
 
 ## Состояние проекта
 
-**Выпущено:** 0.5.0 от 2026-09-28; предыдущий выпуск 0.4.4 от 2026-09-23.
+**Выпущено:** 0.6.0 от 2026-11-10; предыдущий выпуск 0.5.0 от 2026-09-28.
+
+## Настольная оболочка (0.6.0)
+
+Ярлык запускает `ThermoGar.exe` — оболочку на Tauri 2, а не `pythonw.exe launcher.pyw`.
+Оболочка не заменяет лаунчер: она поднимает его, читает `ui_port` из
+`%LOCALAPPDATA%\ThermoGar\runtime\run.json`, проверяет `/_stcore/script-health-check` и
+открывает окно WebView2. Замок, запись прогона, job-объект и проверки целостности остались
+в `launcher.pyw` без изменений.
+
+Сборка оболочки (нужны Rust stable и MSVC Build Tools с Windows SDK):
+
+```
+cd desktop\src-tauri
+cargo build --release
+```
+
+Результат — `desktop\src-tauri\target\release\thermogar-desktop.exe`; `stage_payload.ps1`
+кладёт его в поставку как `ThermoGar.exe` и требует его наличия наравне с рантаймом.
+Если exe не собран, стейджинг падает с `PAYLOAD_SOURCE_MISSING` — это намеренно.
+
 
 **Волна 9** — расчётное исследование ХН62М(Sc)-ВИ на базе `mc_ni`
 (`docs\HN62M_STUDY.md`, отчёт `tasks\WAVE9_REPORT.md`). Влита.

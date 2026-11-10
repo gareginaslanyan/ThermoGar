@@ -68,6 +68,7 @@ $SingleFiles = @(
     @{ Source = 'packaging\stop.pyw';       Dest = 'stop.pyw';                   Required = $true  }
     @{ Source = 'packaging\healthcheck.py'; Dest = 'healthcheck.py';             Required = $true  }
     @{ Source = 'packaging\assets\ThermoGar.ico'; Dest = 'ThermoGar.ico';        Required = $true  }
+    @{ Source = 'desktop\src-tauri\target\release\thermogar-desktop.exe'; Dest = 'ThermoGar.exe'; Required = $true }
     @{ Source = 'README.md';                Dest = 'README.md';                  Required = $false }
     @{ Source = 'USER_GUIDE_THERMOGAR.md';  Dest = 'USER_GUIDE_THERMOGAR.md';    Required = $false }
     @{ Source = 'QUICK_START_THERMOGAR.md'; Dest = 'QUICK_START_THERMOGAR.md';   Required = $false }
@@ -167,6 +168,7 @@ $RequiredInStage = @(
     'launcher.pyw', 'stop.pyw', 'healthcheck.py',
     'runtime\python.exe', 'runtime\pythonw.exe',
     'app\ThermoGar_app.py',
+    'ThermoGar.exe',
     $FeReferenceFingerprint
 )
 foreach ($required in $RequiredInStage) {

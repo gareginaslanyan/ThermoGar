@@ -285,9 +285,12 @@ function Test-PortListening {
 # bodies; steps 1-7 are left exactly as they were.
 function Start-InstalledApp {
     param([string]$Root, [string]$Cwd)
+    # The user path is the desktop shell: it starts launcher.pyw itself and
+    # shows the app in its own window. Launching pythonw+launcher.pyw directly
+    # would still work, but it would not test what the shortcut does.
     $startInfo = New-Object System.Diagnostics.ProcessStartInfo
-    $startInfo.FileName = Join-Path $Root 'runtime\pythonw.exe'
-    $startInfo.Arguments = '"' + (Join-Path $Root 'launcher.pyw') + '"'
+    $startInfo.FileName = Join-Path $Root 'ThermoGar.exe'
+    $startInfo.Arguments = ''
     $startInfo.WorkingDirectory = $Cwd
     $startInfo.UseShellExecute = $false
     $startInfo.CreateNoWindow = $true
@@ -365,7 +368,7 @@ try {
 
     # --- 2. installed files, shortcut, registry ------------------------------
     $required = @(
-        'launcher.pyw', 'stop.pyw', 'healthcheck.py', 'ThermoGar.ico',
+        'launcher.pyw', 'stop.pyw', 'healthcheck.py', 'ThermoGar.ico', 'ThermoGar.exe',
         'runtime\python.exe', 'runtime\pythonw.exe',
         'app\ThermoGar_app.py', '.streamlit\config.toml',
         'manifests\payload-manifest.json', 'Uninstall.exe'
@@ -388,8 +391,8 @@ try {
         # ProcessStartInfo rather than Start-Process: the latter rejects
         # -WorkingDirectory in some PowerShell 7 builds.
         $startInfo = New-Object System.Diagnostics.ProcessStartInfo
-        $startInfo.FileName = $pythonw
-        $startInfo.Arguments = '"' + $launcher + '"'
+        $startInfo.FileName = (Join-Path $InstallRoot 'ThermoGar.exe')
+        $startInfo.Arguments = ''
         $startInfo.WorkingDirectory = $WorkDir
         $startInfo.UseShellExecute = $false
         $startInfo.CreateNoWindow = $true

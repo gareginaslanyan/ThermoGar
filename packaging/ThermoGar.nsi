@@ -126,13 +126,20 @@ Section "ThermoGar" SEC_MAIN
     MessageBox MB_OK|MB_ICONSTOP "Installation failed: bundled runtime is missing." /SD IDOK
     Abort
   ${EndIf}
-
+  ${IfNot} ${FileExists} "$INSTDIR\ThermoGar.exe"
+    SetErrors
+    MessageBox MB_OK|MB_ICONSTOP "Installation failed: desktop shell is missing." /SD IDOK
+    Abort
+  ${EndIf}
   CreateDirectory "${SHORTCUT_DIR}"
+  ; The shortcut runs the desktop shell, which starts launcher.pyw itself and
+  ; shows the app in its own window instead of a browser tab. launcher.pyw is
+  ; still shipped and still owns the run lock, the run record and the child.
   CreateShortcut "${SHORTCUT_LNK}" \
-    "$INSTDIR\runtime\pythonw.exe" '"$INSTDIR\launcher.pyw"' \
+    "$INSTDIR\ThermoGar.exe" "" \
     "$INSTDIR\ThermoGar.ico" 0 SW_SHOWNORMAL "" "${PRODUCT_DESCRIPTION}"
   CreateShortcut "${DESKTOP_LNK}" \
-    "$INSTDIR\runtime\pythonw.exe" '"$INSTDIR\launcher.pyw"' \
+    "$INSTDIR\ThermoGar.exe" "" \
     "$INSTDIR\ThermoGar.ico" 0 SW_SHOWNORMAL "" "${PRODUCT_DESCRIPTION}"
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -178,6 +185,7 @@ Section "Uninstall"
   Delete "$INSTDIR\stop.pyw"
   Delete "$INSTDIR\healthcheck.py"
   Delete "$INSTDIR\ThermoGar.ico"
+  Delete "$INSTDIR\ThermoGar.exe"
   Delete "$INSTDIR\*.md"
   Delete "$INSTDIR\*.txt"
   Delete "$INSTDIR\Uninstall.exe"
