@@ -954,6 +954,12 @@ def _open_ui(port: int) -> None:
     if _ui_opened:
         return
     _ui_opened = True
+    # The desktop shell (ThermoGar.exe) starts this launcher and shows the app
+    # in its own window. It sets THERMOGAR_NO_BROWSER=1 so that the launcher
+    # does not also hand the user a browser tab: two windows for one run is a
+    # bug, and the shell's window is the one the shortcut promises.
+    if os.environ.get("THERMOGAR_NO_BROWSER") == "1":
+        return
     try:
         os.startfile(f"http://127.0.0.1:{port}/")
     except OSError:

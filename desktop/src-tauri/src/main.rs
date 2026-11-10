@@ -93,6 +93,12 @@ fn start_launcher(root: &Path) -> std::io::Result<Child> {
     Command::new(root.join("runtime").join("pythonw.exe"))
         .arg(root.join("launcher.pyw"))
         .current_dir(root)
+        // The launcher opens a browser tab of its own once Streamlit answers.
+        // This shell already shows that page in its window, so the tab would be
+        // a second, redundant window for one run. The launcher honours this flag
+        // and skips os.startfile; running launcher.pyw without the shell still
+        // opens the browser exactly as before.
+        .env("THERMOGAR_NO_BROWSER", "1")
         .stdin(Stdio::null())
         .stdout(Stdio::null())
         .stderr(Stdio::null())
