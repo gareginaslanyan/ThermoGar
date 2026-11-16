@@ -65,10 +65,15 @@ fn read_ui_port() -> Option<u16> {
     digits.parse::<u16>().ok()
 }
 
-/// Ask the app itself whether the page is ready. A TCP connect is not enough:
-/// Streamlit listens long before ThermoGar_app.py has finished its first run,
-/// and a window opened at that moment shows a blank page for 20-60 s.
-fn script_ready(port: u16) -> bool {
+/// Ask the server whether it is serving yet.
+///
+/// Measured on this machine, 2026-11-16: /_stcore/health answers 200 at 2.6 s
+/// while /_stcore/script-health-check only answers at 21.9 s, because the second
+/// one waits for ThermoGar_app.py to finish its first run. Waiting for the
+/// script meant the user stared at nothing for nineteen extra seconds. The
+/// window is opened on the server instead, and Streamlit's own "Running..."
+/// indicator covers the rest of the load inside it.
+fn server_ready(port: u16) -> bool {
     let mut stream = match TcpStream::connect(("127.0.0.1", port)) {
         Ok(s) => s,
         Err(_) => return false,
@@ -76,7 +81,7 @@ fn script_ready(port: u16) -> bool {
     let _ = stream.set_read_timeout(Some(Duration::from_secs(5)));
     let _ = stream.set_write_timeout(Some(Duration::from_secs(5)));
     let request = format!(
-        "GET /_stcore/script-health-check HTTP/1.1\r\nHost: 127.0.0.1:{}\r\nConnection: close\r\n\r\n",
+        "GET /_stcore/health HTTP/1.1\r\nHost: 127.0.0.1:{}\r\nConnection: close\r\n\r\n",
         port
     );
     if stream.write_all(request.as_bytes()).is_err() {
@@ -109,7 +114,7 @@ fn wait_for_ui() -> Option<u16> {
     let deadline = Instant::now() + Duration::from_secs_f64(PORT_WAIT_SECONDS);
     while Instant::now() < deadline {
         if let Some(port) = read_ui_port() {
-            if script_ready(port) {
+            if server_ready(port) {
                 return Some(port);
             }
         }
@@ -152,7 +157,7 @@ fn main() {
             std::thread::spawn(move || {
                 // Attach to a run that is already up; otherwise start one.
                 let port = match read_ui_port() {
-                    Some(p) if script_ready(p) => Some(p),
+                    Some(p) if server_ready(p) => Some(p),
                     _ => {
                         if let Ok(child) = start_launcher(&root) {
                             if let Ok(mut guard) = slot.lock() {
